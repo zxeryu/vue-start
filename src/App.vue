@@ -1,5 +1,13 @@
 <template>
-  <div>App</div>
+  <div>
+    vue-start
+    <div>
+      <router-link to="/">Home</router-link>
+      <router-link to="/about">About</router-link>
+      <router-link to="/counter">Counter</router-link>
+    </div>
+  </div>
+  <router-view />
 </template>
 
 <script lang="ts">
