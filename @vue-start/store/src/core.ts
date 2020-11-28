@@ -52,23 +52,23 @@ export class Actor<TArg = any, TOpts = any> {
     return new this<TArg, TOpts>({ group });
   }
 
-  group = "UN_GROUPED";
-  name = "UN_NAMED";
+  group: string;
+  name: string;
   stage?: AsyncStage;
 
   effect?: (state: any, actor: Actor<TArg, TOpts>) => any;
 
-  arg: TArg = {} as TArg;
-  opts: TOpts = {} as TOpts;
+  arg: TArg;
+  opts: TOpts;
 
   constructor(opt: IActorOpt<TArg, TOpts>) {
-    this.group = opt.group || this.group;
-    this.name = opt.name!;
+    this.group = opt.group || "UN_GROUPED";
+    this.name = opt.name! || "UN_NAMED";
     this.stage = opt.stage;
 
     this.effect = opt.effect;
 
-    this.arg = opt.arg!;
+    this.arg = opt.arg! || ({} as TArg);
     this.opts = opt.opts || ({} as TOpts);
   }
 
@@ -128,15 +128,17 @@ export class Actor<TArg = any, TOpts = any> {
     }`;
   }
 
-  is = (actor: Actor): actor is Actor<TArg, TOpts> => {
+  is(actor: Actor): actor is Actor<TArg, TOpts> {
     const isSame = this.isSameGroup(actor) && actor.name === this.name;
     if (this.stage) {
       return isSame && actor.stage === this.stage;
     }
     return isSame;
-  };
+  }
 
-  isSameGroup = (actor: Actor<TArg, TOpts>) => actor.group === this.group;
+  isSameGroup(actor: Actor<TArg, TOpts>) {
+    return actor.group === this.group;
+  }
 }
 
 export interface IDispatch {
@@ -170,7 +172,12 @@ export class Store<TRoot extends { [key: string]: any } = {}> extends BehaviorSu
     return new Store<TState>(initialState);
   }
 
-  actor$ = new Subject<Actor>();
+  actor$: Subject<Actor>;
+
+  constructor(props) {
+    super(props);
+    this.actor$ = new Subject<Actor>();
+  }
 
   applyMiddleware(...middlewares: IMiddleware<TRoot>[]) {
     if (middlewares.length === 0) {
@@ -188,15 +195,15 @@ export class Store<TRoot extends { [key: string]: any } = {}> extends BehaviorSu
     });
   }
 
-  dispatch = (actor: Actor) => {
+  dispatch(actor: Actor) {
     return this._dispatch(actor);
-  };
+  }
 
-  getState = (): TRoot => {
+  getState(): TRoot {
     return this.value;
-  };
+  }
 
-  private _dispatch = (actor: Actor): Actor => {
+  _dispatch(actor: Actor): Actor {
     if (actor.effect) {
       const nextValue = actor.effect(this.value, actor);
       if (!shallowEqual(nextValue, this.value)) {
@@ -205,5 +212,5 @@ export class Store<TRoot extends { [key: string]: any } = {}> extends BehaviorSu
     }
     this.actor$.next(actor);
     return actor;
-  };
+  }
 }

@@ -2,6 +2,7 @@ import { Observable } from "rxjs";
 import { distinctUntilChanged, map as rxMap } from "rxjs/operators";
 import { shallowEqual } from "./utils";
 import { onMounted, onBeforeUnmount, ref } from "vue";
+import { useStore } from "./ctx";
 
 export type TEqualFn = (a: any, b: any) => boolean;
 
@@ -16,7 +17,7 @@ export class Volume<T, TOutput> extends Observable<TOutput> {
     return new Volume<T, TOutput>(ob$, mapper, mapper.equalFn);
   }
 
-  private _value: TOutput | undefined = undefined;
+  private _value: TOutput | undefined;
 
   get value() {
     if (typeof this._value === "undefined") {
@@ -55,7 +56,7 @@ export const useObservable = <T>(ob$: Observable<T>, defaultValue?: T): T => {
     sub && sub.unsubscribe();
   });
 
-  return v.value;
+  return v;
 };
 
 export const useConn = <T, TOutput = T>(ob$: Observable<T>, mapper: IMapper<T, TOutput>): Observable<TOutput> => {
@@ -64,4 +65,12 @@ export const useConn = <T, TOutput = T>(ob$: Observable<T>, mapper: IMapper<T, T
 
 export const useSelector = <T, TOutput = T>(ob$: Observable<T>, mapper?: IMapper<T, TOutput>): TOutput => {
   return useObservable(useConn(ob$, mapper || (((v: T) => v) as any)));
+};
+
+export const useStoreConn = <TOutput>(mapper?: IMapper<any, TOutput>): Observable<TOutput> => {
+  return useConn(useStore(), mapper || (((v: any) => v) as any));
+};
+
+export const useStoreSelector = <TOutput>(mapper?: IMapper<any, TOutput>) => {
+  return useObservable(useStoreConn(mapper));
 };
