@@ -1,4 +1,5 @@
 {
+  "private": true,
   "name": "vue-start",
   "version": "1.0.0",
   "main": "index.js",
@@ -13,9 +14,9 @@
   },
   "dependencies": {
     "lodash": "^4.17.20",
+    "rxjs": "^6.6.3",
     "vue": "^3.0.3",
-    "vue-router": "^4.0.0-0",
-    "vuex": "^4.0.0-0"
+    "vue-router": "^4.0.0-0"
   },
   "devDependencies": {
     "@babel/core": "^7.12.9",

@@ -7,17 +7,33 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, computed } from "vue";
-import { useStore } from "vuex";
+import { defineComponent, ref, onMounted, onBeforeUnmount, onUpdated } from "vue";
+
+const useCount = () => {
+  const count = ref(0);
+
+  const increment = () => {
+    count.value = count.value + 1;
+  };
+  const decrement = () => {
+    count.value = count.value - 1;
+  };
+
+  return {
+    count,
+    increment,
+    decrement,
+  };
+};
+
 export default defineComponent({
   name: "Counter",
   setup() {
-    const store = useStore();
-
+    const { count, increment, decrement } = useCount();
     return {
-      count: computed(() => store.state.count),
-      increment: () => store.commit("increment"),
-      decrement: () => store.commit("decrement"),
+      count,
+      increment,
+      decrement,
     };
   },
 });
