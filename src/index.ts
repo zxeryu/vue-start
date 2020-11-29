@@ -1,6 +1,13 @@
 import { createApp } from "vue";
 import router from "./router";
-import store from "./store";
 import App from "./App.vue";
+import { createStore } from "@vue-start/store";
+import { Persist } from "@bridge-start/persist";
 
-createApp(App).use(router).use(store).mount("#root");
+const persist = new Persist({ name: "vue-start" });
+persist.loadPersistData((values) => {
+  const store$ = createStore(values);
+  persist.persistRx(store$);
+
+  createApp(App).use(store$).use(router).mount("#root");
+});
