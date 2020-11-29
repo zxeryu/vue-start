@@ -1,5 +1,7 @@
 import { BehaviorSubject, Observable, Subject } from "rxjs";
 import { compose, shallowEqual } from "./utils";
+import { App } from "vue";
+import { storeKey } from "./ctx";
 
 export type TKeyCreator<TActor extends Actor> = (actor: TActor) => string;
 
@@ -212,5 +214,9 @@ export class Store<TRoot extends { [key: string]: any } = {}> extends BehaviorSu
     }
     this.actor$.next(actor);
     return actor;
+  }
+
+  install(app: App) {
+    app.provide<Store>(storeKey, this);
   }
 }
