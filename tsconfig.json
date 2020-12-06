@@ -1,0 +1,28 @@
+{
+  "compileOnSave": true,
+  "compilerOptions": {
+    "baseUrl": ".",
+    "rootDir": ".",
+    "paths": {
+      "@babel/types": ["node_modules/@babel/types"]
+    },
+    "resolveJsonModule": true,
+    "noImplicitAny": true,
+    "allowSyntheticDefaultImports": true,
+    "esModuleInterop": true,
+    "moduleResolution": "Node",
+    "jsx": "react",
+    "module": "commonjs",
+    "target": "es2020",
+    "pretty": true,
+    "strict": true,
+    //    "sourceMap": true
+    "allowJs": false,
+    /* emit ts declaration cache */
+    "declaration": true,
+    "noEmitOnError": false,
+    "emitDeclarationOnly": true,
+    "outDir": ".tmp"
+  },
+  "exclude": [".tmp/*", "dist/*", "node_modules/*"]
+}

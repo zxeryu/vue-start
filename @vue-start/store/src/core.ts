@@ -169,14 +169,16 @@ export const composeEpics = (...epics: Array<IEpic<any>>): IEpic<any> => {
   };
 };
 
-export class Store<TRoot extends { [key: string]: any } = {}> extends BehaviorSubject<TRoot> {
+export type TData = { [key: string]: any };
+
+export class Store<TRoot extends TData = {}> extends BehaviorSubject<TRoot> {
   static create<TState>(initialState: TState = {} as TState) {
     return new Store<TState>(initialState);
   }
 
   actor$: Subject<Actor>;
 
-  constructor(props) {
+  constructor(props: TRoot) {
     super(props);
     this.actor$ = new Subject<Actor>();
   }
@@ -217,6 +219,6 @@ export class Store<TRoot extends { [key: string]: any } = {}> extends BehaviorSu
   }
 
   install(app: App) {
-    app.provide<Store>(storeKey, this);
+    app.provide<Store<TRoot>>(storeKey, this);
   }
 }

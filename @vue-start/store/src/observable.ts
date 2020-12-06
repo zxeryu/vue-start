@@ -1,4 +1,4 @@
-import { Observable } from "rxjs";
+import { Observable, Subscription } from "rxjs";
 import { distinctUntilChanged, map as rxMap } from "rxjs/operators";
 import { shallowEqual } from "./utils";
 import { onMounted, onBeforeUnmount, ref } from "vue";
@@ -46,7 +46,7 @@ export class Volume<T, TOutput> extends Observable<TOutput> {
 
 export const useObservable = <T>(ob$: Observable<T>, defaultValue?: T): T => {
   const v = ref(defaultValue || (ob$ as any).value);
-  let sub;
+  let sub: Subscription;
   onMounted(() => {
     sub = ob$.subscribe((val) => {
       v.value = val;
