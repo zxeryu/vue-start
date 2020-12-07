@@ -10,10 +10,11 @@
     "@vue-start/*"
   ],
   "scripts": {
+    "prepare": "tsc && lerna run prepare",
     "start": "webpack serve"
   },
   "dependencies": {
-    "@bridge-start/persist": "^0.1.0",
+    "@bridge-start/persist": "^0.1.1",
     "lodash": "^4.17.20",
     "rxjs": "^6.6.3",
     "vue": "^3.0.3",
