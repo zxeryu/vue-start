@@ -15,6 +15,7 @@
   },
   "dependencies": {
     "@bridge-start/persist": "^0.1.1",
+    "axios": "^0.21.0",
     "lodash": "^4.17.20",
     "rxjs": "^6.6.3",
     "vue": "^3.0.3",
