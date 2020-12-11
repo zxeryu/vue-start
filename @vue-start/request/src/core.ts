@@ -1,6 +1,7 @@
 import axios, { AxiosInstance, AxiosInterceptorManager, AxiosRequestConfig, AxiosResponse } from "axios";
 import { paramsSerializer, protocolPrefix, transformRequest, transformResponse } from "./utils";
 import { set, forEach, Dictionary, startsWith, split } from "lodash";
+import { App, inject } from "vue";
 
 export type TRequestInterceptor = (
   request: AxiosInterceptorManager<AxiosRequestConfig>,
@@ -22,7 +23,7 @@ const createCompleteUrl = (baseUrls: Dictionary<string>) => (config: AxiosReques
   return config;
 };
 
-export const createAxiosInstance = (
+const createAxiosInstance = (
   options: AxiosRequestConfig,
   interceptors: TRequestInterceptor[],
   baseUrls?: Dictionary<string>,
@@ -43,3 +44,16 @@ export const createAxiosInstance = (
 
   return client;
 };
+
+const storeKey = "$request";
+
+export const createAxios = (
+  options: AxiosRequestConfig,
+  interceptors: TRequestInterceptor[],
+  baseUrls?: Dictionary<string>,
+) => (app: App) => {
+  const client = createAxiosInstance(options, interceptors, baseUrls);
+  app.provide<AxiosInstance>(storeKey, client);
+};
+
+export const useAxios = (): AxiosInstance => inject<AxiosInstance>(storeKey)!;
