@@ -18,8 +18,8 @@
     "axios": "^0.21.0",
     "lodash": "^4.17.20",
     "rxjs": "^6.6.3",
-    "vue": "^3.0.3",
-    "vue-router": "^4.0.0-0"
+    "vue": "^3.0.4",
+    "vue-router": "^4.0.1"
   },
   "devDependencies": {
     "@babel/core": "^7.12.9",
