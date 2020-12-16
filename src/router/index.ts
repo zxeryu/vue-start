@@ -17,6 +17,11 @@ const routes: RouteRecordRaw[] = [
     name: "Counter",
     component: () => import("../views/Counter.vue"),
   },
+  {
+    path: "/network",
+    name: "Network",
+    component: () => import("../views/Network.vue"),
+  },
 ];
 
 const router = createRouter({
