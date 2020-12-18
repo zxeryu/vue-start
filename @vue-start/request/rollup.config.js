@@ -1,6 +1,7 @@
 import resolve from "@rollup/plugin-node-resolve";
 import babel from "@rollup/plugin-babel";
 import commonjs from "@rollup/plugin-commonjs";
+import VuePlugin from "rollup-plugin-vue";
 import dts from "rollup-plugin-dts";
 
 export default [
@@ -23,6 +24,7 @@ export default [
       resolve({
         extensions: [".ts", ".js"],
       }),
+      VuePlugin(),
       babel({
         configFile: "../../babel.config.json",
         babelHelpers: "bundled",
