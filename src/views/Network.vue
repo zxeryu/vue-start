@@ -25,7 +25,7 @@ const test = createRequestActor<
 >(() => {
   return {
     method: "GET",
-    url: `//huaibei-datafusion.rockontrol.com/datafusion/rkVehicleObddetails/allvehicle`,
+    url: `//huaibei-datafusion.rockontrol.com/datafusion/rkVehicleObddetails/allvehiclePoint`,
   };
 });
 
