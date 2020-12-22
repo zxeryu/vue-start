@@ -17,7 +17,7 @@ import { permissionProvide } from "@vue-start/access";
 export default defineComponent({
   name: "App",
   setup() {
-    permissionProvide({ name: false });
+    permissionProvide({});
   },
 });
 </script>

@@ -22,7 +22,7 @@ const test = createRequestActor<
     msg: string;
     data: { vehicleId: number; plateId: string; lon: string; lat: string }[];
   }
->(() => {
+>("test", () => {
   return {
     method: "GET",
     url: `//huaibei-datafusion.rockontrol.com/datafusion/rkVehicleObddetails/allvehiclePoint`,

@@ -1,21 +1,38 @@
 <template>
   <div>About</div>
-  <AccessControl :flag="false"><span>i am span</span></AccessControl>
+  <TestPermission><span>i am span</span></TestPermission>
   <button @click="change">change</button>
 </template>
 
 <script lang="ts">
 import { defineComponent } from "vue";
-import { AccessControl, usePermission } from "@vue-start/access";
+import { usePermission, MustOneOfPermissions, mustOneOfPermissions } from "@vue-start/access";
+import { createRequestActor } from "../../@vue-start/request/src";
+
+const test = createRequestActor<
+  undefined,
+  {
+    code: number;
+    msg: string;
+    data: { vehicleId: number; plateId: string; lon: string; lat: string }[];
+  }
+>("test", () => {
+  return {
+    method: "GET",
+    url: `//huaibei-datafusion.rockontrol.com/datafusion/rkVehicleObddetails/allvehiclePoint`,
+  };
+});
+
+const TestPermission = mustOneOfPermissions(test);
 
 export default defineComponent({
   name: "About",
-  components: { AccessControl },
+  components: { MustOneOfPermissions, TestPermission },
 
   setup() {
-    const pmReactive = usePermission();
+    const pmRef = usePermission();
     const change = () => {
-      pmReactive.name = !pmReactive.name;
+      pmRef.value = { test: !pmRef.value.test };
     };
     return {
       change,
