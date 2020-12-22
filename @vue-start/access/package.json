@@ -25,5 +25,8 @@
   },
   "bugs": {
     "url": "https://github.com/zxeryu/vue-start/issues"
+  },
+  "peerDependencies": {
+    "@vue-start/request": "*"
   }
 }

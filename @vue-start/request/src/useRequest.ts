@@ -1,10 +1,6 @@
 import { useAxios, useRequestCreator } from "./core";
-import { cancelActorIfExists, fakeCancelRequest, IRequestActor, isCancelActor, TRequestFromReq } from "./request";
+import { cancelActorIfExists, fakeCancelRequest, IRequestActor, isCancelActor } from "./request";
 import { ref, onBeforeUnmount, Ref } from "vue";
-
-export const createRequestActor = <TReq, TRes>(requestFromReq: TRequestFromReq): IRequestActor<TReq, TRes> => {
-  return { requestFromReq };
-};
 
 interface IResult<TReq, TRes> {
   data: Ref<TRes>;

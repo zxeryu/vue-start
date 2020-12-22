@@ -14,10 +14,18 @@ export interface IRequestOpts<T = any> {
 export type TRequestFromReq = <T>(arg: T) => IRequestOpts;
 
 export interface IRequestActor<TReq, TRes> {
+  name: string;
   req?: TReq;
   res?: TRes;
   requestFromReq: (req: TReq) => IRequestOpts;
 }
+
+export const createRequestActor = <TReq, TRes>(
+  name: string,
+  requestFromReq: TRequestFromReq,
+): IRequestActor<TReq, TRes> => {
+  return { name, requestFromReq };
+};
 
 const requestConfig = <TReq>(config: IRequestOpts<TReq>): AxiosRequestConfig => {
   const { url, method, headers, query, data, ...otherConfig } = config;
