@@ -1,7 +1,7 @@
 import { useAxios, useRequestCreator } from "./core";
-import { cancelActorIfExists, fakeCancelRequest, IRequestActor, isCancelActor } from "./request";
-import { ref, onBeforeUnmount } from "vue";
-import { useStore, AsyncStage } from "@vue-start/store";
+import { cancelActorIfExists, fakeCancelRequest, IRequestConfig, isCancelActor } from "./request";
+import { onBeforeUnmount, ref } from "vue";
+import { AsyncStage, useStore } from "@vue-start/store";
 import { RequestActor } from "./actor";
 
 // interface IResult<TReq, TRes> {
@@ -11,7 +11,7 @@ import { RequestActor } from "./actor";
 //   error?: Ref<Error | undefined>;
 // }
 
-export const useRequest = <TRequestActor extends IRequestActor<any, any>>(
+export const useRequest = <TRequestActor extends IRequestConfig<any, any>>(
   requestActor: TRequestActor,
   options?: {
     params?: TRequestActor["req"];
@@ -46,12 +46,12 @@ export const useRequest = <TRequestActor extends IRequestActor<any, any>>(
       .then((response) => {
         data.value = response.data;
         options?.onSuccess && options.onSuccess(data.value);
-        options?.joinSub && RequestActor.named(requestActor.name, { stage: AsyncStage.DONE }).invoke(store$);
+        options?.joinSub && RequestActor.named(requestActor.name).staged(AsyncStage.DONE).invoke(store$);
       })
       .catch((err: Error) => {
         error.value = err;
         options?.onFail && options.onFail(err);
-        options?.joinSub && RequestActor.named(requestActor.name, { stage: AsyncStage.FAILED }).invoke(store$);
+        options?.joinSub && RequestActor.named(requestActor.name).staged(AsyncStage.FAILED).invoke(store$);
       })
       .finally(() => {
         request.clear();

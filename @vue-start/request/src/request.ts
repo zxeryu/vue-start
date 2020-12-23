@@ -13,24 +13,26 @@ export interface IRequestOpts<T = any> {
 
 export type TRequestFromReq = <T>(arg: T) => IRequestOpts;
 
-export interface IRequestActor<TReq, TRes> {
+export interface IRequestConfig<TReq, TRes> {
   name: string;
   req?: TReq;
   res?: TRes;
   requestFromReq: (req: TReq) => IRequestOpts;
+  config?: AxiosRequestConfig;
 }
 
-export const createRequestActor = <TReq, TRes>(
+export const createRequestConfig = <TReq, TRes>(
   name: string,
   requestFromReq: TRequestFromReq,
-): IRequestActor<TReq, TRes> => {
-  return { name, requestFromReq };
+  config?: AxiosRequestConfig,
+): IRequestConfig<TReq, TRes> => {
+  return { name, requestFromReq, config };
 };
 
-const requestConfig = <TReq>(config: IRequestOpts<TReq>): AxiosRequestConfig => {
-  const { url, method, headers, query, data, ...otherConfig } = config;
+const requestConfig = <TReq>(requestOpts: IRequestOpts<TReq>, config?: AxiosRequestConfig): AxiosRequestConfig => {
+  const { url, method, headers, query, data } = requestOpts;
   return {
-    ...otherConfig,
+    ...config,
     url,
     method,
     params: query,
@@ -86,8 +88,8 @@ export const createRequestFactory = <TReq>(client: AxiosInstance) => {
     };
   } = {};
 
-  return (actor: IRequestActor<TReq, any>) => {
-    const axiosRequestConfig = requestConfig(actor.requestFromReq(actor?.req || ({} as any)));
+  return (actor: IRequestConfig<TReq, any>) => {
+    const axiosRequestConfig = requestConfig(actor.requestFromReq(actor?.req || ({} as any)), actor.config);
     const uri = axiosRequestConfig.method?.toLowerCase() === "get" && client.getUri(axiosRequestConfig);
     const request = () => {
       if (uri) {

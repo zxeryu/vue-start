@@ -1,6 +1,6 @@
-import { createRequestActor } from "../../@vue-start/request/src";
+import { createRequestConfig } from "../../@vue-start/request/src";
 
-export const test = createRequestActor<
+export const test = createRequestConfig<
   undefined,
   {
     code: number;
@@ -14,7 +14,7 @@ export const test = createRequestActor<
   };
 });
 
-export const getRadar = createRequestActor<
+export const getRadar = createRequestConfig<
   undefined,
   {
     radarId: number;

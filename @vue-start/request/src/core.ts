@@ -2,7 +2,7 @@ import axios, { AxiosInstance, AxiosInterceptorManager, AxiosRequestConfig, Axio
 import { paramsSerializer, protocolPrefix, transformRequest, transformResponse } from "./utils";
 import { set, forEach, Dictionary, startsWith, split } from "lodash";
 import { App, inject } from "vue";
-import { createRequestFactory, IRequestActor } from "./request";
+import { createRequestFactory, IRequestConfig } from "./request";
 
 export type TRequestInterceptor = (
   request: AxiosInterceptorManager<AxiosRequestConfig>,
@@ -68,5 +68,5 @@ interface IRequestFun {
   config: AxiosRequestConfig;
 }
 
-export const useRequestCreator = (): ((actor: IRequestActor<any, any>) => IRequestFun) =>
-  inject<(actor: IRequestActor<any, any>) => IRequestFun>(requestCreateKey)!;
+export const useRequestCreator = (): ((actor: IRequestConfig<any, any>) => IRequestFun) =>
+  inject<(actor: IRequestConfig<any, any>) => IRequestFun>(requestCreateKey)!;

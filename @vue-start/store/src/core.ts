@@ -85,6 +85,13 @@ export class Actor<TArg = any, TOpts = any> {
     });
   }
 
+  staged(stage: AsyncStage): this {
+    return new (this.constructor as any)({
+      ...(this as any),
+      stage,
+    });
+  }
+
   effectWith(effect: (state: any, actor: Actor<TArg, TOpts>) => any): this {
     return new (this.constructor as any)({
       ...(this as any),

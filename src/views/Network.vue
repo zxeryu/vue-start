@@ -26,7 +26,6 @@ export default defineComponent({
     watchEffect(() => {
       console.log("@@@data", data.value);
 
-      console.log("@@@loading", loading.value);
       console.log("#$$$$$$$$$$", radarData.value);
     });
 
