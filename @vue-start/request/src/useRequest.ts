@@ -1,8 +1,9 @@
 import { useAxios, useRequestCreator } from "./core";
 import { cancelActorIfExists, fakeCancelRequest, IRequestConfig, isCancelActor } from "./request";
-import { onBeforeUnmount, ref } from "vue";
+import { onBeforeUnmount, ref, watch } from "vue";
 import { AsyncStage, useStore } from "@vue-start/store";
 import { RequestActor } from "./actor";
+import { UnwrapRef } from "@vue/reactivity";
 
 // interface IResult<TReq, TRes> {
 //   data: Ref<TRes>;
@@ -15,6 +16,7 @@ export const useRequest = <TRequestActor extends IRequestConfig<any, any>>(
   requestActor: TRequestActor,
   options?: {
     params?: TRequestActor["req"];
+    deps?: UnwrapRef<any>;
     manual?: boolean;
     onSuccess?: (data: TRequestActor["res"]) => void;
     onFail?: (err: Error) => void;
@@ -65,8 +67,13 @@ export const useRequest = <TRequestActor extends IRequestConfig<any, any>>(
     run();
   }
 
+  const stopWatch = watch(options?.deps, () => {
+    !options?.manual && run();
+  });
+
   onBeforeUnmount(() => {
     cancelActorIfExists(requestActor);
+    stopWatch && stopWatch();
   });
 
   return [data, loading, run, error] as const;
