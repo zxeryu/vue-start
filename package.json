@@ -10,7 +10,7 @@
     "@vue-start/*"
   ],
   "scripts": {
-    "prepare": "tsc && lerna run prepare",
+    "build": "tsc && lerna run prepare",
     "start": "webpack serve"
   },
   "dependencies": {

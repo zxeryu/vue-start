@@ -31,10 +31,10 @@ export default [
         extensions: [".ts", ".tsx", ".mjs", ".js", ".jsx"],
       }),
     ],
-    external: ["lodash", "vue", "axios", "@vue-start/store", "rxjs"],
+    external: ["vue", "@vue-start/request", "lodash"],
   },
   {
-    input: "../../.tmp/@vue-start/request/index.d.ts",
+    input: "../../.tmp/@vue-start/access/index.d.ts",
     output: [{ file: "dist/index.d.ts", format: "es" }],
     plugins: [dts()],
   },
