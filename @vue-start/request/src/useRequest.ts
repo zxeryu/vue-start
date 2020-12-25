@@ -4,6 +4,7 @@ import { onBeforeUnmount, ref, watch } from "vue";
 import { AsyncStage, useStore } from "@vue-start/store";
 import { RequestActor } from "./actor";
 import { UnwrapRef } from "@vue/reactivity";
+import { clone } from "lodash";
 
 // interface IResult<TReq, TRes> {
 //   data: Ref<TRes>;
@@ -12,13 +13,13 @@ import { UnwrapRef } from "@vue/reactivity";
 //   error?: Ref<Error | undefined>;
 // }
 
-export const useRequest = <TRequestActor extends IRequestConfig<any, any>>(
-  requestActor: TRequestActor,
+export const useRequest = <TRequestConfig extends IRequestConfig<any, any>>(
+  requestConfig: TRequestConfig,
   options?: {
-    params?: TRequestActor["req"];
+    params?: TRequestConfig["req"];
     deps?: UnwrapRef<any>;
     manual?: boolean;
-    onSuccess?: (data: TRequestActor["res"]) => void;
+    onSuccess?: (data: TRequestConfig["res"]) => void;
     onFail?: (err: Error) => void;
     onFinish?: () => void;
     joinSub?: boolean;
@@ -28,19 +29,22 @@ export const useRequest = <TRequestActor extends IRequestConfig<any, any>>(
   const requestCreator = useRequestCreator();
   const store$ = useStore();
 
-  const data = ref<TRequestActor["res"]>();
+  const data = ref<TRequestConfig["res"]>();
   const loading = ref<boolean>(false);
   const error = ref<Error>();
 
-  const run = (arg?: TRequestActor["req"]) => {
-    //set params
-    requestActor.req = arg ? arg : options?.params;
+  let executeConfig: TRequestConfig;
 
-    const request = requestCreator(requestActor);
+  const run = (arg?: TRequestConfig["req"]) => {
+    executeConfig = clone(requestConfig);
+    //set params
+    executeConfig.req = arg ? arg : options?.params;
+
+    const request = requestCreator(executeConfig);
     loading.value = true;
     request()
       .then((response) => {
-        if (isCancelActor(requestActor)) {
+        if (isCancelActor(executeConfig)) {
           return fakeCancelRequest(client, request.config);
         }
         return response;
@@ -48,12 +52,12 @@ export const useRequest = <TRequestActor extends IRequestConfig<any, any>>(
       .then((response) => {
         data.value = response.data;
         options?.onSuccess && options.onSuccess(data.value);
-        options?.joinSub && RequestActor.named(requestActor.name).staged(AsyncStage.DONE).invoke(store$);
+        options?.joinSub && RequestActor.named(executeConfig.name).staged(AsyncStage.DONE).invoke(store$);
       })
       .catch((err: Error) => {
         error.value = err;
         options?.onFail && options.onFail(err);
-        options?.joinSub && RequestActor.named(requestActor.name).staged(AsyncStage.FAILED).invoke(store$);
+        options?.joinSub && RequestActor.named(executeConfig.name).staged(AsyncStage.FAILED).invoke(store$);
       })
       .finally(() => {
         request.clear();
@@ -72,7 +76,7 @@ export const useRequest = <TRequestActor extends IRequestConfig<any, any>>(
   });
 
   onBeforeUnmount(() => {
-    cancelActorIfExists(requestActor);
+    executeConfig && cancelActorIfExists(executeConfig);
     stopWatch && stopWatch();
   });
 
