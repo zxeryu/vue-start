@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.1.1](https://github.com/zxeryu/vue-start/compare/@vue-start/request@0.1.0...@vue-start/request@0.1.1) (2020-12-25)
+
+### Bug Fixes
+
+- **request:** cancel bug ([c83dc2f](https://github.com/zxeryu/vue-start/commit/c83dc2fdb7e0a9e66b6a846bc6ed037e8baf8e16))
+
 # 0.1.0 (2020-12-23)
 
 ### Bug Fixes
