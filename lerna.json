@@ -1,5 +1,5 @@
 {
-  "packages": ["@vue-start/*"],
+  "packages": ["@vue-start/*", "@vue-start-dev/*"],
   "npmClient": "yarn",
   "useWorkspaces": true,
   "ignoreChanges": ["**/*.md", "**/*.js"],
