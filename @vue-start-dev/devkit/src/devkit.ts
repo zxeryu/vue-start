@@ -8,7 +8,7 @@ import { exec } from "./exec";
 type TValueBuilder = (env: string) => string;
 
 const loadConfigFromFile = (cwd: string, state: IState) => {
-  const configFile = join(cwd, "config.ts");
+  const configFile = join(cwd, "config.js");
   if (!existsSync(configFile)) {
     return;
   }
@@ -49,7 +49,7 @@ export const devkit = (cwd = process.cwd()) => {
     try {
       const pkgJSON = JSON.parse(String(readFileSync(pkgFile)));
       const d = get(pkgJSON, "devkit");
-      if (pkgJSON && isObject()) {
+      if (pkgJSON && isObject(d)) {
         actions = {
           ...actions,
           ...d,
