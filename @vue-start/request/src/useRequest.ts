@@ -1,6 +1,6 @@
 import { useAxios, useRequestCreator } from "./core";
 import { cancelActorIfExists, fakeCancelRequest, IRequestConfig, isCancelActor } from "./request";
-import { onBeforeUnmount, ref, watch } from "vue";
+import { onBeforeUnmount, ref, watch, isReactive, toRaw } from "vue";
 import { AsyncStage, useStore } from "@vue-start/store";
 import { RequestActor } from "./actor";
 import { UnwrapRef } from "@vue/reactivity";
@@ -38,7 +38,12 @@ export const useRequest = <TRequestConfig extends IRequestConfig<any, any>>(
   const run = (arg?: TRequestConfig["req"]) => {
     executeConfig = clone(requestConfig);
     //set params
-    executeConfig.req = arg ? arg : options?.params;
+    if (arg) {
+      executeConfig.req = isReactive(arg) ? toRaw(arg) : arg;
+    } else {
+      executeConfig.req = isReactive(options?.params) ? toRaw(options?.params) : options?.params;
+    }
+    // executeConfig.req = arg ? arg : options?.params;
 
     const request = requestCreator(executeConfig);
     loading.value = true;
