@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.1.2](https://github.com/zxeryu/vue-start/compare/@vue-start/request@0.1.1...@vue-start/request@0.1.2) (2021-01-12)
+
+### Bug Fixes
+
+- **request:** reactive params ([7257c7a](https://github.com/zxeryu/vue-start/commit/7257c7a8b5bf648df3b110d5e4b0a32755ea7b35))
+
 ## [0.1.1](https://github.com/zxeryu/vue-start/compare/@vue-start/request@0.1.0...@vue-start/request@0.1.1) (2020-12-25)
 
 ### Bug Fixes
