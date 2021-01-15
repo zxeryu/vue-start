@@ -6,6 +6,7 @@
       <router-link to="/about">About</router-link>
       <router-link to="/counter">Counter</router-link>
       <router-link to="/network">Network</router-link>
+      <router-link to="/hooks">Hooks</router-link>
     </div>
   </div>
   <router-view />

@@ -11,7 +11,6 @@ module.exports = {
   },
   plugins: ["vue", "@typescript-eslint"],
   rules: {
-    "func-style": ["error", "expression"],
     "@typescript-eslint/camelcase": "off",
     "@typescript-eslint/ban-ts-comment": "off",
     "@typescript-eslint/no-explicit-any": "off",

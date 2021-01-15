@@ -22,6 +22,11 @@ const routes: RouteRecordRaw[] = [
     name: "Network",
     component: () => import("../views/Network.vue"),
   },
+  {
+    path: "/hooks",
+    name: "Hooks",
+    component: () => import("../views/Hooks.vue"),
+  },
 ];
 
 const router = createRouter({
