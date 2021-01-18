@@ -22,11 +22,15 @@
     <button @click="reset()">reset</button>
     <button @click="has('hello')">has hello</button>
   </div>
+  <div>
+    <div>useClickAway</div>
+    <div ref="refDom" style="padding: 10px; background-color: aqua">box （点击box之外的区域）</div>
+  </div>
 </template>
 
 <script lang="ts">
-import { defineComponent } from "vue";
-import { useBoolean, useStorageState, useSet } from "@vue-start/hooks";
+import { defineComponent, ref } from "vue";
+import { useBoolean, useStorageState, useSet, useClickAway } from "@vue-start/hooks";
 
 export default defineComponent({
   name: "Hooks",
@@ -34,6 +38,11 @@ export default defineComponent({
     const [state, { setTrue, setFalse, toggle }] = useBoolean();
     const [message, setMessage] = useStorageState("message", "message");
     const [set, { add, remove, reset, has }] = useSet(["hello"]);
+
+    const refDom = ref();
+    useClickAway(() => {
+      console.log(" outside ...");
+    }, refDom);
 
     return {
       //
@@ -50,6 +59,8 @@ export default defineComponent({
       remove,
       reset,
       has,
+      //
+      refDom,
     };
   },
 });
