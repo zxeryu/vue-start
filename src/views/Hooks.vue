@@ -28,7 +28,11 @@
   </div>
   <div>
     <div>useEventListener</div>
-    <div ref="clickRefDom" style="padding: 10px; background-color: burlywood">box2</div>
+    <div ref="clickRefDom" style="padding: 10px; background-color: aqua">box2</div>
+  </div>
+  <div>
+    <div>useHover</div>
+    <div ref="hoverDomRef" style="padding: 10px; background-color: aqua">box3 isHover:{{ isHover }}</div>
   </div>
 </template>
 
@@ -41,6 +45,7 @@ import {
   useClickAway,
   useEventListener,
   useDocumentVisibility,
+  useHover,
 } from "@vue-start/hooks";
 
 export default defineComponent({
@@ -70,6 +75,9 @@ export default defineComponent({
       console.log("@@@@@@@@@@@@@visibility=", visibility.value);
     });
 
+    const hoverDomRef = ref();
+    const isHover = useHover(hoverDomRef);
+
     return {
       //
       state,
@@ -89,6 +97,9 @@ export default defineComponent({
       refDom,
       //
       clickRefDom,
+      //
+      hoverDomRef,
+      isHover,
     };
   },
 });

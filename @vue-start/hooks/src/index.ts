@@ -5,5 +5,15 @@ import useSet from "./useSet";
 import useClickAway from "./useClickAway";
 import useEventListener from "./useEventListener";
 import useDocumentVisibility from "./useDocumentVisibility";
+import useHover from "./useHover";
 
-export { useToggle, useBoolean, useStorageState, useSet, useClickAway, useEventListener, useDocumentVisibility };
+export {
+  useToggle,
+  useBoolean,
+  useStorageState,
+  useSet,
+  useClickAway,
+  useEventListener,
+  useDocumentVisibility,
+  useHover,
+};
