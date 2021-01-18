@@ -28,5 +28,6 @@ module.exports = {
     "@typescript-eslint/explicit-function-return-type": "off",
     "@typescript-eslint/no-use-before-define": "error",
     "@typescript-eslint/ban-types": "off",
+    "@typescript-eslint/no-inferrable-types": "off",
   },
 };
