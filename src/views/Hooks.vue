@@ -33,8 +33,15 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, ref } from "vue";
-import { useBoolean, useStorageState, useSet, useClickAway, useEventListener } from "@vue-start/hooks";
+import { defineComponent, ref, watchEffect } from "vue";
+import {
+  useBoolean,
+  useStorageState,
+  useSet,
+  useClickAway,
+  useEventListener,
+  useDocumentVisibility,
+} from "@vue-start/hooks";
 
 export default defineComponent({
   name: "Hooks",
@@ -56,6 +63,12 @@ export default defineComponent({
       },
       { target: clickRefDom },
     );
+
+    const visibility = useDocumentVisibility();
+
+    watchEffect(() => {
+      console.log("@@@@@@@@@@@@@visibility=", visibility.value);
+    });
 
     return {
       //
