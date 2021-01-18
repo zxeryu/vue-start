@@ -2,7 +2,7 @@ import { Ref, isRef } from "vue";
 
 export type BasicTarget<T = HTMLElement> = (() => T | null) | T | null | Ref<T | null | undefined>;
 
-type TargetElement = HTMLElement | Element | Document | Window;
+export type TargetElement = HTMLElement | Element | Document | Window;
 
 export const getTargetElement = (
   target?: BasicTarget<TargetElement>,

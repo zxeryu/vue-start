@@ -26,11 +26,15 @@
     <div>useClickAway</div>
     <div ref="refDom" style="padding: 10px; background-color: aqua">box （点击box之外的区域）</div>
   </div>
+  <div>
+    <div>useEventListener</div>
+    <div ref="clickRefDom" style="padding: 10px; background-color: burlywood">box2</div>
+  </div>
 </template>
 
 <script lang="ts">
 import { defineComponent, ref } from "vue";
-import { useBoolean, useStorageState, useSet, useClickAway } from "@vue-start/hooks";
+import { useBoolean, useStorageState, useSet, useClickAway, useEventListener } from "@vue-start/hooks";
 
 export default defineComponent({
   name: "Hooks",
@@ -43,6 +47,15 @@ export default defineComponent({
     useClickAway(() => {
       console.log(" outside ...");
     }, refDom);
+
+    const clickRefDom = ref();
+    useEventListener(
+      "click",
+      () => {
+        console.log(" click ...");
+      },
+      { target: clickRefDom },
+    );
 
     return {
       //
@@ -61,6 +74,8 @@ export default defineComponent({
       has,
       //
       refDom,
+      //
+      clickRefDom,
     };
   },
 });
