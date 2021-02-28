@@ -1,5 +1,7 @@
 export interface IState {
   cwd: string;
+  context: string;
+  name: string;
   env: string;
 
   project: {

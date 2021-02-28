@@ -8,7 +8,8 @@ import { exec } from "./exec";
 type TValueBuilder = (env: string) => string;
 
 const loadConfigFromFile = (cwd: string, state: IState) => {
-  const configFile = join(cwd, "config.js");
+  state.context = join(cwd, "src", state.name);
+  const configFile = join(state.context, "config.js");
   if (!existsSync(configFile)) {
     return;
   }
@@ -38,7 +39,7 @@ const loadConfigFromFile = (cwd: string, state: IState) => {
   }
 };
 
-export const devkit = (cwd = process.cwd()) => {
+export const devkit = (cwd = process.cwd(), name: string) => {
   let actions: { [k: string]: string } = {
     dev: "echo 'dev'",
     build: "echo 'build'",
@@ -69,6 +70,8 @@ export const devkit = (cwd = process.cwd()) => {
 
       const state: IState = {
         cwd,
+        context: "",
+        name,
         env,
         project: {},
         meta: {},
