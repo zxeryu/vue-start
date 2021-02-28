@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.1.3](https://github.com/zxeryu/vue-start/compare/@vue-start-dev/devkit@0.1.2...@vue-start-dev/devkit@0.1.3) (2021-02-28)
+
+### Bug Fixes
+
+- **devkit:** support multi app ([2d91c2d](https://github.com/zxeryu/vue-start/commit/2d91c2d7e1a3ddadb50e8c5c716ff52c2a5aa29d))
+
 ## [0.1.2](https://github.com/zxeryu/vue-start/compare/@vue-start-dev/devkit@0.1.1...@vue-start-dev/devkit@0.1.2) (2021-01-19)
 
 **Note:** Version bump only for package @vue-start-dev/devkit
