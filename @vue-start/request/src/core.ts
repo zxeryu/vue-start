@@ -18,8 +18,8 @@ const setDefaultContentType = (config: AxiosRequestConfig): AxiosRequestConfig =
 
 const createCompleteUrl = (baseUrls: Dictionary<string>) => (config: AxiosRequestConfig): AxiosRequestConfig => {
   if (!startsWith(config.url, "http:") && !startsWith(config.url, "https:")) {
-    const firstPart = split(config.url, "/")[1];
-    config.url = `${protocolPrefix(baseUrls[firstPart])}${config.url}`;
+    const firstPart = split(config.url, "/")[1].toUpperCase().replace(/-/g, "_");
+    config.url = `${protocolPrefix(baseUrls[`SRV_${firstPart}`])}${config.url}`;
   }
   return config;
 };
