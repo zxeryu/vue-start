@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.1.3](https://github.com/zxeryu/vue-start/compare/@vue-start/request@0.1.2...@vue-start/request@0.1.3) (2021-03-22)
+
+### Bug Fixes
+
+- createCompleteUrl ([35c5ae2](https://github.com/zxeryu/vue-start/commit/35c5ae2d9e59ebd18f396c51bda7bcf66c80a536))
+
 ## [0.1.2](https://github.com/zxeryu/vue-start/compare/@vue-start/request@0.1.1...@vue-start/request@0.1.2) (2021-01-12)
 
 ### Bug Fixes
