@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.2.0](https://github.com/zxeryu/vue-start/compare/@vue-start/hooks@0.1.0...@vue-start/hooks@0.2.0) (2021-03-30)
+
+### Features
+
+- **hooks:** useWatch ([f1d1039](https://github.com/zxeryu/vue-start/commit/f1d1039d9ddcae96093bd5d1768652677215f483))
+
 # 0.1.0 (2021-01-19)
 
 ### Features
