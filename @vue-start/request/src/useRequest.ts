@@ -3,7 +3,7 @@ import { cancelActorIfExists, fakeCancelRequest, IRequestConfig, isCancelActor }
 import { onBeforeUnmount, ref, watch, isReactive, toRaw } from "vue";
 import { AsyncStage, useStore } from "@vue-start/store";
 import { RequestActor } from "./actor";
-import { UnwrapRef } from "@vue/reactivity";
+import { UnwrapRef, Ref } from "@vue/reactivity";
 import { clone } from "lodash";
 
 // interface IResult<TReq, TRes> {
@@ -17,7 +17,7 @@ export const useRequest = <TRequestConfig extends IRequestConfig<any, any>>(
   requestConfig: TRequestConfig,
   options?: {
     params?: TRequestConfig["req"];
-    deps?: UnwrapRef<any>;
+    deps?: UnwrapRef<Ref | object>;
     manual?: boolean;
     onSuccess?: (data: TRequestConfig["res"]) => void;
     onFail?: (err: Error) => void;
@@ -76,9 +76,12 @@ export const useRequest = <TRequestConfig extends IRequestConfig<any, any>>(
     run();
   }
 
-  const stopWatch = watch(options?.deps, () => {
-    !options?.manual && run();
-  });
+  const stopWatch = watch(
+    () => options?.deps,
+    () => {
+      !options?.manual && run();
+    },
+  );
 
   onBeforeUnmount(() => {
     executeConfig && cancelActorIfExists(executeConfig);
