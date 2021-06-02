@@ -2,11 +2,11 @@ import { startsWith } from "lodash";
 import { stringify } from "querystring";
 import { forEach, isArray, isObject } from "lodash";
 
-export const getProtocol = () => globalThis.location.protocol;
+export const getProtocol = (): string => globalThis.location.protocol;
 
-export const isHttps = () => getProtocol() === "https:";
+export const isHttps = (): boolean => getProtocol() === "https:";
 
-export const protocolPrefix = (url = "") => {
+export const protocolPrefix = (url = ""): string => {
   if (startsWith(url, "http:") || startsWith(url, "https:")) {
     return url;
   }
@@ -15,10 +15,11 @@ export const protocolPrefix = (url = "") => {
 
 const getContentType = (headers: any = {}) => headers["Content-Type"] || headers["content-type"] || "";
 
-export const isContentTypeMultipartFormData = (headers: any) => getContentType(headers).includes("multipart/form-data");
-export const isContentTypeFormURLEncoded = (headers: any) =>
+export const isContentTypeMultipartFormData = (headers: unknown): boolean =>
+  getContentType(headers).includes("multipart/form-data");
+export const isContentTypeFormURLEncoded = (headers: unknown): boolean =>
   getContentType(headers).includes("application/x-www-form-urlencoded");
-export const isContentTypeJSON = (headers: any) => {
+export const isContentTypeJSON = (headers: unknown): boolean => {
   return getContentType(headers).includes("application/json");
 };
 
