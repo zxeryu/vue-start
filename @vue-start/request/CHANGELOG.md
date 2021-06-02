@@ -3,6 +3,13 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.1.4](https://github.com/zxeryu/vue-start/compare/@vue-start/request@0.1.3...@vue-start/request@0.1.4) (2021-06-02)
+
+### Bug Fixes
+
+- **request:** invalid watch source warn ([d87f17d](https://github.com/zxeryu/vue-start/commit/d87f17d24eacddb29cbca5994f2b2d91886fb0af))
+- **request:** some ts-lint error ([010115b](https://github.com/zxeryu/vue-start/commit/010115b1311169ded89f0edc7e9ec30e2b6cbc7d))
+
 ## [0.1.3](https://github.com/zxeryu/vue-start/compare/@vue-start/request@0.1.2...@vue-start/request@0.1.3) (2021-03-22)
 
 ### Bug Fixes
