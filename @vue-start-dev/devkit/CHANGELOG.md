@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.1.4](https://github.com/zxeryu/vue-start/compare/@vue-start-dev/devkit@0.1.3...@vue-start-dev/devkit@0.1.4) (2021-06-10)
+
+### Performance Improvements
+
+- **devkit:** env CI_COMMIT_REF_NAME ([4470abd](https://github.com/zxeryu/vue-start/commit/4470abdf6a0112da8c98cd0741ef0bf3f745a160))
+
 ## [0.1.3](https://github.com/zxeryu/vue-start/compare/@vue-start-dev/devkit@0.1.2...@vue-start-dev/devkit@0.1.3) (2021-02-28)
 
 ### Bug Fixes
