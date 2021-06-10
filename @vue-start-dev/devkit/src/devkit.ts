@@ -4,6 +4,7 @@ import { get, isObject, has, keys, mapKeys, mapValues, startsWith, isFunction } 
 import { IState } from "./state";
 import { writeConfig } from "./action-build";
 import { exec } from "./exec";
+import { fromCommitRefName } from "./action-release";
 
 type TValueBuilder = (env: string) => string;
 
@@ -39,7 +40,7 @@ const loadConfigFromFile = (cwd: string, state: IState) => {
   }
 };
 
-export const devkit = (cwd = process.cwd(), name: string) => {
+export const devkit = (cwd = process.cwd()) => {
   let actions: { [k: string]: string } = {
     dev: "echo 'dev'",
     build: "echo 'build'",
@@ -63,7 +64,7 @@ export const devkit = (cwd = process.cwd(), name: string) => {
 
   return {
     actions,
-    run: (action: string, env: string) => {
+    run: (action: string, name: string, env: string) => {
       if (!has(actions, action)) {
         throw new Error(`missing action ${keys(actions).join(", ")}`);
       }
@@ -76,6 +77,18 @@ export const devkit = (cwd = process.cwd(), name: string) => {
         project: {},
         meta: {},
       };
+
+      if (process.env.CI_COMMIT_REF_NAME) {
+        const { name, env } = fromCommitRefName(process.env.CI_COMMIT_REF_NAME);
+        state.name = name;
+        // state.feature = feature;
+        state.env = env;
+      }
+
+      const appPath = join(cwd, "src", state.name);
+      if (!existsSync(appPath)) {
+        throw new Error("请输入正确的app名称");
+      }
 
       loadConfigFromFile(cwd, state);
 
