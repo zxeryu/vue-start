@@ -3,9 +3,8 @@ import { existsSync, readFileSync } from "fs";
 import { get, isObject, has, keys, mapKeys, mapValues, startsWith, isFunction } from "lodash";
 import { IState } from "./state";
 import { writeConfig } from "./action-build";
-import { release } from "./action-release";
 import { exec } from "./exec";
-import { fromCommitRefName } from "./action-release";
+import { fromCommitRefName, release } from "./action-release";
 
 type TValueBuilder = (env: string) => string;
 
