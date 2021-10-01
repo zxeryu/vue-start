@@ -3,6 +3,7 @@ import { existsSync, readFileSync } from "fs";
 import { get, isObject, has, keys, mapKeys, mapValues, startsWith, isFunction } from "lodash";
 import { IState } from "./state";
 import { writeConfig } from "./action-build";
+import { release } from "./action-release";
 import { exec } from "./exec";
 import { fromCommitRefName } from "./action-release";
 
@@ -44,6 +45,7 @@ export const devkit = (cwd = process.cwd()) => {
   let actions: { [k: string]: string } = {
     dev: "echo 'dev'",
     build: "echo 'build'",
+    release: "",
   };
 
   const pkgFile = join(cwd, "package.json");
@@ -92,11 +94,15 @@ export const devkit = (cwd = process.cwd()) => {
 
       loadConfigFromFile(cwd, state);
 
-      if (action === "build") {
-        writeConfig(cwd, state);
-      }
+      if (action === "release") {
+        release(state);
+      } else {
+        exec(actions[action], state);
 
-      exec(actions[action], state);
+        if (action === "build") {
+          writeConfig(cwd, state);
+        }
+      }
     },
   };
 };
