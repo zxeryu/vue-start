@@ -1,6 +1,6 @@
 {
   "name": "@vue-start-dev/devkit",
-  "version": "0.1.4",
+  "version": "0.2.0",
   "bin": "bin/devkit.js",
   "description": "> TODO: description",
   "author": "zx <zxpstudy@163.com>",
