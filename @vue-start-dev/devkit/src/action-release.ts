@@ -2,7 +2,7 @@ import { IState } from "./state";
 import { exec } from "./exec";
 
 export const fromCommitRefName = (commitTag = "") => {
-  const rule = commitTag.replace(/^feat(ure)?\//, "");
+  const rule = commitTag.replace(/^workspace\//, "");
 
   const [appAndFeature, env] = rule.split(".");
   const [name, feature] = appAndFeature.split("--", 2);
@@ -15,7 +15,8 @@ export const fromCommitRefName = (commitTag = "") => {
 };
 
 export const toCommitRefName = (state: IState) =>
-  `feat/${state.name}` + `${state.env && state.env !== "default" && state.env !== "staging" ? `.${state.env}` : ""}`;
+  `workspace/${state.name}` +
+  `${state.env && state.env !== "default" && state.env !== "staging" ? `.${state.env}` : ""}`;
 
 export const release = (state: IState) => {
   exec(`git tag -f ${toCommitRefName(state)}`, state);
