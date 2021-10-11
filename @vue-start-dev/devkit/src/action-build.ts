@@ -27,3 +27,20 @@ export const writeConfig = (cwd: string, state: IState) => {
     ),
   );
 };
+
+export const writehelmxProject = (cwd: string, state: IState) => {
+  generate(
+    join(cwd, "./helmx.project.yml"),
+    dump(
+      omitEmpty({
+        project: {
+          name: `web-${state.name}`,
+          group: state.project.group,
+          version: "0.0.0",
+          description: state.meta.manifest?.name,
+        },
+        // for overwrite
+      }),
+    ),
+  );
+};
