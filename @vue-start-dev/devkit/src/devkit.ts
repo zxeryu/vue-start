@@ -94,13 +94,13 @@ export const devkit = (cwd = process.cwd()) => {
       loadConfigFromFile(cwd, state);
 
       if (action === "release") {
+        writehelmxProject(cwd, state);
         release(state);
       } else {
         exec(actions[action], state);
 
         if (action === "build") {
           writeConfig(cwd, state);
-          writehelmxProject(cwd, state);
         }
       }
     },

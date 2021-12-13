@@ -7,7 +7,7 @@ import { stringify } from "querystring";
 
 const omitEmpty = <T extends object = any>(o: T) => omitBy(o, (v) => isUndefined(v));
 
-export const writeConfig = (cwd: string, state: IState) => {
+export const writeConfig = (cwd: string, state: IState): void => {
   generate(
     join(cwd, "./config/default.yml"),
     dump(
@@ -28,7 +28,7 @@ export const writeConfig = (cwd: string, state: IState) => {
   );
 };
 
-export const writehelmxProject = (cwd: string, state: IState) => {
+export const writehelmxProject = (cwd: string, state: IState): void => {
   generate(
     join(cwd, "./helmx.project.yml"),
     dump(
@@ -39,7 +39,6 @@ export const writehelmxProject = (cwd: string, state: IState) => {
           version: "0.0.0",
           description: state.meta.manifest?.name,
         },
-        // for overwrite
       }),
     ),
   );
