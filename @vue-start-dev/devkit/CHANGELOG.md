@@ -3,6 +3,13 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.4.0](https://github.com/zxeryu/vue-start/compare/@vue-start-dev/devkit@0.3.0...@vue-start-dev/devkit@0.4.0) (2021-12-14)
+
+### Features
+
+- **devkit:** writehelmxProject ([72a04c8](https://github.com/zxeryu/vue-start/commit/72a04c8df50b590c1e59f023b2785f589f19335b))
+- **devkit:** writehelmxProject in release ([1ce9066](https://github.com/zxeryu/vue-start/commit/1ce90660c84d7e6b08d8e2489f50e3c03ded9895))
+
 # [0.3.0](https://github.com/zxeryu/vue-start/compare/@vue-start-dev/devkit@0.2.0...@vue-start-dev/devkit@0.3.0) (2021-10-09)
 
 ### Features
