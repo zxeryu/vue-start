@@ -2,7 +2,7 @@ import { join } from "path";
 import { existsSync, readFileSync } from "fs";
 import { get, isObject, has, keys, mapKeys, mapValues, startsWith, isFunction } from "lodash";
 import { IState } from "./state";
-import { writeConfig } from "./action-build";
+import { writeConfig, writehelmxProject } from "./action-build";
 import { exec } from "./exec";
 import { fromCommitRefName, release } from "./action-release";
 
@@ -94,6 +94,7 @@ export const devkit = (cwd = process.cwd()) => {
       loadConfigFromFile(cwd, state);
 
       if (action === "release") {
+        writehelmxProject(cwd, state);
         release(state);
       } else {
         exec(actions[action], state);

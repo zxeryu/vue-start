@@ -22,6 +22,7 @@ export default [
       commonjs(),
       resolve({
         extensions: [".ts", ".js"],
+        preferBuiltins: true,
       }),
       babel({
         configFile: "../../babel.config.json",
