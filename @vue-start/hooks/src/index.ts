@@ -6,7 +6,7 @@ import useClickAway from "./useClickAway";
 import useEventListener from "./useEventListener";
 import useDocumentVisibility from "./useDocumentVisibility";
 import useHover from "./useHover";
-import useWatch from "./useWatch";
+import useEffect from "./useEffect";
 
 export {
   useToggle,
@@ -17,5 +17,5 @@ export {
   useEventListener,
   useDocumentVisibility,
   useHover,
-  useWatch,
+  useEffect,
 };

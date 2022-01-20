@@ -14,11 +14,8 @@
 
 <script lang="ts">
 import { defineComponent } from "vue";
-import { permissionProvide } from "@vue-start/access";
 export default defineComponent({
   name: "App",
-  setup() {
-    permissionProvide({});
-  },
+  setup() {},
 });
 </script>

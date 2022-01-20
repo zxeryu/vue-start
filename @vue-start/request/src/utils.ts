@@ -1,57 +1,41 @@
-import { startsWith } from "lodash";
-import { stringify } from "querystring";
-import { forEach, isArray, isObject } from "lodash";
-
-export const getProtocol = (): string => globalThis.location.protocol;
-
-export const isHttps = (): boolean => getProtocol() === "https:";
-
-export const protocolPrefix = (url = ""): string => {
-  if (startsWith(url, "http:") || startsWith(url, "https:")) {
-    return url;
-  }
-  return getProtocol() + url;
-};
+import { isUndefined, forEach, isArray, isObject, omit } from "lodash";
+import { IRequestActor } from "./createRequest";
 
 const getContentType = (headers: any = {}) => headers["Content-Type"] || headers["content-type"] || "";
 
-export const isContentTypeMultipartFormData = (headers: unknown): boolean =>
-  getContentType(headers).includes("multipart/form-data");
-export const isContentTypeFormURLEncoded = (headers: unknown): boolean =>
+export const isContentTypeMultipartFormData = (headers: any) => getContentType(headers).includes("multipart/form-data");
+export const isContentTypeFormURLEncoded = (headers: any) =>
   getContentType(headers).includes("application/x-www-form-urlencoded");
-export const isContentTypeJSON = (headers: unknown): boolean => {
+
+export const isContentTypeJSON = (headers: any) => {
   return getContentType(headers).includes("application/json");
 };
 
 export const paramsSerializer = (params: any) => {
-  const data = {} as any;
+  const searchParams = new URLSearchParams();
 
-  const add = (k: string, v: string) => {
-    if (typeof v === "undefined" || String(v).length === 0) {
-      return;
-    }
-
-    if (data[k]) {
-      data[k] = ([] as string[]).concat(data[k]).concat(v);
-      return;
-    }
-
-    data[k] = v;
-  };
-
-  const appendValue = (k: string, v: any) => {
+  const append = (k: string, v: any) => {
     if (isArray(v)) {
-      forEach(v, (item) => appendValue(k, item));
-    } else if (isObject(v)) {
-      add(k, JSON.stringify(v));
-    } else {
-      add(k, v);
+      forEach(v, (vv) => {
+        append(k, vv);
+      });
+      return;
     }
+    if (isObject(v)) {
+      append(k, JSON.stringify(v));
+      return;
+    }
+    if (isUndefined(v) || `${v}`.length == 0) {
+      return;
+    }
+    searchParams.append(k, `${v}`);
   };
 
-  forEach(params, (v, k) => appendValue(k, v));
+  forEach(params, (v, k) => {
+    append(k, v);
+  });
 
-  return stringify(data);
+  return searchParams.toString();
 };
 
 export const transformRequest = (data: any, headers: any) => {
@@ -66,7 +50,7 @@ export const transformRequest = (data: any, headers: any) => {
       } else if (isObject(v)) {
         formData.append(k, JSON.stringify(v));
       } else {
-        formData.append(k, v);
+        formData.append(k, v as string);
       }
     };
 
@@ -86,9 +70,30 @@ export const transformRequest = (data: any, headers: any) => {
   return data;
 };
 
-export const transformResponse = (data: any, headers: any) => {
+export const transformResponse = (data: unknown, headers: { [k: string]: any }) => {
   if (isContentTypeJSON(headers)) {
-    return JSON.parse(data);
+    return JSON.parse(data as string);
   }
   return data;
+};
+
+export const getRequestConfig = (actor: IRequestActor) => {
+  let axiosRequestConfig = actor.requestConfig!;
+  if (actor.requestFromReq) {
+    axiosRequestConfig = actor.requestFromReq(actor.req || {});
+  } else if (actor.req) {
+    axiosRequestConfig.params = omit(actor.req, "body");
+    axiosRequestConfig.data = actor.req.body;
+  }
+  return axiosRequestConfig;
+};
+
+export const toUrl = (actor: IRequestActor, baseUrl = "") => {
+  const axiosConfig = getRequestConfig(actor);
+
+  return `${baseUrl || axiosConfig?.baseURL || ""}${axiosConfig?.url || ""}?${paramsSerializer(axiosConfig?.params)}`;
+};
+
+export const generateId = () => {
+  return Number(Math.random().toString().substr(3, 3) + Date.now()).toString(36);
 };

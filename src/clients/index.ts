@@ -1,7 +1,7 @@
-import { createRequestConfig } from "../../@vue-start/request/src";
+import { createRequestActor } from "../../@vue-start/request/src";
 
-export const test = createRequestConfig<
-  undefined,
+export const test = createRequestActor<
+  {},
   {
     code: number;
     msg: string;
@@ -14,8 +14,8 @@ export const test = createRequestConfig<
   };
 });
 
-export const getRadar = createRequestConfig<
-  undefined,
+export const getRadar = createRequestActor<
+  {},
   IResult<
     {
       radarId: number;
@@ -33,7 +33,7 @@ export const getRadar = createRequestConfig<
   };
 });
 
-export const getRadarPic = createRequestConfig<
+export const getRadarPic = createRequestActor<
   {
     stime: string;
     etime: string;
@@ -56,7 +56,7 @@ export const getRadarPic = createRequestConfig<
   return {
     method: "POST",
     url: `//huaibei-datafusion.rockontrol.com/datafusion/rk-radar/radarWarningInfos`,
-    query: params,
+    data: params,
   };
 });
 

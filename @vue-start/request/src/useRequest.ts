@@ -1,92 +1,123 @@
-import { useAxios, useRequestCreator } from "./core";
-import { cancelActorIfExists, fakeCancelRequest, IRequestConfig, isCancelActor } from "./request";
-import { onBeforeUnmount, ref, watch, isReactive, toRaw } from "vue";
-import { AsyncStage, useStore } from "@vue-start/store";
-import { RequestActor } from "./actor";
-import { UnwrapRef, Ref } from "@vue/reactivity";
-import { clone } from "lodash";
+import { onBeforeUnmount, ref, isReactive, isRef, toRaw } from "vue";
+import { IRequestActor, isDoneRequestActor, isFailedRequestActor } from "./createRequest";
+import { generateId } from "./utils";
+import { merge as rxMerge, filter as rxFilter, tap as rxTap, BehaviorSubject } from "rxjs";
+import { get } from "lodash";
+import { useRequestProvide } from "./provide";
+import { useEffect } from "@vue-start/hooks";
 
-// interface IResult<TReq, TRes> {
-//   data: Ref<TRes>;
-//   loading: Ref<boolean>;
-//   run: (arg?: TReq) => void;
-//   error?: Ref<Error | undefined>;
-// }
+export interface IUseRequestOptions<TReq, TRes, TErr> {
+  defaultLoading?: boolean;
+  onSuccess?: (actor: IRequestActor<TReq, TRes, TErr>) => void;
+  onFail?: (actor: IRequestActor<TReq, TRes, TErr>) => void;
+  onFinish?: () => void;
+}
 
-export const useRequest = <TRequestConfig extends IRequestConfig<any, any>>(
-  requestConfig: TRequestConfig,
-  options?: {
-    params?: TRequestConfig["req"];
-    deps?: UnwrapRef<Ref | object>;
-    manual?: boolean;
-    onSuccess?: (data: TRequestConfig["res"]) => void;
-    onFail?: (err: Error) => void;
-    onFinish?: () => void;
-    joinSub?: boolean;
-  },
-) => {
-  const client = useAxios();
-  const requestCreator = useRequestCreator();
-  const store$ = useStore();
+export const useRequest = <TReq, TRes, TErr>(
+  requestActor: IRequestActor<TReq, TRes, TErr>,
+  options?: IUseRequestOptions<TReq, TRes, TErr>,
+): readonly [
+  (
+    params: IRequestActor<TReq, TRes, TErr>["req"],
+    options?: Pick<IUseRequestOptions<TReq, TRes, TErr>, "onSuccess" | "onFail">,
+  ) => void,
+  BehaviorSubject<boolean>,
+] => {
+  const { requestSubject$, dispatchRequest } = useRequestProvide();
 
-  const data = ref<TRequestConfig["res"]>();
-  const loading = ref<boolean>(false);
-  const error = ref<Error>();
+  const requesting$ = new BehaviorSubject<boolean>(!!get(options, "defaultLoading"));
 
-  let executeConfig: TRequestConfig;
+  let lastRequestActor: IRequestActor<TReq, TRes, TErr> | undefined = undefined;
+  const lastCallback: Pick<IUseRequestOptions<TReq, TRes, TErr>, "onSuccess" | "onFail"> = {};
 
-  const run = (arg?: TRequestConfig["req"]) => {
-    executeConfig = clone(requestConfig);
-    //set params
-    if (arg) {
-      executeConfig.req = isReactive(arg) ? toRaw(arg) : arg;
-    } else {
-      executeConfig.req = isReactive(options?.params) ? toRaw(options?.params) : options?.params;
-    }
-    // executeConfig.req = arg ? arg : options?.params;
-
-    const request = requestCreator(executeConfig);
-    loading.value = true;
-    request()
-      .then((response) => {
-        if (isCancelActor(executeConfig)) {
-          return fakeCancelRequest(client, request.config);
-        }
-        return response;
-      })
-      .then((response) => {
-        data.value = response.data;
-        options?.onSuccess && options.onSuccess(data.value);
-        options?.joinSub && RequestActor.named(executeConfig.name).staged(AsyncStage.DONE).invoke(store$);
-      })
-      .catch((err: Error) => {
-        error.value = err;
-        options?.onFail && options.onFail(err);
-        options?.joinSub && RequestActor.named(executeConfig.name).staged(AsyncStage.FAILED).invoke(store$);
-      })
-      .finally(() => {
-        request.clear();
-        loading.value = false;
-        options?.onFinish && options.onFinish();
-      });
+  const cancelIfExists = () => {
+    lastRequestActor && dispatchRequest({ ...lastRequestActor, stage: "CANCEL" });
   };
 
-  //automatic
-  if (!options?.manual) {
-    run();
-  }
+  const end = () => {
+    lastRequestActor = undefined;
+    requesting$.next(false);
+    options?.onFinish && options.onFinish();
+  };
 
-  const stopWatch = watch(
-    () => options?.deps,
-    () => {
-      !options?.manual && run();
-    },
-  );
+  const isSameRequest = (actor: IRequestActor) => {
+    return lastRequestActor?.name === actor.name && lastRequestActor?.id === actor.id;
+  };
+
+  const sub = rxMerge(
+    requestSubject$.pipe(
+      rxFilter(isDoneRequestActor),
+      rxFilter(isSameRequest),
+      rxTap((actor) => {
+        lastCallback.onSuccess && lastCallback.onSuccess(actor);
+        options?.onSuccess && options.onSuccess(actor);
+        end();
+      }),
+    ),
+    requestSubject$.pipe(
+      rxFilter(isFailedRequestActor),
+      rxFilter(isSameRequest),
+      rxTap((actor) => {
+        lastCallback.onFail && lastCallback.onFail(actor);
+        options?.onFail && options.onFail(actor);
+        end();
+      }),
+    ),
+  ).subscribe();
 
   onBeforeUnmount(() => {
-    executeConfig && cancelActorIfExists(executeConfig);
-    stopWatch && stopWatch();
+    cancelIfExists();
+    sub && sub.unsubscribe();
   });
 
-  return [data, loading, run, error] as const;
+  const request = (
+    params: IRequestActor<TReq, TRes, TErr>["req"],
+    options?: Pick<IUseRequestOptions<TReq, TRes, TErr>, "onSuccess" | "onFail">,
+  ) => {
+    cancelIfExists();
+
+    lastCallback.onSuccess = options?.onSuccess;
+    lastCallback.onFail = options?.onFail;
+
+    requesting$.next(true);
+
+    const id = generateId();
+    const actor = { ...requestActor, id };
+
+    lastRequestActor = actor;
+
+    dispatchRequest(actor, params);
+  };
+
+  return [request, requesting$];
+};
+
+export const useDirectRequest = <TRequestActor extends IRequestActor>(
+  requestActor: TRequestActor,
+  params: TRequestActor["req"],
+  deps: any | any[],
+) => {
+  const data = ref<TRequestActor["res"]>();
+
+  const [request, requesting$] = useRequest(requestActor, {
+    onSuccess: (actor) => {
+      data.value = actor.res?.data;
+    },
+  });
+
+  const req = () => {
+    let p = params;
+    if (isReactive(params)) {
+      p = toRaw(p);
+    } else if (isRef(params)) {
+      p = params.value;
+    }
+    request(p);
+  };
+
+  useEffect(() => {
+    req();
+  }, deps);
+
+  return [data, req, requesting$];
 };
