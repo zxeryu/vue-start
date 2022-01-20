@@ -3,6 +3,10 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.2.1](https://github.com/zxeryu/vue-start/compare/@vue-start/hooks@0.2.0...@vue-start/hooks@0.2.1) (2022-01-20)
+
+**Note:** Version bump only for package @vue-start/hooks
+
 # [0.2.0](https://github.com/zxeryu/vue-start/compare/@vue-start/hooks@0.1.0...@vue-start/hooks@0.2.0) (2021-03-30)
 
 ### Features

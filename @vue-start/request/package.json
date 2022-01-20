@@ -1,6 +1,6 @@
 {
   "name": "@vue-start/request",
-  "version": "0.1.4",
+  "version": "0.1.5",
   "description": "> TODO: description",
   "author": "zx <zxpstudy@163.com>",
   "homepage": "https://github.com/zxeryu/vue-start#readme",
@@ -25,8 +25,8 @@
     "url": "https://github.com/zxeryu/vue-start/issues"
   },
   "peerDependencies": {
-    "@vue-start/store": "*",
     "@vue-start/hooks": "*",
+    "@vue-start/store": "*",
     "axios": "0.21.x",
     "lodash": ">= 4.x",
     "rxjs": ">=7.x",
