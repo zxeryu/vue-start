@@ -26,7 +26,6 @@
   },
   "peerDependencies": {
     "@vue-start/hooks": "*",
-    "@vue-start/store": "*",
     "axios": "0.21.x",
     "lodash": ">= 4.x",
     "rxjs": ">=7.x",
