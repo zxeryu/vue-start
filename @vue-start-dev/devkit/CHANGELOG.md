@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.4.1](https://github.com/zxeryu/vue-start/compare/@vue-start-dev/devkit@0.4.0...@vue-start-dev/devkit@0.4.1) (2022-01-21)
+
+### Bug Fixes
+
+- **devkit:** html preset ([27b36b4](https://github.com/zxeryu/vue-start/commit/27b36b45f725aed2edbcb1b2b695da91ec33997d))
+
 # [0.4.0](https://github.com/zxeryu/vue-start/compare/@vue-start-dev/devkit@0.3.0...@vue-start-dev/devkit@0.4.0) (2021-12-14)
 
 ### Features
