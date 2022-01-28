@@ -28,6 +28,7 @@
     "@babel/runtime-corejs3": "*",
     "lodash": ">= 4.x",
     "rxjs": ">= 7.x",
-    "vue": ">= 3.x"
+    "vue": ">= 3.x",
+    "@vue-start/hooks": "*"
   }
 }

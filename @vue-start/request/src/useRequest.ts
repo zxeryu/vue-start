@@ -1,10 +1,10 @@
-import { onBeforeUnmount, ref, isReactive, isRef, toRaw } from "vue";
+import { onBeforeUnmount, isReactive, isRef, toRaw } from "vue";
 import { IRequestActor, isDoneRequestActor, isFailedRequestActor } from "./createRequest";
 import { generateId } from "./utils";
 import { merge as rxMerge, filter as rxFilter, tap as rxTap, BehaviorSubject } from "rxjs";
 import { get } from "lodash";
 import { useRequestProvide } from "./provide";
-import { useEffect } from "@vue-start/hooks";
+import { useEffect, useState } from "@vue-start/hooks";
 
 export interface IUseRequestOptions<TReq, TRes, TErr> {
   defaultLoading?: boolean;
@@ -97,11 +97,11 @@ export const useDirectRequest = <TRequestActor extends IRequestActor>(
   params: TRequestActor["req"],
   deps: any | any[],
 ) => {
-  const data = ref<TRequestActor["res"]>();
+  const [state, setState] = useState<TRequestActor["res"]>();
 
   const [request, requesting$] = useRequest(requestActor, {
     onSuccess: (actor) => {
-      data.value = actor.res?.data;
+      setState(actor.res?.data);
     },
   });
 
@@ -119,5 +119,5 @@ export const useDirectRequest = <TRequestActor extends IRequestActor>(
     req();
   }, deps);
 
-  return [data, req, requesting$];
+  return [state, req, requesting$];
 };

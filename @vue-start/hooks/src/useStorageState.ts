@@ -1,5 +1,5 @@
-import { ref } from "vue";
 import { isFunction, isUndefined } from "lodash";
+import { useState } from "./useState";
 
 export interface IFuncUpdater<T> {
   (previousState?: T): T;
@@ -24,20 +24,20 @@ export default function useStorageState<T>(
     return defaultValue;
   }
 
-  const state = ref(getStoredValue());
+  const [state, setState] = useState(getStoredValue());
 
   const updateState = (value?: T | IFuncUpdater<T>) => {
     if (isUndefined(value)) {
       localStorage.removeItem(key);
-      state.value = undefined;
+      setState(undefined);
     } else if (isFunction(value)) {
       const previousState = getStoredValue();
       const currentState = value(previousState);
       localStorage.setItem(key, JSON.stringify(currentState));
-      state.value = currentState;
+      setState(currentState);
     } else {
       localStorage.setItem(key, JSON.stringify(value));
-      state.value = value;
+      setState(value);
     }
   };
 

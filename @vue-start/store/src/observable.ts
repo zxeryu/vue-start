@@ -1,8 +1,8 @@
-import { Observable, Subscription } from "rxjs";
+import { Observable } from "rxjs";
 import { distinctUntilChanged, map as rxMap } from "rxjs/operators";
 import { shallowEqual } from "./utils";
-import { onMounted, onBeforeUnmount, ref } from "vue";
 import { useStore } from "./ctx";
+import { useState, useEffect } from "@vue-start/hooks";
 
 export type TEqualFn = (a: any, b: any) => boolean;
 
@@ -45,18 +45,18 @@ export class Volume<T, TOutput> extends Observable<TOutput> {
 }
 
 export const useObservable = <T>(ob$: Observable<T>, defaultValue?: T): T => {
-  const v = ref(defaultValue || (ob$ as any).value);
-  let sub: Subscription;
-  onMounted(() => {
-    sub = ob$.subscribe((val) => {
-      v.value = val;
-    });
-  });
-  onBeforeUnmount(() => {
-    sub && sub.unsubscribe();
-  });
+  const [state, setState] = useState(defaultValue || (ob$ as any).value);
 
-  return v;
+  useEffect(() => {
+    const sub = ob$.subscribe((val) => {
+      setState(val);
+    });
+    return () => {
+      sub && sub.unsubscribe();
+    };
+  }, undefined);
+
+  return state;
 };
 
 export const useConn = <T, TOutput = T>(ob$: Observable<T>, mapper: IMapper<T, TOutput>): Observable<TOutput> => {
