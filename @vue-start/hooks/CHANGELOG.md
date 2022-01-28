@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.2.3](https://github.com/zxeryu/vue-start/compare/@vue-start/hooks@0.2.2...@vue-start/hooks@0.2.3) (2022-01-28)
+
+### Performance Improvements
+
+- **hooks:** useState ([4e39875](https://github.com/zxeryu/vue-start/commit/4e39875a6eca5f80f4a1a541ff20fe84cd6dbc58))
+
 ## [0.2.2](https://github.com/zxeryu/vue-start/compare/@vue-start/hooks@0.2.1...@vue-start/hooks@0.2.2) (2022-01-28)
 
 ### Bug Fixes
