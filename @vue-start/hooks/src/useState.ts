@@ -1,5 +1,5 @@
 import { reactive } from "vue";
-import { forEach, isArray, isObject } from "lodash";
+import { forEach, isArray, isObject, keys, union, has } from "lodash";
 import { UnwrapNestedRefs } from "@vue/reactivity";
 
 const isRefRule = (v: any) => {
@@ -14,11 +14,23 @@ const setReactiveValue = (r: UnwrapNestedRefs<any>, obj: any) => {
     return;
   }
   if (isRefRule(obj)) {
+    //清空除value的属性
+    forEach(r, (_, k) => {
+      if (k !== "value") {
+        delete r[k];
+      }
+    });
+
     r.value = obj;
     return;
   }
-  forEach(obj, (v, k) => {
-    r[k] = v;
+  const allKeys = union(keys(r), keys(obj));
+  forEach(allKeys, (k) => {
+    if (has(obj, k)) {
+      r[k] = obj[k];
+    } else {
+      delete r[k];
+    }
   });
 };
 /**
