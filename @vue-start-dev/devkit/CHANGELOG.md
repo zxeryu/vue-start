@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.4.2](https://github.com/zxeryu/vue-start/compare/@vue-start-dev/devkit@0.4.1...@vue-start-dev/devkit@0.4.2) (2022-01-28)
+
+### Bug Fixes
+
+- support useState ([c0fdd62](https://github.com/zxeryu/vue-start/commit/c0fdd626baa098eedbb472d615096148edd57ac3))
+
 ## [0.4.1](https://github.com/zxeryu/vue-start/compare/@vue-start-dev/devkit@0.4.0...@vue-start-dev/devkit@0.4.1) (2022-01-21)
 
 ### Bug Fixes

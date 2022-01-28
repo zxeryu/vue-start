@@ -1,6 +1,6 @@
 {
   "name": "@vue-start/store",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "> TODO: description",
   "author": "zx <zxpstudy@163.com>",
   "homepage": "https://github.com/zxeryu/vue-start#readme",
@@ -26,9 +26,9 @@
   },
   "peerDependencies": {
     "@babel/runtime-corejs3": "*",
+    "@vue-start/hooks": "*",
     "lodash": ">= 4.x",
     "rxjs": ">= 7.x",
-    "vue": ">= 3.x",
-    "@vue-start/hooks": "*"
+    "vue": ">= 3.x"
   }
 }

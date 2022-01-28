@@ -3,6 +3,13 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.1.2](https://github.com/zxeryu/vue-start/compare/@vue-start/store@0.1.1...@vue-start/store@0.1.2) (2022-01-28)
+
+### Bug Fixes
+
+- support useState ([c0fdd62](https://github.com/zxeryu/vue-start/commit/c0fdd626baa098eedbb472d615096148edd57ac3))
+- **devkit:** html preset ([27b36b4](https://github.com/zxeryu/vue-start/commit/27b36b45f725aed2edbcb1b2b695da91ec33997d))
+
 ## [0.1.1](https://github.com/zxeryu/vue-start/compare/@vue-start/store@0.1.0...@vue-start/store@0.1.1) (2022-01-20)
 
 **Note:** Version bump only for package @vue-start/store
