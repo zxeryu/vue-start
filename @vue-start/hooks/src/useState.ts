@@ -2,14 +2,14 @@ import { reactive } from "vue";
 import { forEach, isArray, isObject, keys, union, has } from "lodash";
 import { UnwrapNestedRefs } from "@vue/reactivity";
 
-const isRefRule = (v: any) => {
+export const isRefRule = (v: any) => {
   if (!isObject(v)) {
     return true;
   }
   return isArray(v);
 };
 
-const setReactiveValue = (r: UnwrapNestedRefs<any>, obj: any) => {
+export const setReactiveValue = (r: UnwrapNestedRefs<any>, obj: any) => {
   if (!r) {
     return;
   }

@@ -1,5 +1,5 @@
 import { watch, onMounted, onBeforeUnmount, isRef, isReactive, toRaw } from "vue";
-import { isArray, map, isFunction } from "lodash";
+import { isArray, map, isFunction, isUndefined, filter } from "lodash";
 
 type cbType = ((...args: any) => void) | ((...args: any) => () => void);
 
@@ -10,10 +10,25 @@ export default function useEffect(cb: cbType, deps: any | any[]): void {
     stopFn = undefined;
   };
 
-  const stopHandler = watch(deps, (...v) => {
-    stop();
-    stopFn = cb(...v) as any;
-  });
+  let stopHandler: () => void | undefined;
+  if (!isUndefined(deps)) {
+    let validDeps = deps;
+    if (isArray(deps)) {
+      validDeps = filter(deps, (item) => {
+        if (isFunction(item)) {
+          return true;
+        }
+        if (isReactive(item) || isRef(item)) {
+          return true;
+        }
+        return false;
+      });
+    }
+    stopHandler = watch(validDeps, (...v) => {
+      stop();
+      stopFn = cb(...v) as any;
+    });
+  }
 
   onMounted(() => {
     const depList = isArray(deps) ? deps : [deps];
