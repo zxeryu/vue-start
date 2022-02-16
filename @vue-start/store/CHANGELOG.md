@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.1.3](https://github.com/zxeryu/vue-start/compare/@vue-start/store@0.1.2...@vue-start/store@0.1.3) (2022-02-16)
+
+### Bug Fixes
+
+- ~ ([33dfc56](https://github.com/zxeryu/vue-start/commit/33dfc5660603217d32d88b5204473888e8144d0a))
+
 ## [0.1.2](https://github.com/zxeryu/vue-start/compare/@vue-start/store@0.1.1...@vue-start/store@0.1.2) (2022-01-28)
 
 ### Bug Fixes
