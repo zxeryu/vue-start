@@ -14,10 +14,13 @@ export const updateKV = StateActor.named<(prev: any) => any, { key: string }>("u
 
 export type TUpdater<T> = (prev: T) => T;
 
-export const createStateUse = <T>(k: string, initialState?: T, persist = false) => () => {
-  const key = persist ? `$${k}` : k;
-  const store$ = useStore();
+export const useStoreState$ = <T>(k: string, initialState: undefined | T | (() => T), persist: boolean) => {
+  const key = `${persist ? "$" : ""}${k}`;
+
   const initials = isFunction(initialState) ? initialState() : initialState;
+
+  const store$ = useStore();
+
   const update = (stateOrUpdater: T | TUpdater<T>) => {
     return updateKV
       .with(
@@ -31,8 +34,17 @@ export const createStateUse = <T>(k: string, initialState?: T, persist = false) 
       )
       .invoke(store$);
   };
+
   const state$ = Volume.from(store$, (state) => get(state, [key], initials));
   const state = useObservable(state$);
 
   return [state, update] as const;
 };
+
+export const createStateUse =
+  <T>(k: string, initialState?: T, persist = false) =>
+  () => {
+    const [state, update] = useStoreState$(k, initialState, persist);
+
+    return [state, update] as const;
+  };

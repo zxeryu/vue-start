@@ -23,6 +23,10 @@ const loadConfigFromFile = (cwd: string, state: IState) => {
     state.project.group = conf.GROUP;
   }
 
+  if (conf.VERSION) {
+    state.project.version = conf.VERSION;
+  }
+
   const envKeys = keys(envs);
 
   if (envKeys.length > 0 && (state.env === "" || !envs[state.env])) {

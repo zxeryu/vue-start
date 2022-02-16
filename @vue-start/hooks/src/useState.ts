@@ -1,5 +1,5 @@
 import { reactive } from "vue";
-import { forEach, isArray, isObject, keys, union, has } from "lodash";
+import { forEach, isArray, isObject, keys, union, has, isEmpty, size } from "lodash";
 import { UnwrapNestedRefs } from "@vue/reactivity";
 
 export const isRefRule = (v: any) => {
@@ -7,6 +7,14 @@ export const isRefRule = (v: any) => {
     return true;
   }
   return isArray(v);
+};
+
+/**
+ * useState引发的问题
+ * @param state
+ */
+export const isEmptyState = (state: UnwrapNestedRefs<any>) => {
+  return isEmpty(state) || (size(keys(state)) === 1 && has(state, "value") && !state.value);
 };
 
 export const setReactiveValue = (r: UnwrapNestedRefs<any>, obj: any) => {
