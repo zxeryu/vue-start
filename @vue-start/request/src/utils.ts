@@ -1,4 +1,4 @@
-import { isUndefined, forEach, isArray, isObject, omit } from "lodash";
+import { isUndefined, forEach, isArray, isObject, omit, isNull } from "lodash";
 import { IRequestActor } from "./createRequest";
 
 const getContentType = (headers: any = {}) => headers["Content-Type"] || headers["content-type"] || "";
@@ -23,6 +23,9 @@ export const paramsSerializer = (params: any) => {
     }
     if (isObject(v)) {
       append(k, JSON.stringify(v));
+      return;
+    }
+    if (isNull(v)) {
       return;
     }
     if (isUndefined(v) || `${v}`.length == 0) {

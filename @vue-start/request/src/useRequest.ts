@@ -2,7 +2,7 @@ import { onBeforeUnmount, isReactive, isRef, toRaw } from "vue";
 import { IRequestActor, isDoneRequestActor, isFailedRequestActor } from "./createRequest";
 import { generateId } from "./utils";
 import { merge as rxMerge, filter as rxFilter, tap as rxTap, BehaviorSubject } from "rxjs";
-import { get } from "lodash";
+import { get, isFunction } from "lodash";
 import { useRequestProvide } from "./provide";
 import { useEffect, useState } from "@vue-start/hooks";
 
@@ -92,9 +92,12 @@ export const useRequest = <TReq, TRes, TErr>(
   return [request, requesting$];
 };
 
+/**
+ * 直接发起请求
+ */
 export const useDirectRequest = <TRequestActor extends IRequestActor>(
   requestActor: TRequestActor,
-  params: TRequestActor["req"],
+  params: TRequestActor["req"] | (() => TRequestActor["req"]),
   deps: any | any[],
 ) => {
   const [state, setState] = useState<TRequestActor["res"]>();
@@ -105,8 +108,12 @@ export const useDirectRequest = <TRequestActor extends IRequestActor>(
     },
   });
 
-  const req = () => {
-    let p = params;
+  const req = (nextParams?: TRequestActor["req"]) => {
+    if (nextParams) {
+      request(nextParams);
+      return;
+    }
+    let p = isFunction(params) ? params() : params;
     if (isReactive(params)) {
       p = toRaw(p);
     } else if (isRef(params)) {
