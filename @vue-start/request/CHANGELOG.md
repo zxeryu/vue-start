@@ -3,6 +3,13 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.1.8](https://github.com/zxeryu/vue-start/compare/@vue-start/request@0.1.7...@vue-start/request@0.1.8) (2022-03-16)
+
+### Bug Fixes
+
+- **request:** cancel request ([93b0c4d](https://github.com/zxeryu/vue-start/commit/93b0c4d02a5892edf222c3daf96c7beccae91bba))
+- **request:** params fun for useDirectRequest ([da59ce5](https://github.com/zxeryu/vue-start/commit/da59ce56625a3668c257e3bd0590d9dc3f3de8d4))
+
 ## [0.1.7](https://github.com/zxeryu/vue-start/compare/@vue-start/request@0.1.6...@vue-start/request@0.1.7) (2022-01-28)
 
 ### Bug Fixes
