@@ -11,7 +11,7 @@ export type DispatchRequestType = (
   actor: IRequestActor,
   params?: IRequestActor["req"],
   extra?: IRequestActor["extra"],
-) => void;
+) => IRequestActor;
 
 export type RequestProvideType = {
   client: AxiosInstance;
@@ -57,6 +57,8 @@ export const createRequest = (options: AxiosRequestConfig, interceptors: TReques
     operatorActor.req = params;
     operatorActor.extra = extra;
     requestSubject$.next(operatorActor);
+
+    return operatorActor;
   };
 
   //全局订阅

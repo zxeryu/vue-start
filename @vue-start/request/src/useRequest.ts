@@ -1,4 +1,4 @@
-import { onBeforeUnmount, isReactive, isRef, toRaw } from "vue";
+import { isReactive, isRef, toRaw } from "vue";
 import { IRequestActor, isDoneRequestActor, isFailedRequestActor } from "./createRequest";
 import { generateId } from "./utils";
 import { merge as rxMerge, filter as rxFilter, tap as rxTap, BehaviorSubject } from "rxjs";
@@ -34,41 +34,43 @@ export const useRequest = <TReq, TRes, TErr>(
     lastRequestActor && dispatchRequest({ ...lastRequestActor, stage: "CANCEL" });
   };
 
-  const end = () => {
-    lastRequestActor = undefined;
-    requesting$.next(false);
-    options?.onFinish && options.onFinish();
-  };
+  useEffect(() => {
+    const end = () => {
+      lastRequestActor = undefined;
+      requesting$.next(false);
+      options?.onFinish && options.onFinish();
+    };
 
-  const isSameRequest = (actor: IRequestActor) => {
-    return lastRequestActor?.name === actor.name && lastRequestActor?.id === actor.id;
-  };
+    const isSameRequest = (actor: IRequestActor) => {
+      return lastRequestActor?.name === actor.name && lastRequestActor?.id === actor.id;
+    };
 
-  const sub = rxMerge(
-    requestSubject$.pipe(
-      rxFilter(isDoneRequestActor),
-      rxFilter(isSameRequest),
-      rxTap((actor) => {
-        lastCallback.onSuccess && lastCallback.onSuccess(actor);
-        options?.onSuccess && options.onSuccess(actor);
-        end();
-      }),
-    ),
-    requestSubject$.pipe(
-      rxFilter(isFailedRequestActor),
-      rxFilter(isSameRequest),
-      rxTap((actor) => {
-        lastCallback.onFail && lastCallback.onFail(actor);
-        options?.onFail && options.onFail(actor);
-        end();
-      }),
-    ),
-  ).subscribe();
+    const sub = rxMerge(
+      requestSubject$.pipe(
+        rxFilter(isDoneRequestActor),
+        rxFilter(isSameRequest),
+        rxTap((actor) => {
+          lastCallback.onSuccess && lastCallback.onSuccess(actor);
+          options?.onSuccess && options.onSuccess(actor);
+          end();
+        }),
+      ),
+      requestSubject$.pipe(
+        rxFilter(isFailedRequestActor),
+        rxFilter(isSameRequest),
+        rxTap((actor) => {
+          lastCallback.onFail && lastCallback.onFail(actor);
+          options?.onFail && options.onFail(actor);
+          end();
+        }),
+      ),
+    ).subscribe();
 
-  onBeforeUnmount(() => {
-    cancelIfExists();
-    sub && sub.unsubscribe();
-  });
+    return () => {
+      cancelIfExists();
+      sub && sub.unsubscribe();
+    };
+  }, []);
 
   const request = (
     params: IRequestActor<TReq, TRes, TErr>["req"],
@@ -81,12 +83,7 @@ export const useRequest = <TReq, TRes, TErr>(
 
     requesting$.next(true);
 
-    const id = generateId();
-    const actor = { ...requestActor, id };
-
-    lastRequestActor = actor;
-
-    dispatchRequest(actor, params);
+    lastRequestActor = dispatchRequest({ ...requestActor, id: generateId() }, params);
   };
 
   return [request, requesting$];
