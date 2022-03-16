@@ -10,12 +10,13 @@
     <div>
       <input type="date" :onchange="timeChange" />
       <input type="date" :onchange="endTimeChange" />
+      <button :onclick="anotherChange">change t</button>
     </div>
   </div>
 </template>
 
 <script lang="ts">
-import { defineComponent, watchEffect, reactive, ref } from "vue";
+import { defineComponent, watchEffect, reactive, ref, toRaw } from "vue";
 import { useRequest, useDirectRequest } from "@vue-start/request";
 import { useObservable } from "@vue-start/store";
 import { test, getRadar, getRadarPic } from "../clients";
@@ -36,8 +37,15 @@ export default defineComponent({
     radarRun({});
 
     const params = reactive({ stime: "2020-12-1 00:00:00", etime: "2020-12-22 00:00:00" });
+    const another = ref();
 
-    const [radarPicData] = useDirectRequest(getRadarPic, params, params);
+    const [radarPicData] = useDirectRequest(
+      getRadarPic,
+      () => {
+        return { ...toRaw(params), t: another.value };
+      },
+      [params, another],
+    );
 
     watchEffect(() => {
       // console.log("@@@data", data.value);
@@ -53,7 +61,11 @@ export default defineComponent({
       params.etime = e.target.value + " 00:00:00";
     };
 
-    return { data, loading, run: () => run({}), timeChange, endTimeChange };
+    const anotherChange = () => {
+      another.value = new Date().valueOf();
+    };
+
+    return { data, loading, run: () => run({}), timeChange, endTimeChange, anotherChange };
   },
 });
 </script>
