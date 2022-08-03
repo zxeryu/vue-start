@@ -1,7 +1,7 @@
 import { computed, defineComponent, DefineComponent, ExtractPropTypes } from "vue";
 import { FormItem, FormItemProps } from "ant-design-vue";
 import { TValueType } from "../../types";
-import { useProForm } from "./ctx";
+import { useProForm, useProFormList } from "./ctx";
 import { get, isBoolean, keys, omit, set } from "lodash";
 import { convertPathToList } from "../util";
 
@@ -13,6 +13,12 @@ const proFormItemProps = () => ({
 
 export type ProFormItemProps = Partial<ExtractPropTypes<ReturnType<typeof proFormItemProps>>> & FormItemProps;
 
+/**
+ * 基于输入组件生成FormItem包装后的组件
+ * @param InputComp
+ * @param valueType
+ * @param name
+ */
 export const createFormItemComponent = ({
   InputComp,
   valueType,
@@ -30,6 +36,7 @@ export const createFormItemComponent = ({
     },
     setup: (props, { slots }) => {
       const { formState, showState, readonlyState, disableState, readonly: formReadonly, elementMap } = useProForm();
+      const formListCtx = useProFormList();
 
       //优先级 props.readonly > readonlyState > formContext.readonly
       const readonly = computed(() => {
@@ -41,7 +48,8 @@ export const createFormItemComponent = ({
         return formReadonly.value;
       });
 
-      const path = convertPathToList(props.name)!;
+      const nameList = convertPathToList(props.name)!;
+      const path = formListCtx?.pathList ? [...formListCtx.pathList, ...nameList] : nameList;
 
       const invalidKeys = keys(proFormItemProps());
 
@@ -55,7 +63,7 @@ export const createFormItemComponent = ({
         //valueType对应的展示组件
         const ShowComp: any = get(elementMap, valueType);
         return (
-          <FormItem {...omit(props, invalidKeys)}>
+          <FormItem {...omit(props, ...invalidKeys, "name")} name={path}>
             {readonly.value ? (
               <>
                 {ShowComp ? (

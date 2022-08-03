@@ -30,7 +30,7 @@ const routes: RouteRecordRaw[] = [
   {
     path: "/comp",
     name: "Comp",
-    component: () => import("../views/Comp.vue"),
+    component: () => import("../views/Comp"),
   },
 ];
 

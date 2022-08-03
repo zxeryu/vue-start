@@ -23,7 +23,7 @@ const proFormListProps = () => ({
 
 export type ProFormListProps = Partial<ExtractPropTypes<ReturnType<typeof proFormListProps>>> & FormItemProps;
 
-export const FormList = defineComponent<ProFormListProps>({
+export const ProFormList = defineComponent<ProFormListProps>({
   name: "PFormList",
   props: {
     ...FormItem.props,
@@ -62,7 +62,7 @@ export const FormList = defineComponent<ProFormListProps>({
       return (
         <FormItem {...omit(props, invalidKeys)}>
           {map(get(formState, path), (item, index: number) => (
-            <FormListProvider pathList={[...path, index]}>
+            <FormListProvider key={index} pathList={[...path, index]}>
               <div class={"pro-form-list-item"}>
                 {slots.default?.()}
                 {!readonly.value && (

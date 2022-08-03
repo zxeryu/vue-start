@@ -14,72 +14,72 @@ import {
 } from "ant-design-vue";
 import { createFormItemComponent } from "./createFormItemComponent";
 
-export const FormText = createFormItemComponent({
+export const ProFormText = createFormItemComponent({
   InputComp: Input,
   valueType: "text",
   name: "PFromText",
 });
-export const FormTextArea = createFormItemComponent({
+export const ProFormTextArea = createFormItemComponent({
   InputComp: Textarea,
   valueType: "textarea",
   name: "PFromTextarea",
 });
-export const FormTextPassword = createFormItemComponent({
+export const ProFormTextPassword = createFormItemComponent({
   InputComp: InputPassword,
   valueType: "password",
   name: "PFormPassword",
 });
-export const FormTextNumber = createFormItemComponent({
+export const ProFormTextNumber = createFormItemComponent({
   InputComp: InputNumber,
   valueType: "digit",
   name: "PFormNumber",
 });
-export const FormDatePicker = createFormItemComponent({
+export const ProFormDatePicker = createFormItemComponent({
   InputComp: DatePicker,
   valueType: "date",
   name: "PFormDate",
 });
-export const FormDateRangePicker = createFormItemComponent({
+export const ProFormDateRangePicker = createFormItemComponent({
   InputComp: DatePicker.RangePicker,
   valueType: "dateRange",
   name: "PFormDateRange",
 });
-export const FormTimePicker = createFormItemComponent({
+export const ProFormTimePicker = createFormItemComponent({
   InputComp: TimePicker,
   valueType: "time",
   name: "PFormTime",
 });
-export const FormTimeRangePicker = createFormItemComponent({
+export const ProFormTimeRangePicker = createFormItemComponent({
   InputComp: TimePicker.RangePicker,
   valueType: "timeRange",
   name: "PFormTimeRange",
 });
-export const FormSelect = createFormItemComponent({
+export const ProFormSelect = createFormItemComponent({
   InputComp: Select,
   valueType: "select",
   name: "PFormSelect",
 });
-export const FormTreeSelect = createFormItemComponent({
+export const ProFormTreeSelect = createFormItemComponent({
   InputComp: TreeSelect,
   valueType: "treeSelect",
   name: "PFormTreeSelect",
 });
-export const FormCheckbox = createFormItemComponent({
+export const ProFormCheckbox = createFormItemComponent({
   InputComp: Checkbox.Group,
   valueType: "checkbox",
   name: "PFromCheckbox",
 });
-export const FormRadio = createFormItemComponent({
+export const ProFormRadio = createFormItemComponent({
   InputComp: Radio.Group,
   valueType: "radio",
   name: "PFromRadio",
 });
-export const FormSwitch = createFormItemComponent({
+export const ProFormSwitch = createFormItemComponent({
   InputComp: Switch,
   valueType: "switch",
   name: "PFromSwitch",
 });
-export const FormCascader = createFormItemComponent({
+export const ProFormCascader = createFormItemComponent({
   InputComp: Cascader,
   valueType: "cascader",
   name: "PFormCascader",
