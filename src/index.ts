@@ -5,6 +5,8 @@ import App from "./App.vue";
 import { createConfig } from "@vue-start/config";
 import { createRequest, ContentTypeInterceptor } from "@vue-start/request";
 
+import "ant-design-vue/dist/antd.css";
+
 const request = createRequest({}, [ContentTypeInterceptor]);
 const config = createConfig();
 

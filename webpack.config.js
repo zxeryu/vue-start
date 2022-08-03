@@ -9,7 +9,7 @@ module.exports = {
     filename: "build.js",
   },
   resolve: {
-    extensions: [".js", ".ts", ".vue"],
+    extensions: [".js", ".jsx", ".ts", ".tsx", ".vue"],
   },
   mode: "development",
   optimization: {},
@@ -20,8 +20,12 @@ module.exports = {
         loader: "vue-loader",
       },
       {
-        test: /\.(ts|js)$/,
+        test: /\.(tsx|ts|js|jsx)$/,
         loader: "babel-loader",
+      },
+      {
+        test: /\.(css)$/,
+        use: ["style-loader", "css-loader"],
       },
     ],
   },

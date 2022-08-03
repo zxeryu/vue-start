@@ -1,13 +1,12 @@
 {
-  "presets": [
+  "presets": [["@babel/preset-env"]],
+  "plugins": [
     [
-      "@babel/preset-env",
+      "@babel/plugin-transform-typescript",
       {
-        "targets": {
-          "node": "12"
-        }
+        "isTSX": true
       }
-    ]
-  ],
-  "plugins": [["@babel/plugin-transform-typescript"]]
+    ],
+    "@vue/babel-plugin-jsx"
+  ]
 }

@@ -12,9 +12,9 @@
     "allowSyntheticDefaultImports": true,
     "esModuleInterop": true,
     "moduleResolution": "Node",
-    "jsx": "react",
-    "module": "commonjs",
-    "target": "es5",
+    "jsx": "preserve",
+    "module": "esnext",
+    "target": "esnext",
     "pretty": true,
     "strict": true,
     //    "sourceMap": true
