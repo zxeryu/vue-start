@@ -1,9 +1,35 @@
 import { defineComponent, ref } from "vue";
-import { ProForm, ProFormText, ProFormTextArea, ProFormSelect, ProFormList } from "@vue-start/antd-pro";
+import {
+  ProForm,
+  ProFormText,
+  ProFormTextArea,
+  ProFormSelect,
+  ProFormList,
+  ProSchemaForm,
+  ProSearchForm,
+} from "@vue-start/antd-pro";
 import { Button } from "ant-design-vue";
 
 export const Comp = defineComponent(() => {
   const formRef = ref();
+
+  const columns = [
+    { title: "aaa", dataIndex: "aaa", valueType: "text" },
+    {
+      title: "select",
+      dataIndex: "select",
+      valueType: "select",
+      formItemProps: {
+        rules: [{ required: true }],
+      },
+      formFieldProps: {
+        options: [
+          { value: "aaa", label: "aaa" },
+          { value: "bbb", label: "bbb" },
+        ],
+      },
+    },
+  ];
 
   return () => {
     console.log("##########", formRef.value);
@@ -38,6 +64,32 @@ export const Comp = defineComponent(() => {
             submit
           </Button>
         </ProForm>
+        <ProSchemaForm
+          onFinish={(values) => {
+            console.log("######", values);
+          }}
+          columns={columns}
+          formElementMap={{ text: ProFormText, select: ProFormSelect }}
+          v-slots={{
+            extra: () => {
+              return (
+                <div>
+                  <Button type={"primary"} htmlType={"submit"}>
+                    submit
+                  </Button>
+                </div>
+              );
+            },
+          }}
+        />
+        <ProSearchForm
+          onFinish={(values) => {
+            console.log("######search", values);
+          }}
+          columns={columns}
+          formElementMap={{ text: ProFormText, select: ProFormSelect }}
+          debounceKeys={["aaa"]}
+        />
       </div>
     );
   };
