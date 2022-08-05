@@ -4,7 +4,7 @@ import { FormItemProps } from "ant-design-vue/lib/form/FormItem";
 import { DescriptionsItemProp } from "ant-design-vue/lib/descriptions";
 
 export type TColumn = ColumnProps & {
-  valueType: TValueType; //展示组件类型
+  valueType?: TValueType; //展示组件类型
   formValueType?: TValueType; //录入组件类型 如不存在，默认取valueType的值
   showProps?: TextProps; //Typography.Text作为文字展示组件的props
   formItemProps?: FormItemProps; //FormItem props

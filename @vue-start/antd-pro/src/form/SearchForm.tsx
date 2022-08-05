@@ -17,7 +17,7 @@ const proSearchFormProps = () => ({
   /**
    * 初始化触发 onFinish
    */
-  initEmit: { type: Boolean, default: undefined },
+  initEmit: { type: Boolean, default: true },
   /**
    *  模式 自动触发或者手动触发 onFinish
    */

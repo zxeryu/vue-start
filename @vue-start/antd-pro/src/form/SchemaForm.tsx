@@ -29,7 +29,6 @@ export const ProSchemaForm = defineComponent<ProSchemaFormProps>({
       if (!props.formElementMap || size(props.formElementMap) <= 0) {
         return null;
       }
-      console.log("@@@@@@@#@#@#@#", props.needRules);
       return map(props.columns, (item) => getFormItemEl(props.formElementMap, item, props.needRules));
     });
 
