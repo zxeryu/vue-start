@@ -187,7 +187,7 @@ export const ProCurdListConnect = defineComponent({
   setup: () => {
     const { listProps } = useProCurdModule();
     return () => {
-      return <ProCurdList {...listProps} />;
+      return <ProCurdList {...omit(listProps, "slots")} v-slots={get(listProps, "slots")} />;
     };
   },
 });

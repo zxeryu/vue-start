@@ -12,9 +12,11 @@ export type TColumn = ColumnProps & {
   search?: boolean; //是否加入搜索
   hideInTable?: boolean; //在table中隐藏
   hideInForm?: boolean; //在form中隐藏
+  hideInDetail?: boolean; //在desc中隐藏
   searchSort?: boolean; //SearchForm中排序
   tableSort?: boolean; //Table columns中排序
   formSort?: boolean; //Form中排序
+  descSort?: boolean; //Desc中排序
   //拓展属性
   extra?: {
     desc?: DescriptionsItemProp; //DescriptionsItem props

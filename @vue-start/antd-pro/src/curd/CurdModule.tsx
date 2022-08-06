@@ -10,6 +10,16 @@ import { TColumns } from "../../types";
 import { provideProCurdModule } from "./ctx";
 import { ITableOperate } from "../table";
 import { ProCurdListProps } from "./CurdList";
+import { ProCurdFormProps } from "./CurdForm";
+import { DescriptionsProps } from "ant-design-vue";
+
+export enum CurdCurrentMode {
+  ADD = "ADD",
+  EDIT = "EDIT",
+  DETAIL = "DETAIL",
+}
+
+export type ICurdCurrentMode = keyof typeof CurdCurrentMode;
 
 export interface ICurdState extends Record<string, any> {
   //list
@@ -19,11 +29,11 @@ export interface ICurdState extends Record<string, any> {
     dataSource: Record<string, any>[];
     [key: string]: any;
   };
+  //mode
+  mode?: ICurdCurrentMode;
   //detail add edit
   detailLoading?: boolean; //详情加载状态
   detailData?: Record<string, any>; //详情数据
-  //add
-  addContinue?: boolean; //是否显示继续添加
   //add edit
   operateLoading?: boolean; //修改、保存 等等
 }
@@ -44,12 +54,12 @@ export interface IOperate {
   edit?: BooleanOrFun;
   editLabel?: string | VNode;
   onEdit?: (record: Record<string, any>) => void; //触发编辑
-  onEditExecute?: () => void; //编辑完成触发
+  onEditExecute?: (values: Record<string, any>) => void; //编辑完成触发
   //add
   add?: BooleanOrFun;
   addLabel?: string | VNode;
   onAdd?: () => void; //触发添加
-  onAddExecute?: () => void; //添加完成触发
+  onAddExecute?: (values: Record<string, any>) => void; //添加完成触发
   //delete
   delete?: BooleanOrFun;
   deleteLabel?: string | VNode;
@@ -68,9 +78,13 @@ const proCurdModuleProps = () => ({
    */
   operate: { type: Object as PropType<IOperate> },
   /**
-   * 列表Props
+   * 列表 或 详情 的唯一标识
    */
+  rowKey: { type: String, default: "id" },
+  /************************* 子组件props *******************************/
   listProps: { type: Object as PropType<ProCurdListProps> },
+  formProps: { type: Object as PropType<ProCurdFormProps> },
+  descProps: { type: Object as PropType<DescriptionsProps> },
 });
 
 type CurdModuleProps = Partial<ExtractPropTypes<ReturnType<typeof proCurdModuleProps>>>;
@@ -104,6 +118,16 @@ const CurdModule = defineComponent<CurdModuleProps>({
     });
 
     /**
+     * 非 hideInDetail columns
+     */
+    const descColumns = computed(() => {
+      return dealSort(
+        filter(columns.value, (item) => !item.hideInDetail),
+        "descSort",
+      );
+    });
+
+    /**
      *  非 hideInTable columns
      */
     const tableColumns = computed(() => {
@@ -132,13 +156,17 @@ const CurdModule = defineComponent<CurdModuleProps>({
     };
 
     provideProCurdModule({
+      rowKey: props.rowKey!,
       curdState,
       formColumns,
+      descColumns,
       tableColumns,
       searchColumns,
       operate,
       //
       listProps: props.listProps,
+      formProps: props.formProps,
+      descProps: props.descProps,
     });
 
     return () => {
