@@ -4,7 +4,7 @@ import { useProCurdModule } from "./ctx";
 import { CurdCurrentMode } from "./CurdModule";
 import { get, omit } from "lodash";
 import { ProCurdFormConnect } from "./CurdForm";
-import { setReactiveValue } from "../../../hooks";
+import { setReactiveValue } from "@vue-start/hooks";
 
 export const ProCurdModal = defineComponent<ModalProps>({
   props: {
