@@ -1,8 +1,8 @@
 import { defineComponent, ExtractPropTypes, PropType, reactive } from "vue";
-import { Button, Pagination, PaginationProps } from "ant-design-vue";
+import { Button, Pagination, PaginationProps, Popconfirm } from "ant-design-vue";
 import { useProModule } from "../core";
 import { useProCurdModule } from "./ctx";
-import { camelCase, concat, get, isArray, isNumber, mergeWith, omit, size } from "lodash";
+import { camelCase, concat, get, isArray, isFunction, isNumber, mergeWith, omit, size } from "lodash";
 import { ProSearchForm, ProSearchFormProps } from "../form";
 import { IOperateItem, ProTable, ProTableProps } from "../table";
 import { Slots } from "@vue/runtime-core";
@@ -65,7 +65,23 @@ export const ProCurdList = defineComponent<ProCurdListProps>({
     const tableOperateItems: IOperateItem[] = [
       prepareTableItem("detail"),
       prepareTableItem("edit"),
-      prepareTableItem("delete"),
+      {
+        value: "delete",
+        element: (record, item) => {
+          return (
+            <Popconfirm
+              key={item.value}
+              disabled={isFunction(item.disabled) ? item.disabled(record) : item.disabled}
+              onConfirm={() => {
+                operate.onDelete?.(record);
+              }}>
+              <Button type={"link"} danger>
+                {operate.deleteLabel}
+              </Button>
+            </Popconfirm>
+          );
+        },
+      },
     ];
 
     /******************* search pagination ********************/

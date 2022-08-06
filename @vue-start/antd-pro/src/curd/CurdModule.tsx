@@ -34,14 +34,15 @@ export enum CurdAddAction {
 
 export type ICurdAddAction = keyof typeof CurdAddAction;
 
+export interface IListData extends Record<string, any> {
+  total: number;
+  dataSource: Record<string, any>[];
+}
+
 export interface ICurdState extends Record<string, any> {
   //list
   listLoading?: boolean; //列表加载状态
-  listData?: {
-    total: number;
-    dataSource: Record<string, any>[];
-    [key: string]: any;
-  };
+  listData?: IListData;
   //mode
   mode?: ICurdCurrentMode;
   //detail add edit
@@ -198,12 +199,12 @@ export const ProCurd = defineComponent<ProCurdModuleProps>({
     ...ProModule.props,
     ...proCurdModuleProps(),
   },
-  setup: (props, slots) => {
+  setup: (props, { slots }) => {
     const moduleKeys = keys(ProModule.props);
     return () => {
       return (
         <ProModule {...pick(props, moduleKeys)}>
-          <CurdModule {...omit(props, moduleKeys)} v-slots={slots} />
+          <CurdModule {...omit(props, moduleKeys)}>{slots.default?.()}</CurdModule>
         </ProModule>
       );
     };

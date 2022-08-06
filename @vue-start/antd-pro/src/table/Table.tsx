@@ -1,6 +1,6 @@
 import { computed, defineComponent, ExtractPropTypes, PropType, VNode } from "vue";
 import { Button, Table, TableProps } from "ant-design-vue";
-import { map, omit, merge, size, sortBy, filter, isFunction } from "lodash";
+import { map, omit, merge, size, sortBy, filter, isFunction, get } from "lodash";
 import { TColumns } from "../../types";
 import { ColumnType } from "ant-design-vue/lib/table/interface";
 import { getItemEl } from "../core";
@@ -8,7 +8,7 @@ import { getItemEl } from "../core";
 export interface IOperateItem {
   value: string | number;
   label?: string | VNode;
-  element?: (record: Record<string, any>) => VNode;
+  element?: (record: Record<string, any>, item: IOperateItem) => VNode;
   show?: boolean | ((record: Record<string, any>) => boolean);
   disabled?: boolean | ((record: Record<string, any>) => boolean);
   onClick?: (record: Record<string, any>) => void;
@@ -70,8 +70,10 @@ export const ProTable = defineComponent<ProTableProps>({
       const operate = props.operate;
       //处理operate
       if (operate && size(operate.items) > 0) {
+        //将itemState补充的信息拼到item中
+        const completeItems = map(operate.items, (i) => ({ ...i, ...get(operate.itemState, i.value) }));
         //排序
-        const operateList = sortBy(operate.items, (item) => item.sort);
+        const operateList = sortBy(completeItems, (item) => item.sort);
 
         columns.push({
           ...props.column,
@@ -90,18 +92,14 @@ export const ProTable = defineComponent<ProTableProps>({
                 {map(validList, (item) => {
                   // 自定义
                   if (isFunction(item.element)) {
-                    return item.element(record);
+                    return item.element(record, item);
                   }
 
-                  let disabled: undefined | boolean = item.disabled as any;
-                  if (isFunction(item.disabled)) {
-                    disabled = item.disabled(record);
-                  }
                   return (
                     <Button
                       key={item.value}
                       type={"link"}
-                      disabled={disabled}
+                      disabled={isFunction(item.disabled) ? item.disabled(record) : item.disabled}
                       onClick={() => {
                         item.onClick?.(record);
                       }}>
