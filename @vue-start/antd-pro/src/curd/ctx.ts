@@ -4,7 +4,7 @@ import { TColumns } from "../../types";
 import { ICurdState, IOperate } from "./CurdModule";
 import { ProCurdListProps } from "./CurdList";
 import { ProCurdFormProps } from "./CurdForm";
-import { DescriptionsProps } from "ant-design-vue";
+import { DescriptionsProps, ModalProps } from "ant-design-vue";
 
 const ProCurdModuleKey = Symbol("pro-curd-module");
 
@@ -20,6 +20,7 @@ export interface IProCurdModuleProvide {
   listProps?: ProCurdListProps;
   formProps?: ProCurdFormProps;
   descProps?: DescriptionsProps;
+  modalProps?: ModalProps;
 }
 
 export const useProCurdModule = (): IProCurdModuleProvide => inject(ProCurdModuleKey) as IProCurdModuleProvide;

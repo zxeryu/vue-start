@@ -11,8 +11,11 @@ import { provideProCurdModule } from "./ctx";
 import { ITableOperate } from "../table";
 import { ProCurdListProps } from "./CurdList";
 import { ProCurdFormProps } from "./CurdForm";
-import { DescriptionsProps } from "ant-design-vue";
+import { DescriptionsProps, ModalProps } from "ant-design-vue";
 
+/**
+ * curd 操作模式
+ */
 export enum CurdCurrentMode {
   ADD = "ADD",
   EDIT = "EDIT",
@@ -20,6 +23,16 @@ export enum CurdCurrentMode {
 }
 
 export type ICurdCurrentMode = keyof typeof CurdCurrentMode;
+
+/**
+ * curd add 模式下 标记 "确定" "确定并继续" 触发
+ */
+export enum CurdAddAction {
+  NORMAL = "NORMAL",
+  CONTINUE = "CONTINUE",
+}
+
+export type ICurdAddAction = keyof typeof CurdAddAction;
 
 export interface ICurdState extends Record<string, any> {
   //list
@@ -36,6 +49,7 @@ export interface ICurdState extends Record<string, any> {
   detailData?: Record<string, any>; //详情数据
   //add edit
   operateLoading?: boolean; //修改、保存 等等
+  addAction?: ICurdAddAction; //
 }
 
 type BooleanOrFun = boolean | ((record: Record<string, any>) => boolean);
@@ -85,6 +99,7 @@ const proCurdModuleProps = () => ({
   listProps: { type: Object as PropType<ProCurdListProps> },
   formProps: { type: Object as PropType<ProCurdFormProps> },
   descProps: { type: Object as PropType<DescriptionsProps> },
+  modalProps: { type: Object as PropType<ModalProps> },
 });
 
 type CurdModuleProps = Partial<ExtractPropTypes<ReturnType<typeof proCurdModuleProps>>>;
@@ -167,6 +182,7 @@ const CurdModule = defineComponent<CurdModuleProps>({
       listProps: props.listProps,
       formProps: props.formProps,
       descProps: props.descProps,
+      modalProps: props.modalProps,
     });
 
     return () => {
@@ -177,7 +193,7 @@ const CurdModule = defineComponent<CurdModuleProps>({
 
 export type ProCurdModuleProps = CurdModuleProps & ProModuleProps;
 
-export const ProCurdModule = defineComponent<ProCurdModuleProps>({
+export const ProCurd = defineComponent<ProCurdModuleProps>({
   props: {
     ...ProModule.props,
     ...proCurdModuleProps(),

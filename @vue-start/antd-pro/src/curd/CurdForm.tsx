@@ -3,7 +3,7 @@ import { ProForm, ProFormProps } from "../form";
 import { useProCurdModule } from "./ctx";
 import { get, map, omit } from "lodash";
 import { useProModule } from "../core";
-import { CurdCurrentMode } from "./CurdModule";
+import { CurdAddAction, CurdCurrentMode } from "./CurdModule";
 import { Button, ButtonProps } from "ant-design-vue";
 
 /**
@@ -18,7 +18,14 @@ export const OkButton = defineComponent<ButtonProps>({
 
     return () => {
       return (
-        <Button type={"primary"} htmlType={"submit"} {...(props as any)} loading={curdState.operateLoading}>
+        <Button
+          type={"primary"}
+          htmlType={"submit"}
+          onClick={() => {
+            curdState.addAction = CurdAddAction.NORMAL;
+          }}
+          {...(props as any)}
+          loading={curdState.operateLoading}>
           {slots.default ? slots.default() : "确定"}
         </Button>
       );
@@ -38,7 +45,14 @@ export const ContinueAddButton = defineComponent<ButtonProps>({
 
     return () => {
       return (
-        <Button type={"primary"} htmlType={"submit"} {...(props as any)} loading={curdState.operateLoading}>
+        <Button
+          type={"primary"}
+          htmlType={"submit"}
+          onClick={() => {
+            curdState.addAction = CurdAddAction.CONTINUE;
+          }}
+          {...(props as any)}
+          loading={curdState.operateLoading}>
           {slots.default ? slots.default() : "确定并继续"}
         </Button>
       );
