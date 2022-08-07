@@ -26,7 +26,7 @@ export default [
       }),
       VuePlugin(),
       babel({
-        configFile: "../../babel.config.json",
+        configFile: "../../rollup.babel.ts.json",
         babelHelpers: "bundled",
         extensions: [".ts", ".tsx", ".mjs", ".js", ".jsx"],
       }),
