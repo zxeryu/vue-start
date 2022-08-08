@@ -1,6 +1,6 @@
 import { computed, defineComponent, ExtractPropTypes, PropType } from "vue";
-import { ProForm, ProFormProps } from "./Form";
 import { TColumns } from "../../types";
+import { ProForm, ProFormProps } from "./Form";
 import { keys, map, omit, size } from "lodash";
 import { getFormItemEl } from "../core";
 
@@ -18,7 +18,7 @@ const proSchemaFormProps = () => ({
 
 export type ProSchemaFormProps = Partial<ExtractPropTypes<ReturnType<typeof proSchemaFormProps>>> & ProFormProps;
 
-export const ProSchemaForm = defineComponent<ProSchemaFormProps>({
+export const ProSchemaForm = defineComponent({
   name: "PSchemaForm",
   props: {
     ...ProForm.props,
@@ -33,7 +33,6 @@ export const ProSchemaForm = defineComponent<ProSchemaFormProps>({
     });
 
     const invalidKeys = keys(proSchemaFormProps());
-
     return () => {
       return (
         <ProForm ref={(el: any) => expose({ ...el })} {...omit(props, invalidKeys)}>

@@ -1,20 +1,15 @@
-import { defineComponent, ref } from "vue";
+import { defineComponent } from "vue";
 import {
   ProForm,
   ProFormText,
-  ProFormTextArea,
+  ProSubmitButton,
   ProFormSelect,
-  ProFormList,
-  ProSchemaForm,
   ProSearchForm,
-} from "@vue-start/antd-pro";
-import { Button } from "ant-design-vue";
+  ProSchemaForm,
+} from "@vue-start/element-pro";
+import "element-plus/dist/index.css";
 
-import "ant-design-vue/dist/antd.css";
-
-export const Comp = defineComponent(() => {
-  const formRef = ref();
-
+export default defineComponent(() => {
   const columns = [
     { title: "aaa", dataIndex: "aaa", valueType: "text" },
     {
@@ -36,16 +31,20 @@ export const Comp = defineComponent(() => {
   return () => {
     return (
       <div>
+        content
         <ProForm
-          ref={formRef}
-          onFinish={(values) => {
-            console.log("###", values);
+          onFinish={(values: Record<string, any>) => {
+            console.log("##########", values);
+          }}
+          onFinishFailed={(invalidFields: any) => {
+            console.log("##########", invalidFields);
           }}>
-          <ProFormText name={"name"} label={"Name"} rules={[{ required: true }]} />
-          <ProFormTextArea name={"area"} label={"Area"} />
+          <ProFormText name={"name"} label={"Name"} rules={[{ required: true, message: "required" }]} />
+          <ProFormText name={"area"} label={"Area"} fieldProps={{ type: "textarea" }} />
           <ProFormSelect
             name={"select"}
             label={"Select"}
+            rules={[{ required: true, message: "required" }]}
             fieldProps={{
               options: [
                 { value: "aaa", label: "aaa" },
@@ -53,35 +52,22 @@ export const Comp = defineComponent(() => {
               ],
             }}
           />
-          <ProFormList name={"list"}>
-            <div style={{ display: "flex" }}>
-              <ProFormText name={"a"} label={"a"} rules={[{ required: true }]} />
-              <ProFormText name={"b"} label={"b"} />
-              <ProFormText name={"c"} label={"c"} />
-            </div>
-          </ProFormList>
 
-          <Button type={"primary"} htmlType={"submit"}>
-            submit
-          </Button>
+          <ProSubmitButton>提交</ProSubmitButton>
         </ProForm>
         <ProSchemaForm
-          onFinish={(values) => {
+          onFinish={(values: any) => {
             console.log("######", values);
           }}
           columns={columns}
           formElementMap={{ text: ProFormText, select: ProFormSelect }}>
-          <div>
-            <Button type={"primary"} htmlType={"submit"}>
-              submit
-            </Button>
-          </div>
+          <ProSubmitButton>submit</ProSubmitButton>
         </ProSchemaForm>
         <ProSearchForm
-          onFinish={(values) => {
+          onFinish={(values: any) => {
             console.log("######search", values);
           }}
-          columns={columns}
+          columns={columns as any}
           formElementMap={{ text: ProFormText, select: ProFormSelect }}
           debounceKeys={["aaa"]}
         />
@@ -89,5 +75,3 @@ export const Comp = defineComponent(() => {
     );
   };
 });
-
-export default Comp;

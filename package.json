@@ -20,6 +20,7 @@
     "@bridge-start/persist": "^0.1.1",
     "ant-design-vue": "^3.2.5",
     "axios": "^0.21.0",
+    "element-plus": "^2.2.12",
     "lodash": "^4.17.20",
     "rxjs": "^7.3.0",
     "vue": "^3.2.31",

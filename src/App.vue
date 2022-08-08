@@ -9,6 +9,7 @@
         <router-link to="/network">Network</router-link>
         <router-link to="/hooks">Hooks</router-link>
         <router-link to="/comp">Comp</router-link>
+        <router-link to="/comp-el">Comp-El</router-link>
       </div>
     </div>
     <router-view />

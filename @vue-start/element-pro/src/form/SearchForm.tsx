@@ -1,8 +1,8 @@
 import { defineComponent, ExtractPropTypes, PropType, reactive, toRaw } from "vue";
-import { keys, omit, clone, size, some, debounce, get } from "lodash";
-import { useEffect } from "@vue-start/hooks";
-import { getValidValues } from "../util";
 import { ProSchemaForm, ProSchemaFormProps } from "./SchemaForm";
+import { clone, debounce, get, keys, omit, size, some } from "lodash";
+import { getValidValues } from "../util";
+import { useEffect } from "@vue-start/hooks";
 
 export enum SearchMode {
   //自动触发搜索
@@ -28,15 +28,16 @@ const proSearchFormProps = () => ({
   debounceKeys: { type: Array as PropType<string[]> },
   debounceTime: { type: Number, default: 800 },
   //
-  layout: { type: String, default: "inline" },
+  inline: { type: Boolean, default: true },
 });
 
-export type ProSearchFormProps = Partial<ExtractPropTypes<ReturnType<typeof proSearchFormProps>>> & ProSchemaFormProps;
+export type ProSearchFormProps = Partial<ExtractPropTypes<ReturnType<typeof proSearchFormProps>>> &
+  Omit<ProSchemaFormProps, "inline">;
 
 export const ProSearchForm = defineComponent<ProSearchFormProps>({
   name: "PSearchForm",
   props: {
-    ...(omit(ProSchemaForm.props, "layout") as any),
+    ...(omit(ProSchemaForm.props, "inline") as any),
     ...proSearchFormProps(),
   },
   setup: (props, { slots, emit, expose }) => {
@@ -95,7 +96,7 @@ export const ProSearchForm = defineComponent<ProSearchFormProps>({
       return (
         <ProSchemaForm
           ref={(el: any) => expose({ ...el })}
-          layout={props.layout}
+          inline={props.inline}
           {...omit(props, ...invalidKeys, "model")}
           needRules={false}
           model={formState}

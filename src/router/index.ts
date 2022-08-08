@@ -32,6 +32,11 @@ const routes: RouteRecordRaw[] = [
     name: "Comp",
     component: () => import("../views/Comp"),
   },
+  {
+    path: "/comp-el",
+    name: "CompElement",
+    component: () => import("../views/CompElement"),
+  },
 ];
 
 const router = createRouter({
