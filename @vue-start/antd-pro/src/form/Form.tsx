@@ -111,7 +111,7 @@ export const ProForm = defineComponent<ProFormProps>({
         };
       }
       //对外提供form methods
-      expose({ ...el });
+      expose(el);
     };
 
     //pro-form 属性keys

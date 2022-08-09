@@ -122,12 +122,7 @@ export const ProTable = defineComponent<ProTableProps>({
 
     return () => {
       return (
-        <Table
-          ref={(el: any) => expose({ ...el })}
-          {...omit(props, invalidKeys)}
-          columns={columns.value}
-          v-slots={slots}
-        />
+        <Table ref={(el: any) => expose(el)} {...omit(props, invalidKeys)} columns={columns.value} v-slots={slots} />
       );
     };
   },
