@@ -95,7 +95,7 @@ export const ProSearchForm = defineComponent<ProSearchFormProps>({
     return () => {
       return (
         <ProSchemaForm
-          ref={(el: any) => expose({ ...el })}
+          ref={(el: any) => expose(el)}
           inline={props.inline}
           {...omit(props, ...invalidKeys, "model")}
           needRules={false}

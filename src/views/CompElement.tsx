@@ -6,6 +6,7 @@ import {
   ProFormSelect,
   ProSearchForm,
   ProSchemaForm,
+  ProTable,
 } from "@vue-start/element-pro";
 import "element-plus/dist/index.css";
 
@@ -70,6 +71,71 @@ export default defineComponent(() => {
           columns={columns as any}
           formElementMap={{ text: ProFormText, select: ProFormSelect }}
           debounceKeys={["aaa"]}
+        />
+        <ProTable
+          operate={{
+            items: [
+              {
+                value: "detail",
+                label: "detail",
+                onClick: (record) => {
+                  console.log("###detail", record);
+                },
+              },
+              {
+                value: "edit",
+                label: "edit",
+                onClick: (record) => {
+                  console.log("###edit", record);
+                },
+              },
+              {
+                value: "delete",
+                label: "delete",
+                onClick: (record) => {
+                  console.log("###delete", record);
+                },
+              },
+            ],
+          }}
+          columns={[
+            {
+              title: "Date",
+              dataIndex: "date",
+              width: "180",
+            },
+            {
+              title: "Name",
+              dataIndex: "name",
+              width: "180",
+            },
+            {
+              title: "Address",
+              dataIndex: "address",
+            },
+          ]}
+          data={[
+            {
+              date: "2016-05-03",
+              name: "Tom",
+              address: "No. 189, Grove St, Los Angeles",
+            },
+            {
+              date: "2016-05-02",
+              name: "Tom",
+              address: "No. 189, Grove St, Los Angeles",
+            },
+            {
+              date: "2016-05-04",
+              name: "Tom",
+              address: "No. 189, Grove St, Los Angeles",
+            },
+            {
+              date: "2016-05-01",
+              name: "Tom",
+              address: "No. 189, Grove St, Los Angeles",
+            },
+          ]}
         />
       </div>
     );

@@ -1,5 +1,5 @@
 import { computed, defineComponent, ExtractPropTypes, PropType, reactive, ref, toRaw } from "vue";
-import { ElForm, FormInstance, FormProps, ElFormItem, FormItemProps } from "element-plus";
+import { ElForm, FormInstance, ElFormItem, FormItemProps } from "element-plus";
 import { forEach, keys, omit } from "lodash";
 import { UnwrapNestedRefs } from "@vue/reactivity";
 import { DefineComponent } from "@vue/runtime-core";
@@ -7,6 +7,7 @@ import { BooleanObjType, BooleanRulesObjType } from "../../types";
 import { useEffect } from "@vue-start/hooks";
 import { provideProForm } from "./ctx";
 import { getValidValues } from "../util";
+import { FormItemRule } from "element-plus/es/tokens/form";
 
 const proFormItemProps = () => ({
   name: { type: [String, Array] as PropType<string | (string | number)[]> },
@@ -35,10 +36,6 @@ export const ProFormItem = defineComponent<ProFormItemProps>({
 });
 
 const proFormProps = () => ({
-  /**
-   *  表单提交回调
-   */
-  onFinish: { type: Function as PropType<(showValues: any, values: any) => void> },
   /**
    *  子组件是否只读样式
    */
@@ -69,9 +66,30 @@ const proFormProps = () => ({
   provideExtra: { type: Object as PropType<{ [key: string]: any }> },
 });
 
-export type ProFormProps = Partial<ExtractPropTypes<ReturnType<typeof proFormProps>>> & FormProps & Record<string, any>;
+interface FormProps {
+  model?: Record<string, any>;
+  rules?: FormItemRule[];
+  labelPosition?: "left" | "right" | "top";
+  labelWidth?: string | number;
+  labelSuffix?: string;
+  inline?: boolean;
+  inlineMessage?: boolean;
+  statusIcon?: boolean;
+  showMessage?: boolean;
+  size?: "large" | "default" | "small";
+  disabled?: boolean;
+  validateOnRuleChange?: boolean;
+  hideRequiredAsterisk?: boolean;
+  scrollToError?: boolean;
+}
 
-export const ProForm = defineComponent({
+export type ProFormProps = Partial<ExtractPropTypes<ReturnType<typeof proFormProps>>> &
+  FormProps & {
+    onFinish?: (showValues: Record<string, any>, values: Record<string, any>) => void;
+    onFinishFailed?: (invalidFields: Record<string, any>) => void;
+  }; //emit;
+
+export const ProForm = defineComponent<ProFormProps>({
   props: {
     ...ElForm.props,
     ...proFormProps(),

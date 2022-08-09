@@ -35,7 +35,7 @@ export const ProSchemaForm = defineComponent({
     const invalidKeys = keys(proSchemaFormProps());
     return () => {
       return (
-        <ProForm ref={(el: any) => expose({ ...el })} {...omit(props, invalidKeys)}>
+        <ProForm ref={(el: any) => expose(el)} {...omit(props, invalidKeys)}>
           {formItemList.value}
           {slots.default?.()}
         </ProForm>

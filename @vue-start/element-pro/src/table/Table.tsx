@@ -1,8 +1,8 @@
-import { computed, defineComponent, ExtractPropTypes, PropType, VNode } from "vue";
-import { Button, Table, TableProps } from "ant-design-vue";
-import { map, omit, merge, size, sortBy, filter, isFunction, get, keys } from "lodash";
-import { TColumns } from "../../types";
-import { ColumnType } from "ant-design-vue/lib/table/interface";
+import { computed, defineComponent, ExtractPropTypes, isVNode, PropType, VNode } from "vue";
+import { ElTable, ElTableColumn, ElButton } from "element-plus";
+import { TableProps } from "element-plus/es/components/table/src/table/defaults";
+import { TableColumnCtx, TColumns } from "../../types";
+import { filter, get, isFunction, keys, map, merge, omit, size, sortBy } from "lodash";
 import { getItemEl } from "../core";
 
 export interface IOperateItem {
@@ -16,7 +16,7 @@ export interface IOperateItem {
 }
 
 export interface ITableOperate {
-  column?: ColumnType;
+  column?: TableColumnCtx<any>;
   items?: IOperateItem[];
   itemState?: { [key: string]: Omit<IOperateItem, "value"> };
 }
@@ -31,7 +31,7 @@ const proTableProps = () => ({
   /**
    * 公共column，会merge到columns item中
    */
-  column: { type: Object as PropType<ColumnType> },
+  column: { type: Object as PropType<TableColumnCtx<any>> },
   //
   columns: { type: Array as PropType<TColumns> },
   /**
@@ -40,11 +40,16 @@ const proTableProps = () => ({
   elementMap: { type: Object as PropType<{ [key: string]: any }> },
 });
 
-export type ProTableProps = Partial<ExtractPropTypes<ReturnType<typeof proTableProps>>> & Omit<TableProps, "columns">;
+export type ProTableProps = Partial<ExtractPropTypes<ReturnType<typeof proTableProps>>> &
+  Omit<TableProps<any>, "tableLayout" | "flexible" | "data"> & {
+    tableLayout?: "fixed" | "auto";
+    flexible?: boolean;
+    data?: any;
+  };
 
 export const ProTable = defineComponent<ProTableProps>({
   props: {
-    ...Table.props,
+    ...ElTable.props,
     ...proTableProps(),
   },
   setup: (props, { slots, expose }) => {
@@ -53,15 +58,19 @@ export const ProTable = defineComponent<ProTableProps>({
       const columns = map(props.columns, (item) => {
         //merge从共item
         const nextItem = merge(props.column, item);
-        if (!item.customRender) {
-          nextItem.customRender = ({ text }) => {
-            return getItemEl(
-              props.elementMap,
-              {
-                ...item,
-                showProps: { ...item.showProps, content: props.columnEmptyText },
-              },
-              text,
+        if (!item.customRender || !item.formatter) {
+          nextItem.customRender = ({ text }: any) => {
+            return (
+              getItemEl(
+                props.elementMap,
+                {
+                  ...item,
+                  showProps: { ...item.showProps, content: props.columnEmptyText },
+                },
+                text,
+              ) ||
+              text ||
+              props.columnEmptyText
             );
           };
         }
@@ -77,10 +86,11 @@ export const ProTable = defineComponent<ProTableProps>({
         const operateList = sortBy(completeItems, (item) => item.sort);
 
         columns.push({
+          title: "操作",
           valueType: "option",
           fixed: "right",
           ...props.column,
-          customRender: ({ record }) => {
+          customRender: ({ record }: any) => {
             const validList = filter(operateList, (item) => {
               if (item.show && isFunction(item.show)) {
                 return item.show(record);
@@ -97,15 +107,15 @@ export const ProTable = defineComponent<ProTableProps>({
                   }
 
                   return (
-                    <Button
+                    <ElButton
                       key={item.value}
-                      type={"link"}
+                      link
                       disabled={isFunction(item.disabled) ? item.disabled(record) : item.disabled}
                       onClick={() => {
                         item.onClick?.(record);
                       }}>
                       {item.label}
-                    </Button>
+                    </ElButton>
                   );
                 })}
               </div>
@@ -115,19 +125,44 @@ export const ProTable = defineComponent<ProTableProps>({
         });
       }
 
-      return columns as any;
+      return columns;
     });
 
     const invalidKeys = keys(proTableProps());
 
     return () => {
       return (
-        <Table
-          ref={(el: any) => expose({ ...el })}
+        <ElTable
+          ref={(el: any) => {
+            expose(el);
+          }}
           {...omit(props, invalidKeys)}
-          columns={columns.value}
-          v-slots={slots}
-        />
+          v-slots={omit(slots, "default")}>
+          {map(columns.value, (item) => {
+            const formatter = (record: Record<string, any>, column: TableColumnCtx<any>, value: any, index: number) => {
+              if (item.formatter) {
+                return item.formatter(record, column, value, index);
+              }
+              if (item.customRender) {
+                return item.customRender({ value, text: value, record, column } as any);
+              }
+              return null;
+            };
+
+            return (
+              <ElTableColumn
+                key={item.dataIndex || item.prop}
+                {...omit(item, "title", "label", "renderHeader", "prop", "dataIndex", "formatter", "customRender")}
+                label={isVNode(item.title) ? undefined : item.title || item.label}
+                renderHeader={isVNode(item.title) ? () => item.title as any : undefined}
+                prop={(item.dataIndex as any) || item.prop}
+                formatter={item.formatter || item.customRender ? (formatter as any) : undefined}
+              />
+            );
+          })}
+
+          {slots.default?.()}
+        </ElTable>
       );
     };
   },
