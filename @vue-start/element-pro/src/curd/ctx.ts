@@ -4,7 +4,7 @@ import { TColumns } from "../../types";
 import { ICurdState, IOperate } from "./CurdModule";
 import { ProCurdListProps } from "./CurdList";
 import { ProCurdFormProps } from "./CurdForm";
-import { ElDescriptionsProps } from "./CurdDesc";
+import { DescriptionsProps } from "./CurdDesc";
 import { ModalProps } from "./CurdModal";
 
 const ProCurdModuleKey = Symbol("pro-curd-module");
@@ -20,7 +20,7 @@ export interface IProCurdModuleProvide {
   /******************子组件参数*******************/
   listProps?: ProCurdListProps;
   formProps?: ProCurdFormProps;
-  descProps?: ElDescriptionsProps;
+  descProps?: DescriptionsProps;
   modalProps?: ModalProps;
 }
 

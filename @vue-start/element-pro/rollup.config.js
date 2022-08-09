@@ -22,19 +22,19 @@ export default [
     plugins: [
       commonjs(),
       resolve({
-        extensions: [".ts", ".js"],
+        extensions: [".ts", ".tsx", ".js"],
       }),
       VuePlugin(),
       babel({
-        configFile: "../../rollup.babel.ts.json",
+        configFile: "../../babel.config.json",
         babelHelpers: "bundled",
         extensions: [".ts", ".tsx", ".mjs", ".js", ".jsx"],
       }),
     ],
-    external: ["vue"],
+    external: ["element-plus", "lodash", "vue", "rxjs", "rxjs/operators", "@vue-start/hooks", "@vue-start/request"],
   },
   {
-    input: "../../.tmp/@vue-start/config/index.d.ts",
+    input: "../../.tmp/@vue-start/antd-pro/index.d.ts",
     output: [{ file: "dist/index.d.ts", format: "es" }],
     plugins: [dts()],
   },
