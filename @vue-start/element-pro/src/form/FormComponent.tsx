@@ -9,11 +9,10 @@ import {
   ElSwitch,
   ElCascader,
   ElButton,
-  ButtonProps,
 } from "element-plus";
 
 import { createFormItemComponent } from "./createFormItemComponent";
-import { defineComponent } from "vue";
+import { Component, defineComponent } from "vue";
 import { useProForm } from "./ctx";
 import { ProSelect } from "../field";
 
@@ -68,7 +67,27 @@ export const ProFormCascader = createFormItemComponent({
   name: "PFormCascader",
 });
 
-export const ProSubmitButton = defineComponent<ButtonProps & Record<string, any>>({
+export interface ButtonProps {
+  size?: "default" | "small" | "large";
+  disabled?: boolean;
+  type?: "default" | "primary" | "success" | "warning" | "info" | "danger" | "text";
+  icon?: string | Component;
+  nativeType?: "button" | "submit" | "reset";
+  loading?: boolean;
+  loadingIcon?: string | Component;
+  plain?: boolean;
+  text?: boolean;
+  link?: boolean;
+  bg?: boolean;
+  autofocus?: boolean;
+  round?: boolean;
+  circle?: boolean;
+  color?: string;
+  dark?: boolean;
+  autoInsertSpace?: boolean;
+}
+
+export const ProSubmitButton = defineComponent<ButtonProps>({
   props: {
     ...ElButton.props,
   },
@@ -81,7 +100,7 @@ export const ProSubmitButton = defineComponent<ButtonProps & Record<string, any>
     };
 
     return () => {
-      return <ElButton onClick={handleClick} type={"submit"} {...(props as any)} v-slots={slots} />;
+      return <ElButton onClick={handleClick} {...(props as any)} v-slots={slots} />;
     };
   },
 });
