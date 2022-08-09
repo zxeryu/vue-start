@@ -1,6 +1,6 @@
 {
   "name": "@vue-start/antd-pro",
-  "version": "0.0.0",
+  "version": "0.1.0",
   "description": "> TODO: description",
   "author": "zx <zxpstudy@163.com>",
   "homepage": "https://github.com/zxeryu/vue-start#readme",
@@ -25,11 +25,11 @@
     "url": "https://github.com/zxeryu/vue-start/issues"
   },
   "peerDependencies": {
-    "ant-design-vue": ">=3.x",
-    "vue": ">= 3.x",
-    "rxjs": ">=7.x",
-    "lodash": ">= 4.x",
     "@vue-start/hooks": "*",
-    "@vue-start/request": "*"
+    "@vue-start/request": "*",
+    "ant-design-vue": ">=3.x",
+    "lodash": ">= 4.x",
+    "rxjs": ">=7.x",
+    "vue": ">= 3.x"
   }
 }
