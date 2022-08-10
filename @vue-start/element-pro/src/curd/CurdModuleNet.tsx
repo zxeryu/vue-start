@@ -31,22 +31,27 @@ export interface ICurdNetConvert {
  */
 export interface INetOperate extends IOperate {
   //list
+  listActor?: IRequestActor;
   onListDone?: (actor: IRequestActor) => void; //请求成功回调
   onListFail?: (actor: IRequestActor) => void; //请求失败回调
   onListBubble?: (type: "emit" | "done" | "fail", ...rest: any[]) => void;
   //detail
+  detailActor?: IRequestActor;
   onDetailDone?: (actor: IRequestActor) => void;
   onDetailFail?: (actor: IRequestActor) => void;
   onDetailBubble?: (type: "emit" | "done" | "fail", ...rest: any[]) => void;
   //edit
+  editActor?: IRequestActor;
   onEditDone?: (actor: IRequestActor) => void;
   onEditFail?: (actor: IRequestActor) => void;
   onEditBubble?: (type: "emit" | "execute" | "done" | "fail", ...rest: any[]) => void;
   //add
+  addActor?: IRequestActor;
   onAddDone?: (actor: IRequestActor) => void;
   onAddFail?: (actor: IRequestActor) => void;
   onAddBubble?: (type: "emit" | "execute" | "done" | "fail", ...rest: any[]) => void;
   //delete
+  deleteActor?: IRequestActor;
   onDeleteDone?: (actor: IRequestActor) => void;
   onDeleteFail?: (actor: IRequestActor) => void;
   onDeleteBubble?: (type: "emit" | "done" | "fail", ...rest: any[]) => void;
@@ -57,6 +62,8 @@ const proCurdNetProps = () => ({
   converts: { type: Object as PropType<ICurdNetConvert> },
   //
   operate: { type: Object as PropType<INetOperate> },
+  //
+  defaultAddRecord: { type: Object as PropType<Record<string, any>> },
 });
 
 export type ProCurdNetProps = Partial<ExtractPropTypes<ReturnType<typeof proCurdNetProps>>> &
@@ -67,7 +74,7 @@ export const ProCurdNet = defineComponent<ProCurdNetProps>({
     ...ProCurd.props,
     ...proCurdNetProps(),
   },
-  setup: (props, { slots }) => {
+  setup: (props, { slots, expose }) => {
     const { dispatchRequest, requestSubject$ } = useRequestProvide();
 
     const curdState: UnwrapNestedRefs<ICurdState> = props.curdState || reactive({ detailData: {} });
@@ -131,8 +138,8 @@ export const ProCurdNet = defineComponent<ProCurdNetProps>({
 
     /********************************** operate ***************************************/
     let prevListParams: Record<string, any> | undefined;
-    const handleSearch = () => {
-      actions.executeList(prevListParams);
+    const handleSearch = (extra?: Record<string, any>) => {
+      actions.executeList({ ...prevListParams, ...extra });
     };
 
     const operate: INetOperate = {
@@ -236,8 +243,14 @@ export const ProCurdNet = defineComponent<ProCurdNetProps>({
       };
     }, []);
 
+    expose({ actions, refreshList: handleSearch });
+
     return () => {
-      return <ProCurd {...omit(props, "converts")}>{slots.default?.()}</ProCurd>;
+      return (
+        <ProCurd {...omit(props, "converts", "operate", "curdState")} curdState={curdState} operate={operate}>
+          {slots.default?.()}
+        </ProCurd>
+      );
     };
   },
 });

@@ -54,6 +54,7 @@ export const ProCurdModal = defineComponent<ModalProps>({
 
       setReactiveValue(curdState.detailData, {});
       curdState.detailLoading = false;
+      curdState.addAction = undefined;
     };
 
     return () => {
