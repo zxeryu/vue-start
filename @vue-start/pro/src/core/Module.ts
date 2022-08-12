@@ -64,7 +64,7 @@ export const getFormItemEl = (
  * @param column
  * @param value
  */
-export const getItemEl = (elementMap: any, column: TColumn, value: any): VNode | null => {
+export const getItemEl = <T extends TColumn>(elementMap: any, column: T, value: any): VNode | null => {
   const valueType = column.valueType || "text";
   const Comp: any = get(elementMap, valueType);
   if (!Comp) {

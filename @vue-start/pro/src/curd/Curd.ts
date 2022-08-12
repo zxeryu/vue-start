@@ -1,4 +1,4 @@
-import { computed, defineComponent, ExtractPropTypes, h, inject, PropType, provide, reactive } from "vue";
+import { computed, defineComponent, ExtractPropTypes, h, PropType, reactive } from "vue";
 import {
   IProModuleProvide,
   IRequestOpts,
@@ -8,65 +8,11 @@ import {
   useModuleEvent,
   useProModule,
 } from "../core";
-import { filter, get, keys, map, omit, pick, sortBy } from "lodash";
+import { filter, get, keys, map, omit, pick, reduce, sortBy } from "lodash";
 import { TColumns } from "../types";
-import { Ref, UnwrapNestedRefs } from "@vue/reactivity";
-
-const ProCurdKey = Symbol("pro-curd");
-
-export interface IProCurdProvide {
-  rowKey: string;
-  curdState: UnwrapNestedRefs<ICurdState>;
-  formColumns: Ref<TColumns>;
-  descColumns: Ref<TColumns>;
-  tableColumns: Ref<TColumns>;
-  searchColumns: Ref<TColumns>;
-  //
-  sendCurdEvent: (event: TCurdActionEvent) => void;
-  /******************子组件参数*******************/
-  listProps?: Record<string, any>;
-  formProps?: Record<string, any>;
-  descProps?: Record<string, any>;
-  modalProps?: Record<string, any>;
-}
-
-export const useProCurd = (): IProCurdProvide => inject(ProCurdKey) as IProCurdProvide;
-
-export const provideProCurd = (ctx: IProCurdProvide) => provide(ProCurdKey, ctx);
-
-/**
- * curd 5种action
- */
-export enum CurdAction {
-  LIST = "LIST",
-  DETAIL = "DETAIL",
-  ADD = "ADD",
-  EDIT = "EDIT",
-  DELETE = "DELETE",
-}
-
-export type ICurdAction = keyof typeof CurdAction;
-
-/**
- * curd 操作模式
- */
-export enum CurdCurrentMode {
-  ADD = "ADD",
-  EDIT = "EDIT",
-  DETAIL = "DETAIL",
-}
-
-export type ICurdCurrentMode = keyof typeof CurdCurrentMode;
-
-/**
- * curd add 模式下 标记 "确定" "确定并继续" 触发
- */
-export enum CurdAddAction {
-  NORMAL = "NORMAL",
-  CONTINUE = "CONTINUE",
-}
-
-export type ICurdAddAction = keyof typeof CurdAddAction;
+import { UnwrapNestedRefs } from "@vue/reactivity";
+import { CurdAction, ICurdAction, ICurdAddAction, ICurdCurrentMode, provideProCurd } from "./ctx";
+import { IOperateItem } from "../../../element-pro";
 
 export interface IListData extends Record<string, any> {
   total: number;
@@ -90,8 +36,8 @@ export interface ICurdState extends Record<string, any> {
 /**
  * action：list,detail,add,edit,delete
  */
-export interface ICurdRequestOpts extends Omit<IRequestOpts, "action"> {
-  action?: ICurdAction; //类型，由当前程序赋值
+export interface ICurdOperateOpts extends Omit<IRequestOpts, "action">, Omit<IOperateItem, "value"> {
+  action: ICurdAction; //类型，由当前程序赋值
 }
 
 export type TCurdActionEvent = {
@@ -108,7 +54,10 @@ const proCurdProps = () => ({
    * 列表 或 详情 的唯一标识
    */
   rowKey: { type: String, default: "id" },
-
+  /**
+   * operates
+   */
+  operates: { type: Array as PropType<ICurdOperateOpts[]> },
   /************************* 子组件props *******************************/
   listProps: { type: Object as PropType<Record<string, any>> },
   formProps: { type: Object as PropType<Record<string, any>> },
@@ -227,6 +176,13 @@ const Curd = defineComponent<CurdProps>({
       }
     });
 
+    const operateMap = reduce(props.operates, (pair, item) => ({ ...pair, [item.action]: item }), {});
+
+    //根据Action获取ICurdOperateOpts
+    const getOperate = (action: ICurdAction): ICurdOperateOpts | undefined => {
+      return get(operateMap, action);
+    };
+
     provideProCurd({
       rowKey: props.rowKey!,
       curdState: state,
@@ -236,6 +192,8 @@ const Curd = defineComponent<CurdProps>({
       searchColumns,
       //
       sendCurdEvent,
+      //
+      getOperate,
       //
       listProps: props.listProps,
       formProps: props.formProps,
@@ -252,7 +210,6 @@ const Curd = defineComponent<CurdProps>({
 export type ProCurdProps = CurdProps &
   Omit<ProModuleProps, "state" | "requests"> & {
     curdState: UnwrapNestedRefs<ICurdState>;
-    requests: ICurdRequestOpts[];
   };
 
 export const ProCurd = defineComponent<ProCurdProps>({
@@ -265,10 +222,7 @@ export const ProCurd = defineComponent<ProCurdProps>({
 
     /****************** 请求处理 **********************/
     //curd默认网络属性
-    const curdRequestOpts: Record<
-      ICurdAction,
-      Pick<ICurdRequestOpts, "convertParams" | "convertData" | "loadingName" | "stateName">
-    > = {
+    const curdOperateOpts: Record<ICurdAction, Omit<ICurdOperateOpts, "actor" | "action">> = {
       [CurdAction.LIST]: {
         convertParams: (values) => values,
         convertData: (actor) => actor.res?.data,
@@ -280,22 +234,26 @@ export const ProCurd = defineComponent<ProCurdProps>({
         convertData: (actor) => actor.res?.data,
         loadingName: "detailLoading",
         stateName: "detailData",
+        label: "详情",
       },
       [CurdAction.ADD]: {
         convertParams: (values, record) => ({ body: { ...record, ...values } }),
         loadingName: "operateLoading",
+        label: "添加",
       },
       [CurdAction.EDIT]: {
         convertParams: (values, record) => ({ body: { ...record, ...values } }),
         loadingName: "operateLoading",
+        label: "编辑",
       },
       [CurdAction.DELETE]: {
         convertParams: (values, record) => ({ body: { ...record, ...values } }),
+        label: "删除",
       },
     };
 
-    const requests = map(props.requests, (item) => {
-      const curdOpts = get(curdRequestOpts, item.action!);
+    const requests = map(props.operates, (item) => {
+      const curdOpts = get(curdOperateOpts, item.action!);
       return { ...curdOpts, ...item };
     });
 
@@ -303,7 +261,7 @@ export const ProCurd = defineComponent<ProCurdProps>({
     return () => {
       return h(
         ProModule,
-        { ...pick(props, moduleKeys), state: curdState, requests: requests },
+        { ...pick(props, moduleKeys), state: curdState, requests },
         h(Curd, { ...omit(props, ...moduleKeys, "curdState") }, slots),
       );
     };

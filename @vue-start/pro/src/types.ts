@@ -1,3 +1,5 @@
+import { VNode } from "vue";
+
 export type TDefaultValueType =
   | "text"
   | "textarea"
@@ -27,8 +29,8 @@ export type TOption = {
 export type TOptions = TOption[];
 
 export type TColumn = {
-  title?: string;
-  dataIndex?: string;
+  title?: string | VNode;
+  dataIndex?: string | number;
   valueType?: TValueType; //展示组件类型
   formValueType?: TValueType; //录入组件类型 如不存在，默认取valueType的值
   showProps?: Record<string, any>; //文字展示组件的props
