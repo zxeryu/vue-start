@@ -3,6 +3,16 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.1.1](https://github.com/zxeryu/vue-start/compare/@vue-start/element-pro@0.1.0...@vue-start/element-pro@0.1.1) (2022-08-12)
+
+### Bug Fixes
+
+- **element-pro:** curd schema form ([175f9e7](https://github.com/zxeryu/vue-start/commit/175f9e70482009afd118573be6e716535f584043))
+
+### Performance Improvements
+
+- **element-pro:** props ([0836f4f](https://github.com/zxeryu/vue-start/commit/0836f4fcfa2bc11c68a44ca62e8fa3f19b45218b))
+
 # 0.1.0 (2022-08-09)
 
 ### Bug Fixes
