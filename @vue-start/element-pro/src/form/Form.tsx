@@ -6,8 +6,8 @@ import { DefineComponent } from "@vue/runtime-core";
 import { BooleanObjType, BooleanRulesObjType } from "../../types";
 import { useEffect } from "@vue-start/hooks";
 import { provideProForm } from "./ctx";
-import { getValidValues } from "../util";
 import { FormItemRule } from "element-plus/es/tokens/form";
+import { getValidValues } from "@vue-start/pro";
 
 const proFormItemProps = () => ({
   name: { type: [String, Array] as PropType<string | (string | number)[]> },

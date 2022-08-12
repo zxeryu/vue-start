@@ -1,10 +1,8 @@
 import { computed, defineComponent, ExtractPropTypes, PropType } from "vue";
 import { ButtonProps, ProForm, ProFormProps, ProSubmitButton } from "../form";
-import { useProCurdModule } from "./ctx";
 import { get, map, omit } from "lodash";
-import { useProModule } from "../core";
-import { CurdAddAction, CurdCurrentMode } from "./CurdModule";
 import { ElButton } from "element-plus";
+import { CurdAction, CurdAddAction, CurdCurrentMode, useProCurd, useProModule } from "@vue-start/pro";
 
 /**
  * 添加 和 修改 时候的确定按钮
@@ -14,7 +12,7 @@ export const OkButton = defineComponent<ButtonProps>({
     ...ElButton.props,
   },
   setup: (props, { slots }) => {
-    const { curdState } = useProCurdModule();
+    const { curdState } = useProCurd();
 
     return () => {
       return (
@@ -39,7 +37,7 @@ export const ContinueAddButton = defineComponent<ButtonProps>({
     ...ElButton.props,
   },
   setup: (props, { slots }) => {
-    const { curdState } = useProCurdModule();
+    const { curdState } = useProCurd();
 
     return () => {
       return (
@@ -74,7 +72,7 @@ export const ProOperateButton = defineComponent<ProOperateButtonProps>({
     ...(proOperateButtonProps() as any),
   },
   setup: (props, { slots }) => {
-    const { curdState } = useProCurdModule();
+    const { curdState } = useProCurd();
 
     return () => {
       return (
@@ -110,7 +108,7 @@ export const ProCurdForm = defineComponent<ProCurdFormProps>({
   },
   setup: (props, { slots }) => {
     const { getFormItemVNode } = useProModule();
-    const { curdState, formColumns, operate } = useProCurdModule();
+    const { curdState, formColumns, sendCurdEvent } = useProCurd();
 
     const formVNodes = computed(() => {
       return map(formColumns.value, (item) => {
@@ -121,10 +119,10 @@ export const ProCurdForm = defineComponent<ProCurdFormProps>({
     const handleFinish = (values: Record<string, any>) => {
       if (curdState.mode === CurdCurrentMode.EDIT) {
         //edit
-        operate.onEditExecute?.(values);
+        sendCurdEvent({ action: CurdAction.EDIT, type: "execute", values });
       } else {
         //add
-        operate.onAddExecute?.(values);
+        sendCurdEvent({ action: CurdAction.ADD, type: "execute", values });
       }
     };
 
@@ -161,7 +159,7 @@ export const ProCurdForm = defineComponent<ProCurdFormProps>({
 
 export const ProCurdFormConnect = defineComponent({
   setup: () => {
-    const { formProps } = useProCurdModule();
+    const { formProps } = useProCurd();
     return () => {
       return <ProCurdForm {...omit(formProps, "slots")} v-slots={get(formProps, "slots")} />;
     };

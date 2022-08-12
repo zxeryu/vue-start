@@ -1,8 +1,8 @@
 import { defineComponent, ExtractPropTypes, PropType, reactive, toRaw } from "vue";
 import { ProSchemaForm, ProSchemaFormProps } from "./SchemaForm";
 import { clone, debounce, get, keys, omit, size, some } from "lodash";
-import { getValidValues } from "../util";
 import { useEffect } from "@vue-start/hooks";
+import { getValidValues } from "@vue-start/pro";
 
 export enum SearchMode {
   //自动触发搜索

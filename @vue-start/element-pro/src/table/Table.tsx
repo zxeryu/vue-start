@@ -1,9 +1,9 @@
 import { computed, defineComponent, ExtractPropTypes, isVNode, PropType, VNode } from "vue";
 import { ElTable, ElTableColumn, ElButton } from "element-plus";
 import { TableProps } from "element-plus/es/components/table/src/table/defaults";
-import { TableColumnCtx, TColumns } from "../../types";
+import { TableColumnCtx, TColumn, TColumns } from "../../types";
 import { filter, get, isFunction, keys, map, merge, omit, size, sortBy } from "lodash";
-import { getItemEl } from "../core";
+import { getItemEl } from "@vue-start/pro";
 
 export interface IOperateItem {
   value: string | number;
@@ -38,6 +38,10 @@ const proTableProps = () => ({
    * 展示控件集合，readonly模式下使用这些组件渲染
    */
   elementMap: { type: Object as PropType<{ [key: string]: any }> },
+  /**
+   * loading
+   */
+  loading: { type: Boolean, default: false },
 });
 
 export type ProTableProps = Partial<ExtractPropTypes<ReturnType<typeof proTableProps>>> &
@@ -61,7 +65,7 @@ export const ProTable = defineComponent<ProTableProps>({
         if (!item.customRender || !item.formatter) {
           nextItem.customRender = ({ text }: any) => {
             return (
-              getItemEl(
+              getItemEl<TColumn>(
                 props.elementMap,
                 {
                   ...item,
@@ -92,8 +96,11 @@ export const ProTable = defineComponent<ProTableProps>({
           ...props.column,
           customRender: ({ record }: any) => {
             const validList = filter(operateList, (item) => {
-              if (item.show && isFunction(item.show)) {
+              if (isFunction(item.show)) {
                 return item.show(record);
+              }
+              if (item.show === false) {
+                return false;
               }
               return true;
             });
@@ -109,6 +116,7 @@ export const ProTable = defineComponent<ProTableProps>({
                   return (
                     <ElButton
                       key={item.value}
+                      type={"primary"}
                       link
                       disabled={isFunction(item.disabled) ? item.disabled(record) : item.disabled}
                       onClick={() => {
@@ -137,6 +145,7 @@ export const ProTable = defineComponent<ProTableProps>({
             expose(el);
           }}
           {...omit(props, invalidKeys)}
+          v-loading={props.loading}
           v-slots={omit(slots, "default")}>
           {map(columns.value, (item) => {
             const formatter = (record: Record<string, any>, column: TableColumnCtx<any>, value: any, index: number) => {

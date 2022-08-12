@@ -1,10 +1,9 @@
 import { defineComponent } from "vue";
 import { ElDialog } from "element-plus";
-import { useProCurdModule } from "./ctx";
-import { CurdCurrentMode } from "./CurdModule";
 import { get, omit } from "lodash";
 import { ProCurdFormConnect } from "./CurdForm";
 import { setReactiveValue } from "@vue-start/hooks";
+import { CurdAction, useProCurd } from "@vue-start/pro";
 
 export interface ModalProps {
   appendToBody?: boolean;
@@ -35,17 +34,17 @@ export const ProCurdModal = defineComponent<ModalProps>({
     ...ElDialog.props,
   },
   setup: (props, { slots }) => {
-    const { curdState, operate } = useProCurdModule();
+    const { curdState, getOperate } = useProCurd();
 
     //根据当前模式展示不同的Title
     const getTitle = () => {
       switch (curdState.mode) {
-        case CurdCurrentMode.ADD:
-          return operate.addLabel;
-        case CurdCurrentMode.EDIT:
-          return operate.editLabel;
-        case CurdCurrentMode.DETAIL:
-          return operate.detailLabel;
+        case CurdAction.ADD:
+          return getOperate(CurdAction.ADD)?.label;
+        case CurdAction.EDIT:
+          return getOperate(CurdAction.EDIT)?.label;
+        case CurdAction.DETAIL:
+          return getOperate(CurdAction.DETAIL)?.label;
       }
     };
 
@@ -76,7 +75,7 @@ export const ProCurdModal = defineComponent<ModalProps>({
 
 export const ProCurdModalConnect = defineComponent({
   setup: () => {
-    const { modalProps } = useProCurdModule();
+    const { modalProps } = useProCurd();
 
     return () => {
       return (

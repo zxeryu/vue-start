@@ -2,8 +2,8 @@ import { defineComponent, ExtractPropTypes, PropType } from "vue";
 import { provideProFormList, useProForm, useProFormList } from "./ctx";
 import { ButtonProps, ElButton } from "element-plus";
 import { get, isArray, keys, map, omit, set, size } from "lodash";
-import { convertPathToList } from "../util";
 import { ProFormItem, ProFormItemProps } from "./Form";
+import { convertPathToList } from "@vue-start/pro";
 
 const FormListProvider = defineComponent<{
   pathList: (string | number)[];

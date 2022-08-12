@@ -1,9 +1,8 @@
 import { computed, defineComponent } from "vue";
-import { useProCurdModule } from "./ctx";
 import { get, map, omit } from "lodash";
-import { useProModule } from "../core";
 import { ProCurdList } from "./CurdList";
 import { ElDescriptions, ElDescriptionsItem } from "element-plus";
+import { useProCurd, useProModule } from "@vue-start/pro";
 
 export interface DescriptionsProps {
   border?: boolean;
@@ -20,7 +19,7 @@ export const ProCurdDesc = defineComponent<DescriptionsProps>({
   },
   setup: (props, { slots }) => {
     const { getItemVNode } = useProModule();
-    const { curdState, descColumns } = useProCurdModule();
+    const { curdState, descColumns } = useProCurd();
 
     const descVNodes = computed(() => {
       return map(descColumns.value, (item) => {
@@ -49,7 +48,7 @@ export const ProCurdDesc = defineComponent<DescriptionsProps>({
 
 export const ProCurdDescConnect = defineComponent({
   setup: () => {
-    const { descProps } = useProCurdModule();
+    const { descProps } = useProCurd();
     return () => {
       return <ProCurdList {...omit(descProps, "slots")} v-slots={get(descProps, "slots")} />;
     };

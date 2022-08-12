@@ -2,7 +2,7 @@ import { computed, defineComponent, ExtractPropTypes, PropType } from "vue";
 import { TColumns } from "../../types";
 import { ProForm, ProFormProps } from "./Form";
 import { keys, map, omit, size } from "lodash";
-import { getFormItemEl } from "../core";
+import { getFormItemEl } from "@vue-start/pro";
 
 const proSchemaFormProps = () => ({
   columns: { type: Array as PropType<TColumns> },
@@ -35,7 +35,7 @@ export const ProSchemaForm = defineComponent({
     const invalidKeys = keys(proSchemaFormProps());
     return () => {
       return (
-        <ProForm ref={(el: any) => expose(el)} {...omit(props, invalidKeys)}>
+        <ProForm ref={(el: any) => expose(el)} {...omit(props, invalidKeys)} v-slots={omit(slots, "default")}>
           {formItemList.value}
           {slots.default?.()}
         </ProForm>

@@ -2,8 +2,8 @@ import { computed, defineComponent, ExtractPropTypes } from "vue";
 import { TValueType } from "../../types";
 import { useProForm, useProFormList } from "./ctx";
 import { get, isBoolean, keys, omit, set } from "lodash";
-import { convertPathToList } from "../util";
 import { ProFormItem, ProFormItemProps } from "./Form";
+import { convertPathToList } from "@vue-start/pro";
 
 const proFormItemProps = () => ({
   readonly: { type: Boolean, default: undefined },
