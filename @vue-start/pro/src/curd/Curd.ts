@@ -263,68 +263,40 @@ export const ProCurd = defineComponent<ProCurdProps>({
   setup: (props, { slots }) => {
     const curdState: UnwrapNestedRefs<ICurdState> = props.curdState || reactive({ detailData: {} });
 
-    //默认转换
-    const converts: Record<
+    /****************** 请求处理 **********************/
+    //curd默认网络属性
+    const curdRequestOpts: Record<
       ICurdAction,
-      {
-        convertParams?: ICurdRequestOpts["convertParams"];
-        convertData?: ICurdRequestOpts["convertData"];
-      }
+      Pick<ICurdRequestOpts, "convertParams" | "convertData" | "loadingName" | "stateName">
     > = {
       [CurdAction.LIST]: {
         convertParams: (values) => values,
         convertData: (actor) => actor.res?.data,
+        loadingName: "listLoading",
+        stateName: "listData",
       },
       [CurdAction.DETAIL]: {
         convertParams: (record, rowKey) => pick(record, rowKey),
         convertData: (actor) => actor.res?.data,
+        loadingName: "detailLoading",
+        stateName: "detailData",
       },
       [CurdAction.ADD]: {
         convertParams: (values, record) => ({ body: { ...record, ...values } }),
+        loadingName: "operateLoading",
       },
       [CurdAction.EDIT]: {
         convertParams: (values, record) => ({ body: { ...record, ...values } }),
+        loadingName: "operateLoading",
       },
       [CurdAction.DELETE]: {
         convertParams: (values, record) => ({ body: { ...record, ...values } }),
       },
     };
 
-    /****************** 请求处理 **********************/
     const requests = map(props.requests, (item) => {
-      if (item.action === CurdAction.LIST) {
-        return {
-          ...get(converts, CurdAction.LIST),
-          ...item,
-          loadingName: "listLoading",
-          stateName: "listData",
-        };
-      } else if (item.action === CurdAction.DETAIL) {
-        return {
-          ...get(converts, CurdAction.DETAIL),
-          ...item,
-          loadingName: "detailLoading",
-          stateName: "detailData",
-        };
-      } else if (item.action === CurdAction.ADD) {
-        return {
-          ...get(converts, CurdAction.ADD),
-          ...item,
-          loadingName: "operateLoading",
-        };
-      } else if (item.action === CurdAction.EDIT) {
-        return {
-          ...get(converts, CurdAction.EDIT),
-          ...item,
-          loadingName: "operateLoading",
-        };
-      } else if (item.action === CurdAction.DELETE) {
-        return {
-          ...get(converts, CurdAction.DELETE),
-          ...item,
-        };
-      }
-      return item;
+      const curdOpts = get(curdRequestOpts, item.action!);
+      return { ...curdOpts, ...item };
     });
 
     const moduleKeys = keys(ProModule.props);
