@@ -1,5 +1,5 @@
 import { computed, defineComponent, ExtractPropTypes, h, inject, PropType, provide, reactive, VNode } from "vue";
-import { TActionEvent, TActionState, TColumn, TColumns, TValueType } from "../types";
+import { TActionEvent, TActionState, TColumn, TColumns, TElementMap, TValueType } from "../types";
 import { get, isArray, isEmpty, isFunction, isObject, keys, map, mergeWith, omit, reduce } from "lodash";
 import { Ref, UnwrapNestedRefs } from "@vue/reactivity";
 import { Subject } from "rxjs";
@@ -143,11 +143,11 @@ const proModuleProps = () => ({
   /**
    * 展示组件集
    */
-  elementMap: { type: Object as PropType<{ [key: string]: any }> },
+  elementMap: { type: Object as PropType<TElementMap> },
   /**
    * 录入组件集
    */
-  formElementMap: { type: Object as PropType<{ [key: string]: any }> },
+  formElementMap: { type: Object as PropType<TElementMap> },
   /**
    * requests
    */

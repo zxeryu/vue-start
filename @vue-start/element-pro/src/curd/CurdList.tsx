@@ -44,11 +44,12 @@ export const ProCurdList = defineComponent<ProListProps>({
           }}
           {...props}
           searchProps={{
-            ...props.searchProps,
             formElementMap,
+            ...props.searchProps,
             columns: searchColumns.value,
           }}
           tableProps={{
+            elementMap,
             ...tableProps,
             operate: {
               ...tableProps?.operate,
@@ -56,7 +57,6 @@ export const ProCurdList = defineComponent<ProListProps>({
                 ? [...tableOperateItems, ...tableProps?.operate?.items]
                 : tableOperateItems,
             },
-            elementMap,
             columns: tableColumns.value,
             loading: curdState.listLoading,
             data: curdState.listData?.dataSource,

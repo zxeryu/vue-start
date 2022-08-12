@@ -2,12 +2,11 @@ import { computed, defineComponent, ExtractPropTypes, PropType, reactive, ref, t
 import { ElForm, FormInstance, ElFormItem, FormItemProps } from "element-plus";
 import { forEach, keys, omit } from "lodash";
 import { UnwrapNestedRefs } from "@vue/reactivity";
-import { DefineComponent } from "@vue/runtime-core";
 import { BooleanObjType, BooleanRulesObjType } from "../../types";
 import { useEffect } from "@vue-start/hooks";
 import { provideProForm } from "./ctx";
 import { FormItemRule } from "element-plus/es/tokens/form";
-import { getValidValues } from "@vue-start/pro";
+import { getValidValues, TElementMap } from "@vue-start/pro";
 
 const proFormItemProps = () => ({
   name: { type: [String, Array] as PropType<string | (string | number)[]> },
@@ -59,7 +58,7 @@ const proFormProps = () => ({
   /**
    * 展示控件集合，readonly模式下使用这些组件渲染
    */
-  elementMap: { type: Object as PropType<{ [key: string]: DefineComponent }> },
+  elementMap: { type: Object as PropType<TElementMap> },
   /**
    * provide传递
    */

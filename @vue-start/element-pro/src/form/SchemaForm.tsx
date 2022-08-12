@@ -2,14 +2,14 @@ import { computed, defineComponent, ExtractPropTypes, PropType } from "vue";
 import { TColumns } from "../../types";
 import { ProForm, ProFormProps } from "./Form";
 import { keys, map, omit, size } from "lodash";
-import { getFormItemEl } from "@vue-start/pro";
+import { getFormItemEl, TElementMap } from "@vue-start/pro";
 
 const proSchemaFormProps = () => ({
   columns: { type: Array as PropType<TColumns> },
   /**
    * 录入控件集合，通过column->valueType 查找对应的录入组件
    */
-  formElementMap: { type: Object as PropType<{ [key: string]: any }> },
+  formElementMap: { type: Object as PropType<TElementMap> },
   /**
    * 是否启用rules验证
    */

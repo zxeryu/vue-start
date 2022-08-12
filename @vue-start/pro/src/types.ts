@@ -64,6 +64,9 @@ export type TActionEvent = {
   extra?: Record<string, any>;
 };
 
+/**
+ * 发送state对象
+ */
 export type TActionState = {
   //属性名称
   type: string;
@@ -72,3 +75,8 @@ export type TActionState = {
   //备用
   extra?: Record<string, any>;
 };
+
+/**
+ * 组件Map
+ */
+export type TElementMap = Record<string, any>;

@@ -1,6 +1,6 @@
-import { computed, defineComponent, ExtractPropTypes, PropType } from "vue";
-import { ButtonProps, ProForm, ProFormProps, ProSubmitButton } from "../form";
-import { get, map, omit } from "lodash";
+import { defineComponent, ExtractPropTypes, PropType } from "vue";
+import { ButtonProps, ProSchemaForm, ProSchemaFormProps, ProSubmitButton } from "../form";
+import { get, omit } from "lodash";
 import { ElButton } from "element-plus";
 import { CurdAction, CurdAddAction, CurdCurrentMode, useProCurd, useProModule } from "@vue-start/pro";
 
@@ -99,22 +99,16 @@ const proCurdFormProps = () => ({
   operateButtonProps: { type: Object as PropType<ProOperateButtonProps> },
 });
 
-export type ProCurdFormProps = Partial<ExtractPropTypes<ReturnType<typeof proCurdFormProps>>> & ProFormProps;
+export type ProCurdFormProps = Partial<ExtractPropTypes<ReturnType<typeof proCurdFormProps>>> & ProSchemaFormProps;
 
 export const ProCurdForm = defineComponent<ProCurdFormProps>({
   props: {
-    ...ProForm.props,
+    ...ProSchemaForm.props,
     ...proCurdFormProps(),
   },
   setup: (props, { slots }) => {
-    const { getFormItemVNode } = useProModule();
+    const { elementMap, formElementMap } = useProModule();
     const { curdState, formColumns, sendCurdEvent } = useProCurd();
-
-    const formVNodes = computed(() => {
-      return map(formColumns.value, (item) => {
-        return getFormItemVNode(item, true);
-      });
-    });
 
     const handleFinish = (values: Record<string, any>) => {
       if (curdState.mode === CurdCurrentMode.EDIT) {
@@ -128,30 +122,24 @@ export const ProCurdForm = defineComponent<ProCurdFormProps>({
 
     return () => {
       return (
-        <ProForm
-          {...props}
+        <ProSchemaForm
+          elementMap={elementMap}
+          formElementMap={formElementMap}
+          {...(props as any)}
+          columns={formColumns}
           model={curdState.detailData}
           readonly={curdState.mode === CurdCurrentMode.DETAIL}
           hideRequiredAsterisk={curdState.mode === CurdCurrentMode.DETAIL}
           onFinish={handleFinish}
-          v-slots={{
-            default: () => {
-              return (
-                <>
-                  {formVNodes.value}
-                  {curdState.mode !== CurdCurrentMode.DETAIL && (
-                    <ProOperateButton
-                      {...omit(props.operateButtonProps, "slots")}
-                      v-slots={get(props.operateButtonProps, "slots")}
-                    />
-                  )}
-                  {slots.default?.()}
-                </>
-              );
-            },
-            ...omit(slots, "default"),
-          }}
-        />
+          v-slots={omit(slots, "default")}>
+          {curdState.mode !== CurdCurrentMode.DETAIL && (
+            <ProOperateButton
+              {...omit(props.operateButtonProps, "slots")}
+              v-slots={get(props.operateButtonProps, "slots")}
+            />
+          )}
+          {slots.default?.()}
+        </ProSchemaForm>
       );
     };
   },
