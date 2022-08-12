@@ -4,8 +4,8 @@ import {
   isFailedRequestActor,
   isPreRequestActor,
   useRequestProvide,
-} from "../../../request";
-import { useEffect } from "../../../hooks";
+} from "@vue-start/request";
+import { useEffect } from "@vue-start/hooks";
 import { merge as rxMerge, filter as rxFilter, tap as rxTap } from "rxjs";
 import { forEach, isString, map } from "lodash";
 

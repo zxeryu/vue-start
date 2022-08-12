@@ -1,4 +1,4 @@
-import { useEffect } from "../../../hooks";
+import { useEffect } from "@vue-start/hooks";
 import { useProModule } from "./Module";
 import { TActionEvent } from "../types";
 

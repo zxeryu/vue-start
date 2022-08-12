@@ -3,8 +3,8 @@ import { TActionEvent, TActionState, TColumn, TColumns, TValueType } from "../ty
 import { get, isArray, isEmpty, isFunction, isObject, keys, map, mergeWith, omit, reduce } from "lodash";
 import { Ref, UnwrapNestedRefs } from "@vue/reactivity";
 import { Subject } from "rxjs";
-import { setReactiveValue } from "../../../hooks";
-import { IRequestActor, useRequestProvide } from "../../../request";
+import { setReactiveValue } from "@vue-start/hooks";
+import { IRequestActor, useRequestProvide } from "@vue-start/request";
 import { useComposeRequestActor } from "./request";
 
 /**
