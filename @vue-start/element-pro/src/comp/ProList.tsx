@@ -129,9 +129,15 @@ export const ProList = defineComponent<ProListProps>({
 
           {slots.divide2?.()}
 
-          {isNumber(paginationProps?.total) && paginationProps!.total > 0 && (
-            <>{slots.pagination ? slots.pagination(pagination) : <ElPagination {...pagination} />}</>
-          )}
+          <div class={"pro-list-footer"}>
+            {slots.footerLeft?.()}
+
+            {isNumber(paginationProps?.total) && paginationProps!.total > 0 && (
+              <>{slots.pagination ? slots.pagination(pagination) : <ElPagination {...pagination} />}</>
+            )}
+
+            {slots.footerRight?.()}
+          </div>
         </>
       );
     };

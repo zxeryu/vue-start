@@ -1,17 +1,17 @@
 import { computed, defineComponent, ExtractPropTypes, h, PropType, reactive } from "vue";
-import {
-  IProModuleProvide,
-  IRequestOpts,
-  ProModule,
-  ProModuleProps,
-  RequestAction,
-  useModuleEvent,
-  useProModule,
-} from "../core";
+import { IProModuleProvide, IRequestOpts, ProModule, ProModuleProps, useModuleEvent, useProModule } from "../core";
 import { filter, get, keys, map, omit, pick, reduce, sortBy } from "lodash";
 import { TColumns } from "../types";
 import { UnwrapNestedRefs } from "@vue/reactivity";
-import { CurdAction, ICurdAction, ICurdAddAction, ICurdCurrentMode, provideProCurd } from "./ctx";
+import {
+  CurdAction,
+  CurdSubAction,
+  ICurdAction,
+  ICurdAddAction,
+  ICurdCurrentMode,
+  ICurdSubAction,
+  provideProCurd,
+} from "./ctx";
 import { IOperateItem } from "../../../element-pro";
 
 export interface IListData extends Record<string, any> {
@@ -44,7 +44,7 @@ export type TCurdActionEvent = {
   //action类型
   action: ICurdAction;
   //add、edit 存在execute类型事件
-  type: "emit" | "execute";
+  type: ICurdSubAction;
   record?: Record<string, any>;
   values?: Record<string, any>;
 };
@@ -141,35 +141,29 @@ const Curd = defineComponent<CurdProps>({
 
     //事件订阅
     useModuleEvent((event) => {
-      if (event.type === RequestAction.Success) {
-        return;
-      } else if (event.type === RequestAction.Fail) {
-        return;
-      }
-
       const action = event.type as ICurdAction;
 
       const { type, values, record } = event.payload as Omit<TCurdActionEvent, "action">;
 
       switch (action) {
         case CurdAction.LIST:
-          if (type === "emit") {
+          if (type === CurdSubAction.EMIT) {
             prevListParams = values;
             handleSearch();
           }
           return;
         case CurdAction.ADD:
-          if (type === "execute") {
+          if (type === CurdSubAction.EXECUTE) {
             sendRequest(CurdAction.ADD, values, state.detailData);
           }
           return;
         case CurdAction.EDIT:
-          if (type === "execute") {
+          if (type === CurdSubAction.EXECUTE) {
             sendRequest(CurdAction.EDIT, values, state.detailData);
           }
           return;
         case CurdAction.DELETE:
-          if (type === "emit") {
+          if (type === CurdSubAction.EMIT) {
             sendRequest(CurdAction.DELETE, record, props.rowKey);
           }
           return;

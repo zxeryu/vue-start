@@ -2,7 +2,7 @@ import { defineComponent } from "vue";
 import { get, omit, pick } from "lodash";
 import { IOperateItem } from "../table";
 import { ProList, ProListProps } from "../comp/ProList";
-import { CurdAction, ICurdAction, useProCurd, useProModule } from "@vue-start/pro";
+import { CurdAction, CurdSubAction, ICurdAction, useProCurd, useProModule } from "@vue-start/pro";
 import { IProCurdProvide } from "../../types";
 
 /**
@@ -27,7 +27,7 @@ export const ProCurdList = defineComponent<ProListProps>({
           if (item?.onClick) {
             item.onClick(record);
           }
-          sendCurdEvent({ action, type: "emit", record });
+          sendCurdEvent({ action, type: CurdSubAction.EMIT, record });
         },
         value: action,
       };
@@ -47,7 +47,7 @@ export const ProCurdList = defineComponent<ProListProps>({
         <ProList
           //@ts-ignore
           onList={(values: Record<string, any>) => {
-            sendCurdEvent({ action: CurdAction.LIST, type: "emit", values });
+            sendCurdEvent({ action: CurdAction.LIST, type: CurdSubAction.EMIT, values });
           }}
           {...props}
           searchProps={{

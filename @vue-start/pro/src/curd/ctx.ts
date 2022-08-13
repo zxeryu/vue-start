@@ -32,7 +32,7 @@ export const provideProCurd = (ctx: IProCurdProvide) => provide(ProCurdKey, ctx)
 /************************************ 常量 *************************************/
 
 /**
- * curd 5种action
+ * curd 5种Action
  */
 export enum CurdAction {
   LIST = "LIST",
@@ -43,6 +43,19 @@ export enum CurdAction {
 }
 
 export type ICurdAction = keyof typeof CurdAction;
+
+/**
+ * 5种Action 的子事件
+ */
+export enum CurdSubAction {
+  EMIT = "EMIT", //事件触发
+  EXECUTE = "EXECUTE", //add、edit完成提交
+  PAGE = "PAGE", //Page模式下事件
+  SUCCESS = "SUCCESS", //请求成功
+  FAIL = "FAIL", //请求失败
+}
+
+export type ICurdSubAction = keyof typeof CurdSubAction;
 
 /**
  * curd 操作模式

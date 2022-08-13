@@ -2,7 +2,7 @@ import { defineComponent, ExtractPropTypes, PropType } from "vue";
 import { ButtonProps, ProSchemaForm, ProSchemaFormProps, ProSubmitButton } from "../form";
 import { get, omit } from "lodash";
 import { ElButton } from "element-plus";
-import { CurdAction, CurdAddAction, CurdCurrentMode, useProCurd, useProModule } from "@vue-start/pro";
+import { CurdAction, CurdAddAction, CurdCurrentMode, CurdSubAction, useProCurd, useProModule } from "@vue-start/pro";
 
 /**
  * 添加 和 修改 时候的确定按钮
@@ -113,10 +113,10 @@ export const ProCurdForm = defineComponent<ProCurdFormProps>({
     const handleFinish = (values: Record<string, any>) => {
       if (curdState.mode === CurdCurrentMode.EDIT) {
         //edit
-        sendCurdEvent({ action: CurdAction.EDIT, type: "execute", values });
+        sendCurdEvent({ action: CurdAction.EDIT, type: CurdSubAction.EXECUTE, values });
       } else {
         //add
-        sendCurdEvent({ action: CurdAction.ADD, type: "execute", values });
+        sendCurdEvent({ action: CurdAction.ADD, type: CurdSubAction.EXECUTE, values });
       }
     };
 
