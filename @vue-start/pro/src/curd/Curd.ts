@@ -210,8 +210,9 @@ export type ProCurdProps = CurdProps &
 
 export const ProCurd = defineComponent<ProCurdProps>({
   props: {
-    ...ProModule.props,
+    ...omit(ProModule.props, "state", "requests"),
     ...Curd.props,
+    curdState: { type: Object as PropType<ICurdState> },
   },
   setup: (props, { slots }) => {
     const curdState: UnwrapNestedRefs<ICurdState> = props.curdState || reactive({ detailData: {} });
@@ -253,12 +254,12 @@ export const ProCurd = defineComponent<ProCurdProps>({
       return { ...curdOpts, ...item };
     });
 
-    const moduleKeys = keys(ProModule.props);
+    const moduleKeys = keys(omit(ProModule.props, "state", "requests"));
     return () => {
       return h(
         ProModule,
         { ...pick(props, moduleKeys), state: curdState, requests },
-        h(Curd, { ...omit(props, ...moduleKeys, "curdState") }, slots),
+        h(Curd, { ...omit(props, ...moduleKeys, "curdState", "operates") }, slots),
       );
     };
   },

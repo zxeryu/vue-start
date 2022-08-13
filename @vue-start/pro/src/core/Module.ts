@@ -216,7 +216,7 @@ export const ProModule = defineComponent<ProModuleProps>({
     /*********************************** request ***************************************/
     const { dispatchRequest } = useRequestProvide();
 
-    const requestMap = reduce(props.requests, (pair, item) => ({ ...pair, [item.actor.name]: item }), {});
+    const requestMap = reduce(props.requests, (pair, item) => ({ ...pair, [item.actor?.name]: item }), {});
     const actionMap = reduce(props.requests, (pair, item) => ({ ...pair, [item.action!]: item }), {});
 
     //发送请求
