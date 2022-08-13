@@ -112,7 +112,7 @@ export interface TableColumnCtx<T> {
 }
 
 export interface IProCurdProvide
-  extends Pick<IProCurdProvideOrigin, "rowKey" | "curdState" | "sendCurdEvent" | "getOperate"> {
+  extends Pick<IProCurdProvideOrigin, "rowKey" | "curdState" | "sendCurdEvent" | "getOperate" | "refreshList"> {
   formColumns: Ref<TColumns>;
   descColumns: Ref<TColumns>;
   tableColumns: Ref<TColumns>;

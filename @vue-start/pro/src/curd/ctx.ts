@@ -16,6 +16,8 @@ export interface IProCurdProvide {
   sendCurdEvent: (event: TCurdActionEvent) => void;
   //
   getOperate: (action: ICurdAction) => ICurdOperateOpts | undefined;
+  //
+  refreshList: (extra?: Record<string, any>) => void;
   /******************子组件参数*******************/
   listProps?: Record<string, any>;
   formProps?: Record<string, any>;

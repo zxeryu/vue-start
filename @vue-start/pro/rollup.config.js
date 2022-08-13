@@ -34,7 +34,7 @@ export default [
     external: ["lodash", "vue", "rxjs", "rxjs/operators", "@vue-start/hooks", "@vue-start/request"],
   },
   {
-    input: "../../.tmp/@vue-start/request/index.d.ts",
+    input: "../../.tmp/@vue-start/pro/index.d.ts",
     output: [{ file: "dist/index.d.ts", format: "es" }],
     plugins: [dts()],
   },

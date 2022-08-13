@@ -20,8 +20,15 @@ export const ProCurdList = defineComponent<ProListProps>({
     /******************* table ********************/
 
     const prepareTableItem = (action: ICurdAction): IOperateItem => {
+      const item = getOperate(action);
       return {
-        ...pick(getOperate(action), "label", "element", "show", "disabled", "onClick", "sort"),
+        ...pick(item, "label", "element", "show", "disabled", "sort"),
+        onClick: (record) => {
+          if (item?.onClick) {
+            item.onClick(record);
+          }
+          sendCurdEvent({ action, type: "emit", record });
+        },
         value: action,
       };
     };

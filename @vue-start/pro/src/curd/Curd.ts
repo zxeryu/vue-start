@@ -195,6 +195,8 @@ const Curd = defineComponent<CurdProps>({
       //
       getOperate,
       //
+      refreshList: handleSearch,
+      //
       listProps: props.listProps,
       formProps: props.formProps,
       descProps: props.descProps,

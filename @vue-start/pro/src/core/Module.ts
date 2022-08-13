@@ -252,14 +252,14 @@ export const ProModule = defineComponent<ProModuleProps>({
             dispatch({ type: requestOpts.stateName, payload: data });
           }
           //发送成功事件
-          sendEvent({ type: RequestAction.Success, payload: { actor } });
+          sendEvent({ type: RequestAction.Success, payload: { actor, requestOpts } });
           //回调事件
           requestOpts.onSuccess?.(actor);
         },
         onFailed: (actor) => {
           const requestOpts = get(requestMap, actor.name);
           //发送失败事件
-          sendEvent({ type: RequestAction.Fail, payload: { actor } });
+          sendEvent({ type: RequestAction.Fail, payload: { actor, requestOpts } });
           //回调事件
           requestOpts.onFailed?.(actor);
         },
