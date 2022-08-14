@@ -1,12 +1,5 @@
 import { filter, isArray, isString, keys, omit, split } from "lodash";
-
-export type BooleanObjType = {
-  [key: string]: boolean;
-};
-
-export type BooleanRulesObjType = {
-  [key: string]: (record: any) => boolean;
-};
+import { BooleanObjType, BooleanRulesObjType } from "../types";
 
 /**
  * 剔除showState或showStateRules规则为!true的值

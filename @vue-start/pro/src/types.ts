@@ -80,3 +80,11 @@ export type TActionState = {
  * 组件Map
  */
 export type TElementMap = Record<string, any>;
+
+export type BooleanObjType = {
+  [key: string]: boolean;
+};
+
+export type BooleanRulesObjType = {
+  [key: string]: (record: any) => boolean;
+};

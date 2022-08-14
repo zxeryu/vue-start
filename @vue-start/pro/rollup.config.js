@@ -22,11 +22,11 @@ export default [
     plugins: [
       commonjs(),
       resolve({
-        extensions: [".ts", ".js"],
+        extensions: [".ts", ".tsx", ".js"],
       }),
       VuePlugin(),
       babel({
-        configFile: "../../rollup.babel.ts.json",
+        configFile: "../../babel.config.json",
         babelHelpers: "bundled",
         extensions: [".ts", ".tsx", ".mjs", ".js", ".jsx"],
       }),
