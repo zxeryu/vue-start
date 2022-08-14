@@ -145,7 +145,6 @@ export const ProTable = defineComponent<ProTableProps>({
             expose(el);
           }}
           {...omit(props, invalidKeys)}
-          v-loading={props.loading}
           v-slots={omit(slots, "default")}>
           {map(columns.value, (item) => {
             const formatter = (record: Record<string, any>, column: TableColumnCtx<any>, value: any, index: number) => {

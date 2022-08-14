@@ -1,13 +1,5 @@
 import { defineComponent } from "vue";
-import {
-  ProForm,
-  ProFormText,
-  ProSubmitButton,
-  ProFormSelect,
-  ProSearchForm,
-  ProSchemaForm,
-  ProTable,
-} from "@vue-start/element-pro";
+import { ProForm, ProFormText, ProSubmitButton, ProFormSelect, ProSearchForm, ProTable } from "@vue-start/element-pro";
 import "element-plus/dist/index.css";
 
 export default defineComponent(() => {
@@ -35,10 +27,10 @@ export default defineComponent(() => {
         content
         <ProForm
           onFinish={(values: Record<string, any>) => {
-            console.log("##########", values);
+            console.log("##########onFinish", values);
           }}
           onFinishFailed={(invalidFields: any) => {
-            console.log("##########", invalidFields);
+            console.log("##########onFinishFailed", invalidFields);
           }}>
           <ProFormText name={"name"} label={"Name"} rules={[{ required: true, message: "required" }]} />
           <ProFormText name={"area"} label={"Area"} fieldProps={{ type: "textarea" }} />
@@ -56,14 +48,14 @@ export default defineComponent(() => {
 
           <ProSubmitButton>提交</ProSubmitButton>
         </ProForm>
-        <ProSchemaForm
+        <ProForm
           onFinish={(values: any) => {
             console.log("######", values);
           }}
-          columns={columns}
+          columns={columns as any}
           formElementMap={{ text: ProFormText, select: ProFormSelect }}>
           <ProSubmitButton>submit</ProSubmitButton>
-        </ProSchemaForm>
+        </ProForm>
         <ProSearchForm
           onFinish={(values: any) => {
             console.log("######search", values);
@@ -73,6 +65,7 @@ export default defineComponent(() => {
           debounceKeys={["aaa"]}
         />
         <ProTable
+          loading
           operate={{
             items: [
               {

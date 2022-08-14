@@ -1,5 +1,5 @@
 import { defineComponent, ExtractPropTypes, PropType } from "vue";
-import { ButtonProps, ProSchemaForm, ProSchemaFormProps, ProSubmitButton } from "../form";
+import { ButtonProps, ProForm, ProFormProps, ProSubmitButton } from "../form";
 import { get, omit } from "lodash";
 import { ElButton } from "element-plus";
 import { CurdAction, CurdAddAction, CurdCurrentMode, CurdSubAction, useProCurd, useProModule } from "@vue-start/pro";
@@ -99,11 +99,11 @@ const proCurdFormProps = () => ({
   operateButtonProps: { type: Object as PropType<ProOperateButtonProps> },
 });
 
-export type ProCurdFormProps = Partial<ExtractPropTypes<ReturnType<typeof proCurdFormProps>>> & ProSchemaFormProps;
+export type ProCurdFormProps = Partial<ExtractPropTypes<ReturnType<typeof proCurdFormProps>>> & ProFormProps;
 
 export const ProCurdForm = defineComponent<ProCurdFormProps>({
   props: {
-    ...ProSchemaForm.props,
+    ...ProForm.props,
     ...proCurdFormProps(),
   },
   setup: (props, { slots }) => {
@@ -122,7 +122,7 @@ export const ProCurdForm = defineComponent<ProCurdFormProps>({
 
     return () => {
       return (
-        <ProSchemaForm
+        <ProForm
           elementMap={elementMap}
           formElementMap={formElementMap}
           {...(props as any)}
@@ -139,7 +139,7 @@ export const ProCurdForm = defineComponent<ProCurdFormProps>({
             />
           )}
           {slots.default?.()}
-        </ProSchemaForm>
+        </ProForm>
       );
     };
   },

@@ -1,6 +1,6 @@
 import { defineComponent, ExtractPropTypes, PropType } from "vue";
 import { clone, debounce, filter, get, map, size, some } from "lodash";
-import { useEffect } from "@vue-start/hooks";
+import { useEffect, useWatch } from "@vue-start/hooks";
 import { UnwrapNestedRefs } from "@vue/reactivity";
 import { TColumns } from "../types";
 import { getColumnFormItemName, getColumnValueType } from "../core";
@@ -88,7 +88,7 @@ export const ProSearchForm = defineComponent<ProSearchFormProps>({
     };
 
     //监听
-    useEffect(
+    useWatch(
       (state, prevState) => {
         if (props.searchMode !== SearchMode.AUTO) {
           return;

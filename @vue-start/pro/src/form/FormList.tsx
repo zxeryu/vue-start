@@ -40,7 +40,7 @@ const proFormListProps = () => ({
 
 export type ProFormListProps = Partial<ExtractPropTypes<ReturnType<typeof proFormListProps>>>;
 
-export const ProFormItem = defineComponent<ProFormListProps>({
+export const ProFormList = defineComponent<ProFormListProps>({
   props: {
     ...proFormListProps(),
   } as any,

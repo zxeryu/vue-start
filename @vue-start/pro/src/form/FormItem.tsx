@@ -16,7 +16,7 @@ const proFormItemProps = () => ({
   slots: { type: Object },
 });
 
-export type ProFormItemProps = Partial<ExtractPropTypes<ReturnType<typeof proFormItemProps>>>;
+export type ProFormItemProps = Partial<ExtractPropTypes<ReturnType<typeof proFormItemProps>>> & Record<string, any>;
 
 export const createFormItemCompFn = <T extends FormItemProps>(
   FormItem: any,

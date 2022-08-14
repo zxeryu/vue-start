@@ -1,12 +1,13 @@
-import { computed, defineComponent, ExtractPropTypes, PropType, reactive, ref, toRaw } from "vue";
+import { defineComponent, ExtractPropTypes, PropType, reactive, ref, toRaw } from "vue";
 import { ElForm, FormInstance, ElFormItem, FormItemProps } from "element-plus";
-import { forEach, keys, omit } from "lodash";
-import { UnwrapNestedRefs } from "@vue/reactivity";
-import { BooleanObjType, BooleanRulesObjType } from "../../types";
-import { useEffect } from "@vue-start/hooks";
-import { provideProForm } from "./ctx";
+import { keys, omit, pick } from "lodash";
 import { FormItemRule } from "element-plus/es/tokens/form";
-import { getValidValues, TElementMap } from "@vue-start/pro";
+import {
+  getValidValues,
+  ProForm as ProFormOrigin,
+  ProFormProps as ProFormPropsOrigin,
+  useProForm,
+} from "@vue-start/pro";
 
 const proFormItemProps = () => ({
   name: { type: [String, Array] as PropType<string | (string | number)[]> },
@@ -34,37 +35,6 @@ export const ProFormItem = defineComponent<ProFormItemProps>({
   },
 });
 
-const proFormProps = () => ({
-  /**
-   *  子组件是否只读样式
-   */
-  readonly: { type: Boolean, default: undefined },
-  /**
-   *  FormComponent 根据此项来确定组件是否显示
-   *  rules 根据rules中方法生成showState对象
-   */
-  showState: { type: Object as PropType<UnwrapNestedRefs<BooleanObjType>> },
-  showStateRules: { type: Object as PropType<BooleanRulesObjType> },
-  /**
-   * 是否只读
-   */
-  readonlyState: { type: Object as PropType<UnwrapNestedRefs<BooleanObjType>> },
-  readonlyStateRules: { type: Object as PropType<BooleanRulesObjType> },
-  /**
-   * 是否disabled
-   */
-  disableState: { type: Object as PropType<UnwrapNestedRefs<BooleanObjType>> },
-  disableStateRules: { type: Object as PropType<BooleanRulesObjType> },
-  /**
-   * 展示控件集合，readonly模式下使用这些组件渲染
-   */
-  elementMap: { type: Object as PropType<TElementMap> },
-  /**
-   * provide传递
-   */
-  provideExtra: { type: Object as PropType<{ [key: string]: any }> },
-});
-
 interface FormProps {
   model?: Record<string, any>;
   rules?: FormItemRule[];
@@ -82,63 +52,32 @@ interface FormProps {
   scrollToError?: boolean;
 }
 
-export type ProFormProps = Partial<ExtractPropTypes<ReturnType<typeof proFormProps>>> &
+export type ProFormProps = ProFormPropsOrigin &
   FormProps & {
     onFinish?: (showValues: Record<string, any>, values: Record<string, any>) => void;
     onFinishFailed?: (invalidFields: Record<string, any>) => void;
   }; //emit;
 
+const Content = defineComponent(() => {
+  const { formItemVNodes } = useProForm();
+  return () => {
+    return formItemVNodes.value;
+  };
+});
+
 export const ProForm = defineComponent<ProFormProps>({
+  inheritAttrs: false,
   props: {
     ...ElForm.props,
-    ...proFormProps(),
+    ...omit(ProFormOrigin.props, "model"),
   },
-  setup: (props, { slots, expose, emit }) => {
-    const form = ref();
+  setup: (props, { slots, expose, emit, attrs }) => {
+    const formRef = ref();
 
     const formState = props.model || reactive({});
-    //组件状态相关
     const showState = props.showState || reactive({});
-    const readonlyState = props.readonlyState || reactive({});
-    const disableState = props.disableState || reactive({});
 
-    //formState改变情况下，更新 showState，readonlyState，disableState状态
-    useEffect(() => {
-      if (props.showStateRules) {
-        forEach(props.showStateRules, (fn, key) => {
-          showState[key] = fn(formState);
-        });
-      }
-      if (props.readonlyStateRules) {
-        forEach(props.readonlyStateRules, (fn, key) => {
-          readonlyState[key] = fn(formState);
-        });
-      }
-      if (props.disableStateRules) {
-        forEach(props.disableStateRules, (fn, key) => {
-          disableState[key] = fn(formState);
-        });
-      }
-    }, formState);
-
-    //转换为ref对象
-    const readonly = computed(() => props.readonly);
-
-    provideProForm({
-      formRef: form,
-      formState,
-      showState,
-      readonlyState,
-      disableState,
-      //
-      elementMap: props.elementMap,
-      //
-      readonly,
-      //
-      ...props.provideExtra,
-    });
-
-    const formRef = (el: FormInstance) => {
+    const handleRef = (el: FormInstance) => {
       const nexEl = {
         ...el,
         submit: () => {
@@ -155,14 +94,23 @@ export const ProForm = defineComponent<ProFormProps>({
         },
       };
       expose(nexEl);
-      form.value = nexEl;
+      formRef.value = nexEl;
     };
 
-    const invalidKeys = keys(proFormProps());
+    const originKeys = keys(omit(ProFormOrigin.props, "model"));
 
     return () => {
       return (
-        <ElForm ref={formRef as any} {...omit(props, ...invalidKeys, "model")} model={formState} v-slots={slots} />
+        <ProFormOrigin
+          {...pick(props, ...originKeys)}
+          model={formState}
+          showState={showState}
+          provideExtra={{ formRef }}>
+          <ElForm ref={handleRef as any} {...attrs} {...omit(props, ...originKeys, "model")} model={formState}>
+            <Content />
+            {slots.default?.()}
+          </ElForm>
+        </ProFormOrigin>
       );
     };
   },

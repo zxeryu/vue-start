@@ -13,8 +13,8 @@ import {
 
 import { createFormItemComponent } from "./createFormItemComponent";
 import { Component, defineComponent } from "vue";
-import { useProForm } from "./ctx";
 import { ProSelect } from "../field";
+import { useProForm } from "@vue-start/pro";
 
 export const ProFormText = createFormItemComponent({
   InputComp: ElInput,
