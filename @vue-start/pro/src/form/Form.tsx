@@ -1,5 +1,5 @@
 import { Ref, UnwrapNestedRefs } from "@vue/reactivity";
-import { computed, defineComponent, ExtractPropTypes, inject, PropType, provide, reactive } from "vue";
+import { computed, defineComponent, ExtractPropTypes, inject, PropType, provide, reactive, VNode } from "vue";
 import { BooleanObjType, BooleanRulesObjType, TColumns, TElementMap } from "../types";
 import { useEffect } from "@vue-start/hooks";
 import { forEach, map, size } from "lodash";
@@ -18,6 +18,8 @@ interface IProFormProvide extends IProFormProvideExtra {
   //
   elementMap?: TElementMap;
   formElementMap?: TElementMap;
+  //
+  formItemVNodes: Ref<(VNode | null)[]>;
 }
 
 export const useProForm = (): IProFormProvide => inject(ProFormKey) as IProFormProvide;
@@ -108,6 +110,18 @@ export const ProForm = defineComponent({
     //转换为ref对象
     const readonly = computed(() => props.readonly);
 
+    /**
+     * 将columns 转化为FormItem VNode对象
+     */
+    const formItemVNodes = computed(() => {
+      if (size(props.formElementMap) <= 0) {
+        return [];
+      }
+      return map(props.columns, (item) => {
+        return getFormItemEl(props.formElementMap, item, props.needRules);
+      });
+    });
+
     provideProForm({
       formState,
       showState,
@@ -118,23 +132,13 @@ export const ProForm = defineComponent({
       //
       readonly,
       //
+      formItemVNodes,
+      //
       ...props.provideExtra,
     });
 
-    /**
-     * 将columns 转化为FormItem VNode对象
-     */
-    const formItemVNodes = computed(() => {
-      if (size(props.formElementMap) <= 0) {
-        return null;
-      }
-      return map(props.columns, (item) => {
-        return getFormItemEl(props.formElementMap, item, props.needRules);
-      });
-    });
-
     return () => {
-      return slots.default?.(formItemVNodes);
+      return slots.default?.();
     };
   },
 });
