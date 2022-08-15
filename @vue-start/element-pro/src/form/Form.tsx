@@ -102,10 +102,10 @@ export const ProForm = defineComponent<ProFormProps>({
     return () => {
       return (
         <ProFormOrigin
-          {...pick(props, ...originKeys)}
+          {...pick(props, ...originKeys, "provideExtra")}
           model={formState}
           showState={showState}
-          provideExtra={{ formRef }}>
+          provideExtra={{ formRef, ...props.provideExtra }}>
           <ElForm ref={handleRef as any} {...attrs} {...omit(props, ...originKeys, "model")} model={formState}>
             <Content />
             {slots.default?.()}

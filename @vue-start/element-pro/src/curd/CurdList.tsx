@@ -1,8 +1,7 @@
 import { defineComponent } from "vue";
 import { get, omit, pick } from "lodash";
-import { IOperateItem } from "../table";
 import { ProList, ProListProps } from "../comp/ProList";
-import { CurdAction, CurdSubAction, ICurdAction, useProCurd, useProModule } from "@vue-start/pro";
+import { CurdAction, CurdSubAction, ICurdAction, IOperateItem, useProCurd, useProModule } from "@vue-start/pro";
 import { IProCurdProvide } from "../../types";
 
 /**

@@ -28,7 +28,7 @@ export type TTableColumn = {
     column: TTableColumn;
   }) => VNode;
 
-  fixed?: string;
+  fixed?: boolean | string;
 } & TColumn;
 
 export type TTableColumns = TTableColumn[];
@@ -73,6 +73,14 @@ const proTableProps = () => ({
    * 展示控件集合，readonly模式下使用这些组件渲染
    */
   elementMap: { type: Object as PropType<TElementMap> },
+  /**
+   * loading
+   */
+  loading: { type: Boolean },
+  /**
+   * provide传递
+   */
+  provideExtra: { type: Object as PropType<IProTableProvideExtra> },
 });
 
 export type ProTableProps = Partial<ExtractPropTypes<ReturnType<typeof proTableProps>>>;
@@ -155,7 +163,7 @@ export const ProTable = defineComponent<ProTableProps>({
       return columns;
     });
 
-    provideProTable({ columns });
+    provideProTable({ columns, ...props.provideExtra });
 
     return () => {
       return slots.default?.(columns.value);

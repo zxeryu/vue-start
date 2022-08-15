@@ -12,7 +12,7 @@ import {
   ICurdSubAction,
   provideProCurd,
 } from "./ctx";
-import { IOperateItem } from "../../../element-pro";
+import { IOperateItem } from "../table";
 
 export interface IListData extends Record<string, any> {
   total: number;

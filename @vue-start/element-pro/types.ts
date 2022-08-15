@@ -1,9 +1,9 @@
 import { DescriptionsProps, ProCurdFormProps, ProFormItemProps } from "./src";
 import { VNode } from "vue";
 import { FilterMethods, Filters } from "element-plus/es/components/table/src/table-column/defaults";
-import { IProCurdProvide as IProCurdProvideOrigin, TColumn as TColumnOrigin } from "@vue-start/pro";
+import { IProCurdProvide as IProCurdProvideOrigin, TTableColumn } from "@vue-start/pro";
 import { Ref } from "@vue/reactivity";
-import { ProListProps } from "./src/comp/ProList";
+import { ProListProps } from "./src";
 import { ModalProps } from "./src/curd/CurdModal";
 
 export type TOption = {
@@ -15,7 +15,7 @@ export type TOption = {
 export type TOptions = TOption[];
 
 export type TColumn = TableColumnCtx<any> &
-  Omit<TColumnOrigin, "formItemProps" | "title" | "dataIndex"> & {
+  Omit<TTableColumn, "formItemProps" | "title" | "dataIndex"> & {
     formItemProps?: ProFormItemProps;
   };
 
