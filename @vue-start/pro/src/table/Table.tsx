@@ -1,6 +1,6 @@
 import { computed, defineComponent, ExtractPropTypes, inject, PropType, provide, VNode } from "vue";
 import { TColumn, TElementMap } from "../types";
-import { filter, get, isFunction, map, merge, size, sortBy } from "lodash";
+import { filter, get, isFunction, map, merge, some, sortBy } from "lodash";
 import { getItemEl } from "../core";
 import { Ref } from "@vue/reactivity";
 
@@ -114,7 +114,7 @@ export const ProTable = defineComponent<ProTableProps>({
 
       const operate = props.operate;
       //处理operate
-      if (operate && size(operate.items) > 0) {
+      if (operate && operate.items && some(operate.items, (item) => item.show)) {
         //将itemState补充的信息拼到item中
         const items = map(operate.items, (i) => ({ ...i, ...get(operate.itemState, i.value) }));
         //排序

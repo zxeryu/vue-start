@@ -123,10 +123,10 @@ export const ProCurdForm = defineComponent<ProCurdFormProps>({
     return () => {
       return (
         <ProForm
-          elementMap={elementMap}
-          formElementMap={formElementMap}
-          {...(props as any)}
-          columns={formColumns}
+          {...(omit(props, "elementMap", "formElementMap") as any)}
+          elementMap={props.elementMap || elementMap}
+          formElementMap={props.formElementMap || formElementMap}
+          columns={formColumns.value}
           model={curdState.detailData}
           readonly={curdState.mode === CurdCurrentMode.DETAIL}
           hideRequiredAsterisk={curdState.mode === CurdCurrentMode.DETAIL}

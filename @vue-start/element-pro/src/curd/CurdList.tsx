@@ -1,5 +1,5 @@
 import { defineComponent } from "vue";
-import { get, omit, pick } from "lodash";
+import { get, isUndefined, omit, pick, mergeWith, isArray, concat } from "lodash";
 import { ProList, ProListProps } from "../comp/ProList";
 import { CurdAction, CurdSubAction, ICurdAction, IOperateItem, useProCurd, useProModule } from "@vue-start/pro";
 import { IProCurdProvide } from "../../types";
@@ -21,10 +21,12 @@ export const ProCurdList = defineComponent<ProListProps>({
     const prepareTableItem = (action: ICurdAction): IOperateItem => {
       const item = getOperate(action);
       return {
-        ...pick(item, "label", "element", "show", "disabled", "sort"),
+        ...pick(item, "label", "element", "disabled", "sort"),
+        show: !isUndefined(item?.show) ? item?.show : false,
         onClick: (record) => {
           if (item?.onClick) {
             item.onClick(record);
+            return;
           }
           sendCurdEvent({ action, type: CurdSubAction.EMIT, record });
         },
@@ -57,12 +59,17 @@ export const ProCurdList = defineComponent<ProListProps>({
           tableProps={{
             elementMap,
             ...tableProps,
-            operate: {
-              ...tableProps?.operate,
-              items: tableProps?.operate?.items
-                ? [...tableOperateItems, ...tableProps?.operate?.items]
-                : tableOperateItems,
-            },
+            operate: mergeWith({ items: tableOperateItems }, tableProps?.operate, (objValue, srcValue) => {
+              if (isArray(objValue)) {
+                if (isArray(srcValue)) {
+                  //合并
+                  return concat(objValue, srcValue);
+                } else {
+                  //使用curd默认
+                  return objValue;
+                }
+              }
+            }),
             columns: tableColumns.value,
             loading: curdState.listLoading,
             data: curdState.listData?.dataSource,

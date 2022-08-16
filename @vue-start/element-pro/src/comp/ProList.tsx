@@ -1,8 +1,7 @@
 import { defineComponent, ExtractPropTypes, PropType, reactive } from "vue";
 import { ProSearchForm, ProSearchFormProps } from "../form";
 import { ProTable, ProTableProps } from "../table";
-import { useEffect, useWatch } from "@vue-start/hooks";
-import { isNumber, omit, size } from "lodash";
+import { isNumber, omit } from "lodash";
 import { Slots } from "@vue/runtime-core";
 import { ElPagination } from "element-plus";
 
@@ -62,33 +61,19 @@ export const ProList = defineComponent<ProListProps>({
   setup: (props, { slots, emit }) => {
     /******************* search pagination ********************/
 
-    const searchState = props.searchProps?.model || reactive({});
-
     const pageState = props.pageState || reactive({ ...defaultPage });
 
+    let prevValues: Record<string, any> | undefined;
     const handleSearch = () => {
-      emit("list", { ...searchState, ...pageState });
+      emit("list", { ...prevValues, ...pageState });
     };
 
     //页数重置1 且搜索
-    const executeSearchWithResetPage = () => {
+    const executeSearchWithResetPage = (values: Record<string, any>) => {
+      prevValues = values;
       pageState.page = 1;
       handleSearch();
     };
-
-    //无SearchForm组件 初始化 触发
-    useEffect(() => {
-      if (size(props.searchProps?.columns) <= 0 && props.searchProps?.initEmit !== false) {
-        handleSearch();
-      }
-    }, []);
-
-    //无SearchForm组件 订阅searchState
-    useWatch(() => {
-      if (size(props.searchProps?.columns) <= 0) {
-        executeSearchWithResetPage();
-      }
-    }, searchState);
 
     return () => {
       const searchProps = props.searchProps;
@@ -115,15 +100,13 @@ export const ProList = defineComponent<ProListProps>({
 
       return (
         <>
-          {size(searchProps?.columns) > 0 && (
-            <ProSearchForm {...searchProps} model={searchState} onFinish={executeSearchWithResetPage}>
-              {props.extraInSearch && extra}
-            </ProSearchForm>
-          )}
+          <ProSearchForm {...searchProps} onFinish={executeSearchWithResetPage}>
+            {props.extraInSearch && extra}
+          </ProSearchForm>
 
           {slots.divide?.()}
 
-          {(size(searchProps?.columns) <= 0 || !props.extraInSearch) && extra}
+          {!props.extraInSearch && extra}
 
           {slots.default ? slots.default() : <ProTable {...omit(tableProps, "slots")} v-slots={tableProps?.slots} />}
 

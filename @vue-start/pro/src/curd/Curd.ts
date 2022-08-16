@@ -36,8 +36,9 @@ export interface ICurdState extends Record<string, any> {
 /**
  * action：list,detail,add,edit,delete
  */
-export interface ICurdOperateOpts extends Omit<IRequestOpts, "action">, Omit<IOperateItem, "value"> {
+export interface ICurdOperateOpts extends Omit<IRequestOpts, "actor" | "action">, Omit<IOperateItem, "value"> {
   action: ICurdAction; //类型，由当前程序赋值
+  actor?: IRequestOpts;
 }
 
 export type TCurdActionEvent = {
@@ -141,6 +142,7 @@ const Curd = defineComponent<CurdProps>({
 
     //事件订阅
     useModuleEvent((event) => {
+      console.log("###########!!!!!!!!!!!", event);
       const action = event.type as ICurdAction;
 
       const { type, values, record } = event.payload as Omit<TCurdActionEvent, "action">;
@@ -258,8 +260,8 @@ export const ProCurd = defineComponent<ProCurdProps>({
     return () => {
       return h(
         ProModule,
-        { ...pick(props, moduleKeys), state: curdState, requests },
-        h(Curd, { ...omit(props, ...moduleKeys, "curdState", "operates") }, slots),
+        { ...pick(props, moduleKeys), state: curdState, requests: requests as any },
+        h(Curd, { ...omit(props, ...moduleKeys, "curdState", "operates"), operates: requests }, slots),
       );
     };
   },

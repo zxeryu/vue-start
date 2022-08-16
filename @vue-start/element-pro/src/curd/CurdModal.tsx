@@ -65,9 +65,8 @@ export const ProCurdModal = defineComponent<ModalProps>({
           modelValue={!!curdState.mode}
           onClose={handleCancel}
           {...(props as any)}
-          v-slots={omit(slots, "default")}>
-          {curdState.detailLoading ? <div class={"pro-curd-modal-spin"} v-loading={true} /> : slots.default?.()}
-        </ElDialog>
+          v-slots={slots}
+        />
       );
     };
   },
