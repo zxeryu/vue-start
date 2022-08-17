@@ -3,6 +3,21 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.2.0](https://github.com/zxeryu/vue-start/compare/@vue-start/pro@0.1.0...@vue-start/pro@0.2.0) (2022-08-17)
+
+### Bug Fixes
+
+- **element-pro:** bug ([2e4c694](https://github.com/zxeryu/vue-start/commit/2e4c69469a3babd4d08ea13c934a71a31df5b743))
+- **element-pro:** grid ([6b435c7](https://github.com/zxeryu/vue-start/commit/6b435c796890dc1e253f35f7b622bb14041c01cf))
+- **pro:** curd sub action ([f389009](https://github.com/zxeryu/vue-start/commit/f389009b9890844d51c6ad92279ac308e7686517))
+- **pro:** refresh list ([d07ff48](https://github.com/zxeryu/vue-start/commit/d07ff484918271516db2aeca7727eb83dfad63ff))
+- **request:** support provide ([212a41b](https://github.com/zxeryu/vue-start/commit/212a41b3c056c3acf38d65c3f1e7a8e388bc9052))
+
+### Features
+
+- **pro:** abstract form ([f848aab](https://github.com/zxeryu/vue-start/commit/f848aabe5bec62600f7eb3575c85654ed778b3c6))
+- **pro:** abstract table ([3c26fde](https://github.com/zxeryu/vue-start/commit/3c26fde0f72e541bf3d2176c91748c7d8105341d))
+
 # 0.1.0 (2022-08-12)
 
 ### Bug Fixes

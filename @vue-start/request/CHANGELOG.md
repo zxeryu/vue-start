@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.1.9](https://github.com/zxeryu/vue-start/compare/@vue-start/request@0.1.8...@vue-start/request@0.1.9) (2022-08-17)
+
+### Bug Fixes
+
+- **request:** support provide ([212a41b](https://github.com/zxeryu/vue-start/commit/212a41b3c056c3acf38d65c3f1e7a8e388bc9052))
+
 ## [0.1.8](https://github.com/zxeryu/vue-start/compare/@vue-start/request@0.1.7...@vue-start/request@0.1.8) (2022-03-16)
 
 ### Bug Fixes

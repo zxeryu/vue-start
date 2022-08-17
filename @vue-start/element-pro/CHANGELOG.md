@@ -3,6 +3,15 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.1.2](https://github.com/zxeryu/vue-start/compare/@vue-start/element-pro@0.1.1...@vue-start/element-pro@0.1.2) (2022-08-17)
+
+### Bug Fixes
+
+- **element-pro:** bug ([2e4c694](https://github.com/zxeryu/vue-start/commit/2e4c69469a3babd4d08ea13c934a71a31df5b743))
+- **element-pro:** grid ([6b435c7](https://github.com/zxeryu/vue-start/commit/6b435c796890dc1e253f35f7b622bb14041c01cf))
+- **pro:** curd sub action ([f389009](https://github.com/zxeryu/vue-start/commit/f389009b9890844d51c6ad92279ac308e7686517))
+- **pro:** refresh list ([d07ff48](https://github.com/zxeryu/vue-start/commit/d07ff484918271516db2aeca7727eb83dfad63ff))
+
 ## [0.1.1](https://github.com/zxeryu/vue-start/compare/@vue-start/element-pro@0.1.0...@vue-start/element-pro@0.1.1) (2022-08-12)
 
 ### Bug Fixes
