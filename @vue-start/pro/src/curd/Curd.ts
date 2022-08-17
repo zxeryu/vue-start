@@ -142,7 +142,6 @@ const Curd = defineComponent<CurdProps>({
 
     //事件订阅
     useModuleEvent((event) => {
-      console.log("###########!!!!!!!!!!!", event);
       const action = event.type as ICurdAction;
 
       const { type, values, record } = event.payload as Omit<TCurdActionEvent, "action">;
@@ -179,6 +178,11 @@ const Curd = defineComponent<CurdProps>({
       return get(operateMap, action);
     };
 
+    const listProps = computed(() => props.listProps);
+    const formProps = computed(() => props.formProps);
+    const descProps = computed(() => props.descProps);
+    const modalProps = computed(() => props.modalProps);
+
     provideProCurd({
       rowKey: props.rowKey!,
       curdState: state,
@@ -193,10 +197,10 @@ const Curd = defineComponent<CurdProps>({
       //
       refreshList: handleSearch,
       //
-      listProps: props.listProps,
-      formProps: props.formProps,
-      descProps: props.descProps,
-      modalProps: props.modalProps,
+      listProps,
+      formProps,
+      descProps,
+      modalProps,
     });
 
     return () => {
@@ -246,7 +250,7 @@ export const ProCurd = defineComponent<ProCurdProps>({
         label: "编辑",
       },
       [CurdAction.DELETE]: {
-        convertParams: (values, record) => ({ body: { ...record, ...values } }),
+        convertParams: (record, rowKey) => pick(record, rowKey),
         label: "删除",
       },
     };

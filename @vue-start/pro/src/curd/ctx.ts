@@ -1,4 +1,4 @@
-import { Ref, UnwrapNestedRefs } from "@vue/reactivity";
+import { ComputedRef, Ref, UnwrapNestedRefs } from "@vue/reactivity";
 import { TColumns } from "../types";
 import { inject, provide } from "vue";
 import { ICurdOperateOpts, ICurdState, TCurdActionEvent } from "./Curd";
@@ -19,10 +19,10 @@ export interface IProCurdProvide {
   //
   refreshList: (extra?: Record<string, any>) => void;
   /******************子组件参数*******************/
-  listProps?: Record<string, any>;
-  formProps?: Record<string, any>;
-  descProps?: Record<string, any>;
-  modalProps?: Record<string, any>;
+  listProps?: ComputedRef<Record<string, any> | undefined>;
+  formProps?: ComputedRef<Record<string, any> | undefined>;
+  descProps?: ComputedRef<Record<string, any> | undefined>;
+  modalProps?: ComputedRef<Record<string, any> | undefined>;
 }
 
 export const useProCurd = <T extends IProCurdProvide>(): T => inject(ProCurdKey) as T;

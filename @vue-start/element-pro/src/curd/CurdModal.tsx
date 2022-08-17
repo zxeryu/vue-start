@@ -78,7 +78,7 @@ export const ProCurdModalConnect = defineComponent({
 
     return () => {
       return (
-        <ProCurdModal {...omit(modalProps, "slots")} v-slots={get(modalProps, "slots")}>
+        <ProCurdModal {...omit(modalProps?.value, "slots")} v-slots={get(modalProps?.value, "slots")}>
           <ProCurdFormConnect />
         </ProCurdModal>
       );

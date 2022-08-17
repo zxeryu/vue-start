@@ -1,13 +1,15 @@
 import { defineComponent, ExtractPropTypes, PropType, reactive, ref, toRaw } from "vue";
 import { ElForm, FormInstance, ElFormItem, FormItemProps } from "element-plus";
-import { keys, omit, pick } from "lodash";
+import { get, keys, map, omit, pick, size } from "lodash";
 import { FormItemRule } from "element-plus/es/tokens/form";
 import {
+  getColumnFormItemName,
+  getFormItemEl,
   getValidValues,
   ProForm as ProFormOrigin,
   ProFormProps as ProFormPropsOrigin,
-  useProForm,
 } from "@vue-start/pro";
+import { ProGrid, ProGridProps } from "../comp";
 
 const proFormItemProps = () => ({
   name: { type: [String, Array] as PropType<string | (string | number)[]> },
@@ -53,23 +55,18 @@ interface FormProps {
 }
 
 export type ProFormProps = ProFormPropsOrigin &
-  FormProps & {
+  FormProps &
+  Omit<ProGridProps, "items"> & {
     onFinish?: (showValues: Record<string, any>, values: Record<string, any>) => void;
     onFinishFailed?: (invalidFields: Record<string, any>) => void;
   }; //emit;
-
-const Content = defineComponent(() => {
-  const { formItemVNodes } = useProForm();
-  return () => {
-    return formItemVNodes.value;
-  };
-});
 
 export const ProForm = defineComponent<ProFormProps>({
   inheritAttrs: false,
   props: {
     ...ElForm.props,
     ...omit(ProFormOrigin.props, "model"),
+    ...omit(ProGrid.props, "items"),
   },
   setup: (props, { slots, expose, emit, attrs }) => {
     const formRef = ref();
@@ -107,7 +104,26 @@ export const ProForm = defineComponent<ProFormProps>({
           showState={showState}
           provideExtra={{ formRef, ...props.provideExtra }}>
           <ElForm ref={handleRef as any} {...attrs} {...omit(props, ...originKeys, "model")} model={formState}>
-            <Content />
+            {props.formElementMap && size(props.columns) > 0 && (
+              <>
+                {props.row ? (
+                  <ProGrid
+                    row={props.row}
+                    col={props.col}
+                    items={map(props.columns, (item) => {
+                      const vNode = getFormItemEl(props.formElementMap, item, props.needRules);
+                      return {
+                        rowKey: getColumnFormItemName(item),
+                        vNode: vNode as any,
+                        col: get(item, ["extra", "col"]),
+                      };
+                    })}
+                  />
+                ) : (
+                  <>{map(props.columns, (item) => getFormItemEl(props.formElementMap, item, props.needRules))}</>
+                )}
+              </>
+            )}
             {slots.default?.()}
           </ElForm>
         </ProFormOrigin>

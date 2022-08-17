@@ -149,7 +149,7 @@ export const ProCurdFormConnect = defineComponent({
   setup: () => {
     const { formProps } = useProCurd();
     return () => {
-      return <ProCurdForm {...omit(formProps, "slots")} v-slots={get(formProps, "slots")} />;
+      return <ProCurdForm {...omit(formProps?.value, "slots")} v-slots={get(formProps?.value, "slots")} />;
     };
   },
 });

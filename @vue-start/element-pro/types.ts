@@ -2,9 +2,10 @@ import { DescriptionsProps, ProCurdFormProps, ProFormItemProps } from "./src";
 import { VNode } from "vue";
 import { FilterMethods, Filters } from "element-plus/es/components/table/src/table-column/defaults";
 import { IProCurdProvide as IProCurdProvideOrigin, TTableColumn } from "@vue-start/pro";
-import { Ref } from "@vue/reactivity";
+import { ComputedRef, Ref } from "@vue/reactivity";
 import { ProListProps } from "./src";
 import { ModalProps } from "./src/curd/CurdModal";
+import { ColSizeObject } from "element-plus/es/components/col/src/col";
 
 export type TOption = {
   label?: string;
@@ -20,34 +21,6 @@ export type TColumn = TableColumnCtx<any> &
   };
 
 export type TColumns = TColumn[];
-
-export type BooleanObjType = {
-  [key: string]: boolean;
-};
-
-export type BooleanRulesObjType = {
-  [key: string]: (record: any) => boolean;
-};
-
-export type TDefaultValueType =
-  | "text"
-  | "textarea"
-  | "password"
-  | "digit"
-  | "date"
-  | "dateRange"
-  | "time"
-  | "timeRange"
-  | "select"
-  | "treeSelect"
-  | "checkbox"
-  | "radio"
-  | "slider"
-  | "switch"
-  | "rate"
-  | "cascader";
-
-export type TValueType = TDefaultValueType | string;
 
 // Table column
 export interface TableColumnCtx<T> {
@@ -118,8 +91,28 @@ export interface IProCurdProvide
   tableColumns: Ref<TColumns>;
   searchColumns: Ref<TColumns>;
   /******************子组件参数*******************/
-  listProps?: ProListProps;
-  formProps?: ProCurdFormProps;
-  descProps?: DescriptionsProps;
-  modalProps?: ModalProps;
+  listProps?: ComputedRef<ProListProps | undefined>;
+  formProps?: ComputedRef<ProCurdFormProps | undefined>;
+  descProps?: ComputedRef<DescriptionsProps | undefined>;
+  modalProps?: ComputedRef<ModalProps | undefined>;
+}
+
+export interface IRow {
+  gutter?: number;
+  justify?: "start" | "end" | "center" | "space-around" | "space-between" | "space-evenly";
+  align?: "top" | "bottom" | "middle";
+  tag?: string;
+}
+
+export interface ICol {
+  span?: number;
+  offset?: number;
+  push?: number;
+  pull?: number;
+  xs?: ColSizeObject | number;
+  sm?: ColSizeObject | number;
+  md?: ColSizeObject | number;
+  lg?: ColSizeObject | number;
+  xl?: ColSizeObject | number;
+  tag?: string;
 }

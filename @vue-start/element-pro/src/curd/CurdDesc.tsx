@@ -50,7 +50,7 @@ export const ProCurdDescConnect = defineComponent({
   setup: () => {
     const { descProps } = useProCurd();
     return () => {
-      return <ProCurdList {...omit(descProps, "slots")} v-slots={get(descProps, "slots")} />;
+      return <ProCurdList {...omit(descProps?.value, "slots")} v-slots={get(descProps?.value, "slots")} />;
     };
   },
 });

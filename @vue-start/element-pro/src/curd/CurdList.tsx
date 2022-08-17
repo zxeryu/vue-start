@@ -1,5 +1,5 @@
 import { defineComponent } from "vue";
-import { get, isUndefined, omit, pick, mergeWith, isArray, concat } from "lodash";
+import { get, isUndefined, omit, pick, mergeWith, isArray, concat, map } from "lodash";
 import { ProList, ProListProps } from "../comp/ProList";
 import { CurdAction, CurdSubAction, ICurdAction, IOperateItem, useProCurd, useProModule } from "@vue-start/pro";
 import { IProCurdProvide } from "../../types";
@@ -63,7 +63,18 @@ export const ProCurdList = defineComponent<ProListProps>({
               if (isArray(objValue)) {
                 if (isArray(srcValue)) {
                   //合并
-                  return concat(objValue, srcValue);
+                  return concat(
+                    objValue,
+                    map(srcValue, (item) => {
+                      const nextItem = { ...item };
+                      if (!item.onClick) {
+                        nextItem.onClick = (record: Record<string, any>) => {
+                          sendCurdEvent({ action: CurdAction.LIST, type: `operate-${item.value}` as any, record });
+                        };
+                      }
+                      return nextItem;
+                    }),
+                  );
                 } else {
                   //使用curd默认
                   return objValue;
@@ -89,7 +100,7 @@ export const ProCurdListConnect = defineComponent({
   setup: () => {
     const { listProps } = useProCurd();
     return () => {
-      return <ProCurdList {...omit(listProps, "slots")} v-slots={get(listProps, "slots")} />;
+      return <ProCurdList {...omit(listProps?.value, "slots")} v-slots={get(listProps?.value, "slots")} />;
     };
   },
 });
