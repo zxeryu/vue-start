@@ -4,6 +4,7 @@ import { TableProps } from "element-plus/es/components/table/src/table/defaults"
 import { TableColumnCtx, TColumns } from "../../types";
 import { get, keys, map, omit, pick } from "lodash";
 import { ProTable as ProTableOrigin, ProTableProps as ProTablePropsOrigin, useProTable } from "@vue-start/pro";
+import { createLoadingId, ProLoading } from "../comp/Loading";
 
 export type ProTableProps = Omit<ProTablePropsOrigin, "columns"> & {
   columns?: TColumns;
@@ -50,6 +51,7 @@ export const ProTable = defineComponent<ProTableProps>({
     ...ProTableOrigin.props,
   },
   setup: (props, { slots, expose, attrs }) => {
+    const id = createLoadingId("table");
     const tableRef = ref();
 
     const originKeys = keys(ProTableOrigin.props);
@@ -57,7 +59,6 @@ export const ProTable = defineComponent<ProTableProps>({
     return () => {
       return (
         <ProTableOrigin
-          {...attrs}
           {...(pick(props, ...originKeys, "provideExtra") as any)}
           provideExtra={{ tableRef, ...props.provideExtra }}>
           <ElTable
@@ -65,10 +66,15 @@ export const ProTable = defineComponent<ProTableProps>({
               expose(el);
               tableRef.value = el;
             }}
+            // @ts-ignore
+            id={id}
+            {...attrs}
             {...omit(props, originKeys)}
             v-slots={omit(slots, "default")}>
             <Content />
             {slots.default?.()}
+
+            {props.loading && <ProLoading target={id} loading />}
           </ElTable>
         </ProTableOrigin>
       );
