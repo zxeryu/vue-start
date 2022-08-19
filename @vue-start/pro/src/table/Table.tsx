@@ -78,6 +78,14 @@ const proTableProps = () => ({
    */
   loading: { type: Boolean },
   /**
+   * 序号
+   */
+  serialNumber: { type: Boolean },
+  /**
+   * 分页
+   */
+  pagination: { type: Object as PropType<{ page?: number; pageSize?: number }> },
+  /**
    * provide传递
    */
   provideExtra: { type: Object as PropType<IProTableProvideExtra> },
@@ -111,6 +119,23 @@ export const ProTable = defineComponent<ProTableProps>({
         }
         return nextItem;
       });
+
+      //处理序号
+      if (props.serialNumber) {
+        columns.unshift({
+          title: "序号",
+          dataIndex: "serialNumber",
+          width: 80,
+          ...props.column,
+          // @ts-ignore
+          customRender: ({ index }) => {
+            if (props.pagination?.page && props.pagination?.pageSize) {
+              return props.pagination.pageSize * (props.pagination.page - 1) + index + 1;
+            }
+            return index + 1;
+          },
+        });
+      }
 
       const operate = props.operate;
       //处理operate
@@ -166,7 +191,7 @@ export const ProTable = defineComponent<ProTableProps>({
     provideProTable({ columns, ...props.provideExtra });
 
     return () => {
-      return slots.default?.(columns.value);
+      return slots.default?.();
     };
   },
 });

@@ -50,7 +50,6 @@ export const ProLoading = defineComponent<ProLoadingProps>({
         if (!element) {
           return;
         }
-        console.log("##########emit=", props.loading);
         const instance = ElLoading.service({
           target: element,
           body: props.body,

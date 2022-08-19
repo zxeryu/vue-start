@@ -1,7 +1,7 @@
 import { defineComponent, ExtractPropTypes, PropType, VNode } from "vue";
 import { ICol, IRow } from "../../types";
 import { ElRow, ElCol } from "element-plus";
-import { map, merge } from "lodash";
+import { map } from "lodash";
 
 const proGridProps = () => ({
   /**
@@ -38,7 +38,7 @@ export const ProGrid = defineComponent<ProGridProps>({
         <ElRow {...props.row}>
           {map(props.items, (item) => {
             return (
-              <ElCol key={item.rowKey} {...merge(props.col, item.col)}>
+              <ElCol key={item.rowKey} {...props.col} {...item.col}>
                 {item.vNode}
               </ElCol>
             );

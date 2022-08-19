@@ -54,23 +54,22 @@ export const ProTable = defineComponent<ProTableProps>({
     const id = createLoadingId("table");
     const tableRef = ref();
 
-    const originKeys = keys(ProTableOrigin.props);
+    expose({ tableRef });
 
+    const originKeys = keys(ProTableOrigin.props);
     return () => {
       return (
         <ProTableOrigin
           {...(pick(props, ...originKeys, "provideExtra") as any)}
           provideExtra={{ tableRef, ...props.provideExtra }}>
           <ElTable
-            ref={(el: any) => {
-              expose(el);
-              tableRef.value = el;
-            }}
+            ref={tableRef}
             // @ts-ignore
             id={id}
             {...attrs}
             {...omit(props, originKeys)}
             v-slots={omit(slots, "default")}>
+            {slots.top?.()}
             <Content />
             {slots.default?.()}
 

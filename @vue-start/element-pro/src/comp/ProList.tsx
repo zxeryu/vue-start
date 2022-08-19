@@ -108,7 +108,15 @@ export const ProList = defineComponent<ProListProps>({
 
           {!props.extraInSearch && extra}
 
-          {slots.default ? slots.default() : <ProTable {...omit(tableProps, "slots")} v-slots={tableProps?.slots} />}
+          {slots.default ? (
+            slots.default()
+          ) : (
+            <ProTable
+              pagination={{ page: pageState.page, pageSize: pageState.pageSize }}
+              {...omit(tableProps, "slots")}
+              v-slots={tableProps?.slots}
+            />
+          )}
 
           {slots.divide2?.()}
 

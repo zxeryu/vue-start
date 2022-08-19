@@ -43,6 +43,7 @@ export const ProCurdList = defineComponent<ProListProps>({
 
     return () => {
       const tableProps = props.tableProps;
+      const paginationProps = props.paginationProps;
 
       return (
         <ProList
@@ -69,7 +70,7 @@ export const ProCurdList = defineComponent<ProListProps>({
                       const nextItem = { ...item };
                       if (!item.onClick) {
                         nextItem.onClick = (record: Record<string, any>) => {
-                          sendCurdEvent({ action: CurdAction.LIST, type: `operate-${item.value}` as any, record });
+                          sendCurdEvent({ action: "operate", type: item.value, record } as any);
                         };
                       }
                       return nextItem;
@@ -86,7 +87,7 @@ export const ProCurdList = defineComponent<ProListProps>({
             data: curdState.listData?.dataSource,
           }}
           paginationProps={{
-            ...props.paginationProps,
+            ...paginationProps,
             total: curdState.listData?.total,
           }}
           v-slots={slots}
