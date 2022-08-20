@@ -3,6 +3,7 @@ import { TColumn, TElementMap } from "../types";
 import { filter, get, isFunction, map, merge, some, sortBy } from "lodash";
 import { getItemEl } from "../core";
 import { Ref } from "@vue/reactivity";
+import { mergeStateToList } from "../util";
 
 const ProTableKey = Symbol("pro-table");
 
@@ -69,6 +70,7 @@ const proTableProps = () => ({
   column: { type: Object as PropType<TTableColumn> },
   //
   columns: { type: Array as PropType<TTableColumns> },
+  columnState: { type: Object as PropType<Record<string, any>> },
   /**
    * 展示控件集合，readonly模式下使用这些组件渲染
    */
@@ -99,8 +101,9 @@ export const ProTable = defineComponent<ProTableProps>({
   } as any,
   setup: (props, { slots }) => {
     const columns = computed(() => {
+      const mergeColumns = mergeStateToList(props.columns!, props.columnState!, (item) => item.dataIndex);
       //根据valueType选择对应的展示组件
-      const columns = map(props.columns, (item) => {
+      const columns = map(mergeColumns, (item) => {
         //merge公共item
         const nextItem = merge(props.column, item);
         if (!item.customRender) {

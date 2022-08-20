@@ -8,6 +8,7 @@ import {
   getValidValues,
   ProForm as ProFormOrigin,
   ProFormProps as ProFormPropsOrigin,
+  useProForm,
 } from "@vue-start/pro";
 import { ProGrid, ProGridProps } from "../comp";
 
@@ -61,6 +62,42 @@ export type ProFormProps = ProFormPropsOrigin &
     onFinishFailed?: (invalidFields: Record<string, any>) => void;
   }; //emit;
 
+const Content = defineComponent<
+  ProGridProps & {
+    needRules?: boolean;
+  }
+>({
+  props: {
+    ...ProGrid.props,
+    needRules: { type: Boolean },
+  },
+  setup: (props) => {
+    const { formElementMap, columns } = useProForm();
+    return () => {
+      if (!formElementMap || size(columns.value) <= 0) {
+        return null;
+      }
+      if (!props.row) {
+        return map(columns.value, (item) => getFormItemEl(formElementMap, item, props.needRules));
+      }
+      return (
+        <ProGrid
+          row={props.row}
+          col={props.col}
+          items={map(columns.value, (item) => {
+            const vNode = getFormItemEl(formElementMap, item, props.needRules);
+            return {
+              rowKey: getColumnFormItemName(item),
+              vNode: vNode as any,
+              col: get(item, ["extra", "col"]),
+            };
+          })}
+        />
+      );
+    };
+  },
+});
+
 export const ProForm = defineComponent<ProFormProps>({
   inheritAttrs: false,
   props: {
@@ -95,6 +132,7 @@ export const ProForm = defineComponent<ProFormProps>({
     };
 
     const originKeys = keys(omit(ProFormOrigin.props, "model"));
+    const gridKeys = keys(ProGrid.props);
 
     return () => {
       return (
@@ -103,27 +141,13 @@ export const ProForm = defineComponent<ProFormProps>({
           model={formState}
           showState={showState}
           provideExtra={{ formRef, ...props.provideExtra }}>
-          <ElForm ref={handleRef as any} {...attrs} {...omit(props, ...originKeys, "model")} model={formState}>
-            {props.formElementMap && size(props.columns) > 0 && (
-              <>
-                {props.row ? (
-                  <ProGrid
-                    row={props.row}
-                    col={props.col}
-                    items={map(props.columns, (item) => {
-                      const vNode = getFormItemEl(props.formElementMap, item, props.needRules);
-                      return {
-                        rowKey: getColumnFormItemName(item),
-                        vNode: vNode as any,
-                        col: get(item, ["extra", "col"]),
-                      };
-                    })}
-                  />
-                ) : (
-                  <>{map(props.columns, (item) => getFormItemEl(props.formElementMap, item, props.needRules))}</>
-                )}
-              </>
-            )}
+          <ElForm
+            ref={handleRef as any}
+            {...attrs}
+            {...omit(props, ...originKeys, "model", ...gridKeys)}
+            model={formState}>
+            {slots.top?.()}
+            <Content {...pick(props, gridKeys)} needRules={props.needRules} />
             {slots.default?.()}
           </ElForm>
         </ProFormOrigin>

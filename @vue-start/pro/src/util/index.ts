@@ -1,4 +1,17 @@
-import { filter, isArray, isString, keys, omit, split } from "lodash";
+import {
+  filter,
+  get,
+  isArray,
+  isEmpty,
+  isFunction,
+  isObject,
+  isString,
+  keys,
+  map,
+  mergeWith,
+  omit,
+  split,
+} from "lodash";
 import { BooleanObjType, BooleanRulesObjType } from "../types";
 
 /**
@@ -47,4 +60,36 @@ export const convertPathToList = (
  */
 export const generateId = (): string => {
   return Number(Math.random().toString().substr(3, 3) + Date.now()).toString(36);
+};
+
+/**
+ * 将listState 中的数据通过id merge到 list item中
+ * ps：数组会替换
+ * @param list
+ * @param listState
+ * @param id
+ */
+export const mergeStateToList = (
+  list: Record<string, any>[],
+  listState: Record<string, any>,
+  id: string | number | ((item: Record<string, any>) => string | number),
+): Record<string, any>[] => {
+  if (!listState || !id) {
+    return list;
+  }
+  return map(list, (item) => {
+    const idName = isFunction(id) ? id(item) : id;
+    //如果listState中有值，merge处理
+    const stateData = get(listState, idName);
+    if (!stateData || isEmpty(stateData) || isFunction(stateData) || !isObject(stateData)) {
+      return item;
+    }
+    //只有是对象（键值对）才合并
+    return mergeWith(item, stateData, (objValue, srcValue) => {
+      //如果是数组，替换
+      if (isArray(objValue) || isArray(srcValue)) {
+        return srcValue;
+      }
+    });
+  });
 };

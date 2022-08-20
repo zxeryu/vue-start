@@ -1,9 +1,10 @@
 import { Ref, UnwrapNestedRefs } from "@vue/reactivity";
-import { computed, defineComponent, ExtractPropTypes, inject, PropType, provide, reactive, VNode } from "vue";
+import { computed, defineComponent, ExtractPropTypes, inject, PropType, provide, reactive } from "vue";
 import { BooleanObjType, BooleanRulesObjType, TColumns, TElementMap } from "../types";
 import { useEffect } from "@vue-start/hooks";
-import { forEach, map, size } from "lodash";
-import { getFormItemEl } from "../core";
+import { forEach } from "lodash";
+import { getColumnFormItemName } from "../core";
+import { mergeStateToList } from "../util";
 
 const ProFormKey = Symbol("pro-form");
 
@@ -19,7 +20,7 @@ interface IProFormProvide extends IProFormProvideExtra {
   elementMap?: TElementMap;
   formElementMap?: TElementMap;
   //
-  formItemVNodes: Ref<(VNode | null)[]>;
+  columns: Ref<TColumns>;
 }
 
 export const useProForm = (): IProFormProvide => inject(ProFormKey) as IProFormProvide;
@@ -57,6 +58,7 @@ const proFormProps = () => ({
    *
    */
   columns: { type: Array as PropType<TColumns> },
+  columnState: { type: Object as PropType<Record<string, any>> },
   /**
    * 展示控件集合，readonly模式下使用这些组件渲染
    */
@@ -110,17 +112,9 @@ export const ProForm = defineComponent({
     //转换为ref对象
     const readonly = computed(() => props.readonly);
 
-    /**
-     * 将columns 转化为FormItem VNode对象
-     */
-    const formItemVNodes = computed(() => {
-      if (size(props.formElementMap) <= 0) {
-        return [];
-      }
-      return map(props.columns, (item) => {
-        return getFormItemEl(props.formElementMap, item, props.needRules);
-      });
-    });
+    const columns = computed(() =>
+      mergeStateToList(props.columns!, props.columnState!, (item) => getColumnFormItemName(item)!),
+    );
 
     provideProForm({
       formState,
@@ -129,15 +123,17 @@ export const ProForm = defineComponent({
       disableState,
       //
       elementMap: props.elementMap,
+      formElementMap: props.formElementMap,
       //
       readonly,
       //
-      formItemVNodes,
+      columns,
       //
       ...props.provideExtra,
     });
 
     return () => {
+      // console.log("########", columns.value, props.columns, props.columnState);
       return slots.default?.();
     };
   },

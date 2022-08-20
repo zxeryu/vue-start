@@ -1,11 +1,12 @@
 import { computed, defineComponent, ExtractPropTypes, h, inject, PropType, provide, reactive, VNode } from "vue";
 import { TActionEvent, TActionState, TColumn, TColumns, TElementMap, TValueType } from "../types";
-import { get, isArray, isEmpty, isFunction, isObject, keys, map, mergeWith, omit, reduce } from "lodash";
+import { get, isObject, keys, omit, reduce } from "lodash";
 import { Ref, UnwrapNestedRefs } from "@vue/reactivity";
 import { Subject } from "rxjs";
 import { setReactiveValue } from "@vue-start/hooks";
 import { IRequestActor, useRequestProvide } from "@vue-start/request";
 import { useComposeRequestActor } from "./request";
+import { mergeStateToList } from "../util";
 
 /**
  * 获取Column的valueType，默认"text"
@@ -165,20 +166,7 @@ export const ProModule = defineComponent<ProModuleProps>({
      * columns columnState 合并
      */
     const columns = computed(() => {
-      return map(props.columns, (item) => {
-        //如果columnState中有值，merge处理
-        const mapData = get(props.columnState, getColumnFormItemName(item)!);
-        if (isObject(mapData) && !isEmpty(mapData) && !isArray(mapData) && !isFunction(mapData)) {
-          //合并
-          return mergeWith(item, mapData, (objValue, srcValue) => {
-            //如果是数组，替换
-            if (isArray(objValue) || isArray(srcValue)) {
-              return srcValue;
-            }
-          });
-        }
-        return item;
-      });
+      return mergeStateToList(props.columns!, props.columnState!, (item) => getColumnFormItemName(item)!);
     });
 
     /*********************************** 渲染组件 ***************************************/
