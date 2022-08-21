@@ -60,6 +60,12 @@ export type TActionEvent = {
   type: string;
   //数据or对象
   payload?: any;
+  /**
+   * 发送事件源
+   * 公共组件（如：Curd）只处理source为undefined的事件
+   * 业务组件可以传入该参数覆盖之前的默认行为
+   */
+  source?: string;
   //备用
   extra?: Record<string, any>;
 };

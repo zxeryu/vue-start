@@ -31,16 +31,7 @@ export default [
         extensions: [".ts", ".tsx", ".mjs", ".js", ".jsx"],
       }),
     ],
-    external: [
-      "element-plus",
-      "lodash",
-      "vue",
-      "rxjs",
-      "rxjs/operators",
-      "@vue-start/hooks",
-      "@vue-start/request",
-      "@vue-start/pro",
-    ],
+    external: ["element-plus", "lodash", "vue", "rxjs", "rxjs/operators", "@vue-start/hooks", "@vue-start/pro"],
   },
   {
     input: "../../.tmp/@vue-start/element-pro/index.d.ts",

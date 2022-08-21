@@ -161,7 +161,7 @@ export const ProModule = defineComponent<ProModuleProps>({
   props: {
     ...(proModuleProps() as any),
   },
-  setup: (props, { slots }) => {
+  setup: (props, { slots, expose }) => {
     /**
      * columns columnState 合并
      */
@@ -275,6 +275,11 @@ export const ProModule = defineComponent<ProModuleProps>({
       dispatch,
       //
       requests: props.requests!,
+      sendRequest,
+    });
+
+    expose({
+      sendEvent,
       sendRequest,
     });
 

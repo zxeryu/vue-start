@@ -1,7 +1,7 @@
-import { computed, defineComponent, ExtractPropTypes, h, PropType, reactive } from "vue";
+import { computed, defineComponent, ExtractPropTypes, PropType, reactive, ref } from "vue";
 import { IProModuleProvide, IRequestOpts, ProModule, ProModuleProps, useModuleEvent, useProModule } from "../core";
 import { filter, get, keys, map, omit, pick, reduce, sortBy } from "lodash";
-import { TColumns } from "../types";
+import { TActionEvent, TColumns } from "../types";
 import { UnwrapNestedRefs } from "@vue/reactivity";
 import {
   CurdAction,
@@ -13,6 +13,11 @@ import {
   provideProCurd,
 } from "./ctx";
 import { IOperateItem } from "../table";
+
+export const defaultPage = {
+  page: 1,
+  pageSize: 10,
+};
 
 export interface IListData extends Record<string, any> {
   total: number;
@@ -48,6 +53,8 @@ export type TCurdActionEvent = {
   type: ICurdSubAction;
   record?: Record<string, any>;
   values?: Record<string, any>;
+  //
+  source?: TActionEvent["source"];
 };
 
 const proCurdProps = () => ({
@@ -72,7 +79,7 @@ const Curd = defineComponent<CurdProps>({
   props: {
     ...(proCurdProps() as any),
   },
-  setup: (props, { slots }) => {
+  setup: (props, { slots, expose }) => {
     const { columns, state, sendEvent, sendRequest } = useProModule() as Omit<IProModuleProvide, "state"> & {
       state: ICurdState;
     };
@@ -137,11 +144,15 @@ const Curd = defineComponent<CurdProps>({
 
     //发送事件
     const sendCurdEvent = (event: TCurdActionEvent) => {
-      sendEvent({ type: event.action, payload: omit(event, "action") });
+      sendEvent({ type: event.action, payload: omit(event, "action", "source"), source: event.source });
     };
 
     //事件订阅
     useModuleEvent((event) => {
+      //如果当前event存在source 不处理
+      if (event.source) {
+        return;
+      }
       const action = event.type as ICurdAction;
 
       const { type, values, record } = event.payload as Omit<TCurdActionEvent, "action">;
@@ -203,6 +214,8 @@ const Curd = defineComponent<CurdProps>({
       modalProps,
     });
 
+    expose({ sendCurdEvent, getOperate, refreshList: handleSearch });
+
     return () => {
       return slots.default?.();
     };
@@ -220,7 +233,10 @@ export const ProCurd = defineComponent<ProCurdProps>({
     ...Curd.props,
     curdState: { type: Object as PropType<ICurdState> },
   },
-  setup: (props, { slots }) => {
+  setup: (props, { slots, expose }) => {
+    const moduleRef = ref();
+    const curdRef = ref();
+
     const curdState: UnwrapNestedRefs<ICurdState> = props.curdState || reactive({ detailData: {} });
 
     /****************** 请求处理 **********************/
@@ -255,17 +271,27 @@ export const ProCurd = defineComponent<ProCurdProps>({
       },
     };
 
+    /****************************** columns分类 *************************************/
+
     const requests = map(props.operates, (item) => {
       const curdOpts = get(curdOperateOpts, item.action!);
       return { ...curdOpts, ...item };
     });
 
     const moduleKeys = keys(omit(ProModule.props, "state", "requests"));
+
+    expose({ moduleRef, curdRef });
+
     return () => {
-      return h(
-        ProModule,
-        { ...pick(props, moduleKeys), state: curdState, requests: requests as any },
-        h(Curd, { ...omit(props, ...moduleKeys, "curdState", "operates"), operates: requests }, slots),
+      return (
+        <ProModule ref={moduleRef} {...pick(props, moduleKeys)} state={curdState} requests={requests as any}>
+          <Curd
+            ref={curdRef}
+            {...omit(props, ...moduleKeys, "curdState", "operates")}
+            operates={requests}
+            v-slots={slots}
+          />
+        </ProModule>
       );
     };
   },

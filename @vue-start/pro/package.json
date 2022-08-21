@@ -23,5 +23,13 @@
   },
   "bugs": {
     "url": "https://github.com/zxeryu/vue-start/issues"
+  },
+  "peerDependencies": {
+    "@vue-start/hooks": "*",
+    "@vue-start/request": "*",
+    "lodash": ">= 4.x",
+    "rxjs": ">=7.x",
+    "vue": ">=3.x",
+    "vue-router": ">=4.x"
   }
 }
