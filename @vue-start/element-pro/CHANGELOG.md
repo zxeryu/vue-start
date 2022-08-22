@@ -3,6 +3,21 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.2.0](https://github.com/zxeryu/vue-start/compare/@vue-start/element-pro@0.1.2...@vue-start/element-pro@0.2.0) (2022-08-22)
+
+### Bug Fixes
+
+- **element-pro:** loading ([c512f63](https://github.com/zxeryu/vue-start/commit/c512f638f06acab64242bf85b2475b860097061e))
+- **element-pro:** serial number for table ([32e12aa](https://github.com/zxeryu/vue-start/commit/32e12aa6bdd494464bc2839eaaed5d8ce66330a5))
+
+### Features
+
+- **pro:** modal/page curd ([07b696c](https://github.com/zxeryu/vue-start/commit/07b696cf2a327d4ec083ec75f3d5b73c870bfcb3))
+
+### Performance Improvements
+
+- **pro:** columnState for table,form ([7f4431e](https://github.com/zxeryu/vue-start/commit/7f4431ebf2d426b93a24e381712d705700561ec9))
+
 ## [0.1.2](https://github.com/zxeryu/vue-start/compare/@vue-start/element-pro@0.1.1...@vue-start/element-pro@0.1.2) (2022-08-17)
 
 ### Bug Fixes
