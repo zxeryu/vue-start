@@ -13,6 +13,7 @@ import {
   provideProCurd,
 } from "./ctx";
 import { IOperateItem } from "../table";
+import { IRequestActor } from "@vue-start/request";
 
 export const defaultPage = {
   page: 1,
@@ -43,7 +44,7 @@ export interface ICurdState extends Record<string, any> {
  */
 export interface ICurdOperateOpts extends Omit<IRequestOpts, "actor" | "action">, Omit<IOperateItem, "value"> {
   action: ICurdAction; //类型，由当前程序赋值
-  actor?: IRequestOpts;
+  actor?: IRequestActor;
 }
 
 export type TCurdActionEvent = {
@@ -224,7 +225,7 @@ const Curd = defineComponent<CurdProps>({
 
 export type ProCurdProps = CurdProps &
   Omit<ProModuleProps, "state" | "requests"> & {
-    curdState: UnwrapNestedRefs<ICurdState>;
+    curdState?: UnwrapNestedRefs<ICurdState>;
   };
 
 export const ProCurd = defineComponent<ProCurdProps>({
