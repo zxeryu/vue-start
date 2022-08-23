@@ -1,6 +1,6 @@
 import { computed, defineComponent, ExtractPropTypes, inject, PropType, provide, VNode } from "vue";
 import { TColumn, TElementMap } from "../types";
-import { filter, get, isFunction, map, merge, some, sortBy } from "lodash";
+import { filter, get, isFunction, map, some, sortBy } from "lodash";
 import { getItemEl } from "../core";
 import { Ref } from "@vue/reactivity";
 import { mergeStateToList } from "../util";
@@ -105,7 +105,7 @@ export const ProTable = defineComponent<ProTableProps>({
       //根据valueType选择对应的展示组件
       const columns = map(mergeColumns, (item) => {
         //merge公共item
-        const nextItem = merge(props.column, item);
+        const nextItem = { ...props.column, ...item };
         if (!item.customRender) {
           nextItem.customRender = ({ text }) => {
             const vn = getItemEl(
