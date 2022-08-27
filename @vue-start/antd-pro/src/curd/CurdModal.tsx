@@ -1,27 +1,26 @@
 import { defineComponent } from "vue";
 import { Modal, ModalProps, Spin } from "ant-design-vue";
-import { useProCurdModule } from "./ctx";
-import { CurdCurrentMode } from "./CurdModule";
 import { get, omit } from "lodash";
 import { ProCurdFormConnect } from "./CurdForm";
 import { setReactiveValue } from "@vue-start/hooks";
+import { CurdAction, CurdCurrentMode, useProCurd } from "@vue-start/pro";
 
 export const ProCurdModal = defineComponent<ModalProps>({
   props: {
     ...Modal.props,
   },
   setup: (props, { slots }) => {
-    const { curdState, operate } = useProCurdModule();
+    const { curdState, getOperate } = useProCurd();
 
     //根据当前模式展示不同的Title
     const getTitle = () => {
       switch (curdState.mode) {
         case CurdCurrentMode.ADD:
-          return operate.addLabel;
+          return getOperate(CurdAction.ADD)?.label;
         case CurdCurrentMode.EDIT:
-          return operate.editLabel;
+          return getOperate(CurdAction.EDIT)?.label;
         case CurdCurrentMode.DETAIL:
-          return operate.detailLabel;
+          return getOperate(CurdAction.DETAIL)?.label;
       }
     };
 
@@ -58,11 +57,11 @@ export const ProCurdModal = defineComponent<ModalProps>({
 
 export const ProCurdModalConnect = defineComponent({
   setup: () => {
-    const { modalProps } = useProCurdModule();
+    const { modalProps } = useProCurd();
 
     return () => {
       return (
-        <ProCurdModal {...omit(modalProps, "slots")} v-slots={get(modalProps, "slots")}>
+        <ProCurdModal {...omit(modalProps?.value, "slots")} v-slots={get(modalProps?.value, "slots")}>
           <ProCurdFormConnect />
         </ProCurdModal>
       );

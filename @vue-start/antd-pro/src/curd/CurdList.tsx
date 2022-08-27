@@ -1,22 +1,20 @@
 import { defineComponent, ExtractPropTypes, PropType, reactive } from "vue";
-import { Button, Pagination, PaginationProps, Popconfirm } from "ant-design-vue";
-import { useProModule } from "../core";
-import { useProCurdModule } from "./ctx";
-import { camelCase, concat, get, isArray, isFunction, isNumber, mergeWith, omit, size } from "lodash";
+import { PaginationProps } from "ant-design-vue";
+import { concat, get, isArray, isUndefined, map, mergeWith, omit, pick, size } from "lodash";
 import { ProSearchForm, ProSearchFormProps } from "../form";
-import { IOperateItem, ProTable, ProTableProps } from "../table";
+import { ProTable, ProTableProps } from "../table";
 import { Slots } from "@vue/runtime-core";
-import { useEffect, useWatch } from "@vue-start/hooks";
 
-export type TPageState = {
-  page: number;
-  pageSize: number;
-};
-
-export const defaultPage: TPageState = {
-  page: 1,
-  pageSize: 10,
-};
+import {
+  CurdAction,
+  CurdSubAction,
+  defaultPage,
+  ICurdAction,
+  IOperateItem,
+  TPageState,
+  useProCurd,
+  useProModule,
+} from "@vue-start/pro";
 
 const curdListProps = () => ({
   /**
@@ -41,129 +39,101 @@ export type ProCurdListProps = Partial<ExtractPropTypes<ReturnType<typeof curdLi
  */
 export const ProCurdList = defineComponent<ProCurdListProps>({
   props: {
-    ...(curdListProps() as any),
-  },
+    ...curdListProps(),
+  } as any,
   setup: (props, { slots }) => {
     const { elementMap, formElementMap } = useProModule();
-    const { curdState, searchColumns, tableColumns, operate } = useProCurdModule();
+    const { curdState, searchColumns, tableColumns, getOperate, sendCurdEvent } = useProCurd();
 
     /******************* table ********************/
 
-    const prepareTableItem = (propName: string): IOperateItem => {
+    const prepareTableItem = (action: ICurdAction): IOperateItem => {
+      const item = getOperate(action);
       return {
-        value: propName,
-        label: get(operate, `${propName}Label`),
-        show: get(operate, propName, false),
+        ...pick(item, "label", "element", "disabled", "sort"),
+        show: !isUndefined(item?.show) ? item?.show : false,
+        value: action,
         onClick: (record) => {
-          const fun = get(operate, camelCase(`on-${propName}`));
-          fun?.(record);
+          if (item?.onClick) {
+            item.onClick(record);
+            return;
+          }
+          sendCurdEvent({ action, type: CurdSubAction.EMIT, record });
         },
       };
     };
 
     //table操作栏 items
     const tableOperateItems: IOperateItem[] = [
-      prepareTableItem("detail"),
-      prepareTableItem("edit"),
-      {
-        value: "delete",
-        element: (record, item) => {
-          return (
-            <Popconfirm
-              key={item.value}
-              disabled={isFunction(item.disabled) ? item.disabled(record) : item.disabled}
-              onConfirm={() => {
-                operate.onDelete?.(record);
-              }}>
-              <Button type={"link"} danger>
-                {operate.deleteLabel}
-              </Button>
-            </Popconfirm>
-          );
-        },
-      },
+      prepareTableItem(CurdAction.DETAIL),
+      prepareTableItem(CurdAction.EDIT),
+      prepareTableItem(CurdAction.DELETE),
     ];
+
+    //新配置的operate item，添加默认发送事件方法
+    const convertOperateItems = (list: IOperateItem[]) => {
+      return map(list, (item) => {
+        if (!item.onClick) {
+          return {
+            ...item,
+            onClick: (record: Record<string, any>) => {
+              sendCurdEvent({ action: "operate", type: item.value, record } as any);
+            },
+          };
+        }
+        return item;
+      });
+    };
 
     /******************* search pagination ********************/
 
-    const searchState = props.searchProps?.model || reactive({});
-
     const pageState = props.pageState || reactive({ ...defaultPage });
 
+    let prevValues: Record<string, any> | undefined;
     const handleSearch = () => {
-      operate.onList && operate.onList({ ...searchState, ...pageState });
+      sendCurdEvent({ action: CurdAction.LIST, type: CurdSubAction.EMIT, values: { ...prevValues, ...pageState } });
     };
 
-    const executeSearchWithResetPage = () => {
+    const executeSearchWithResetPage = (values: Record<string, any>) => {
+      prevValues = values;
       pageState.page = 1;
       handleSearch();
     };
 
-    //无SearchForm组件 初始化
-    useEffect(() => {
-      // 处理触发onList 操作
-      if (size(searchColumns.value) <= 0 && props.searchProps?.initEmit !== false) {
-        handleSearch();
-      }
-    }, []);
-    //无SearchForm组件 订阅searchState
-    useWatch(() => {
-      if (size(searchColumns.value) > 0) {
-        return;
-      }
-      executeSearchWithResetPage();
-    }, searchState);
-
     return () => {
-      const pagination = props.paginationProps || props.tableProps?.pagination;
-
       //
-      const extra = (
-        <div class={"pro-curd-list-search"}>
-          {operate.add && (
-            <Button
-              type={"primary"}
-              onClick={() => {
-                operate.onAdd?.();
-              }}>
-              {operate.addLabel}
-            </Button>
-          )}
-          {slots.extra?.()}
-        </div>
-      );
+      const extra = slots.extra ? <div class={"pro-curd-list-search"}>{slots.extra()}</div> : null;
 
       return (
         <>
           {size(searchColumns.value) > 0 && (
             <ProSearchForm
               formElementMap={formElementMap}
-              columns={searchColumns.value}
               {...props.searchProps}
-              model={searchState}
-              onFinish={executeSearchWithResetPage}
-              v-slots={{
-                //extraInSearch 模式下放入SearchForm
-                extra: () => (props.extraInSearch ? extra : null),
-              }}
-            />
+              columns={searchColumns.value}
+              onFinish={executeSearchWithResetPage}>
+              {props.extraInSearch && extra}
+            </ProSearchForm>
           )}
+
           {slots.divide?.()}
-          {(size(searchColumns.value) <= 0 || !props.extraInSearch) && (operate.add || slots.extra) && extra}
+
+          {!props.extraInSearch && extra}
 
           {slots.default ? (
             slots.default()
           ) : (
             <ProTable
+              paginationState={{ page: pageState.page, pageSize: pageState.pageSize }}
               elementMap={elementMap}
-              columns={tableColumns.value}
+              {...omit(props.tableProps, "slots", "operate")}
               //tableProps中的operate无用
-              operate={mergeWith({ items: tableOperateItems }, operate.tableOperate, (objValue, srcValue) => {
+              operate={mergeWith({ items: tableOperateItems }, props.tableProps?.operate, (objValue, srcValue) => {
                 if (isArray(objValue) && isArray(srcValue)) {
-                  return concat(objValue, srcValue);
+                  return concat(objValue, convertOperateItems(srcValue));
                 }
               })}
-              {...omit(props.tableProps, "slots", "operate")}
+              columns={tableColumns.value}
               loading={curdState.listLoading}
               dataSource={curdState.listData?.dataSource}
               v-slots={props.tableProps?.slots}
@@ -173,26 +143,11 @@ export const ProCurdList = defineComponent<ProCurdListProps>({
 
           {slots.divide2?.()}
 
-          {curdState.listData && isNumber(curdState.listData?.total) && curdState.listData.total > 0 && (
-            <div class={"pro-curd-list-bottom"}>
-              <Pagination
-                {...pagination}
-                total={curdState.listData.total}
-                current={pageState.page}
-                pageSize={pageState.pageSize}
-                onChange={(page: number, pageSize: number) => {
-                  pageState.page = page;
-                  pageState.pageSize = pageSize;
-                  handleSearch();
-                }}
-                onShowSizeChange={(current: number, size: number) => {
-                  pageState.page = current;
-                  pageState.pageSize = size;
-                  handleSearch();
-                }}
-              />
-            </div>
-          )}
+          <div class={"pro-list-footer"}>
+            {slots.footerStart?.()}
+            {slots.pagination?.(pageState, curdState.listData?.total, handleSearch)}
+            {slots.footerEnd?.()}
+          </div>
         </>
       );
     };
@@ -201,9 +156,9 @@ export const ProCurdList = defineComponent<ProCurdListProps>({
 
 export const ProCurdListConnect = defineComponent({
   setup: () => {
-    const { listProps } = useProCurdModule();
+    const { listProps } = useProCurd();
     return () => {
-      return <ProCurdList {...omit(listProps, "slots")} v-slots={get(listProps, "slots")} />;
+      return <ProCurdList {...omit(listProps?.value, "slots")} v-slots={get(listProps?.value, "slots")} />;
     };
   },
 });

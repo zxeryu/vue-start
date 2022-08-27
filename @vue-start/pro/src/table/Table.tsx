@@ -86,7 +86,7 @@ const proTableProps = () => ({
   /**
    * 分页
    */
-  pagination: { type: Object as PropType<{ page?: number; pageSize?: number }> },
+  paginationState: { type: Object as PropType<{ page?: number; pageSize?: number }> },
   /**
    * provide传递
    */
@@ -132,8 +132,8 @@ export const ProTable = defineComponent<ProTableProps>({
           ...props.column,
           // @ts-ignore
           customRender: ({ index }) => {
-            if (props.pagination?.page && props.pagination?.pageSize) {
-              return props.pagination.pageSize * (props.pagination.page - 1) + index + 1;
+            if (props.paginationState?.page && props.paginationState?.pageSize) {
+              return props.paginationState.pageSize * (props.paginationState.page - 1) + index + 1;
             }
             return index + 1;
           },

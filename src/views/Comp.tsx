@@ -1,13 +1,5 @@
 import { defineComponent, ref } from "vue";
-import {
-  ProForm,
-  ProFormText,
-  ProFormTextArea,
-  ProFormSelect,
-  ProFormList,
-  ProSchemaForm,
-  ProSearchForm,
-} from "@vue-start/antd-pro";
+import { ProForm, ProFormText, ProFormTextArea, ProFormSelect, ProFormList, ProSearchForm } from "@vue-start/antd-pro";
 import { Button } from "ant-design-vue";
 
 import "ant-design-vue/dist/antd.css";
@@ -15,7 +7,7 @@ import "ant-design-vue/dist/antd.css";
 export const Comp = defineComponent(() => {
   const formRef = ref();
 
-  const columns = [
+  const columns: any = [
     { title: "aaa", dataIndex: "aaa", valueType: "text" },
     {
       title: "select",
@@ -65,7 +57,7 @@ export const Comp = defineComponent(() => {
             submit
           </Button>
         </ProForm>
-        <ProSchemaForm
+        <ProForm
           onFinish={(values) => {
             console.log("######", values);
           }}
@@ -76,7 +68,7 @@ export const Comp = defineComponent(() => {
               submit
             </Button>
           </div>
-        </ProSchemaForm>
+        </ProForm>
         <ProSearchForm
           onFinish={(values) => {
             console.log("######search", values);

@@ -97,6 +97,8 @@ export const ProOperateButton = defineComponent<ProOperateButtonProps>({
 const proCurdFormProps = () => ({
   //
   operateButtonProps: { type: Object as PropType<ProOperateButtonProps> },
+  //
+  operateButton: { type: Boolean, default: true },
 });
 
 export type ProCurdFormProps = Partial<ExtractPropTypes<ReturnType<typeof proCurdFormProps>>> & ProFormProps;
@@ -132,7 +134,7 @@ export const ProCurdForm = defineComponent<ProCurdFormProps>({
           hideRequiredAsterisk={curdState.mode === CurdCurrentMode.DETAIL}
           onFinish={handleFinish}
           v-slots={omit(slots, "default")}>
-          {curdState.mode !== CurdCurrentMode.DETAIL && (
+          {props.operateButton && curdState.mode !== CurdCurrentMode.DETAIL && (
             <ProOperateButton
               {...omit(props.operateButtonProps, "slots")}
               v-slots={get(props.operateButtonProps, "slots")}

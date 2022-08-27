@@ -112,7 +112,7 @@ export const ProList = defineComponent<ProListProps>({
             slots.default()
           ) : (
             <ProTable
-              pagination={{ page: pageState.page, pageSize: pageState.pageSize }}
+              paginationState={{ page: pageState.page, pageSize: pageState.pageSize }}
               {...omit(tableProps, "slots")}
               v-slots={tableProps?.slots}
             />

@@ -94,3 +94,12 @@ export type BooleanObjType = {
 export type BooleanRulesObjType = {
   [key: string]: (record: any) => boolean;
 };
+
+/**
+ *
+ */
+export interface FieldNames {
+  value?: string;
+  label?: string;
+  children?: string;
+}

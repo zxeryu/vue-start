@@ -1,30 +1,29 @@
-import { computed, defineComponent, ExtractPropTypes, PropType } from "vue";
+import { defineComponent, ExtractPropTypes, PropType } from "vue";
 import { ProForm, ProFormProps } from "../form";
-import { useProCurdModule } from "./ctx";
-import { get, map, omit } from "lodash";
-import { useProModule } from "../core";
-import { CurdAddAction, CurdCurrentMode } from "./CurdModule";
+import { get, omit } from "lodash";
 import { Button, ButtonProps } from "ant-design-vue";
+
+import { CurdAction, CurdAddAction, CurdCurrentMode, CurdSubAction, useProCurd, useProModule } from "@vue-start/pro";
 
 /**
  * 添加 和 修改 时候的确定按钮
  */
 export const OkButton = defineComponent<ButtonProps>({
   props: {
-    ...Button.props,
-  },
+    ...omit(Button.props, "type"),
+    type: { type: String, default: "primary" },
+  } as any,
   setup: (props, { slots }) => {
-    const { curdState } = useProCurdModule();
+    const { curdState } = useProCurd();
 
     return () => {
       return (
         <Button
-          type={"primary"}
-          htmlType={"submit"}
           onClick={() => {
             curdState.addAction = CurdAddAction.NORMAL;
           }}
           {...(props as any)}
+          htmlType={"submit"}
           loading={curdState.operateLoading}>
           {slots.default ? slots.default() : "确定"}
         </Button>
@@ -38,20 +37,20 @@ export const OkButton = defineComponent<ButtonProps>({
  */
 export const ContinueAddButton = defineComponent<ButtonProps>({
   props: {
-    ...Button.props,
-  },
+    ...omit(Button.props, "type"),
+    type: { type: String, default: "primary" },
+  } as any,
   setup: (props, { slots }) => {
-    const { curdState } = useProCurdModule();
+    const { curdState } = useProCurd();
 
     return () => {
       return (
         <Button
-          type={"primary"}
-          htmlType={"submit"}
           onClick={() => {
             curdState.addAction = CurdAddAction.CONTINUE;
           }}
           {...(props as any)}
+          htmlType={"submit"}
           loading={curdState.operateLoading}>
           {slots.default ? slots.default() : "确定并继续"}
         </Button>
@@ -78,7 +77,7 @@ export const ProOperateButton = defineComponent<ProOperateButtonProps>({
     ...(proOperateButtonProps() as any),
   },
   setup: (props, { slots }) => {
-    const { curdState } = useProCurdModule();
+    const { curdState } = useProCurd();
 
     return () => {
       return (
@@ -103,6 +102,8 @@ export const ProOperateButton = defineComponent<ProOperateButtonProps>({
 const proCurdFormProps = () => ({
   //
   operateButtonProps: { type: Object as PropType<ProOperateButtonProps> },
+  //
+  operateButton: { type: Boolean, default: true },
 });
 
 export type ProCurdFormProps = Partial<ExtractPropTypes<ReturnType<typeof proCurdFormProps>>> & ProFormProps;
@@ -113,51 +114,39 @@ export const ProCurdForm = defineComponent<ProCurdFormProps>({
     ...proCurdFormProps(),
   },
   setup: (props, { slots }) => {
-    const { getFormItemVNode } = useProModule();
-    const { curdState, formColumns, operate } = useProCurdModule();
-
-    const formVNodes = computed(() => {
-      return map(formColumns.value, (item) => {
-        return getFormItemVNode(item, true);
-      });
-    });
+    const { elementMap, formElementMap } = useProModule();
+    const { curdState, formColumns, sendCurdEvent } = useProCurd();
 
     const handleFinish = (values: Record<string, any>) => {
       if (curdState.mode === CurdCurrentMode.EDIT) {
         //edit
-        operate.onEditExecute?.(values);
+        sendCurdEvent({ action: CurdAction.EDIT, type: CurdSubAction.EXECUTE, values });
       } else {
         //add
-        operate.onAddExecute?.(values);
+        sendCurdEvent({ action: CurdAction.ADD, type: CurdSubAction.EXECUTE, values });
       }
     };
 
     return () => {
       return (
         <ProForm
-          {...props}
+          {...omit(props, "elementMap", "formElementMap")}
+          elementMap={props.elementMap || elementMap}
+          formElementMap={props.formElementMap || formElementMap}
+          columns={formColumns.value}
           model={curdState.detailData}
           readonly={curdState.mode === CurdCurrentMode.DETAIL}
           hideRequiredMark={curdState.mode === CurdCurrentMode.DETAIL}
           onFinish={handleFinish}
-          v-slots={{
-            default: () => {
-              return (
-                <>
-                  {formVNodes.value}
-                  {curdState.mode !== CurdCurrentMode.DETAIL && (
-                    <ProOperateButton
-                      {...omit(props.operateButtonProps, "slots")}
-                      v-slots={get(props.operateButtonProps, "slots")}
-                    />
-                  )}
-                  {slots.default?.()}
-                </>
-              );
-            },
-            ...omit(slots, "default"),
-          }}
-        />
+          v-slots={omit(slots, "default")}>
+          {props.operateButton && curdState.mode !== CurdCurrentMode.DETAIL && (
+            <ProOperateButton
+              {...omit(props.operateButtonProps, "slots")}
+              v-slots={get(props.operateButtonProps, "slots")}
+            />
+          )}
+          {slots.default?.()}
+        </ProForm>
       );
     };
   },
@@ -165,9 +154,9 @@ export const ProCurdForm = defineComponent<ProCurdFormProps>({
 
 export const ProCurdFormConnect = defineComponent({
   setup: () => {
-    const { formProps } = useProCurdModule();
+    const { formProps } = useProCurd();
     return () => {
-      return <ProCurdForm {...omit(formProps, "slots")} v-slots={get(formProps, "slots")} />;
+      return <ProCurdForm {...omit(formProps?.value, "slots")} v-slots={get(formProps?.value, "slots")} />;
     };
   },
 });

@@ -15,7 +15,12 @@ import {
 import { IOperateItem } from "../table";
 import { IRequestActor } from "@vue-start/request";
 
-export const defaultPage = {
+export type TPageState = {
+  page: number;
+  pageSize: number;
+};
+
+export const defaultPage: TPageState = {
   page: 1,
   pageSize: 10,
 };

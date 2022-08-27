@@ -19,6 +19,7 @@ export const ProFormList = defineComponent<ProFormListProps>({
   name: "PFormList",
   props: {
     ...ProFormItem.props,
+    ...ProFormListOrigin.props,
     ...proFormListProps(),
   },
   setup: (props, { slots }) => {

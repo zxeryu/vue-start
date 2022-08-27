@@ -1,89 +1,42 @@
 import { defineComponent, ExtractPropTypes, PropType } from "vue";
-import { provideProFormList, useProForm, useProFormList } from "./ctx";
 import { ButtonProps, FormItem, FormItemProps, Button } from "ant-design-vue";
-import { get, isArray, keys, map, omit, set, size } from "lodash";
-import { convertPathToList } from "../util";
+import { keys, omit, pick } from "lodash";
 
-const FormListProvider = defineComponent({
-  props: { pathList: { type: Array } },
-  setup: (props, { slots }) => {
-    provideProFormList({ pathList: props.pathList as any });
-    return () => {
-      return slots.default?.();
-    };
-  },
-});
+import { ProFormList as ProFormListOrigin, ProFormListProps as ProFormListPropsOrigin } from "@vue-start/pro";
 
 const proFormListProps = () => ({
   addButtonText: { type: String, default: "添加一项" },
   addButtonProps: { type: Object as PropType<ButtonProps> },
-  //每行默认id
-  rowKey: { type: String, default: "id" },
+  minusButtonText: { type: String, default: "删除" },
+  minusButtonProps: { type: Object as PropType<ButtonProps> },
 });
 
-export type ProFormListProps = Partial<ExtractPropTypes<ReturnType<typeof proFormListProps>>> & FormItemProps;
+export type ProFormListProps = Partial<ExtractPropTypes<ReturnType<typeof proFormListProps>>> &
+  ProFormListPropsOrigin &
+  FormItemProps;
 
 export const ProFormList = defineComponent<ProFormListProps>({
-  name: "PFormList",
   props: {
     ...FormItem.props,
+    ...ProFormListOrigin.props,
     ...proFormListProps(),
   },
   setup: (props, { slots }) => {
-    const { formState, readonly } = useProForm();
-
-    const formListCtx = useProFormList();
-
-    const nameList = convertPathToList(props.name);
-    const path = formListCtx?.pathList ? [...formListCtx.pathList, ...nameList!] : nameList!;
-
-    const handleAdd = () => {
-      let targetList = get(formState, path);
-      if (!isArray(targetList)) {
-        targetList = [];
-      }
-      targetList.push({
-        [props.rowKey!]: new Date().valueOf(),
-      });
-      set(formState, path, targetList);
-    };
-
-    const handleRemove = (index: number) => {
-      const targetList = get(formState, path);
-      if (size(targetList) <= 0) {
-        return;
-      }
-      targetList.splice(index, 1);
-    };
-
+    const originKeys = keys(ProFormListOrigin.props);
     const invalidKeys = keys(proFormListProps());
 
     return () => {
       return (
-        <FormItem {...omit(props, invalidKeys)}>
-          {map(get(formState, path), (item, index: number) => (
-            <FormListProvider key={index} pathList={[...path, index]}>
-              <div class={"pro-form-list-item"}>
-                {slots.default?.()}
-                {!readonly.value && (
-                  <div class={"pro-form-list-item-minus"} onClick={() => handleRemove(index)}>
-                    {slots.minus ? slots.minus() : <Button type={"link"}>删除</Button>}
-                  </div>
-                )}
-              </div>
-            </FormListProvider>
-          ))}
-          {!readonly.value && (
-            <div class={"pro-form-list-item-add"} onClick={handleAdd}>
-              {slots.add ? (
-                slots.add()
-              ) : (
-                <Button type={"primary"} {...props.addButtonProps}>
-                  {props.addButtonText}
-                </Button>
-              )}
-            </div>
-          )}
+        <FormItem {...omit(props, ...originKeys, ...invalidKeys)} name={props.name}>
+          <ProFormListOrigin
+            {...pick(props, originKeys)}
+            name={props.name}
+            v-slots={{
+              itemMinus: () => <Button {...props.minusButtonProps}>{props.minusButtonText}</Button>,
+              add: () => <Button {...props.addButtonProps}>{props.addButtonText}</Button>,
+              ...slots,
+            }}
+          />
         </FormItem>
       );
     };

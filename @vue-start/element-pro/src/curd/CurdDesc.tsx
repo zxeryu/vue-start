@@ -1,6 +1,5 @@
 import { computed, defineComponent } from "vue";
 import { get, map, omit } from "lodash";
-import { ProCurdList } from "./CurdList";
 import { ElDescriptions, ElDescriptionsItem } from "element-plus";
 import { useProCurd, useProModule } from "@vue-start/pro";
 
@@ -50,7 +49,7 @@ export const ProCurdDescConnect = defineComponent({
   setup: () => {
     const { descProps } = useProCurd();
     return () => {
-      return <ProCurdList {...omit(descProps?.value, "slots")} v-slots={get(descProps?.value, "slots")} />;
+      return <ProCurdDesc {...omit(descProps?.value, "slots")} v-slots={get(descProps?.value, "slots")} />;
     };
   },
 });

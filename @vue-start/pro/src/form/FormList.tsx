@@ -75,7 +75,7 @@ export const ProFormList = defineComponent<ProFormListProps>({
       return (
         <>
           {map(get(formState, path), (item, index: number) => (
-            <FormListProvider key={index} pathList={[...path, index]}>
+            <FormListProvider key={(item[props.rowKey!], index)} pathList={[...path, index]}>
               <div class={"pro-form-list-item"}>
                 {slots.default?.()}
                 {!readonly.value && (
