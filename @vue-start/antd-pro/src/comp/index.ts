@@ -8,4 +8,4 @@ export type ProGridProps = {
   items?: { vNode: VNode; rowKey?: string | number; col?: ColProps }[];
 };
 
-export const ProGrid: DefineComponent<ProGridProps> = createGrid<RowProps, ColProps>(Row, Col);
+export const ProGrid: DefineComponent<ProGridProps> = createGrid(Row, Col);

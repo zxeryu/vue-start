@@ -41,7 +41,7 @@ export const ProCurdModal = defineComponent<ModalProps>({
           visible={!!curdState.mode}
           onCancel={handleCancel}
           {...(props as any)}
-          v-slots={omit(slots, "slots")}>
+          v-slots={omit(slots, "default")}>
           {curdState.detailLoading ? (
             <div class={"pro-curd-modal-spin"}>
               <Spin spinning />

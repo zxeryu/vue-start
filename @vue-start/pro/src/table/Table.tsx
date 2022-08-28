@@ -1,6 +1,6 @@
-import { computed, defineComponent, ExtractPropTypes, inject, PropType, provide, VNode } from "vue";
+import { computed, defineComponent, ExtractPropTypes, inject, PropType, provide, ref, VNode } from "vue";
 import { TColumn, TElementMap } from "../types";
-import { filter, get, isFunction, map, some, sortBy } from "lodash";
+import { filter, get, isFunction, keys, map, omit, some, sortBy } from "lodash";
 import { getItemEl } from "../core";
 import { Ref } from "@vue/reactivity";
 import { mergeStateToList } from "../util";
@@ -27,9 +27,10 @@ export type TTableColumn = {
     record: Record<string, any>;
     index: number;
     column: TTableColumn;
-  }) => VNode;
+  }) => VNode | string | number;
 
   fixed?: boolean | string;
+  width?: number | string;
 } & TColumn;
 
 export type TTableColumns = TTableColumn[];
@@ -76,10 +77,6 @@ const proTableProps = () => ({
    */
   elementMap: { type: Object as PropType<TElementMap> },
   /**
-   * loading
-   */
-  loading: { type: Boolean },
-  /**
    * 序号
    */
   serialNumber: { type: Boolean },
@@ -95,66 +92,40 @@ const proTableProps = () => ({
 
 export type ProTableProps = Partial<ExtractPropTypes<ReturnType<typeof proTableProps>>>;
 
-export const ProTable = defineComponent<ProTableProps>({
-  props: {
-    ...proTableProps(),
-  } as any,
-  setup: (props, { slots }) => {
-    const columns = computed(() => {
-      const mergeColumns = mergeStateToList(props.columns!, props.columnState!, (item) => item.dataIndex);
-      //根据valueType选择对应的展示组件
-      const columns = map(mergeColumns, (item) => {
-        //merge公共item
-        const nextItem = { ...props.column, ...item };
-        if (!item.customRender) {
-          nextItem.customRender = ({ text }) => {
-            const vn = getItemEl(
-              props.elementMap,
-              {
-                ...item,
-                showProps: { ...item.showProps, content: props.columnEmptyText },
-              },
-              text,
-            );
-            //如果找不到注册的组件，使用当前值 及 columnEmptyText
-            return vn || text || props.columnEmptyText;
-          };
-        }
-        return nextItem;
+export const createTable = (Table: any, Props?: any): any => {
+  return defineComponent<ProTableProps>({
+    props: {
+      ...Table.props,
+      ...Props,
+      ...proTableProps(),
+    },
+    setup: (props, { slots }) => {
+      const createNumberColumn = (): TTableColumn => ({
+        title: "序号",
+        dataIndex: "serialNumber",
+        width: 80,
+        ...props.column,
+        customRender: ({ index }) => {
+          if (props.paginationState?.page && props.paginationState?.pageSize) {
+            return props.paginationState.pageSize * (props.paginationState.page - 1) + index + 1;
+          }
+          return index + 1;
+        },
       });
 
-      //处理序号
-      if (props.serialNumber) {
-        columns.unshift({
-          title: "序号",
-          dataIndex: "serialNumber",
-          width: 80,
-          ...props.column,
-          // @ts-ignore
-          customRender: ({ index }) => {
-            if (props.paginationState?.page && props.paginationState?.pageSize) {
-              return props.paginationState.pageSize * (props.paginationState.page - 1) + index + 1;
-            }
-            return index + 1;
-          },
-        });
-      }
-
-      const operate = props.operate;
-      //处理operate
-      if (operate && operate.items && some(operate.items, (item) => item.show)) {
+      const createOperateColumn = (): TTableColumn => {
+        const operate = props.operate!;
         //将itemState补充的信息拼到item中
         const items = map(operate.items, (i) => ({ ...i, ...get(operate.itemState, i.value) }));
         //排序
         const sortedItems = sortBy(items, (item) => item.sort);
-
-        columns.push({
+        return {
+          ...props.column,
           title: "操作",
           dataIndex: "operate",
           fixed: "right",
-          ...props.column,
           customRender: ({ record }) => {
-            const validItems = filter(sortedItems, (item) => {
+            const showItems = filter(sortedItems, (item) => {
               if (item.show && isFunction(item.show)) {
                 return item.show(record);
               }
@@ -163,9 +134,10 @@ export const ProTable = defineComponent<ProTableProps>({
               }
               return true;
             });
+
             return (
               <div class={"pro-table-operate"}>
-                {map(validItems, (item) => {
+                {map(showItems, (item) => {
                   //自定义
                   if (isFunction(item.element)) {
                     return item.element(record, item);
@@ -184,17 +156,53 @@ export const ProTable = defineComponent<ProTableProps>({
               </div>
             );
           },
-          ...operate.column,
+        };
+      };
+
+      const columns = computed(() => {
+        const mergeColumns = mergeStateToList(props.columns!, props.columnState!, (item) => item.dataIndex);
+        //根据valueType选择对应的展示组件
+        const columns = map(mergeColumns, (item) => {
+          //merge公共item
+          const nextItem = { ...props.column, ...item };
+          if (!item.customRender) {
+            nextItem.customRender = ({ text }) => {
+              const vn = getItemEl(
+                props.elementMap,
+                {
+                  ...item,
+                  showProps: { ...item.showProps, content: props.columnEmptyText },
+                },
+                text,
+              );
+              //如果找不到注册的组件，使用当前值 及 columnEmptyText
+              return vn || text || props.columnEmptyText;
+            };
+          }
+          return nextItem;
         });
-      }
+        //处理序号
+        if (props.serialNumber) {
+          columns.unshift(createNumberColumn());
+        }
 
-      return columns;
-    });
+        //处理operate
+        if (props.operate && props.operate.items && some(props.operate.items, (item) => item.show)) {
+          columns.push(createOperateColumn());
+        }
 
-    provideProTable({ columns, ...props.provideExtra });
+        return columns;
+      });
 
-    return () => {
-      return slots.default?.();
-    };
-  },
-});
+      const tableRef = ref();
+
+      provideProTable({ columns, tableRef, ...props.provideExtra });
+
+      const invalidKeys = keys(proTableProps());
+
+      return () => {
+        return <Table ref={tableRef} {...omit(props, invalidKeys)} columns={columns.value} v-slots={slots} />;
+      };
+    },
+  });
+};

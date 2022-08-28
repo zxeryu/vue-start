@@ -1,7 +1,7 @@
-import { computed, defineComponent } from "vue";
-import { get, map, omit } from "lodash";
+import { DefineComponent, defineComponent } from "vue";
+import { get, omit } from "lodash";
 import { ElDescriptions, ElDescriptionsItem } from "element-plus";
-import { useProCurd, useProModule } from "@vue-start/pro";
+import { createCurdDesc, useProCurd } from "@vue-start/pro";
 
 export interface DescriptionsProps {
   border?: boolean;
@@ -12,38 +12,7 @@ export interface DescriptionsProps {
   extra?: string;
 }
 
-export const ProCurdDesc = defineComponent<DescriptionsProps>({
-  props: {
-    ...ElDescriptions.props,
-  },
-  setup: (props, { slots }) => {
-    const { getItemVNode } = useProModule();
-    const { curdState, descColumns } = useProCurd();
-
-    const descVNodes = computed(() => {
-      return map(descColumns.value, (item) => {
-        const value = get(curdState.detailData, item.dataIndex!);
-        return (
-          <ElDescriptionsItem key={item.dataIndex as any} label={item.title} {...get(item.extra, "desc")}>
-            {getItemVNode(item, value)}
-          </ElDescriptionsItem>
-        );
-      });
-    });
-
-    return () => {
-      return (
-        <ElDescriptions
-          {...props}
-          v-slots={{
-            default: () => descVNodes.value,
-            ...omit(slots, "default"),
-          }}
-        />
-      );
-    };
-  },
-});
+export const ProCurdDesc: DefineComponent<DescriptionsProps> = createCurdDesc(ElDescriptions, ElDescriptionsItem);
 
 export const ProCurdDescConnect = defineComponent({
   setup: () => {

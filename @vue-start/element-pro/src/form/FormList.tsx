@@ -1,8 +1,10 @@
 import { defineComponent, ExtractPropTypes, PropType } from "vue";
 import { ButtonProps, ElButton } from "element-plus";
-import { keys, omit, pick } from "lodash";
+import { keys, omit } from "lodash";
 import { ProFormItem, ProFormItemProps } from "./Form";
-import { ProFormList as ProFormListOrigin, ProFormListProps as ProFormListPropsOrigin } from "@vue-start/pro";
+import { createFormList, ProFormListProps as ProFormListPropsOrigin } from "@vue-start/pro";
+
+const FormList = createFormList(ProFormItem);
 
 const proFormListProps = () => ({
   addButtonText: { type: String, default: "添加一项" },
@@ -18,39 +20,22 @@ export type ProFormListProps = Partial<ExtractPropTypes<ReturnType<typeof proFor
 export const ProFormList = defineComponent<ProFormListProps>({
   name: "PFormList",
   props: {
-    ...ProFormItem.props,
-    ...ProFormListOrigin.props,
+    ...FormList.props,
     ...proFormListProps(),
   },
   setup: (props, { slots }) => {
-    const originKeys = keys(ProFormListOrigin.props);
     const invalidKeys = keys(proFormListProps());
 
     return () => {
       return (
-        <ProFormItem {...(omit(props, ...originKeys, ...invalidKeys) as any)} name={props.name}>
-          <ProFormListOrigin
-            {...pick(props, originKeys)}
-            name={props.name}
-            v-slots={{
-              itemMinus: () => {
-                return (
-                  <ElButton link {...props.minusButtonProps}>
-                    {props.minusButtonText}
-                  </ElButton>
-                );
-              },
-              add: () => {
-                return (
-                  <ElButton type={"primary"} {...props.addButtonProps}>
-                    {props.addButtonText}
-                  </ElButton>
-                );
-              },
-              ...slots,
-            }}
-          />
-        </ProFormItem>
+        <FormList
+          {...omit(props, invalidKeys)}
+          v-slots={{
+            itemMinus: () => <ElButton {...props.minusButtonProps}>{props.minusButtonText}</ElButton>,
+            add: () => <ElButton {...props.addButtonProps}>{props.addButtonText}</ElButton>,
+            ...slots,
+          }}
+        />
       );
     };
   },

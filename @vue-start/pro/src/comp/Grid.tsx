@@ -1,35 +1,24 @@
-import { defineComponent, PropType, VNode } from "vue";
+import { defineComponent, ExtractPropTypes, PropType, VNode } from "vue";
 import { map } from "lodash";
 
-const proGridProps = <TRow, TCol>() => ({
-  /**
-   * row属性
-   */
-  row: { type: Object as PropType<TRow>, default: undefined },
-  /**
-   * 公共col属性
-   */
-  col: { type: Object as PropType<TCol> },
-  /**
-   *
-   */
+const proGridProps = () => ({
+  row: { type: Object as PropType<Record<string, any>>, default: undefined },
+  col: { type: Object as PropType<Record<string, any>> },
   items: {
     type: Array as PropType<
       {
         vNode: VNode;
         rowKey?: string | number;
-        col?: TCol;
+        col?: Record<string, any>;
       }[]
     >,
   },
 });
 
-export const createGrid = <TRow, TCol>(Row: any, Col: any) => {
-  return defineComponent<{
-    row?: TRow;
-    col?: TCol;
-    items?: { vNode: VNode; rowKey?: string | number; col?: TCol }[];
-  }>({
+export type GridProps = Partial<ExtractPropTypes<ReturnType<typeof proGridProps>>>;
+
+export const createGrid = (Row: any, Col: any): any => {
+  return defineComponent<GridProps>({
     props: {
       ...proGridProps(),
     } as any,
@@ -46,5 +35,5 @@ export const createGrid = <TRow, TCol>(Row: any, Col: any) => {
         );
       };
     },
-  }) as any;
+  });
 };

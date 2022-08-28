@@ -1,8 +1,9 @@
 import { defineComponent, ExtractPropTypes, PropType } from "vue";
 import { ButtonProps, FormItem, FormItemProps, Button } from "ant-design-vue";
-import { keys, omit, pick } from "lodash";
+import { keys, omit } from "lodash";
+import { createFormList, ProFormListProps as ProFormListPropsOrigin } from "@vue-start/pro";
 
-import { ProFormList as ProFormListOrigin, ProFormListProps as ProFormListPropsOrigin } from "@vue-start/pro";
+const FormList = createFormList(FormItem);
 
 const proFormListProps = () => ({
   addButtonText: { type: String, default: "添加一项" },
@@ -17,27 +18,22 @@ export type ProFormListProps = Partial<ExtractPropTypes<ReturnType<typeof proFor
 
 export const ProFormList = defineComponent<ProFormListProps>({
   props: {
-    ...FormItem.props,
-    ...ProFormListOrigin.props,
+    ...FormList.props,
     ...proFormListProps(),
   },
   setup: (props, { slots }) => {
-    const originKeys = keys(ProFormListOrigin.props);
     const invalidKeys = keys(proFormListProps());
 
     return () => {
       return (
-        <FormItem {...omit(props, ...originKeys, ...invalidKeys)} name={props.name}>
-          <ProFormListOrigin
-            {...pick(props, originKeys)}
-            name={props.name}
-            v-slots={{
-              itemMinus: () => <Button {...props.minusButtonProps}>{props.minusButtonText}</Button>,
-              add: () => <Button {...props.addButtonProps}>{props.addButtonText}</Button>,
-              ...slots,
-            }}
-          />
-        </FormItem>
+        <FormList
+          {...omit(props, invalidKeys)}
+          v-slots={{
+            itemMinus: () => <Button {...props.minusButtonProps}>{props.minusButtonText}</Button>,
+            add: () => <Button {...props.addButtonProps}>{props.addButtonText}</Button>,
+            ...slots,
+          }}
+        />
       );
     };
   },

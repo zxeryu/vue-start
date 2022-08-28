@@ -1,96 +1,77 @@
 import { defineComponent } from "vue";
-import { get, isUndefined, omit, pick, mergeWith, isArray, concat, map } from "lodash";
-import { ProList, ProListProps } from "../comp/ProList";
-import { CurdAction, CurdSubAction, ICurdAction, IOperateItem, useProCurd, useProModule } from "@vue-start/pro";
-import { IProCurdProvide } from "../../types";
+import { get, omit } from "lodash";
+import { createCurdList, TPageState, useProCurd } from "@vue-start/pro";
+import { ProSearchForm, ProSearchFormProps } from "../form";
+import { ProTable, ProTableProps } from "../table";
+import { Slots } from "@vue/runtime-core";
+import { ElPagination } from "element-plus";
+
+const CurdList = createCurdList(ProSearchForm, ProTable);
+
+export interface PaginationProps {
+  total?: number;
+  pageSize?: number;
+  defaultPageSize?: number;
+  currentPage?: number;
+  defaultCurrentPage?: number;
+  pageCount?: number;
+  pagerCount?: number;
+  layout?: string;
+  pageSizes?: number[];
+  popperClass?: string;
+  prevText?: string;
+  nextText?: string;
+  small?: boolean;
+  background?: boolean;
+  disabled?: boolean;
+  hideOnSinglePage?: boolean;
+  //emit
+  onSizeChange?: (val: number) => void;
+  onCurrentChange?: (val: number) => void;
+}
+
+export type ProCurdListProps = {
+  extraInSearch?: boolean;
+  searchProps?: ProSearchFormProps & { slots?: Slots };
+  tableProps?: ProTableProps & { slots?: Slots };
+  paginationProps?: PaginationProps;
+  pageState?: TPageState;
+};
 
 /**
  * 组合列表
  * SearchForm + Table + Pagination
  */
-export const ProCurdList = defineComponent<ProListProps>({
+export const ProCurdList = defineComponent<ProCurdListProps>({
   props: {
-    ...ProList.props,
+    ...CurdList.props,
+    paginationProps: { type: Object },
   },
   setup: (props, { slots }) => {
-    const { elementMap, formElementMap } = useProModule();
-    const { curdState, searchColumns, tableColumns, getOperate, sendCurdEvent } = useProCurd<IProCurdProvide>();
-
-    /******************* table ********************/
-
-    const prepareTableItem = (action: ICurdAction): IOperateItem => {
-      const item = getOperate(action);
-      return {
-        ...pick(item, "label", "element", "disabled", "sort"),
-        show: !isUndefined(item?.show) ? item?.show : false,
-        onClick: (record) => {
-          if (item?.onClick) {
-            item.onClick(record);
-            return;
-          }
-          sendCurdEvent({ action, type: CurdSubAction.EMIT, record });
-        },
-        value: action,
-      };
-    };
-
-    //table操作栏 items
-    const tableOperateItems: IOperateItem[] = [
-      prepareTableItem(CurdAction.DETAIL),
-      prepareTableItem(CurdAction.EDIT),
-      prepareTableItem(CurdAction.DELETE),
-    ];
-
     return () => {
-      const tableProps = props.tableProps;
-      const paginationProps = props.paginationProps;
-
       return (
-        <ProList
-          //@ts-ignore
-          onList={(values: Record<string, any>) => {
-            sendCurdEvent({ action: CurdAction.LIST, type: CurdSubAction.EMIT, values });
+        <CurdList
+          {...omit(props, "paginationProps")}
+          v-slots={{
+            pagination: (pageState: TPageState, total: number, handleSearch: Function) => (
+              <ElPagination
+                {...props.paginationProps}
+                total={total}
+                currentPage={pageState.page}
+                pageSize={pageState.pageSize}
+                // @ts-ignore
+                onSizeChange={(pageSize: number) => {
+                  pageState.pageSize = pageSize;
+                  handleSearch();
+                }}
+                onCurrentChange={(current: number) => {
+                  pageState.page = current;
+                  handleSearch();
+                }}
+              />
+            ),
+            ...slots,
           }}
-          {...props}
-          searchProps={{
-            formElementMap,
-            ...props.searchProps,
-            columns: searchColumns.value,
-          }}
-          tableProps={{
-            elementMap,
-            ...tableProps,
-            operate: mergeWith({ items: tableOperateItems }, tableProps?.operate, (objValue, srcValue) => {
-              if (isArray(objValue)) {
-                if (isArray(srcValue)) {
-                  //合并
-                  return concat(
-                    objValue,
-                    map(srcValue, (item) => {
-                      const nextItem = { ...item };
-                      if (!item.onClick) {
-                        nextItem.onClick = (record: Record<string, any>) => {
-                          sendCurdEvent({ action: "operate", type: item.value, record } as any);
-                        };
-                      }
-                      return nextItem;
-                    }),
-                  );
-                } else {
-                  //使用curd默认
-                  return objValue;
-                }
-              }
-            }),
-            columns: tableColumns.value,
-            loading: curdState.listLoading,
-            data: curdState.listData?.dataSource,
-          }}
-          paginationProps={{
-            ...paginationProps,
-            total: curdState.listData?.total,
-          }}
-          v-slots={slots}
         />
       );
     };

@@ -1,5 +1,5 @@
 import { defineComponent, ExtractPropTypes, inject, PropType, provide } from "vue";
-import { get, isArray, map, set, size } from "lodash";
+import { get, isArray, map, omit, set, size } from "lodash";
 import { useProForm } from "./Form";
 import { convertPathToList } from "../util";
 
@@ -40,64 +40,68 @@ const proFormListProps = () => ({
 
 export type ProFormListProps = Partial<ExtractPropTypes<ReturnType<typeof proFormListProps>>>;
 
-export const ProFormList = defineComponent<ProFormListProps>({
-  props: {
-    ...proFormListProps(),
-  } as any,
-  setup: (props, { slots }) => {
-    const { formState, readonly } = useProForm();
+export const createFormList = (FormItem: any): any => {
+  return defineComponent({
+    props: {
+      ...FormItem.props,
+      //每行默认id
+      rowKey: { type: String, default: "id" },
+    },
+    setup: (props, { slots }) => {
+      const { formState, readonly } = useProForm();
 
-    const formListCtx = useProFormList();
+      const formListCtx = useProFormList();
 
-    const nameList = convertPathToList(props.name);
-    const path = formListCtx?.pathList ? [...formListCtx.pathList, ...nameList!] : nameList!;
+      const nameList = convertPathToList(props.name);
+      const path = formListCtx?.pathList ? [...formListCtx.pathList, ...nameList!] : nameList!;
 
-    const handleAdd = () => {
-      let targetList = get(formState, path);
-      if (!isArray(targetList)) {
-        targetList = [];
-      }
-      targetList.push({
-        [props.rowKey!]: new Date().valueOf(),
-      });
-      set(formState, path, targetList);
-    };
+      const handleAdd = () => {
+        let targetList = get(formState, path);
+        if (!isArray(targetList)) {
+          targetList = [];
+        }
+        targetList.push({
+          [props.rowKey!]: new Date().valueOf(),
+        });
+        set(formState, path, targetList);
+      };
 
-    const handleRemove = (index: number) => {
-      const targetList = get(formState, path);
-      if (size(targetList) <= 0) {
-        return;
-      }
-      targetList.splice(index, 1);
-    };
+      const handleRemove = (index: number) => {
+        const targetList = get(formState, path);
+        if (size(targetList) <= 0) {
+          return;
+        }
+        targetList.splice(index, 1);
+      };
 
-    return () => {
-      return (
-        <>
-          {map(get(formState, path), (item, index: number) => (
-            <FormListProvider key={(item[props.rowKey!], index)} pathList={[...path, index]}>
-              <div class={"pro-form-list-item"}>
-                {slots.default?.()}
-                {!readonly.value && (
-                  <>
-                    <div class={"pro-form-list-item-add"} onClick={handleAdd}>
-                      {slots.itemAdd?.()}
-                    </div>
-                    <div class={"pro-form-list-item-minus"} onClick={() => handleRemove(index)}>
-                      {slots.itemMinus?.()}
-                    </div>
-                  </>
-                )}
+      return () => {
+        return (
+          <FormItem {...omit(props, "rowKey")}>
+            {map(get(formState, path), (item, index: number) => (
+              <FormListProvider key={item[props.rowKey!] || index} pathList={[...path, index]}>
+                <div class={"pro-form-list-item"}>
+                  {slots.default?.()}
+                  {!readonly.value && (
+                    <>
+                      <div class={"pro-form-list-item-add"} onClick={handleAdd}>
+                        {slots.itemAdd?.()}
+                      </div>
+                      <div class={"pro-form-list-item-minus"} onClick={() => handleRemove(index)}>
+                        {slots.itemMinus?.()}
+                      </div>
+                    </>
+                  )}
+                </div>
+              </FormListProvider>
+            ))}
+            {!readonly.value && (
+              <div class={"pro-form-list-add"} onClick={handleAdd}>
+                {slots.add?.()}
               </div>
-            </FormListProvider>
-          ))}
-          {!readonly.value && (
-            <div class={"pro-form-list-add"} onClick={handleAdd}>
-              {slots.add?.()}
-            </div>
-          )}
-        </>
-      );
-    };
-  },
-});
+            )}
+          </FormItem>
+        );
+      };
+    },
+  });
+};

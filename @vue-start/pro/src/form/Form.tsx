@@ -1,10 +1,11 @@
 import { Ref, UnwrapNestedRefs } from "@vue/reactivity";
-import { computed, defineComponent, ExtractPropTypes, inject, PropType, provide, reactive } from "vue";
+import { computed, defineComponent, ExtractPropTypes, inject, PropType, provide, reactive, ref } from "vue";
 import { BooleanObjType, BooleanRulesObjType, TColumns, TElementMap } from "../types";
 import { useEffect } from "@vue-start/hooks";
-import { forEach } from "lodash";
-import { getColumnFormItemName } from "../core";
-import { mergeStateToList } from "../util";
+import { forEach, get, keys, map, omit, size } from "lodash";
+import { getColumnFormItemName, getFormItemEl } from "../core";
+import { getValidValues, mergeStateToList } from "../util";
+import { GridProps } from "../comp";
 
 const ProFormKey = Symbol("pro-form");
 
@@ -79,62 +80,116 @@ const proFormProps = () => ({
 
 export type ProFormProps = Partial<ExtractPropTypes<ReturnType<typeof proFormProps>>>;
 
-export const ProForm = defineComponent({
-  props: {
-    ...proFormProps(),
-  },
-  setup: (props, { slots }) => {
-    const formState = props.model || reactive({});
-    //组件状态相关
-    const showState = props.showState || reactive({});
-    const readonlyState = props.readonlyState || reactive({});
-    const disableState = props.disableState || reactive({});
+export const createForm = (Form: any, Grid: any): any => {
+  return defineComponent<ProFormProps & Omit<GridProps, "items">>({
+    inheritAttrs: false,
+    props: {
+      ...Form.props,
+      ...proFormProps(),
+      ...omit(Grid.props, "items"),
+    },
+    setup: (props, { slots, emit, expose, attrs }) => {
+      const formState = props.model || reactive({});
+      //组件状态相关
+      const showState = props.showState || reactive({});
+      const readonlyState = props.readonlyState || reactive({});
+      const disableState = props.disableState || reactive({});
 
-    //formState改变情况下，更新 showState，readonlyState，disableState状态
-    useEffect(() => {
-      if (props.showStateRules) {
-        forEach(props.showStateRules, (fn, key) => {
-          showState[key] = fn(formState);
-        });
-      }
-      if (props.readonlyStateRules) {
-        forEach(props.readonlyStateRules, (fn, key) => {
-          readonlyState[key] = fn(formState);
-        });
-      }
-      if (props.disableStateRules) {
-        forEach(props.disableStateRules, (fn, key) => {
-          disableState[key] = fn(formState);
-        });
-      }
-    }, formState);
+      //formState改变情况下，更新 showState，readonlyState，disableState状态
+      useEffect(() => {
+        if (props.showStateRules) {
+          forEach(props.showStateRules, (fn, key) => {
+            showState[key] = fn(formState);
+          });
+        }
+        if (props.readonlyStateRules) {
+          forEach(props.readonlyStateRules, (fn, key) => {
+            readonlyState[key] = fn(formState);
+          });
+        }
+        if (props.disableStateRules) {
+          forEach(props.disableStateRules, (fn, key) => {
+            disableState[key] = fn(formState);
+          });
+        }
+      }, formState);
 
-    //转换为ref对象
-    const readonly = computed(() => props.readonly);
+      //readonly
+      const readonly = computed(() => props.readonly);
 
-    const columns = computed(() =>
-      mergeStateToList(props.columns!, props.columnState!, (item) => getColumnFormItemName(item)!),
-    );
+      //columns合并
+      const columns = computed(() =>
+        mergeStateToList(props.columns!, props.columnState!, (item) => getColumnFormItemName(item)!),
+      );
 
-    provideProForm({
-      formState,
-      showState,
-      readonlyState,
-      disableState,
-      //
-      elementMap: props.elementMap,
-      formElementMap: props.formElementMap,
-      //
-      readonly,
-      //
-      columns,
-      //
-      ...props.provideExtra,
-    });
+      const handleFinish = (values: Record<string, any>) => {
+        //删除不显示的值再触发事件
+        const showValues = getValidValues(values, showState, props.showStateRules);
+        emit("finish", showValues, values);
+      };
 
-    return () => {
-      // console.log("########", columns.value, props.columns, props.columnState);
-      return slots.default?.();
-    };
-  },
-});
+      const formRef = ref();
+
+      expose({
+        submit: () => {
+          formRef.value?.submit();
+        },
+      });
+
+      provideProForm({
+        formState,
+        showState,
+        readonlyState,
+        disableState,
+        //
+        elementMap: props.elementMap,
+        formElementMap: props.formElementMap,
+        //
+        readonly,
+        //
+        columns,
+        //
+        formRef,
+        //
+        ...props.provideExtra,
+      });
+
+      const invalidKeys = keys(proFormProps());
+      const gridKeys = keys(omit(Grid.props, "items"));
+
+      return () => {
+        return (
+          <Form
+            ref={formRef}
+            {...omit(attrs, "onFinish")}
+            {...omit(props, ...invalidKeys, ...gridKeys, "onFinish")}
+            model={formState}
+            onFinish={handleFinish}
+            v-slots={omit(slots, "default")}>
+            {slots.start?.()}
+
+            {props.formElementMap && size(columns.value) > 0 && (
+              <>
+                {props.row ? (
+                  <Grid
+                    row={props.row}
+                    col={props.col}
+                    items={map(columns.value, (item) => ({
+                      rowKey: getColumnFormItemName(item),
+                      vNode: getFormItemEl(props.formElementMap, item, props.needRules)!,
+                      col: get(item, ["extra", "col"]),
+                    }))}
+                  />
+                ) : (
+                  map(columns.value, (item) => getFormItemEl(props.formElementMap, item, props.needRules))
+                )}
+              </>
+            )}
+
+            {slots.default?.()}
+          </Form>
+        );
+      };
+    },
+  });
+};

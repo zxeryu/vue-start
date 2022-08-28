@@ -1,102 +1,59 @@
-import { defineComponent, reactive, ref, toRaw } from "vue";
-import { Form, FormProps } from "ant-design-vue";
-import { get, keys, map, omit, pick, size } from "lodash";
+import { DefineComponent, defineComponent, ref } from "vue";
+import { Form as FormOrigin, FormProps } from "ant-design-vue";
 
 import {
-  getColumnFormItemName,
-  getFormItemEl,
-  getValidValues,
-  ProForm as ProFormOrigin,
+  createExpose,
+  createForm,
+  createSearchForm,
   ProFormProps as ProFormPropsOrigin,
-  useProForm,
+  ProSearchFormProps as ProSearchFormPropsOrigin,
 } from "@vue-start/pro";
-import { ProGrid } from "../comp";
+import { ProGrid, ProGridProps } from "../comp";
+import { useEffect } from "@vue-start/hooks";
 
-const Content = defineComponent({
+const Form = defineComponent({
   props: {
-    ...ProGrid.props,
-    needRules: { type: Boolean },
+    ...FormOrigin.props,
   },
-  setup: (props) => {
-    const { formElementMap, columns } = useProForm();
+  setup: (props, { slots, emit, expose }) => {
+    const formRef = ref();
+
+    const formMethods = [
+      "clearValidate",
+      "getFieldsValue",
+      "resetFields",
+      "scrollToField",
+      "validate",
+      "validateFields",
+      "submit",
+    ];
+    useEffect(() => {
+      if (!formRef.value) {
+        return;
+      }
+      formRef.value.submit = () => {
+        formRef.value.validate().then((values: Record<string, any>) => {
+          emit("finish", values);
+        });
+      };
+    }, []);
+
+    expose(createExpose(formMethods, formRef));
+
     return () => {
-      if (!formElementMap || size(columns.value) <= 0) {
-        return null;
-      }
-      if (!props.row) {
-        return map(columns.value, (item) => getFormItemEl(formElementMap, item, props.needRules));
-      }
-      return (
-        <ProGrid
-          row={props.row}
-          col={props.col}
-          items={map(columns.value, (item) => ({
-            rowKey: getColumnFormItemName(item),
-            vNode: getFormItemEl(formElementMap, item, props.needRules)!,
-            col: get(item, ["extra", "col"]),
-          }))}
-        />
-      );
+      return <FormOrigin ref={formRef} {...props} v-slots={slots} />;
     };
   },
 });
 
-export type ProFormProps = ProFormPropsOrigin & FormProps;
+export type ProFormProps = ProFormPropsOrigin & FormProps & Omit<ProGridProps, "items">;
 
-export const ProForm = defineComponent<ProFormProps>({
-  inheritAttrs: false,
-  props: {
-    ...Form.props,
-    ...omit(ProFormOrigin.props, "model"),
-    ...omit(ProGrid.props, "items"),
-  },
-  setup: (props, { slots, expose, emit, attrs }) => {
-    const formRef = ref();
+export const ProForm: DefineComponent<ProFormProps> = createForm(Form, ProGrid);
 
-    const formState = props.model || reactive({});
-    const showState = props.showState || reactive({});
+export type ProSearchFormProps = ProSearchFormPropsOrigin & ProFormProps;
 
-    //删除不显示的值再触发事件
-    const handleFinish = (values: Record<string, any>) => {
-      const showValues = getValidValues(values, showState, props.showStateRules);
-      emit("finish", showValues, values);
-    };
-
-    const handleRef = (el: any) => {
-      if (el) {
-        //为form对象注入submit方法
-        el.submit = () => {
-          el.validate().then(() => {
-            handleFinish(toRaw(formState));
-          });
-        };
-      }
-      //对外提供form methods
-      expose(el);
-    };
-
-    const originKeys = keys(omit(ProFormOrigin.props, "model"));
-    const gridKeys = keys(ProGrid.props);
-
-    return () => {
-      return (
-        <ProFormOrigin
-          {...pick(props, ...originKeys, "provideExtra")}
-          model={formState}
-          showState={showState}
-          provideExtra={{ formRef, ...props.provideExtra }}>
-          <Form
-            ref={handleRef as any}
-            {...omit(attrs, "finish", "onFinish")}
-            {...omit(props, ...originKeys, "model", ...gridKeys)}
-            model={formState}
-            onFinish={handleFinish}>
-            {slots.top?.()}
-            <Content {...pick(props, gridKeys)} needRules={props.needRules} />
-            {slots.default?.()}
-          </Form>
-        </ProFormOrigin>
-      );
-    };
-  },
+export const ProSearchForm: DefineComponent<ProSearchFormProps> = createSearchForm(ProForm, {
+  //覆盖props描述
+  layout: { type: String, default: "inline" },
+  needRules: { type: Boolean, default: false },
 });
