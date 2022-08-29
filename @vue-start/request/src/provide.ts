@@ -4,7 +4,7 @@ import { paramsSerializer, transformRequest, transformResponse } from "./utils";
 import { forEach, get, set, clone } from "lodash";
 import { Subject } from "rxjs";
 import { createRequestObservable, IRequestActor } from "./createRequest";
-import { useEffect } from "../../hooks";
+import { useEffect } from "@vue-start/hooks";
 
 const ProvideKey = "$axios";
 

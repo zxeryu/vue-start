@@ -28,6 +28,8 @@ const Table = defineComponent({
     return () => {
       return (
         <ElTable
+          // @ts-ignore
+          id={id}
           {...omit(props, "columns", "dataSource", "loading")}
           data={props.dataSource || props.data}
           v-slots={omit(slots, "default", "start")}>

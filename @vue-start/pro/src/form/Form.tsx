@@ -134,6 +134,9 @@ export const createForm = (Form: any, Grid: any): any => {
         submit: () => {
           formRef.value?.submit();
         },
+        resetFields: (...params: any[]) => {
+          formRef.value?.resetFields(...params);
+        },
       });
 
       provideProForm({

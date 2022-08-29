@@ -124,6 +124,7 @@ export const createTable = (Table: any, Props?: any): any => {
           title: "操作",
           dataIndex: "operate",
           fixed: "right",
+          ...operate.column,
           customRender: ({ record }) => {
             const showItems = filter(sortedItems, (item) => {
               if (item.show && isFunction(item.show)) {
