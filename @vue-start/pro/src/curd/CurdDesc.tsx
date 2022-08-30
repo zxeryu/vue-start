@@ -1,6 +1,5 @@
 import { computed, defineComponent } from "vue";
-import { useProModule } from "../core";
-import { useProCurd } from "./index";
+import { useProCurd } from "./ctx";
 import { get, map, omit } from "lodash";
 
 export const createCurdDesc = (Descriptions: any, DescriptionsItem: any): any => {
@@ -9,8 +8,7 @@ export const createCurdDesc = (Descriptions: any, DescriptionsItem: any): any =>
       ...Descriptions.props,
     },
     setup: (props, { slots }) => {
-      const { getItemVNode } = useProModule();
-      const { curdState, descColumns } = useProCurd();
+      const { getItemVNode, curdState, descColumns } = useProCurd();
 
       const descVNodes = computed(() => {
         return map(descColumns.value, (item) => {

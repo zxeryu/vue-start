@@ -1,5 +1,5 @@
 import { defineComponent, reactive } from "vue";
-import { CurdAction, ProCurd } from "@vue-start/pro";
+import { CurdAction, ProCurd, ProModule, useModuleEvent, useProModule } from "@vue-start/pro";
 import {
   ProCurdListConnect,
   ProForm,
@@ -11,6 +11,7 @@ import {
 } from "@vue-start/element-pro";
 import "element-plus/dist/index.css";
 import { size } from "lodash";
+import { useEffect } from "@vue-start/hooks";
 
 const CurdTest = defineComponent(() => {
   const curdState = reactive({
@@ -245,7 +246,106 @@ export default defineComponent(() => {
           ]}
         />
         <CurdTest />
+        <ModuleTest />
       </div>
     );
   };
+});
+
+const ModuleTestEvent = defineComponent(() => {
+  const { dispatch } = useProModule();
+  useEffect(() => {
+    dispatch({ type: "label", payload: "sub-2-init" });
+    setTimeout(() => {
+      dispatch({ type: "label", payload: "sub-2-update" });
+    }, 3000);
+  }, []);
+  useModuleEvent((event) => {
+    console.log("#########", event.type, event.payload);
+  });
+  return () => {
+    return null;
+  };
+});
+
+const ModuleTest = defineComponent(() => {
+  return () => {
+    return (
+      <ProModule
+        elementMap={{
+          Test1,
+          Test2,
+          Test3,
+        }}
+        elementConfigs={[
+          {
+            elementType: "Test1",
+            elementId: "Test1",
+          },
+          {
+            elementType: "Test2",
+            elementId: "Test2",
+            elementProps: {
+              style: "color:red",
+            },
+            children: [
+              {
+                elementType: "Test3",
+                elementId: "Test2-Test3",
+                elementProps: {
+                  label: "sub-1",
+                },
+              },
+              {
+                elementType: "Test3",
+                elementId: "Test2-Test3-2",
+                elementProps: {
+                  style: "color:pink;cursor:pointer",
+                },
+                highConfig$: {
+                  registerStateList: [{ name: "label" }],
+                  registerEventList: [{ name: "onClick", sendEventName: "eeeee" }],
+                },
+              },
+              {
+                elementType: "Test3",
+                elementId: "Test2-Test3-3",
+                elementProps: {
+                  label: "sub-3",
+                },
+              },
+            ],
+          },
+        ]}>
+        <ModuleTestEvent />
+      </ProModule>
+    );
+  };
+});
+
+const Test1 = defineComponent(() => {
+  return () => {
+    return <div>Test1</div>;
+  };
+});
+const Test2 = defineComponent((_, { slots }) => {
+  return () => {
+    return (
+      <div>
+        Test2
+        {slots.default?.()}
+      </div>
+    );
+  };
+});
+
+const Test3 = defineComponent({
+  props: {
+    label: String,
+  },
+  setup: (props) => {
+    return () => {
+      return <span>{props.label}</span>;
+    };
+  },
 });

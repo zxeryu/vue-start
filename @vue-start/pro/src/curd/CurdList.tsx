@@ -1,6 +1,5 @@
 import { defineComponent, ExtractPropTypes, PropType, reactive } from "vue";
 import { defaultPage, TPageState } from "./Curd";
-import { useProModule } from "../core";
 import { CurdAction, CurdSubAction, ICurdAction, useProCurd } from "./ctx";
 import { concat, isArray, isUndefined, map, mergeWith, omit, pick } from "lodash";
 import { IOperateItem } from "../table";
@@ -26,8 +25,8 @@ export const createCurdList = (SearchForm: any, Table: any) => {
       ...proCurdListProps(),
     } as any,
     setup: (props, { slots }) => {
-      const { elementMap, formElementMap } = useProModule();
-      const { curdState, searchColumns, tableColumns, getOperate, sendCurdEvent } = useProCurd();
+      const { elementMap, formElementMap, curdState, searchColumns, tableColumns, getOperate, sendCurdEvent } =
+        useProCurd();
 
       /******************* search pagination ********************/
 

@@ -1,11 +1,17 @@
 import { ComputedRef, Ref, UnwrapNestedRefs } from "@vue/reactivity";
-import { TColumns } from "../types";
-import { inject, provide } from "vue";
+import { TColumn, TColumns, TElementMap } from "../types";
+import { inject, provide, VNode } from "vue";
 import { ICurdOperateOpts, ICurdState, TCurdActionEvent } from "./Curd";
 
 const ProCurdKey = Symbol("pro-curd");
 
 export interface IProCurdProvide {
+  columns: Ref<TColumns>;
+  getFormItemVNode: (column: TColumn, needRules: boolean | undefined) => VNode | null;
+  getItemVNode: (column: TColumn, value: any) => VNode | null;
+  elementMap: TElementMap;
+  formElementMap: TElementMap;
+  //
   rowKey: string;
   curdState: UnwrapNestedRefs<ICurdState>;
   formColumns: Ref<TColumns>;

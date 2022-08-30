@@ -1,95 +1,17 @@
-import { computed, defineComponent, ExtractPropTypes, h, inject, PropType, provide, reactive, VNode } from "vue";
-import { TActionEvent, TActionState, TColumn, TColumns, TElementMap, TValueType } from "../types";
-import { get, isObject, keys, omit, reduce } from "lodash";
-import { Ref, UnwrapNestedRefs } from "@vue/reactivity";
+import { defineComponent, ExtractPropTypes, inject, PropType, provide, reactive } from "vue";
+import { TActionEvent, TActionState, TElementMap } from "../types";
+import { get, isArray, isObject, keys, reduce, size } from "lodash";
+import { UnwrapNestedRefs } from "@vue/reactivity";
 import { Subject } from "rxjs";
 import { setReactiveValue } from "@vue-start/hooks";
 import { IRequestActor, useRequestProvide } from "@vue-start/request";
 import { useComposeRequestActor } from "./request";
-import { mergeStateToList } from "../util";
-
-/**
- * 获取Column的valueType，默认"text"
- * @param column
- */
-export const getColumnValueType = (column: TColumn): TValueType => {
-  return column.formValueType || column.valueType || "text";
-};
-
-/**
- *获取Column的FormItem name
- * @param column
- */
-export const getColumnFormItemName = (column: TColumn): string | number | undefined => {
-  return (column.formItemProps?.name || column.dataIndex) as any;
-};
-
-/**
- * 根据Column生成FormItem VNode
- * formFieldProps中的slots参数会以v-slots的形式传递到FormItem的录入组件（子组件）中
- * @param formElementMap
- * @param column
- * @param needRules
- */
-export const getFormItemEl = (
-  formElementMap: any,
-  column: TColumn,
-  needRules: boolean | undefined = true,
-): VNode | null => {
-  const valueType = getColumnValueType(column);
-  const Comp: any = get(formElementMap, valueType);
-  if (!Comp) {
-    return null;
-  }
-
-  const name = getColumnFormItemName(column);
-  const itemProps = needRules ? column.formItemProps : omit(column.formItemProps, "rules");
-
-  return h(
-    Comp,
-    {
-      key: name,
-      name,
-      label: column.title,
-      ...itemProps,
-      fieldProps: omit(column.formFieldProps, "slots"),
-      showProps: column.showProps,
-    },
-    column.formFieldProps?.slots,
-  );
-};
-
-/**
- *  根据Column生成Item VNode
- * @param elementMap
- * @param column
- * @param value
- */
-export const getItemEl = <T extends TColumn>(elementMap: any, column: T, value: any): VNode | null => {
-  const valueType = column.valueType || "text";
-  const Comp: any = get(elementMap, valueType);
-  if (!Comp) {
-    return null;
-  }
-  return h(
-    Comp,
-    {
-      ...omit(column.formFieldProps, "slots"),
-      showProps: column.showProps,
-      value,
-    },
-    column.formFieldProps?.slots,
-  );
-};
+import { IElementConfig, renderElement, renderElements } from "./core";
 
 const ProModuleKey = Symbol("pro-module");
 
 export interface IProModuleProvide {
-  columns: Ref<TColumns>;
-  getFormItemVNode: (column: TColumn, needRules: boolean | undefined) => VNode | null;
-  getItemVNode: (column: TColumn, value: any) => VNode | null;
-  elementMap: { [key: string]: any };
-  formElementMap: { [key: string]: any };
+  elementMap: TElementMap;
   //
   subject$: Subject<TActionEvent>;
   sendEvent: (action: TActionEvent) => void;
@@ -133,22 +55,13 @@ const proModuleProps = () => ({
    */
   state: { type: Object as PropType<UnwrapNestedRefs<Record<string, any>>> },
   /**
-   * 配置（静态）
-   */
-  columns: { type: Array as PropType<TColumns> },
-  /**
-   * 配置（动态）
-   * columns动态属性兼容
-   */
-  columnState: { type: Object as PropType<Record<string, any>> },
-  /**
-   * 展示组件集
+   * 组件集
    */
   elementMap: { type: Object as PropType<TElementMap> },
   /**
-   * 录入组件集
+   * 组件描述（树）
    */
-  formElementMap: { type: Object as PropType<TElementMap> },
+  elementConfigs: { type: Array as PropType<IElementConfig[]> },
   /**
    * requests
    */
@@ -162,23 +75,13 @@ export const ProModule = defineComponent<ProModuleProps>({
     ...(proModuleProps() as any),
   },
   setup: (props, { slots, expose }) => {
-    /**
-     * columns columnState 合并
-     */
-    const columns = computed(() => {
-      return mergeStateToList(props.columns!, props.columnState!, (item) => getColumnFormItemName(item)!);
-    });
+    /*********************************** render ***************************************/
 
-    /*********************************** 渲染组件 ***************************************/
-
-    // 获取FormItem VNode
-    const getFormItemVNode = (column: TColumn, needRules: boolean | undefined = true): VNode | null => {
-      return getFormItemEl(props.formElementMap, column, needRules);
-    };
-
-    // 获取Item VNode
-    const getItemVNode = (column: TColumn, value: any): VNode | null => {
-      return getItemEl(props.elementMap, column, value);
+    const render = (elementConfig: IElementConfig | IElementConfig[]) => {
+      if (isArray(elementConfig)) {
+        return renderElements(props.elementMap!, elementConfig);
+      }
+      return renderElement(props.elementMap!, elementConfig);
     };
 
     /*********************************** 事件处理 ***************************************/
@@ -262,11 +165,7 @@ export const ProModule = defineComponent<ProModuleProps>({
     );
 
     provideProModule({
-      columns,
-      getFormItemVNode,
-      getItemVNode,
       elementMap: props.elementMap!,
-      formElementMap: props.formElementMap!,
       //
       subject$,
       sendEvent,
@@ -284,7 +183,12 @@ export const ProModule = defineComponent<ProModuleProps>({
     });
 
     return () => {
-      return slots.default?.();
+      return (
+        <>
+          {size(props.elementConfigs) > 0 && render(props.elementConfigs!)}
+          {slots.default?.()}
+        </>
+      );
     };
   },
 });

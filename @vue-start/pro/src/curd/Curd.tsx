@@ -1,7 +1,7 @@
-import { computed, defineComponent, ExtractPropTypes, PropType, reactive, ref } from "vue";
+import { computed, defineComponent, ExtractPropTypes, PropType, reactive, ref, VNode } from "vue";
 import { IProModuleProvide, IRequestOpts, ProModule, ProModuleProps, useModuleEvent, useProModule } from "../core";
 import { filter, get, keys, map, omit, pick, reduce, sortBy } from "lodash";
-import { TActionEvent, TColumns } from "../types";
+import { TActionEvent, TColumn, TColumns, TElementMap } from "../types";
 import { UnwrapNestedRefs } from "@vue/reactivity";
 import {
   CurdAction,
@@ -14,6 +14,8 @@ import {
 } from "./ctx";
 import { IOperateItem } from "../table";
 import { IRequestActor } from "@vue-start/request";
+import { mergeStateToList } from "../util";
+import { getColumnFormItemName, getFormItemEl, getItemEl } from "../core";
 
 export type TPageState = {
   page: number;
@@ -65,6 +67,19 @@ export type TCurdActionEvent = {
 
 const proCurdProps = () => ({
   /**
+   * 配置（静态）
+   */
+  columns: { type: Array as PropType<TColumns> },
+  /**
+   * 配置（动态）
+   * columns动态属性兼容
+   */
+  columnState: { type: Object as PropType<Record<string, any>> },
+  /**
+   * 录入组件集
+   */
+  formElementMap: { type: Object as PropType<TElementMap> },
+  /**
    * 列表 或 详情 的唯一标识
    */
   rowKey: { type: String, default: "id" },
@@ -86,8 +101,27 @@ const Curd = defineComponent<CurdProps>({
     ...(proCurdProps() as any),
   },
   setup: (props, { slots, expose }) => {
-    const { columns, state, sendEvent, sendRequest } = useProModule() as Omit<IProModuleProvide, "state"> & {
+    const { elementMap, state, sendEvent, sendRequest } = useProModule() as Omit<IProModuleProvide, "state"> & {
       state: ICurdState;
+    };
+
+    /**
+     * columns columnState 合并
+     */
+    const columns = computed(() => {
+      return mergeStateToList(props.columns!, props.columnState!, (item) => getColumnFormItemName(item)!);
+    });
+
+    /*********************************** 渲染组件 ***************************************/
+
+    // 获取FormItem VNode
+    const getFormItemVNode = (column: TColumn, needRules: boolean | undefined = true): VNode | null => {
+      return getFormItemEl(props.formElementMap, column, needRules);
+    };
+
+    // 获取Item VNode
+    const getItemVNode = (column: TColumn, value: any): VNode | null => {
+      return getItemEl(elementMap, column, value);
     };
 
     /**
@@ -201,6 +235,12 @@ const Curd = defineComponent<CurdProps>({
     const modalProps = computed(() => props.modalProps);
 
     provideProCurd({
+      columns,
+      getFormItemVNode,
+      getItemVNode,
+      elementMap,
+      formElementMap: props.formElementMap!,
+      //
       rowKey: props.rowKey!,
       curdState: state,
       formColumns,

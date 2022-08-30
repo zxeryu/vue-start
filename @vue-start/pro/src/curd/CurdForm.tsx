@@ -1,5 +1,4 @@
 import { defineComponent, ExtractPropTypes, PropType, ref } from "vue";
-import { useProModule } from "../core";
 import { CurdAction, CurdAddAction, CurdCurrentMode, CurdSubAction, useProCurd } from "./ctx";
 import { ICurdState } from "./Curd";
 import { omit } from "lodash";
@@ -30,8 +29,7 @@ export const createCurdForm = (
       ...proCurdAddOrEditProps(),
     },
     setup: (props, { slots }) => {
-      const { elementMap, formElementMap } = useProModule();
-      const { curdState, formColumns, sendCurdEvent } = useProCurd();
+      const { elementMap, formElementMap, curdState, formColumns, sendCurdEvent } = useProCurd();
 
       const formRef = ref();
 
