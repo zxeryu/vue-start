@@ -253,7 +253,7 @@ export default defineComponent(() => {
 });
 
 const ModuleTestEvent = defineComponent(() => {
-  const { dispatch } = useProModule();
+  const { state, dispatch } = useProModule();
   useEffect(() => {
     dispatch({ type: "label", payload: "sub-2-init" });
     setTimeout(() => {
@@ -264,7 +264,14 @@ const ModuleTestEvent = defineComponent(() => {
     console.log("#########", event.type, event.payload);
   });
   return () => {
-    return null;
+    return (
+      <button
+        onClick={() => {
+          dispatch({ type: "secShow", payload: !state.secShow });
+        }}>
+        显示/隐藏第二个组件
+      </button>
+    );
   };
 });
 
@@ -293,7 +300,23 @@ const ModuleTest = defineComponent(() => {
                 elementType: "Test3",
                 elementId: "Test2-Test3",
                 elementProps: {
-                  label: "sub-1",
+                  label: {
+                    elementType: "Test3",
+                    elementId: "Test2-Test3-sub-1",
+                    elementProps: {
+                      label: "属性转换",
+                    },
+                  },
+                },
+                slots: {
+                  text: () => "text-1",
+                },
+                highConfig$: {
+                  registerPropsTrans: [
+                    {
+                      name: "label",
+                    },
+                  ],
                 },
               },
               {
@@ -302,8 +325,18 @@ const ModuleTest = defineComponent(() => {
                 elementProps: {
                   style: "color:pink;cursor:pointer",
                 },
+                slots: {
+                  text: {
+                    elementType: "Test3",
+                    elementId: "Test2-Test3-2-slot",
+                    elementProps: {
+                      style: "color:blue;cursor:pointer",
+                      label: "插槽转换",
+                    },
+                  },
+                },
                 highConfig$: {
-                  registerStateList: [{ name: "label" }],
+                  registerStateList: [{ name: "label" }, { name: "secShow", mapName: "show$" }],
                   registerEventList: [{ name: "onClick", sendEventName: "eeeee" }],
                 },
               },
@@ -332,8 +365,10 @@ const Test2 = defineComponent((_, { slots }) => {
   return () => {
     return (
       <div>
-        Test2
+        Test2 default:
         {slots.default?.()}
+        list:
+        {slots.list?.()}
       </div>
     );
   };
@@ -341,11 +376,16 @@ const Test2 = defineComponent((_, { slots }) => {
 
 const Test3 = defineComponent({
   props: {
-    label: String,
+    label: [String, Object],
   },
-  setup: (props) => {
+  setup: (props, { slots }) => {
     return () => {
-      return <span>{props.label}</span>;
+      return (
+        <span>
+          {props.label}
+          {slots?.text?.()}
+        </span>
+      );
     };
   },
 });
