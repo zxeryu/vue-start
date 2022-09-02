@@ -36,18 +36,19 @@ export type TColumn = {
   showProps?: Record<string, any>; //文字展示组件的props
   formItemProps?: { name?: string; label?: string }; //FormItem props
   formFieldProps?: Record<string, any>; //录入组件 props
-  search?: boolean; //是否加入搜索
-  hideInTable?: boolean; //在table中隐藏
-  hideInForm?: boolean; //在form中隐藏
-  hideInDetail?: boolean; //在desc中隐藏
-  searchSort?: boolean; //SearchForm中排序
-  tableSort?: boolean; //Table columns中排序
-  formSort?: boolean; //Form中排序
-  descSort?: boolean; //Desc中排序
+  search?: boolean; //同extra中的search
   //拓展属性
   extra?: {
     desc?: any; //DescriptionsItem props
-  };
+    /**
+     * 自定义标记，用户分类columns 和 排序
+     * 如： search：标记搜索条件；searchSort：搜索项的顺序
+     * 现有：search、form、detail
+     * 在Curd组件中可使用getSignColumns方法获取标记的Columns
+     * ${sign}：      boolean 标记
+     * ${signSort}:   标记的columns排序
+     */
+  } & Record<string, any>;
 };
 
 export type TColumns = TColumn[];

@@ -7,6 +7,7 @@ const ProCurdKey = Symbol("pro-curd");
 
 export interface IProCurdProvide {
   columns: Ref<TColumns>;
+  getSignColumns: (signName: string) => TColumns;
   getFormItemVNode: (column: TColumn, needRules: boolean | undefined) => VNode | null;
   getItemVNode: (column: TColumn, value: any) => VNode | null;
   elementMap: TElementMap;

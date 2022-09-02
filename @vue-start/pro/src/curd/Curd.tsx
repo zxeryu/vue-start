@@ -125,53 +125,29 @@ const Curd = defineComponent<CurdProps>({
     };
 
     /**
-     * 排序
-     * @param list
-     * @param propName
+     * ${signName} 配置为true 会被选择
+     * @param signName
+     * @param opposite 如果为true，未配置（undefined）会被选择
      */
-    const dealSort = (list: TColumns, propName: string): TColumns => {
-      return sortBy(list, (item) => get(item, propName));
+    const getSignColumns = (signName: string, opposite?: boolean) => {
+      const signColumns = filter(columns.value, (item) => {
+        const sign = get(item, ["extra", signName]) || get(item, signName);
+        if (opposite) {
+          //不为false 即为选中
+          return sign !== false;
+        }
+        //只有true 才为选中
+        return sign;
+      });
+      return sortBy(signColumns, (item) => {
+        return get(item, ["extra", `${signName}Sort`]) || get(item, `${signName}Sort`);
+      });
     };
 
-    /**
-     * 非 hideInForm columns
-     */
-    const formColumns = computed(() => {
-      return dealSort(
-        filter(columns.value, (item) => !item.hideInForm),
-        "formSort",
-      );
-    });
-
-    /**
-     * 非 hideInDetail columns
-     */
-    const descColumns = computed(() => {
-      return dealSort(
-        filter(columns.value, (item) => !item.hideInDetail),
-        "descSort",
-      );
-    });
-
-    /**
-     *  非 hideInTable columns
-     */
-    const tableColumns = computed(() => {
-      return dealSort(
-        filter(columns.value, (item) => !item.hideInTable),
-        "tableSort",
-      );
-    });
-
-    /**
-     * search columns
-     */
-    const searchColumns = computed(() => {
-      return dealSort(
-        filter(columns.value, (item) => !!item.search),
-        "searchSort",
-      );
-    });
+    const formColumns = computed(() => getSignColumns("form", true));
+    const descColumns = computed(() => getSignColumns("detail", true));
+    const tableColumns = computed(() => getSignColumns("table", true));
+    const searchColumns = computed(() => getSignColumns("search"));
 
     /******************************** 逻辑 *************************************/
 
@@ -236,6 +212,7 @@ const Curd = defineComponent<CurdProps>({
 
     provideProCurd({
       columns,
+      getSignColumns,
       getFormItemVNode,
       getItemVNode,
       elementMap,
