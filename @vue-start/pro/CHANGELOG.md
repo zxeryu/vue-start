@@ -3,6 +3,21 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.4.0](https://github.com/zxeryu/vue-start/compare/@vue-start/pro@0.3.2...@vue-start/pro@0.4.0) (2022-09-02)
+
+### Bug Fixes
+
+- **pro:** curd columns sign ([19ca887](https://github.com/zxeryu/vue-start/commit/19ca887b2f0826c64a0cae7b6abe093ab6d1f525))
+- **pro:** dispatch support fun ([9c9528c](https://github.com/zxeryu/vue-start/commit/9c9528cf305e6e3bf1daebc57afb5d5ac9d9fd21))
+
+### Features
+
+- module render ([1e14e95](https://github.com/zxeryu/vue-start/commit/1e14e956e8712db277d2e9020b392243b454a846))
+
+### Performance Improvements
+
+- props/slots convert ([06c9655](https://github.com/zxeryu/vue-start/commit/06c9655f0622278e18770699b1d643fe10cbbdca))
+
 ## [0.3.2](https://github.com/zxeryu/vue-start/compare/@vue-start/pro@0.3.1...@vue-start/pro@0.3.2) (2022-08-29)
 
 ### Bug Fixes
