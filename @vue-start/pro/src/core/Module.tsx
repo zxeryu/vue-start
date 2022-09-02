@@ -1,6 +1,6 @@
 import { defineComponent, ExtractPropTypes, inject, PropType, provide, reactive } from "vue";
 import { TActionEvent, TActionState, TElementMap } from "../types";
-import { get, isArray, isObject, keys, reduce, size } from "lodash";
+import { get, isArray, isFunction, isObject, keys, reduce, size } from "lodash";
 import { UnwrapNestedRefs } from "@vue/reactivity";
 import { Subject } from "rxjs";
 import { setReactiveValue } from "@vue-start/hooks";
@@ -96,12 +96,14 @@ export const ProModule = defineComponent<ProModuleProps>({
     const state = props.state || reactive({});
 
     const dispatch = (action: TActionState) => {
+      const prev = state[action.type];
+      const data = isFunction(action.payload) ? action.payload(prev) : action.payload;
       //如果要更新的属性值是 object ，执行覆盖操作
-      if (isObject(state[action.type])) {
-        setReactiveValue(state[action.type], action.payload);
+      if (isObject(prev)) {
+        setReactiveValue(state[action.type], data);
         return;
       }
-      state[action.type] = action.payload;
+      state[action.type] = data;
     };
 
     /*********************************** request ***************************************/
