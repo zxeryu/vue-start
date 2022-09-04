@@ -24,7 +24,7 @@ export const ProSelect = defineComponent<ProSelectProps>({
           onUpdate:modelValue={(v) => {
             emit("update:modelValue", v ? v : undefined);
           }}
-          v-slots={omit(props, "slots")}>
+          v-slots={omit(slots, "default")}>
           {map(props.options, (item) => (
             <ElOption key={item.value} {...item} />
           ))}

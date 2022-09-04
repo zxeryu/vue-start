@@ -6,6 +6,7 @@ import { forEach, get, keys, map, omit, size } from "lodash";
 import { getColumnFormItemName, getFormItemEl } from "../core";
 import { getValidValues, mergeStateToList } from "../util";
 import { GridProps } from "../comp";
+import { provideProFormList } from "./FormList";
 
 const ProFormKey = Symbol("pro-form");
 
@@ -156,6 +157,9 @@ export const createForm = (Form: any, Grid: any): any => {
         //
         ...props.provideExtra,
       });
+
+      //为了不warning ...
+      provideProFormList({} as any);
 
       const invalidKeys = keys(proFormProps());
       const gridKeys = keys(omit(Grid.props, "items"));

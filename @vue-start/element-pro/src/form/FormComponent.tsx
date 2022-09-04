@@ -5,7 +5,6 @@ import {
   ElTimePicker,
   ElTreeSelect,
   ElCheckboxGroup,
-  ElRadioGroup,
   ElSwitch,
   ElCascader,
   ElButton,
@@ -13,7 +12,7 @@ import {
 
 import { createFormItemComponent } from "./createFormItemComponent";
 import { Component, defineComponent } from "vue";
-import { ProSelect } from "../field";
+import { ProRadio, ProSelect } from "../field";
 import { useProForm } from "@vue-start/pro";
 
 export const ProFormText = createFormItemComponent({
@@ -52,7 +51,7 @@ export const ProFormCheckbox = createFormItemComponent({
   name: "PFromCheckbox",
 });
 export const ProFormRadio = createFormItemComponent({
-  InputComp: ElRadioGroup,
+  InputComp: ProRadio,
   valueType: "radio",
   name: "PFromRadio",
 });

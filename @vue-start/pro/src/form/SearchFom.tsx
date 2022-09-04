@@ -18,7 +18,7 @@ const proSearchFormProps = () => ({
   /**
    * 需要监听的对象
    */
-  model: { type: Object as PropType<UnwrapNestedRefs<Record<string, any>>>, required: true },
+  model: { type: Object as PropType<UnwrapNestedRefs<Record<string, any>>> },
   /**
    * 初始化触发 onFinish
    */

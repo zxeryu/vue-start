@@ -15,7 +15,7 @@ interface IProFormListProvide {
 
 export const useProFormList = (): IProFormListProvide => inject(ProFormListKey) as IProFormListProvide;
 
-const provideProFormList = (ctx: IProFormListProvide) => {
+export const provideProFormList = (ctx: IProFormListProvide) => {
   provide(ProFormListKey, ctx);
 };
 
