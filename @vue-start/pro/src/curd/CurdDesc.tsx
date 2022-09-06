@@ -8,12 +8,16 @@ export const createCurdDesc = (Descriptions: any, DescriptionsItem: any): any =>
       ...Descriptions.props,
       //重写Item content
       renderItem: { type: Function },
+      //标记名称
+      signName: { type: String },
     },
     setup: (props, { slots }) => {
-      const { getItemVNode, curdState, descColumns } = useProCurd();
+      const { getItemVNode, curdState, descColumns, getSignColumns } = useProCurd();
 
       const descVNodes = computed(() => {
-        return map(descColumns.value, (item) => {
+        const columns = props.signName ? getSignColumns(props.signName) : descColumns.value;
+
+        return map(columns, (item) => {
           const vn = props.renderItem?.(item);
           if (vn) {
             return vn;

@@ -1,9 +1,12 @@
-import { defineComponent, ExtractPropTypes, PropType, ref } from "vue";
+import { computed, defineComponent, ExtractPropTypes, PropType, ref } from "vue";
 import { CurdAction, CurdAddAction, CurdCurrentMode, CurdSubAction, useProCurd } from "./ctx";
 import { ICurdState } from "./Curd";
 import { omit } from "lodash";
 
 const proCurdAddOrEditProps = () => ({
+  //标记名称
+  signName: { type: String },
+
   //是否使用operate bar
   operateBar: { type: Boolean, default: true },
   //显示 确定并继续 按钮
@@ -24,16 +27,29 @@ export const createCurdForm = (
   convertFormProps?: (curdState: ICurdState) => Record<string, any>,
 ): any => {
   return defineComponent({
+    inheritAttrs: false,
     props: {
       ...Form.props,
       ...proCurdAddOrEditProps(),
     },
-    setup: (props, { slots }) => {
-      const { elementMap, formElementMap, curdState, formColumns, sendCurdEvent } = useProCurd();
+    setup: (props, { slots, attrs, expose }) => {
+      const { elementMap, formElementMap, curdState, formColumns, getSignColumns, sendCurdEvent } = useProCurd();
 
       const formRef = ref();
 
-      const handleFinish = (values: Record<string, any>) => {
+      const columns = computed(() => {
+        if (props.signName) {
+          return getSignColumns(props.signName);
+        }
+        return formColumns.value;
+      });
+
+      const handleFinish = (values: Record<string, any>, originValues: Record<string, any>) => {
+        if (attrs.onFinish) {
+          (attrs.onFinish as any)(values, originValues);
+          return;
+        }
+
         if (curdState.mode === CurdCurrentMode.EDIT) {
           //edit
           sendCurdEvent({ action: CurdAction.EDIT, type: CurdSubAction.EXECUTE, values });
@@ -53,14 +69,21 @@ export const createCurdForm = (
         formRef.value?.submit();
       };
 
+      expose({
+        submit: () => {
+          formRef.value?.submit();
+        },
+      });
+
       return () => {
         return (
           <Form
             ref={formRef}
+            {...omit(attrs, "onFinish")}
             {...props}
             elementMap={props.elementMap || elementMap}
             formElementMap={props.formElementMap || formElementMap}
-            columns={formColumns.value}
+            columns={columns.value}
             model={curdState.detailData}
             readonly={curdState.mode === CurdCurrentMode.DETAIL}
             onFinish={handleFinish}
