@@ -148,7 +148,7 @@ export const ProModalCurd = defineComponent<ProModalCurdProps>({
     const invalidKeys = keys(ModalCurd.props);
     return () => {
       return (
-        <ProCurd {...(omit(props, invalidKeys) as any)}>
+        <ProCurd ref={curdRef} {...(omit(props, invalidKeys) as any)}>
           <ModalCurd {...pick(props, invalidKeys)} />
           {slots.default?.()}
         </ProCurd>
