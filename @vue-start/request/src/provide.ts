@@ -53,7 +53,7 @@ const createClient = (options: AxiosRequestConfig, interceptors: TRequestInterce
   const dispatchRequest: DispatchRequestType = (actor, params, extra) => {
     const operatorActor = clone(actor);
     operatorActor.req = params;
-    operatorActor.extra = extra;
+    operatorActor.extra = extra || operatorActor.extra;
     requestSubject$.next(operatorActor);
 
     return operatorActor;
