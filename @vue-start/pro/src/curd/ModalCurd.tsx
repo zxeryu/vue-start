@@ -1,5 +1,5 @@
-import { defineComponent, ExtractPropTypes, PropType, reactive } from "vue";
-import { defaultPage, ProCurd, ProCurdProps } from "./Curd";
+import { defineComponent, ExtractPropTypes, PropType, reactive, ref } from "vue";
+import { CurdMethods, defaultPage, ProCurd, ProCurdProps } from "./Curd";
 import { get, keys, omit, pick } from "lodash";
 import { RequestAction, useModuleEvent, useProModule } from "../core";
 import {
@@ -11,6 +11,7 @@ import {
   ICurdSubAction,
   useProCurd,
 } from "./ctx";
+import { createExpose } from "../util";
 
 const modalCurdProps = () => ({
   defaultAddRecord: { type: Object as PropType<Record<string, any>> },
@@ -139,7 +140,11 @@ export const ProModalCurd = defineComponent<ProModalCurdProps>({
     ...ProCurd.props,
     ...ModalCurd.props,
   },
-  setup: (props, { slots }) => {
+  setup: (props, { slots, expose }) => {
+    const curdRef = ref();
+
+    expose(createExpose(CurdMethods, curdRef));
+
     const invalidKeys = keys(ModalCurd.props);
     return () => {
       return (

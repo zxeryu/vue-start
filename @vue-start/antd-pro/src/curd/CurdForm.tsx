@@ -1,5 +1,5 @@
 import { DefineComponent, defineComponent } from "vue";
-import { ProForm, ProFormProps } from "../form";
+import { FormMethods, ProForm, ProFormProps } from "../form";
 import { get, omit } from "lodash";
 import { Button } from "ant-design-vue";
 
@@ -11,6 +11,7 @@ export const ProCurdForm: DefineComponent<ProFormProps & ProCurdAddOrEditProps> 
   (curdState) => ({
     hideRequiredMark: curdState.mode === CurdCurrentMode.DETAIL,
   }),
+  FormMethods,
 );
 
 export const ProCurdFormConnect = defineComponent({

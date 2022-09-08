@@ -88,6 +88,19 @@ export const createCurdList = (SearchForm: any, Table: any) => {
 
       return () => {
         const tableProps = props.tableProps;
+        const rewriteTableProps = {
+          elementMap,
+          ...omit(tableProps, "slots", "operate"),
+          operate: mergeWith({ items: tableOperateItems }, tableProps?.operate, (objValue, srcValue) => {
+            if (isArray(objValue) && isArray(srcValue)) {
+              return concat(objValue, convertOperateItems(srcValue));
+            }
+          }),
+          paginationState: { page: pageState.page, pageSize: pageState.pageSize },
+          columns: tableColumns.value,
+          loading: curdState.listLoading,
+          dataSource: curdState.listData?.dataSource,
+        };
 
         const extra = slots.extra ? <div class={"pro-curd-list-extra"}>{slots.extra()}</div> : null;
 
@@ -107,22 +120,9 @@ export const createCurdList = (SearchForm: any, Table: any) => {
             {!props.extraInSearch && extra}
 
             {slots.table ? (
-              slots.table()
+              slots.table(rewriteTableProps)
             ) : (
-              <Table
-                elementMap={elementMap}
-                {...omit(tableProps, "slots", "operate")}
-                operate={mergeWith({ items: tableOperateItems }, tableProps?.operate, (objValue, srcValue) => {
-                  if (isArray(objValue) && isArray(srcValue)) {
-                    return concat(objValue, convertOperateItems(srcValue));
-                  }
-                })}
-                paginationState={{ page: pageState.page, pageSize: pageState.pageSize }}
-                columns={tableColumns.value}
-                loading={curdState.listLoading}
-                dataSource={curdState.listData?.dataSource}
-                v-slots={tableProps?.slots}
-              />
+              <Table {...rewriteTableProps} v-slots={tableProps?.slots} />
             )}
 
             {slots.divide2?.()}

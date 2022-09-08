@@ -11,6 +11,16 @@ import {
 import { ProGrid, ProGridProps } from "../comp";
 import { useEffect } from "@vue-start/hooks";
 
+export const FormMethods = [
+  "clearValidate",
+  "getFieldsValue",
+  "resetFields",
+  "scrollToField",
+  "validate",
+  "validateFields",
+  "submit",
+];
+
 const Form = defineComponent({
   props: {
     ...FormOrigin.props,
@@ -18,15 +28,6 @@ const Form = defineComponent({
   setup: (props, { slots, emit, expose }) => {
     const formRef = ref();
 
-    const formMethods = [
-      "clearValidate",
-      "getFieldsValue",
-      "resetFields",
-      "scrollToField",
-      "validate",
-      "validateFields",
-      "submit",
-    ];
     useEffect(() => {
       if (!formRef.value) {
         return;
@@ -38,7 +39,7 @@ const Form = defineComponent({
       };
     }, []);
 
-    expose(createExpose(formMethods, formRef));
+    expose(createExpose(FormMethods, formRef));
 
     return () => {
       return <FormOrigin ref={formRef} {...props} v-slots={slots} />;
@@ -48,12 +49,16 @@ const Form = defineComponent({
 
 export type ProFormProps = ProFormPropsOrigin & FormProps & Omit<ProGridProps, "items">;
 
-export const ProForm: DefineComponent<ProFormProps> = createForm(Form, ProGrid);
+export const ProForm: DefineComponent<ProFormProps> = createForm(Form, ProGrid, FormMethods);
 
 export type ProSearchFormProps = ProSearchFormPropsOrigin & ProFormProps;
 
-export const ProSearchForm: DefineComponent<ProSearchFormProps> = createSearchForm(ProForm, {
-  //覆盖props描述
-  layout: { type: String, default: "inline" },
-  needRules: { type: Boolean, default: false },
-});
+export const ProSearchForm: DefineComponent<ProSearchFormProps> = createSearchForm(
+  ProForm,
+  {
+    //覆盖props描述
+    layout: { type: String, default: "inline" },
+    needRules: { type: Boolean, default: false },
+  },
+  FormMethods,
+);

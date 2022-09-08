@@ -4,7 +4,7 @@ import { BooleanObjType, BooleanRulesObjType, TColumns, TElementMap } from "../t
 import { useEffect } from "@vue-start/hooks";
 import { forEach, get, keys, map, omit, size } from "lodash";
 import { getColumnFormItemName, getFormItemEl } from "../core";
-import { getValidValues, mergeStateToList } from "../util";
+import { createExpose, getValidValues, mergeStateToList } from "../util";
 import { GridProps } from "../comp";
 import { provideProFormList } from "./FormList";
 
@@ -81,7 +81,7 @@ const proFormProps = () => ({
 
 export type ProFormProps = Partial<ExtractPropTypes<ReturnType<typeof proFormProps>>>;
 
-export const createForm = (Form: any, Grid: any): any => {
+export const createForm = (Form: any, Grid: any, formMethods: string[]): any => {
   return defineComponent<ProFormProps & Omit<GridProps, "items">>({
     inheritAttrs: false,
     props: {
@@ -131,14 +131,7 @@ export const createForm = (Form: any, Grid: any): any => {
 
       const formRef = ref();
 
-      expose({
-        submit: () => {
-          formRef.value?.submit();
-        },
-        resetFields: (...params: any[]) => {
-          formRef.value?.resetFields(...params);
-        },
-      });
+      expose(createExpose(formMethods, formRef));
 
       provideProForm({
         formState,

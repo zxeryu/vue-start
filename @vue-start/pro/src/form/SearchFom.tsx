@@ -4,6 +4,7 @@ import { useEffect, useWatch } from "@vue-start/hooks";
 import { UnwrapNestedRefs } from "@vue/reactivity";
 import { TColumns } from "../types";
 import { getColumnFormItemName, getColumnValueType } from "../core";
+import { createExpose } from "../util";
 
 export enum SearchMode {
   //自动触发搜索
@@ -47,7 +48,7 @@ export type ProSearchFormProps = Partial<ExtractPropTypes<ReturnType<typeof proS
  * 该组件只是个模式，最终返回null，不做任何渲染，应配合着ProForm的包装类一起使用
  * 针对传入的model（监听对象）做相应的finish（回调）处理
  */
-export const createSearchForm = (Form: any, Props: any): any => {
+export const createSearchForm = (Form: any, Props: any, formMethods: string[]): any => {
   return defineComponent<ProSearchFormProps>({
     props: {
       ...Form.props,
@@ -55,7 +56,7 @@ export const createSearchForm = (Form: any, Props: any): any => {
       ...Props,
       ...proSearchFormProps(),
     },
-    setup: (props, { slots }) => {
+    setup: (props, { slots, expose }) => {
       const formState = props.model || reactive({});
 
       const valueTypeSet = new Set(props.debounceTypes);
@@ -72,6 +73,8 @@ export const createSearchForm = (Form: any, Props: any): any => {
       );
 
       const formRef = ref();
+
+      expose(createExpose(formMethods, formRef));
 
       const handleFinish = () => {
         formRef.value?.submit();

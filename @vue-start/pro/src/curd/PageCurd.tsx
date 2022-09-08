@@ -1,4 +1,4 @@
-import { defineComponent, ExtractPropTypes, PropType } from "vue";
+import { defineComponent, ExtractPropTypes, PropType, ref } from "vue";
 import { RequestAction, useModuleEvent, useProModule } from "../core";
 import {
   CurdAction,
@@ -11,7 +11,8 @@ import {
 } from "./ctx";
 import { useRoute, useRouter } from "vue-router";
 import { get, keys, omit, pick } from "lodash";
-import { ProCurd, ProCurdProps } from "./Curd";
+import { CurdMethods, ProCurd, ProCurdProps } from "./Curd";
+import { createExpose } from "../util";
 
 const pageCurdProps = () => ({
   defaultAddRecord: { type: Object as PropType<Record<string, any>> },
@@ -123,11 +124,15 @@ export const ProPageCurd = defineComponent<ProPageCurdProps>({
     ...ProCurd.props,
     ...PageCurd.props,
   },
-  setup: (props, { slots }) => {
+  setup: (props, { slots, expose }) => {
+    const curdRef = ref();
+
+    expose(createExpose(CurdMethods, curdRef));
+
     const invalidKeys = keys(PageCurd.props);
     return () => {
       return (
-        <ProCurd {...(omit(props, invalidKeys) as any)}>
+        <ProCurd ref={curdRef} {...(omit(props, invalidKeys) as any)}>
           <PageCurd {...pick(props, invalidKeys)} />
           {slots.default?.()}
         </ProCurd>

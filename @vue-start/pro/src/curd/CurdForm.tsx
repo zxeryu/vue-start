@@ -2,6 +2,7 @@ import { computed, defineComponent, ExtractPropTypes, PropType, ref } from "vue"
 import { CurdAction, CurdAddAction, CurdCurrentMode, CurdSubAction, useProCurd } from "./ctx";
 import { ICurdState } from "./Curd";
 import { omit } from "lodash";
+import { createExpose } from "../util";
 
 const proCurdAddOrEditProps = () => ({
   //标记名称
@@ -25,6 +26,7 @@ export const createCurdForm = (
   Form: any,
   Button: any,
   convertFormProps?: (curdState: ICurdState) => Record<string, any>,
+  formMethods?: string[],
 ): any => {
   return defineComponent({
     inheritAttrs: false,
@@ -69,11 +71,7 @@ export const createCurdForm = (
         formRef.value?.submit();
       };
 
-      expose({
-        submit: () => {
-          formRef.value?.submit();
-        },
-      });
+      expose(createExpose(formMethods!, formRef));
 
       return () => {
         return (

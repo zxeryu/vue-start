@@ -96,6 +96,8 @@ const proCurdProps = () => ({
 
 type CurdProps = Partial<ExtractPropTypes<ReturnType<typeof proCurdProps>>>;
 
+export const CurdMethods = ["sendCurdEvent", "refreshList", "sendEvent", "sendRequest"];
+
 const Curd = defineComponent<CurdProps>({
   props: {
     ...(proCurdProps() as any),
@@ -237,7 +239,7 @@ const Curd = defineComponent<CurdProps>({
       modalProps,
     });
 
-    expose({ sendCurdEvent, getOperate, refreshList: handleSearch });
+    expose({ sendCurdEvent, refreshList: handleSearch });
 
     return () => {
       return slots.default?.();
@@ -303,7 +305,20 @@ export const ProCurd = defineComponent<ProCurdProps>({
 
     const moduleKeys = keys(omit(ProModule.props, "state", "requests"));
 
-    expose({ moduleRef, curdRef });
+    expose({
+      sendCurdEvent: (event: TCurdActionEvent) => {
+        curdRef.value?.sendCurdEvent(event);
+      },
+      refreshList: (extra?: Record<string, any>) => {
+        curdRef.value?.refreshList(extra);
+      },
+      sendEvent: (action: TActionEvent) => {
+        moduleRef.value?.sendEvent(action);
+      },
+      sendRequest: (requestNameOrAction: string, ...params: any[]) => {
+        moduleRef.value?.sendEvent(requestNameOrAction, ...params);
+      },
+    });
 
     return () => {
       return (

@@ -55,6 +55,8 @@ interface FormProps {
   scrollToError?: boolean;
 }
 
+export const FormMethods = ["clearValidate", "resetFields", "scrollToField", "validate", "validateField", "submit"];
+
 const Form = defineComponent({
   props: {
     ...ElForm.props,
@@ -62,8 +64,6 @@ const Form = defineComponent({
   setup: (props, { slots, emit, expose }) => {
     const formState = props.model || reactive({});
     const formRef = ref<FormInstance & { submit: () => void }>();
-
-    const formMethods = ["clearValidate", "resetFields", "scrollToField", "validate", "validateField", "submit"];
 
     useEffect(() => {
       if (!formRef.value) {
@@ -80,7 +80,7 @@ const Form = defineComponent({
       };
     }, []);
 
-    expose(createExpose(formMethods, formRef));
+    expose(createExpose(FormMethods, formRef));
 
     return () => {
       return <ElForm ref={formRef} {...omit(props, "model")} model={formState} v-slots={slots} />;
@@ -95,11 +95,15 @@ export type ProFormProps = ProFormPropsOrigin &
     onFinishFailed?: (invalidFields: Record<string, any>) => void;
   }; //emit;
 
-export const ProForm: DefineComponent<ProFormProps> = createForm(Form, ProGrid);
+export const ProForm: DefineComponent<ProFormProps> = createForm(Form, ProGrid, FormMethods);
 
 export type ProSearchFormProps = ProSearchFormPropsOrigin & ProFormProps;
 
-export const ProSearchForm: DefineComponent<ProSearchFormProps> = createSearchForm(ProForm, {
-  needRules: { type: Boolean, default: false },
-  inline: { type: Boolean, default: true },
-});
+export const ProSearchForm: DefineComponent<ProSearchFormProps> = createSearchForm(
+  ProForm,
+  {
+    needRules: { type: Boolean, default: false },
+    inline: { type: Boolean, default: true },
+  },
+  FormMethods,
+);

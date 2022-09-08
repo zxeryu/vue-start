@@ -1,14 +1,19 @@
 import { DefineComponent, defineComponent } from "vue";
-import { ProForm, ProFormProps } from "../form";
+import { FormMethods, ProForm, ProFormProps } from "../form";
 import { get, omit } from "lodash";
 import { ElButton } from "element-plus";
 import { createCurdForm, CurdCurrentMode, ProCurdAddOrEditProps, useProCurd } from "@vue-start/pro";
 
 export type ProCurdFormProps = ProFormProps & ProCurdAddOrEditProps;
 
-export const ProCurdForm: DefineComponent<ProCurdFormProps> = createCurdForm(ProForm, ElButton, (curdState) => ({
-  hideRequiredAsterisk: curdState.mode === CurdCurrentMode.DETAIL,
-}));
+export const ProCurdForm: DefineComponent<ProCurdFormProps> = createCurdForm(
+  ProForm,
+  ElButton,
+  (curdState) => ({
+    hideRequiredAsterisk: curdState.mode === CurdCurrentMode.DETAIL,
+  }),
+  FormMethods,
+);
 
 export const ProCurdFormConnect = defineComponent({
   setup: () => {

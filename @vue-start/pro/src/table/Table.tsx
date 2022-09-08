@@ -3,7 +3,7 @@ import { TColumn, TElementMap } from "../types";
 import { filter, get, isFunction, keys, map, omit, some, sortBy } from "lodash";
 import { getItemEl } from "../core";
 import { Ref } from "@vue/reactivity";
-import { mergeStateToList } from "../util";
+import { createExpose, mergeStateToList } from "../util";
 
 const ProTableKey = Symbol("pro-table");
 
@@ -92,14 +92,14 @@ const proTableProps = () => ({
 
 export type ProTableProps = Partial<ExtractPropTypes<ReturnType<typeof proTableProps>>>;
 
-export const createTable = (Table: any, Props?: any): any => {
+export const createTable = (Table: any, Props?: any, tableMethods?: string[]): any => {
   return defineComponent<ProTableProps>({
     props: {
       ...Table.props,
       ...Props,
       ...proTableProps(),
     },
-    setup: (props, { slots }) => {
+    setup: (props, { slots, expose }) => {
       const createNumberColumn = (): TTableColumn => ({
         title: "序号",
         dataIndex: "serialNumber",
@@ -198,6 +198,8 @@ export const createTable = (Table: any, Props?: any): any => {
       const tableRef = ref();
 
       provideProTable({ columns, tableRef, ...props.provideExtra });
+
+      expose(createExpose(tableMethods || [], tableRef));
 
       const invalidKeys = keys(proTableProps());
 

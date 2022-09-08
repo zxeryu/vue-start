@@ -1,9 +1,9 @@
-import { DefineComponent, defineComponent, isVNode } from "vue";
+import { DefineComponent, defineComponent, isVNode, ref } from "vue";
 import { ElTable, ElTableColumn } from "element-plus";
 import { TableProps } from "element-plus/es/components/table/src/table/defaults";
 import { TableColumnCtx, TColumns } from "../../types";
 import { get, map, omit } from "lodash";
-import { createTable, ProTableProps as ProTablePropsOrigin } from "@vue-start/pro";
+import { createExpose, createTable, ProTableProps as ProTablePropsOrigin } from "@vue-start/pro";
 import { createLoadingId, ProLoading } from "../comp/Loading";
 
 export type ProTableProps = Omit<ProTablePropsOrigin, "columns"> & {
@@ -15,6 +15,22 @@ export type ProTableProps = Omit<ProTablePropsOrigin, "columns"> & {
     loading?: boolean;
   };
 
+export const TableMethods = [
+  "clearSelection",
+  "getSelectionRows",
+  "toggleRowSelection",
+  "toggleAllSelection",
+  "toggleRowExpansion",
+  "setCurrentRow",
+  "clearSort",
+  "clearFilter",
+  "doLayout",
+  "sort",
+  "scrollTo",
+  "setScrollTop",
+  "setScrollLeft",
+];
+
 const Table = defineComponent({
   props: {
     ...ElTable.props,
@@ -22,12 +38,17 @@ const Table = defineComponent({
     dataSource: { type: Array },
     loading: { type: Boolean },
   },
-  setup: (props, { slots }) => {
+  setup: (props, { slots, expose }) => {
+    const tableRef = ref();
+
     const id = createLoadingId("table");
+
+    expose(createExpose(TableMethods, tableRef));
 
     return () => {
       return (
         <ElTable
+          ref={tableRef}
           // @ts-ignore
           id={id}
           {...omit(props, "columns", "dataSource", "loading")}
@@ -60,4 +81,4 @@ const Table = defineComponent({
   },
 });
 
-export const ProTable: DefineComponent<ProTableProps> = createTable(Table);
+export const ProTable: DefineComponent<ProTableProps> = createTable(Table, undefined, TableMethods);
