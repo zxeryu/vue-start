@@ -2,9 +2,52 @@ import { DefineComponent, defineComponent, isVNode, ref } from "vue";
 import { ElTable, ElTableColumn } from "element-plus";
 import { TableProps } from "element-plus/es/components/table/src/table/defaults";
 import { TableColumnCtx, TColumns } from "../../types";
-import { get, map, omit } from "lodash";
+import { map, omit, size } from "lodash";
 import { createExpose, createTable, ProTableProps as ProTablePropsOrigin } from "@vue-start/pro";
-import { createLoadingId, ProLoading } from "../comp/Loading";
+import { createLoadingId, ProLoading } from "../comp";
+
+export type ProTableColumnProps = TableColumnCtx<any>;
+
+export const ProTableColumn = defineComponent<ProTableColumnProps>({
+  props: {
+    ...omit(ElTableColumn.props, "label", "prop"),
+    title: { type: String },
+    dataIndex: { type: String },
+    children: { type: Array },
+    customRender: { type: Function },
+  } as any,
+  setup: (props) => {
+    return () => {
+      return (
+        <ElTableColumn
+          {...omit(
+            props,
+            "title",
+            "label",
+            "renderHeader",
+            "prop",
+            "dataIndex",
+            "formatter",
+            "customRender",
+            "children",
+          )}
+          label={isVNode(props.title) ? undefined : props.title}
+          renderHeader={isVNode(props.title) ? () => props.title as any : undefined}
+          prop={props.dataIndex as any}
+          formatter={
+            ((record: Record<string, any>, column: TableColumnCtx<any>, value: any, index: number) => {
+              if (props.customRender) {
+                return props.customRender({ value, text: value, record, column, index } as any);
+              }
+              return value;
+            }) as any
+          }>
+          {size(props.children) > 0 && map(props.children, (item) => <ProTableColumn key={item.dataIndex} {...item} />)}
+        </ElTableColumn>
+      );
+    };
+  },
+});
 
 export type ProTableProps = Omit<ProTablePropsOrigin, "columns"> & {
   columns?: TColumns;
@@ -56,21 +99,7 @@ const Table = defineComponent({
           v-slots={omit(slots, "default", "start")}>
           {slots.start?.()}
           {map(props.columns, (item) => (
-            <ElTableColumn
-              key={item.dataIndex}
-              {...omit(item, "title", "label", "renderHeader", "prop", "dataIndex", "formatter", "customRender")}
-              label={isVNode(item.title) ? undefined : item.title || get(item, "label")}
-              renderHeader={isVNode(item.title) ? () => item.title as any : undefined}
-              prop={item.dataIndex as any}
-              formatter={
-                ((record: Record<string, any>, column: TableColumnCtx<any>, value: any, index: number) => {
-                  if (item.customRender) {
-                    return item.customRender({ value, text: value, record, column, index } as any);
-                  }
-                  return value;
-                }) as any
-              }
-            />
+            <ProTableColumn key={item.dataIndex} {...item} />
           ))}
           {slots.default?.()}
 

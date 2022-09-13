@@ -30,7 +30,7 @@ const PageCurd = defineComponent<PageCurdProps>({
     const route = useRoute();
 
     const { dispatch, sendRequest } = useProModule();
-    const { rowKey, curdState } = useProCurd();
+    const { rowKey, curdState, refreshList } = useProCurd();
 
     const dealList = (subAction: ICurdSubAction) => {
       if (subAction === CurdSubAction.PAGE) {
@@ -80,6 +80,13 @@ const PageCurd = defineComponent<PageCurdProps>({
       }
     };
 
+    const dealDelete = (subAction: ICurdSubAction) => {
+      if (subAction === CurdSubAction.SUCCESS) {
+        //刷新列表
+        refreshList();
+      }
+    };
+
     useModuleEvent(({ type, payload, source }) => {
       if (source) {
         return;
@@ -107,6 +114,9 @@ const PageCurd = defineComponent<PageCurdProps>({
           break;
         case CurdAction.EDIT:
           dealEdit(subAction, { record });
+          break;
+        case CurdAction.DELETE:
+          dealDelete(subAction);
           break;
       }
     });

@@ -220,28 +220,33 @@ export default defineComponent(() => {
             {
               title: "Address",
               dataIndex: "address",
+              children: [
+                { title: "Address1", dataIndex: "address1" },
+                { title: "Address2", dataIndex: "address2" },
+              ],
             },
           ]}
           data={[
             {
               date: "2016-05-03",
               name: "Tom",
-              address: "No. 189, Grove St, Los Angeles",
+              address1: "No. 189, Grove St, Los Angeles",
+              address2: "No. 189, Grove St, Los Angeles222",
             },
             {
               date: "2016-05-02",
               name: "Tom",
-              address: "No. 189, Grove St, Los Angeles",
+              address1: "No. 189, Grove St, Los Angeles",
             },
             {
               date: "2016-05-04",
               name: "Tom",
-              address: "No. 189, Grove St, Los Angeles",
+              address2: "No. 189, Grove St, Los Angeles",
             },
             {
               date: "2016-05-01",
               name: "Tom",
-              address: "No. 189, Grove St, Los Angeles",
+              address1: "No. 189, Grove St, Los Angeles",
             },
           ]}
         />
