@@ -106,14 +106,20 @@ export const createCurdList = (SearchForm: any, Table: any) => {
 
         return (
           <>
-            <SearchForm
-              formElementMap={formElementMap}
-              {...omit(props.searchProps, "slots")}
-              columns={searchColumns.value}
-              onFinish={executeSearchWithResetPage}
-              v-slots={props.searchProps?.slots}>
-              {props.extraInSearch && extra}
-            </SearchForm>
+            {slots.start?.()}
+
+            {slots.search ? (
+              slots.search({ executeSearchWithResetPage })
+            ) : (
+              <SearchForm
+                formElementMap={formElementMap}
+                {...omit(props.searchProps, "slots")}
+                columns={searchColumns.value}
+                onFinish={executeSearchWithResetPage}
+                v-slots={props.searchProps?.slots}>
+                {props.extraInSearch && extra}
+              </SearchForm>
+            )}
 
             {slots.divide?.()}
 
@@ -134,6 +140,8 @@ export const createCurdList = (SearchForm: any, Table: any) => {
 
               {slots.footerEnd?.()}
             </div>
+
+            {slots.end?.()}
           </>
         );
       };

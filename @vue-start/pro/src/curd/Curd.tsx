@@ -198,6 +198,10 @@ const Curd = defineComponent<CurdProps>({
           }
           return;
       }
+      //非 CurdAction 五种操作的其他请求
+      if (action && type === CurdSubAction.EXECUTE) {
+        sendRequest(action, values);
+      }
     });
 
     const operateMap = reduce(props.operates, (pair, item) => ({ ...pair, [item.action]: item }), {});
@@ -298,10 +302,12 @@ export const ProCurd = defineComponent<ProCurdProps>({
 
     /****************************** columns分类 *************************************/
 
-    const requests = map(props.operates, (item) => {
+    const operates = map(props.operates, (item) => {
       const curdOpts = get(curdOperateOpts, item.action!);
       return { ...curdOpts, ...item };
     });
+    //只取配置actor的项
+    const requests = filter(operates, (item) => item.actor);
 
     const moduleKeys = keys(omit(ProModule.props, "state", "requests"));
 
@@ -326,7 +332,7 @@ export const ProCurd = defineComponent<ProCurdProps>({
           <Curd
             ref={curdRef}
             {...omit(props, ...moduleKeys, "curdState", "operates")}
-            operates={requests}
+            operates={operates}
             v-slots={slots}
           />
         </ProModule>

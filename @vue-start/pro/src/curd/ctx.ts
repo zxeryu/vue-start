@@ -56,7 +56,7 @@ export type ICurdAction = keyof typeof CurdAction;
  */
 export enum CurdSubAction {
   EMIT = "EMIT", //事件触发
-  EXECUTE = "EXECUTE", //add、edit完成提交
+  EXECUTE = "EXECUTE", //add、edit完成提交 发起网络请求
   PAGE = "PAGE", //Page模式下事件
   SUCCESS = "SUCCESS", //请求成功
   FAIL = "FAIL", //请求失败
