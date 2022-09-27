@@ -17,6 +17,7 @@ import {
   observeOn as rxOperatorObserveOn,
 } from "rxjs/operators";
 import { getRequestConfig } from "./utils";
+import { ResponseOpts } from "./provide";
 
 export type ReqType = { body?: Record<string, any>; [key: string]: any };
 
@@ -161,7 +162,11 @@ export const createRequestFactory = (client: AxiosInstance) => {
   };
 };
 
-export const createRequestObservable = (actor$: Observable<IRequestActor>, client: AxiosInstance) => {
+export const createRequestObservable = (
+  actor$: Observable<IRequestActor>,
+  client: AxiosInstance,
+  opts?: ResponseOpts,
+) => {
   const requestFactory = createRequestFactory(client);
 
   const fakeCancelRequest = (axiosRequestConfig: AxiosRequestConfig) => {
@@ -191,10 +196,16 @@ export const createRequestObservable = (actor$: Observable<IRequestActor>, clien
               return rxOf(response);
             }),
             rxMap((response) => {
+              if (opts?.convertResponse) {
+                return opts.convertResponse(actor, response);
+              }
               return { ...actor, stage: "DONE", res: response } as IRequestActor;
             }),
             rxCatchError((err) => {
-              return rxOf({ ...actor, stage: "FAILED", err: err } as IRequestActor);
+              const errActor = opts?.convertError
+                ? opts.convertError(actor, err)
+                : { ...actor, stage: "FAILED", err: err };
+              return rxOf(errActor as IRequestActor);
             }),
             rxTap(() => {
               request.clear();

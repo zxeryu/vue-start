@@ -1,5 +1,5 @@
 import { inject, App, provide } from "vue";
-import axios, { AxiosInstance, AxiosInterceptorManager, AxiosRequestConfig, AxiosResponse } from "axios";
+import axios, { AxiosError, AxiosInstance, AxiosInterceptorManager, AxiosRequestConfig, AxiosResponse } from "axios";
 import { paramsSerializer, transformRequest, transformResponse } from "./utils";
 import { forEach, get, set, clone } from "lodash";
 import { Subject } from "rxjs";
@@ -36,7 +36,12 @@ export const ContentTypeInterceptor: TRequestInterceptor = (request) => {
   });
 };
 
-const createClient = (options: AxiosRequestConfig, interceptors: TRequestInterceptor[]) => {
+export type ResponseOpts = {
+  convertResponse?: (actor: IRequestActor, response: AxiosResponse) => IRequestActor;
+  convertError?: (actor: IRequestActor, error: AxiosError) => IRequestActor;
+};
+
+const createClient = (options: AxiosRequestConfig, interceptors: TRequestInterceptor[], opts?: ResponseOpts) => {
   // client
   const client = axios.create({
     paramsSerializer,
@@ -59,15 +64,19 @@ const createClient = (options: AxiosRequestConfig, interceptors: TRequestInterce
     return operatorActor;
   };
   //全局订阅
-  const sub = createRequestObservable(requestSubject$, client).subscribe((actor) => {
+  const sub = createRequestObservable(requestSubject$, client, opts).subscribe((actor) => {
     requestSubject$.next(actor);
   });
 
   return { client, requestSubject$, dispatchRequest, sub };
 };
 
-export const provideRequest = (options: AxiosRequestConfig, interceptors: TRequestInterceptor[]) => {
-  const { client, requestSubject$, dispatchRequest, sub } = createClient(options, interceptors);
+export const provideRequest = (
+  options: AxiosRequestConfig,
+  interceptors: TRequestInterceptor[],
+  opts?: ResponseOpts,
+) => {
+  const { client, requestSubject$, dispatchRequest, sub } = createClient(options, interceptors, opts);
 
   provide<RequestProvideType>(ProvideKey, { client, requestSubject$, dispatchRequest });
 
@@ -78,9 +87,10 @@ export const provideRequest = (options: AxiosRequestConfig, interceptors: TReque
   }, []);
 };
 
-export const createRequest = (options: AxiosRequestConfig, interceptors: TRequestInterceptor[]) => (app: App) => {
-  const { client, requestSubject$, dispatchRequest } = createClient(options, interceptors);
+export const createRequest =
+  (options: AxiosRequestConfig, interceptors: TRequestInterceptor[], opts?: ResponseOpts) => (app: App) => {
+    const { client, requestSubject$, dispatchRequest } = createClient(options, interceptors, opts);
 
-  //vue挂载request对象
-  app.provide<RequestProvideType>(ProvideKey, { client, requestSubject$, dispatchRequest });
-};
+    //vue挂载request对象
+    app.provide<RequestProvideType>(ProvideKey, { client, requestSubject$, dispatchRequest });
+  };
