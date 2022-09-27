@@ -7,6 +7,8 @@ import { createExpose } from "../util";
 const proCurdAddOrEditProps = () => ({
   //标记名称
   signName: { type: String },
+  //form model 绑定的curdState中的对象
+  modelName: { type: String, default: "detailData" },
 
   //是否使用operate bar
   operateBar: { type: Boolean, default: true },
@@ -81,8 +83,8 @@ export const createCurdForm = (
             {...props}
             elementMap={props.elementMap || elementMap}
             formElementMap={props.formElementMap || formElementMap}
-            columns={columns.value}
-            model={curdState.detailData}
+            columns={props.columns || columns.value}
+            model={props.model || curdState[props.modelName]}
             readonly={curdState.mode === CurdCurrentMode.DETAIL}
             onFinish={handleFinish}
             {...convertFormProps?.(curdState)}

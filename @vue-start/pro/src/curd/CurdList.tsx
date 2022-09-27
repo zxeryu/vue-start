@@ -90,6 +90,7 @@ export const createCurdList = (SearchForm: any, Table: any) => {
         const tableProps = props.tableProps;
         const rewriteTableProps = {
           elementMap,
+          columns: tableColumns.value,
           ...omit(tableProps, "slots", "operate"),
           operate: mergeWith({ items: tableOperateItems }, tableProps?.operate, (objValue, srcValue) => {
             if (isArray(objValue) && isArray(srcValue)) {
@@ -97,7 +98,6 @@ export const createCurdList = (SearchForm: any, Table: any) => {
             }
           }),
           paginationState: { page: pageState.page, pageSize: pageState.pageSize },
-          columns: tableColumns.value,
           loading: curdState.listLoading,
           dataSource: curdState.listData?.dataSource,
         };
@@ -113,8 +113,8 @@ export const createCurdList = (SearchForm: any, Table: any) => {
             ) : (
               <SearchForm
                 formElementMap={formElementMap}
-                {...omit(props.searchProps, "slots")}
                 columns={searchColumns.value}
+                {...omit(props.searchProps, "slots")}
                 onFinish={executeSearchWithResetPage}
                 v-slots={props.searchProps?.slots}>
                 {props.extraInSearch && extra}

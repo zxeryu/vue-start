@@ -322,7 +322,7 @@ export const ProCurd = defineComponent<ProCurdProps>({
         moduleRef.value?.sendEvent(action);
       },
       sendRequest: (requestNameOrAction: string, ...params: any[]) => {
-        moduleRef.value?.sendEvent(requestNameOrAction, ...params);
+        moduleRef.value?.sendRequest(requestNameOrAction, ...params);
       },
     });
 
