@@ -9,6 +9,8 @@ import useHover from "./useHover";
 import useEffect from "./useEffect";
 import { useWatch } from "./useWatch";
 export * from "./useState";
+export * from "./useMemo";
+export * from "./useUpdateKey";
 
 export {
   useToggle,
@@ -22,3 +24,5 @@ export {
   useEffect,
   useWatch,
 };
+
+export * from "./util";

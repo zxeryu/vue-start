@@ -28,6 +28,15 @@ export type TOption = {
 
 export type TOptions = TOption[];
 
+export type TreeOption = {
+  label?: string;
+  value: string | number;
+  disabled?: boolean;
+  children?: TreeOption[];
+};
+
+export type TreeOptions = TreeOption[];
+
 export type TColumn = {
   title?: string | VNode;
   dataIndex?: string | number;

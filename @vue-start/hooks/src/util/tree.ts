@@ -1,13 +1,8 @@
-import { FieldNames, TOption } from "../types";
 import { find, findIndex, forEach, get, isFunction, size } from "lodash";
+import { FieldNames, TOption } from "../../../pro";
+import { getFieldNames } from "./options";
 
-export type TData = Record<string, any>;
-
-const treeDefaultNames: FieldNames = {
-  children: "children",
-  label: "label",
-  value: "value",
-};
+type TData = Record<string, any>;
 
 /**
  * 根据value从treeData中找到对象
@@ -22,7 +17,8 @@ export const findTargetInTree = (
   fieldNames: FieldNames,
   cb: ((index: number, target: TData, list: TData[]) => void) | { target?: TData; index?: number; list?: TData[] },
 ) => {
-  const index = findIndex(data, (item) => get(item, (fieldNames?.value || treeDefaultNames.value) as any) === value);
+  const { valueName, childrenName } = getFieldNames(fieldNames);
+  const index = findIndex(data, (item) => get(item, valueName) === value);
   if (index > -1) {
     if (isFunction(cb)) {
       cb(index, data[index], data);
@@ -34,7 +30,7 @@ export const findTargetInTree = (
     return;
   }
   forEach(data, (item) => {
-    const children = get(item, (fieldNames?.children || treeDefaultNames.children) as any);
+    const children = get(item, childrenName);
     if (size(children) > 0) {
       findTargetInTree(children, value, fieldNames, cb);
     }
@@ -56,7 +52,8 @@ export const findTargetListInTree = (
   cb: ((list?: TData[]) => void) | { list?: TData[] },
   parent: TData[] = [],
 ) => {
-  const target = find(data, (item) => get(item, (fieldNames?.value || treeDefaultNames.value) as any) === value);
+  const { valueName, childrenName } = getFieldNames(fieldNames);
+  const target = find(data, (item) => get(item, valueName) === value);
   if (target) {
     if (isFunction(cb)) {
       cb([...parent, target]);
@@ -66,7 +63,7 @@ export const findTargetListInTree = (
     return;
   }
   forEach(data, (item) => {
-    const children = get(item, (fieldNames?.children || treeDefaultNames.children) as any);
+    const children = get(item, childrenName);
     if (size(children) > 0) {
       findTargetListInTree(children, value, fieldNames, cb, [...parent, item]);
     }

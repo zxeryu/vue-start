@@ -1,6 +1,5 @@
 import { defineComponent, ExtractPropTypes, PropType } from "vue";
-import { useEffect } from "@vue-start/hooks";
-import { generateId } from "@vue-start/pro";
+import { generateId, useEffect } from "@vue-start/hooks";
 import { ElLoading } from "element-plus";
 import { isString } from "lodash";
 
