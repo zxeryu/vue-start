@@ -13,6 +13,9 @@ const proCurdListProps = () => ({
   searchProps: { type: Object as PropType<Record<string, any>> },
   //table
   tableProps: { type: Object as PropType<Record<string, any>> },
+  //pagination是否展示
+  paginationProps: { type: Object as PropType<Record<string, any>> },
+  showPagination: { type: Boolean, default: true },
   //pageState
   pageState: { type: Object as PropType<TPageState> },
 });
@@ -133,13 +136,13 @@ export const createCurdList = (SearchForm: any, Table: any) => {
 
             {slots.divide2?.()}
 
-            <div class={"pro-curd-list-footer"}>
-              {slots.footerStart?.()}
-
-              {slots.pagination?.(pageState, curdState.listData?.total, handleSearch)}
-
-              {slots.footerEnd?.()}
-            </div>
+            {props.showPagination && (
+              <div class={"pro-curd-list-footer"}>
+                {slots.footerStart?.()}
+                {slots.pagination?.(pageState, curdState.listData?.total, handleSearch)}
+                {slots.footerEnd?.()}
+              </div>
+            )}
 
             {slots.end?.()}
           </>
