@@ -48,14 +48,17 @@ export type TColumn = {
   search?: boolean; //同extra中的search
   //拓展属性
   extra?: {
-    desc?: any; //DescriptionsItem props
+    //DescriptionsItem props
+    desc?: Record<string, any>;
+    //Col props
+    col?: Record<string, any>;
     /**
-     * 自定义标记，用户分类columns 和 排序
-     * 如： search：标记搜索条件；searchSort：搜索项的顺序
-     * 现有：search、form、detail
+     * 自定义标记，对columns进行筛选 和 排序
+     * 默认支持：search、form、table、detail
+     * 比如： search：标记搜索条件；searchSort：搜索项的顺序
      * 在Curd组件中可使用getSignColumns方法获取标记的Columns
-     * ${sign}：      boolean 标记
-     * ${signSort}:   标记的columns排序
+     * [sign]：              boolean 标记
+     * [`${sign}Sort`]：     标记的columns排序
      */
   } & Record<string, any>;
 };

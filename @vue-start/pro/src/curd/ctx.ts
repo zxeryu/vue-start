@@ -7,7 +7,7 @@ const ProCurdKey = Symbol("pro-curd");
 
 export interface IProCurdProvide {
   columns: Ref<TColumns>;
-  getSignColumns: (signName: string) => TColumns;
+  getSignColumns: (signName: string) => TColumns; //获取标记的column
   getFormItemVNode: (column: TColumn, needRules: boolean | undefined) => VNode | null;
   getItemVNode: (column: TColumn, value: any) => VNode | null;
   elementMap: TElementMap;
@@ -19,11 +19,11 @@ export interface IProCurdProvide {
   descColumns: Ref<TColumns>;
   tableColumns: Ref<TColumns>;
   searchColumns: Ref<TColumns>;
-  //
+  //发送curd事件
   sendCurdEvent: (event: TCurdActionEvent) => void;
-  //
+  //获取配置的operate
   getOperate: (action: ICurdAction) => ICurdOperateOpts | undefined;
-  //
+  //刷新列表
   refreshList: (extra?: Record<string, any>) => void;
   /******************子组件参数*******************/
   listProps?: ComputedRef<Record<string, any> | undefined>;
@@ -39,7 +39,7 @@ export const provideProCurd = (ctx: IProCurdProvide) => provide(ProCurdKey, ctx)
 /************************************ 常量 *************************************/
 
 /**
- * curd 5种Action
+ * curd 5种基础Action
  */
 export enum CurdAction {
   LIST = "LIST",
@@ -49,10 +49,10 @@ export enum CurdAction {
   DELETE = "DELETE",
 }
 
-export type ICurdAction = keyof typeof CurdAction;
+export type ICurdAction = keyof typeof CurdAction | string;
 
 /**
- * 5种Action 的子事件
+ * CurdAction 的子事件
  */
 export enum CurdSubAction {
   EMIT = "EMIT", //事件触发
@@ -73,7 +73,7 @@ export enum CurdCurrentMode {
   DETAIL = "DETAIL",
 }
 
-export type ICurdCurrentMode = keyof typeof CurdCurrentMode;
+export type ICurdCurrentMode = keyof typeof CurdCurrentMode | string;
 
 /**
  * curd add 模式下 标记 "确定" "确定并继续" 触发
