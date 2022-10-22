@@ -1,4 +1,4 @@
-import { parse } from "querystring";
+import { parse } from "./configvalue";
 import { App, inject } from "vue";
 
 const getDevKitValue = (key: string) => {
@@ -8,13 +8,9 @@ const getDevKitValue = (key: string) => {
 type TConfig = { [key: string]: string };
 
 export const getConfig = (): TConfig => {
-  const app = parse(getDevKitValue("app"), ",", "=", {
-    decodeURIComponent: (v) => v,
-  });
+  const app = parse(getDevKitValue("app"));
 
-  const config = parse(getDevKitValue("config"), ",", "=", {
-    decodeURIComponent: (v) => v,
-  });
+  const config = parse(getDevKitValue("config"));
 
   return { ...config, ...app } as TConfig;
 };

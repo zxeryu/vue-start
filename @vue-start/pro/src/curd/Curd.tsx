@@ -217,7 +217,7 @@ const Curd = defineComponent<CurdProps>({
     const modalProps = computed(() => props.modalProps);
 
     provideProCurd({
-      columns,
+      columns: columns as any,
       getSignColumns,
       getFormItemVNode,
       getItemVNode,
@@ -226,10 +226,10 @@ const Curd = defineComponent<CurdProps>({
       //
       rowKey: props.rowKey!,
       curdState: state,
-      formColumns,
-      descColumns,
-      tableColumns,
-      searchColumns,
+      formColumns: formColumns as any,
+      descColumns: descColumns as any,
+      tableColumns: tableColumns as any,
+      searchColumns: searchColumns as any,
       //
       sendCurdEvent,
       //
@@ -237,10 +237,10 @@ const Curd = defineComponent<CurdProps>({
       //
       refreshList: handleSearch,
       //
-      listProps,
-      formProps,
-      descProps,
-      modalProps,
+      listProps: listProps as any,
+      formProps: formProps as any,
+      descProps: descProps as any,
+      modalProps: modalProps as any,
     });
 
     expose({ sendCurdEvent, refreshList: handleSearch });

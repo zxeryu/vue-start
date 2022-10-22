@@ -197,7 +197,7 @@ export const createTable = (Table: any, Props?: any, tableMethods?: string[]): a
 
       const tableRef = ref();
 
-      provideProTable({ columns, tableRef, ...props.provideExtra });
+      provideProTable({ columns: columns as any, tableRef, ...props.provideExtra });
 
       expose(createExpose(tableMethods || [], tableRef));
 

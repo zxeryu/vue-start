@@ -142,9 +142,9 @@ export const createForm = (Form: any, Grid: any, formMethods: string[]): any => 
         elementMap: props.elementMap,
         formElementMap: props.formElementMap,
         //
-        readonly,
+        readonly: readonly as any,
         //
-        columns,
+        columns: columns as any,
         //
         formRef,
         //

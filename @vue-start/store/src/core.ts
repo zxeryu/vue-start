@@ -21,33 +21,35 @@ export interface IActorOpt<TArg = any, TOpts = any> {
   opts?: TOpts;
 }
 
-export const effectOn = <TRoot, TActor extends Actor>(
-  keyOrKeyCreator: string | TKeyCreator<TActor>,
-  effect: (root: TRoot, actor: TActor) => TRoot | undefined,
-) => (root: any = {}, actor: TActor) => {
-  const k = typeof keyOrKeyCreator === "function" ? keyOrKeyCreator(actor) : keyOrKeyCreator;
+export const effectOn =
+  <TRoot, TActor extends Actor>(
+    keyOrKeyCreator: string | TKeyCreator<TActor>,
+    effect: (root: TRoot, actor: TActor) => TRoot | undefined,
+  ) =>
+  (root: any = {}, actor: TActor) => {
+    const k = typeof keyOrKeyCreator === "function" ? keyOrKeyCreator(actor) : keyOrKeyCreator;
 
-  if (k === "") {
-    return root;
-  }
-
-  const nextState = effect(root[k], actor);
-
-  const nextRoot: typeof root = {};
-
-  for (const key in root) {
-    if (key === k) {
-      continue;
+    if (k === "") {
+      return root;
     }
-    nextRoot[key] = root[key];
-  }
 
-  if (typeof nextState !== "undefined") {
-    nextRoot[k] = nextState;
-  }
+    const nextState = effect(root[k], actor);
 
-  return nextRoot;
-};
+    const nextRoot: typeof root = {};
+
+    for (const key in root) {
+      if (key === k) {
+        continue;
+      }
+      nextRoot[key] = root[key];
+    }
+
+    if (typeof nextState !== "undefined") {
+      nextRoot[k] = nextState;
+    }
+
+    return nextRoot;
+  };
 
 export class Actor<TArg = any, TOpts = any> {
   static of<TArg = any, TOpts = any>(group: string) {
@@ -164,7 +166,7 @@ export interface IMiddleware<TState = any> {
   (api: IMiddlewareAPI<TState>): (next: IDispatch) => IDispatch;
 }
 
-export interface IEpic<TState = any> {
+export interface IEpic<TState extends TData> {
   (actor$: Observable<Actor>, so$: Store<TState>): Observable<Actor>;
 }
 
@@ -179,7 +181,7 @@ export const composeEpics = (...epics: Array<IEpic<any>>): IEpic<any> => {
 export type TData = { [key: string]: any };
 
 export class Store<TRoot extends TData = {}> extends BehaviorSubject<TRoot> {
-  static create<TState>(initialState: TState = {} as TState) {
+  static create<TState extends TData>(initialState: TState = {} as TState) {
     return new Store<TState>(initialState);
   }
 

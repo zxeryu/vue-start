@@ -9,7 +9,7 @@ export const createStore = (initialState: TData): Store => {
 
 export const useStore = <TRoot extends TData = {}>(): Store<TRoot> => inject<Store<TRoot>>(storeKey)!;
 
-export const useEpic = (epic: IEpic) => {
+export const useEpic = (epic: IEpic<TData>) => {
   const store$ = useStore();
   const sub = store$.epicOn(epic);
 

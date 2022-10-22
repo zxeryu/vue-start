@@ -1,29 +1,24 @@
 {
-  "compileOnSave": true,
   "compilerOptions": {
+    "target": "ESNext",
+    "useDefineForClassFields": true,
+    "module": "ESNext",
+    "moduleResolution": "Node",
+    "strict": true,
+    "jsx": "preserve",
+    "sourceMap": false,
+    "resolveJsonModule": true,
+    "isolatedModules": true,
+    "esModuleInterop": true,
+    "lib": ["ESNext", "DOM"],
+    "skipLibCheck": true,
     "baseUrl": ".",
     "rootDir": ".",
-    "paths": {
-      "@babel/types": ["node_modules/@babel/types"],
-      "*": ["__types__/*", "*"]
-    },
-    "resolveJsonModule": true,
-    "noImplicitAny": true,
-    "allowSyntheticDefaultImports": true,
-    "esModuleInterop": true,
-    "moduleResolution": "Node",
-    "jsx": "preserve",
-    "module": "esnext",
-    "target": "esnext",
-    "pretty": true,
-    "strict": true,
-    //    "sourceMap": true
-    "allowJs": false,
-    /* emit ts declaration cache */
     "declaration": true,
     "noEmitOnError": false,
     "emitDeclarationOnly": true,
     "outDir": ".tmp"
   },
-  "exclude": [".tmp/*", "dist/*", "node_modules/*"]
+  "include": ["@vue-start/*", "@vue-start-dev/*"],
+  "references": [{ "path": "./tsconfig.node.json" }]
 }
