@@ -1,7 +1,7 @@
 import { defineComponent, ExtractPropTypes, PropType, reactive } from "vue";
-import { defaultPage, TPageState } from "./Curd";
-import { CurdAction, CurdSubAction, ICurdAction, useProCurd } from "./ctx";
-import { concat, isArray, isUndefined, map, mergeWith, omit, pick } from "lodash";
+import { defaultPage, ICurdOperateOpts, TPageState } from "./Curd";
+import { CurdAction, CurdSubAction, useProCurd } from "./ctx";
+import { concat, filter, isArray, isUndefined, map, mergeWith, omit, pick } from "lodash";
 import { IOperateItem } from "../table";
 
 const proCurdListProps = () => ({
@@ -28,7 +28,7 @@ export const createCurdList = (SearchForm: any, Table: any) => {
       ...proCurdListProps(),
     } as any,
     setup: (props, { slots }) => {
-      const { elementMap, formElementMap, curdState, searchColumns, tableColumns, getOperate, sendCurdEvent } =
+      const { elementMap, formElementMap, curdState, searchColumns, tableColumns, sendCurdEvent, operates } =
         useProCurd();
 
       /******************* search pagination ********************/
@@ -48,31 +48,30 @@ export const createCurdList = (SearchForm: any, Table: any) => {
 
       /******************* table ********************/
 
-      const createTableItem = (action: ICurdAction): IOperateItem => {
-        const operate = getOperate(action);
-        const item = {
-          ...pick(operate, "label", "element", "disabled", "sort", "onClick"),
-          show: !isUndefined(operate?.show) ? operate?.show : false,
-          value: action,
-        };
-        if (!item.onClick) {
-          return {
-            ...item,
-            onClick: (record) => {
-              //默认发送事件
-              sendCurdEvent({ action, type: CurdSubAction.EMIT, record });
-            },
+      const tableOperateItems = map(
+        filter(operates as ICurdOperateOpts[], (item) => {
+          const action = item.action;
+          return (
+            action === CurdAction.DETAIL ||
+            action === CurdAction.EDIT ||
+            action === CurdAction.DELETE ||
+            item.tableOperate
+          );
+        }),
+        (operate: ICurdOperateOpts) => {
+          const item = {
+            ...pick(operate, "label", "element", "disabled", "sort", "onClick"),
+            show: !isUndefined(operate?.show) ? operate?.show : false,
+            value: operate.action,
           };
-        }
-        return item;
-      };
-
-      //table操作栏 items
-      const tableOperateItems: IOperateItem[] = [
-        createTableItem(CurdAction.DETAIL),
-        createTableItem(CurdAction.EDIT),
-        createTableItem(CurdAction.DELETE),
-      ];
+          if (!item.onClick) {
+            item.onClick = (record) => {
+              sendCurdEvent({ action: operate.action, type: CurdSubAction.EMIT, record });
+            };
+          }
+          return item;
+        },
+      );
 
       //新配置的operate item，添加默认发送事件方法
       const convertOperateItems = (list: IOperateItem[]) => {
