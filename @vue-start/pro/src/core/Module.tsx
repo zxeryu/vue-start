@@ -124,19 +124,18 @@ export const ProModule = defineComponent<ProModuleProps>({
       } else {
         nextParams = get(params, 0);
       }
+
+      //如果设置了loading，将请求状态维护到state中
+      if (requestOpts.loadingName) {
+        dispatch({ type: requestOpts.loadingName, payload: true });
+      }
+
       dispatchRequest(requestOpts.actor, nextParams);
     };
 
     useComposeRequestActor(
       keys(requestMap),
       {
-        onStart: (actor) => {
-          //如果设置了loading，将请求状态维护到state中
-          const loadingName = get(requestMap, [actor.name, "loadingName"]);
-          if (loadingName) {
-            dispatch({ type: loadingName, payload: true });
-          }
-        },
         onSuccess: (actor) => {
           const requestOpts = get(requestMap, actor.name);
           //如果设置了stateName，将结果维护到state中
