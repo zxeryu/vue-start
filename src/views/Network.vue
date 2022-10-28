@@ -54,10 +54,10 @@ export default defineComponent({
       console.log("time", params);
     });
 
-    const timeChange = (e) => {
+    const timeChange = (e:any) => {
       params.stime = e.target.value + " 00:00:00";
     };
-    const endTimeChange = (e) => {
+    const endTimeChange = (e:any) => {
       params.etime = e.target.value + " 00:00:00";
     };
 

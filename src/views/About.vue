@@ -3,7 +3,7 @@
   <div>{{ state.age }}</div>
   <button @click="onChange">change</button>
 </template>
-<script>
+<script lang="ts">
 import { defineComponent } from "vue";
 import { useState } from "@vue-start/hooks";
 

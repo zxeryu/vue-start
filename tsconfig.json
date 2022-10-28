@@ -19,6 +19,6 @@
     "emitDeclarationOnly": true,
     "outDir": ".tmp"
   },
-  "include": ["@vue-start/*", "@vue-start-dev/*"],
+  "include": ["@vue-start/**/*", "@vue-start-dev/**/*", "src/**/*"],
   "references": [{ "path": "./tsconfig.node.json" }]
 }

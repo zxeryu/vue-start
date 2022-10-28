@@ -3,6 +3,10 @@ import vue from "@vitejs/plugin-vue";
 import vueJsx from "@vitejs/plugin-vue-jsx";
 import path from "path";
 
+const buildData = process.env.VITE_BUILD ? JSON.parse(process.env.VITE_BUILD) : undefined;
+
+console.log(buildData);
+
 // https://vitejs.dev/config/
 export default defineConfig({
   resolve: {
@@ -17,4 +21,43 @@ export default defineConfig({
     },
   },
   plugins: [vue(), vueJsx()],
+  build: buildData
+    ? {
+        outDir: buildData.outDir,
+        lib: {
+          entry: buildData.entry,
+          formats: ["cjs", "es"],
+          name: "index",
+          fileName: (format) => {
+            if (format === "cjs") {
+              return "index.js";
+            }
+            return `index.${format}.js`;
+          },
+        },
+        rollupOptions: {
+          external: [
+            "vue",
+            "vue-router",
+            //
+            "ant-design-vue",
+            "element-plus",
+            //
+            "axios",
+            "rxjs",
+            "rxjs/operators",
+            "lodash",
+            "cross-spawn",
+            "js-yaml",
+            "fs",
+            "path",
+            "querystring",
+            //
+            "@vue-start/hooks",
+            "@vue-start/request",
+            "@vue-start/pro",
+          ],
+        },
+      }
+    : undefined,
 });
