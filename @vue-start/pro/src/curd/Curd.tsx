@@ -1,5 +1,13 @@
 import { computed, defineComponent, ExtractPropTypes, PropType, reactive, ref, VNode } from "vue";
-import { IProModuleProvide, IRequestOpts, ProModule, ProModuleProps, useModuleEvent, useProModule } from "../core";
+import {
+  IProModuleProvide,
+  IRequestOpts,
+  ProModule,
+  ProModuleProps,
+  RequestAction,
+  useModuleEvent,
+  useProModule,
+} from "../core";
 import { filter, get, keys, map, omit, pick, reduce, sortBy } from "lodash";
 import { TActionEvent, TColumn, TColumns, TElementMap } from "../types";
 import { UnwrapNestedRefs } from "@vue/reactivity";
@@ -52,6 +60,7 @@ export interface ICurdState extends Record<string, any> {
 export interface ICurdOperateOpts extends Omit<IRequestOpts, "actor" | "action">, Omit<IOperateItem, "value"> {
   action: ICurdAction; //类型，由当前程序赋值
   actor?: IRequestActor;
+  tableOperate?: boolean; //是否加入Table operate
 }
 
 export type TCurdActionEvent = {
@@ -166,35 +175,44 @@ const Curd = defineComponent<CurdProps>({
     };
 
     //事件订阅
-    useModuleEvent((event) => {
+    useModuleEvent(({ type, payload, source }) => {
       //如果当前event存在source 不处理
-      if (event.source) {
+      if (source) {
         return;
       }
-      const action = event.type as ICurdAction;
+      let action: ICurdAction | string = type;
+      let subAction: CurdSubAction = payload?.type;
 
-      const { type, values, record } = event.payload as Omit<TCurdActionEvent, "action">;
+      if (action === RequestAction.Success) {
+        //覆盖
+        action = get(payload, ["requestOpts", "action"]);
+        subAction = CurdSubAction.SUCCESS;
+      }
+
+      const { values, record } = payload as Omit<TCurdActionEvent, "action">;
 
       switch (action) {
         case CurdAction.LIST:
-          if (type === CurdSubAction.EMIT) {
+          if (subAction === CurdSubAction.EMIT) {
             prevListParams = values;
             handleSearch();
           }
           return;
         case CurdAction.ADD:
-          if (type === CurdSubAction.EXECUTE) {
+          if (subAction === CurdSubAction.EXECUTE) {
             sendRequest(CurdAction.ADD, values, state.detailData);
           }
           return;
         case CurdAction.EDIT:
-          if (type === CurdSubAction.EXECUTE) {
+          if (subAction === CurdSubAction.EXECUTE) {
             sendRequest(CurdAction.EDIT, values, state.detailData);
           }
           return;
         case CurdAction.DELETE:
-          if (type === CurdSubAction.EMIT) {
+          if (subAction === CurdSubAction.EMIT) {
             sendRequest(CurdAction.DELETE, record, props.rowKey);
+          } else if (subAction === CurdSubAction.SUCCESS) {
+            handleSearch();
           }
           return;
       }
@@ -233,6 +251,7 @@ const Curd = defineComponent<CurdProps>({
       //
       sendCurdEvent,
       //
+      operates: props.operates!,
       getOperate,
       //
       refreshList: handleSearch,

@@ -1,10 +1,4 @@
-import {
-  IRequestActor,
-  isDoneRequestActor,
-  isFailedRequestActor,
-  isPreRequestActor,
-  useRequestProvide,
-} from "@vue-start/request";
+import { IRequestActor, isDoneRequestActor, isFailedRequestActor, useRequestProvide } from "@vue-start/request";
 import { useEffect } from "@vue-start/hooks";
 import { merge as rxMerge, filter as rxFilter, tap as rxTap } from "rxjs";
 import { forEach, isString, map } from "lodash";
@@ -41,7 +35,6 @@ export const useComposeRequestActor = (
   actors: (IRequestActor | string)[],
   //各种状态回调
   options: {
-    onStart?: (actor: IRequestActor) => void;
     onSuccess?: (actor: IRequestActor) => void;
     onFailed?: (actor: IRequestActor) => void;
     onFinish?: (actor: IRequestActor) => void;
@@ -57,16 +50,6 @@ export const useComposeRequestActor = (
 
   useEffect(() => {
     const sub = rxMerge(
-      requestSubject$.pipe(
-        rxFilter(isPreRequestActor),
-        rxTap((actor) => {
-          if (nameSet.has(actor.name)) {
-            options.onStart?.(actor);
-
-            lastRequestActors[actor.name] = actor;
-          }
-        }),
-      ),
       requestSubject$.pipe(
         rxFilter(isDoneRequestActor),
         rxTap((actor) => {

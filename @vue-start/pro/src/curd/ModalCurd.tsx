@@ -1,5 +1,5 @@
-import { defineComponent, ExtractPropTypes, PropType, reactive, ref } from "vue";
-import { CurdMethods, defaultPage, ProCurd, ProCurdProps } from "./Curd";
+import { defineComponent, ExtractPropTypes, PropType, ref } from "vue";
+import { CurdMethods, ProCurd, ProCurdProps } from "./Curd";
 import { get, keys, omit, pick } from "lodash";
 import { RequestAction, useModuleEvent, useProModule } from "../core";
 import {
@@ -30,7 +30,7 @@ const ModalCurd = defineComponent<ModalCurdProps>({
     const { dispatch, sendRequest } = useProModule();
     const { rowKey, curdState, listProps, getOperate, refreshList } = useProCurd();
 
-    const pageState = listProps?.value?.pageState || reactive({ ...defaultPage });
+    const pageState = listProps?.value?.pageState;
 
     //发送详情接口
     const sendDetailRequest = (record: Record<string, any>) => {
@@ -61,9 +61,11 @@ const ModalCurd = defineComponent<ModalCurdProps>({
         });
       } else if (subAction === CurdSubAction.SUCCESS) {
         //添加成功
-        pageState.page = 1; //重置当前页数
+        if (pageState) {
+          pageState.page = 1; //重置当前页数
+        }
         //刷新List
-        refreshList({ page: 1 });
+        refreshList();
 
         if (curdState.addAction === CurdAddAction.CONTINUE) {
           dispatch({
@@ -84,13 +86,6 @@ const ModalCurd = defineComponent<ModalCurdProps>({
       } else if (subAction === CurdSubAction.SUCCESS) {
         // 编辑成功
         dispatch({ type: "mode", payload: undefined });
-        //刷新列表
-        refreshList();
-      }
-    };
-
-    const dealDelete = (subAction: ICurdSubAction) => {
-      if (subAction === CurdSubAction.SUCCESS) {
         //刷新列表
         refreshList();
       }
@@ -120,9 +115,6 @@ const ModalCurd = defineComponent<ModalCurdProps>({
           break;
         case CurdAction.EDIT:
           dealEdit(subAction, { record });
-          break;
-        case CurdAction.DELETE:
-          dealDelete(subAction);
           break;
       }
     });

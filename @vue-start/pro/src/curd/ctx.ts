@@ -21,6 +21,7 @@ export interface IProCurdProvide {
   searchColumns: Ref<TColumns>;
   //发送curd事件
   sendCurdEvent: (event: TCurdActionEvent) => void;
+  operates: ICurdOperateOpts[];
   //获取配置的operate
   getOperate: (action: ICurdAction) => ICurdOperateOpts | undefined;
   //刷新列表
