@@ -1,6 +1,6 @@
 import { defineComponent, ExtractPropTypes, PropType, ref } from "vue";
 import { CurdMethods, ProCurd, ProCurdProps } from "./Curd";
-import { get, keys, omit, pick } from "lodash";
+import { get, keys, omit, pick, cloneDeep } from "lodash";
 import { RequestAction, useModuleEvent, useProModule } from "../core";
 import {
   CurdAction,
@@ -40,7 +40,7 @@ const ModalCurd = defineComponent<ModalCurdProps>({
         sendRequest(CurdAction.DETAIL, record, rowKey);
       } else {
         //直接使用当前record作为详情数据
-        dispatch({ type: "detailData", payload: record });
+        dispatch({ type: "detailData", payload: cloneDeep(record) });
       }
     };
 
