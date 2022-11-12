@@ -1,10 +1,9 @@
 import { defineComponent, ExtractPropTypes, PropType, reactive, ref } from "vue";
 import { clone, debounce, filter, get, keys, map, omit, size, some } from "lodash";
 import { useEffect, useWatch } from "@vue-start/hooks";
-import { UnwrapNestedRefs } from "@vue/reactivity";
-import { TColumns } from "../types";
 import { getColumnFormItemName, getColumnValueType } from "../core";
 import { createExpose } from "../util";
+import { ProFormProps } from "./Form";
 
 export enum SearchMode {
   //自动触发搜索
@@ -17,10 +16,6 @@ export type ISearchMode = keyof typeof SearchMode;
 
 const proSearchFormProps = () => ({
   /**
-   * 需要监听的对象
-   */
-  model: { type: Object as PropType<UnwrapNestedRefs<Record<string, any>>> },
-  /**
    * 初始化触发 onFinish
    */
   initEmit: { type: Boolean, default: true },
@@ -28,11 +23,6 @@ const proSearchFormProps = () => ({
    *  模式 自动触发或者手动触发 onFinish
    */
   searchMode: { type: String as PropType<ISearchMode>, default: SearchMode.AUTO },
-  /**
-   * 配置 同ProForm中的columns
-   * 可以根据column中valueType计算出默认的debounceKeys
-   */
-  columns: { type: Array as PropType<TColumns> },
   /**
    * 需要debounce处理的字段
    */
@@ -42,7 +32,7 @@ const proSearchFormProps = () => ({
   debounceTime: { type: Number, default: 800 },
 });
 
-export type ProSearchFormProps = Partial<ExtractPropTypes<ReturnType<typeof proSearchFormProps>>>;
+export type ProSearchFormProps = Partial<ExtractPropTypes<ReturnType<typeof proSearchFormProps>>> & ProFormProps;
 
 /**
  * 该组件只是个模式，最终返回null，不做任何渲染，应配合着ProForm的包装类一起使用

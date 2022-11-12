@@ -2,10 +2,13 @@ import { computed, defineComponent, ExtractPropTypes, PropType, reactive, ref, V
 import {
   IProModuleProvide,
   IRequestOpts,
+  proBaseProps,
+  ProBaseProps,
   ProModule,
   ProModuleProps,
   RequestAction,
   useModuleEvent,
+  useProConfig,
   useProModule,
 } from "../core";
 import { filter, get, keys, map, omit, pick, reduce, sortBy } from "lodash";
@@ -76,19 +79,6 @@ export type TCurdActionEvent = {
 
 const proCurdProps = () => ({
   /**
-   * 配置（静态）
-   */
-  columns: { type: Array as PropType<TColumns> },
-  /**
-   * 配置（动态）
-   * columns动态属性兼容
-   */
-  columnState: { type: Object as PropType<Record<string, any>> },
-  /**
-   * 录入组件集
-   */
-  formElementMap: { type: Object as PropType<TElementMap> },
-  /**
    * 列表 或 详情 的唯一标识
    */
   rowKey: { type: String, default: "id" },
@@ -103,12 +93,13 @@ const proCurdProps = () => ({
   modalProps: { type: Object as PropType<Record<string, any>> },
 });
 
-type CurdProps = Partial<ExtractPropTypes<ReturnType<typeof proCurdProps>>>;
+type CurdProps = Partial<ExtractPropTypes<ReturnType<typeof proCurdProps>>> & ProBaseProps;
 
 export const CurdMethods = ["sendCurdEvent", "refreshList", "sendEvent", "sendRequest"];
 
 const Curd = defineComponent<CurdProps>({
   props: {
+    ...proBaseProps,
     ...(proCurdProps() as any),
   },
   setup: (props, { slots, expose }) => {
@@ -282,6 +273,8 @@ export const ProCurd = defineComponent<ProCurdProps>({
     curdState: { type: Object as PropType<ICurdState> },
   },
   setup: (props, { slots, expose }) => {
+    const { elementMap, formElementMap } = useProConfig();
+
     const moduleRef = ref();
     const curdRef = ref();
 
@@ -347,10 +340,16 @@ export const ProCurd = defineComponent<ProCurdProps>({
 
     return () => {
       return (
-        <ProModule ref={moduleRef} {...pick(props, moduleKeys)} state={curdState} requests={requests as any}>
+        <ProModule
+          ref={moduleRef}
+          {...pick(props, moduleKeys)}
+          elementMap={props.elementMap || elementMap}
+          state={curdState}
+          requests={requests as any}>
           <Curd
             ref={curdRef}
             {...omit(props, ...moduleKeys, "curdState", "operates")}
+            formElementMap={props.formElementMap || formElementMap}
             operates={operates}
             v-slots={slots}
           />

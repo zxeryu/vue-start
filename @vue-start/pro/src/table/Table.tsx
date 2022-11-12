@@ -1,7 +1,7 @@
 import { computed, defineComponent, ExtractPropTypes, inject, PropType, provide, ref, VNode } from "vue";
 import { TColumn, TElementMap } from "../types";
 import { filter, get, isFunction, keys, map, omit, some, sortBy } from "lodash";
-import { getItemEl } from "../core";
+import { getItemEl, proBaseProps, ProBaseProps, useProConfig } from "../core";
 import { Ref } from "@vue/reactivity";
 import { createExpose, mergeStateToList } from "../util";
 
@@ -69,13 +69,6 @@ const proTableProps = () => ({
    * 公共column，会merge到columns item中
    */
   column: { type: Object as PropType<TTableColumn> },
-  //
-  columns: { type: Array as PropType<TTableColumns> },
-  columnState: { type: Object as PropType<Record<string, any>> },
-  /**
-   * 展示控件集合，readonly模式下使用这些组件渲染
-   */
-  elementMap: { type: Object as PropType<TElementMap> },
   /**
    * 序号
    */
@@ -90,16 +83,21 @@ const proTableProps = () => ({
   provideExtra: { type: Object as PropType<IProTableProvideExtra> },
 });
 
-export type ProTableProps = Partial<ExtractPropTypes<ReturnType<typeof proTableProps>>>;
+export type ProTableProps = Partial<ExtractPropTypes<ReturnType<typeof proTableProps>>> & ProBaseProps;
 
 export const createTable = (Table: any, Props?: any, tableMethods?: string[]): any => {
   return defineComponent<ProTableProps>({
     props: {
       ...Table.props,
+      ...proBaseProps,
       ...Props,
       ...proTableProps(),
     },
     setup: (props, { slots, expose }) => {
+      const { elementMap: elementMapP } = useProConfig();
+
+      const elementMap = props.elementMap || elementMapP;
+
       const createNumberColumn = (): TTableColumn => ({
         title: "序号",
         dataIndex: "serialNumber",
@@ -169,7 +167,7 @@ export const createTable = (Table: any, Props?: any, tableMethods?: string[]): a
           if (!item.customRender) {
             nextItem.customRender = ({ text }) => {
               const vn = getItemEl(
-                props.elementMap,
+                elementMap,
                 {
                   ...item,
                   showProps: { ...item.showProps, content: props.columnEmptyText },

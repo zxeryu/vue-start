@@ -3,7 +3,7 @@ import { computed, defineComponent, ExtractPropTypes, inject, PropType, provide,
 import { BooleanObjType, BooleanRulesObjType, TColumns, TElementMap } from "../types";
 import { useEffect } from "@vue-start/hooks";
 import { forEach, get, keys, map, omit, size } from "lodash";
-import { getColumnFormItemName, getFormItemEl } from "../core";
+import { getColumnFormItemName, getFormItemEl, proBaseProps, ProBaseProps, useProConfig } from "../core";
 import { createExpose, getValidValues, mergeStateToList } from "../util";
 import { GridProps } from "../comp";
 import { provideProFormList } from "./FormList";
@@ -57,19 +57,6 @@ const proFormProps = () => ({
   disableState: { type: Object as PropType<UnwrapNestedRefs<BooleanObjType>> },
   disableStateRules: { type: Object as PropType<BooleanRulesObjType> },
   /**
-   *
-   */
-  columns: { type: Array as PropType<TColumns> },
-  columnState: { type: Object as PropType<Record<string, any>> },
-  /**
-   * 展示控件集合，readonly模式下使用这些组件渲染
-   */
-  elementMap: { type: Object as PropType<TElementMap> },
-  /**
-   * 录入控件集合
-   */
-  formElementMap: { type: Object as PropType<TElementMap> },
-  /**
    * 是否启用rules验证
    */
   needRules: { type: Boolean, default: true },
@@ -79,17 +66,23 @@ const proFormProps = () => ({
   provideExtra: { type: Object as PropType<IProFormProvideExtra> },
 });
 
-export type ProFormProps = Partial<ExtractPropTypes<ReturnType<typeof proFormProps>>>;
+export type ProFormProps = Partial<ExtractPropTypes<ReturnType<typeof proFormProps>>> & ProBaseProps;
 
 export const createForm = (Form: any, Grid: any, formMethods: string[]): any => {
   return defineComponent<ProFormProps & Omit<GridProps, "items">>({
     inheritAttrs: false,
     props: {
       ...Form.props,
+      ...proBaseProps,
       ...proFormProps(),
       ...omit(Grid.props, "items"),
     },
     setup: (props, { slots, emit, expose, attrs }) => {
+      const { elementMap: elementMapP, formElementMap: formElementMapP } = useProConfig();
+
+      const elementMap = props.elementMap || elementMapP;
+      const formElementMap = props.formElementMap || formElementMapP;
+
       const formState = props.model || reactive({});
       //组件状态相关
       const showState = props.showState || reactive({});
@@ -139,8 +132,8 @@ export const createForm = (Form: any, Grid: any, formMethods: string[]): any => 
         readonlyState,
         disableState,
         //
-        elementMap: props.elementMap,
-        formElementMap: props.formElementMap,
+        elementMap,
+        formElementMap,
         //
         readonly: readonly as any,
         //
@@ -168,7 +161,7 @@ export const createForm = (Form: any, Grid: any, formMethods: string[]): any => 
             v-slots={omit(slots, "default")}>
             {slots.start?.()}
 
-            {props.formElementMap && size(columns.value) > 0 && (
+            {formElementMap && size(columns.value) > 0 && (
               <>
                 {props.row ? (
                   <Grid
@@ -176,12 +169,12 @@ export const createForm = (Form: any, Grid: any, formMethods: string[]): any => 
                     col={props.col}
                     items={map(columns.value, (item) => ({
                       rowKey: getColumnFormItemName(item),
-                      vNode: getFormItemEl(props.formElementMap, item, props.needRules)!,
+                      vNode: getFormItemEl(formElementMap, item, props.needRules)!,
                       col: get(item, ["extra", "col"]),
                     }))}
                   />
                 ) : (
-                  map(columns.value, (item) => getFormItemEl(props.formElementMap, item, props.needRules))
+                  map(columns.value, (item) => getFormItemEl(formElementMap, item, props.needRules))
                 )}
               </>
             )}
