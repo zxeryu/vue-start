@@ -1,8 +1,10 @@
 import { defineConfig } from "vite";
 import vue from "@vitejs/plugin-vue";
 import vueJsx from "@vitejs/plugin-vue-jsx";
+import htmlPlugin from "vite-plugin-html-config";
 import path from "path";
 
+const devData = process.env.VITE_DEV ? JSON.parse(process.env.VITE_DEV) : undefined;
 const buildData = process.env.VITE_BUILD ? JSON.parse(process.env.VITE_BUILD) : undefined;
 
 console.log(buildData);
@@ -11,16 +13,28 @@ console.log(buildData);
 export default defineConfig({
   resolve: {
     alias: {
-      "@vue-start/antd-pro": path.resolve(__dirname, "./@vue-start/antd-pro/index"),
-      "@vue-start/config": path.resolve(__dirname, "./@vue-start/config/index"),
-      "@vue-start/element-pro": path.resolve(__dirname, "./@vue-start/element-pro/index"),
-      "@vue-start/hooks": path.resolve(__dirname, "./@vue-start/hooks/index"),
-      "@vue-start/pro": path.resolve(__dirname, "./@vue-start/pro/index"),
-      "@vue-start/request": path.resolve(__dirname, "./@vue-start/request/index"),
-      "@vue-start/store": path.resolve(__dirname, "./@vue-start/store/index"),
+      "@vue-start/antd-pro": path.resolve(__dirname, "@vue-start/antd-pro/index"),
+      "@vue-start/config": path.resolve(__dirname, "@vue-start/config/index"),
+      "@vue-start/element-pro": path.resolve(__dirname, "@vue-start/element-pro/index"),
+      "@vue-start/hooks": path.resolve(__dirname, "@vue-start/hooks/index"),
+      "@vue-start/pro": path.resolve(__dirname, "@vue-start/pro/index"),
+      "@vue-start/request": path.resolve(__dirname, "@vue-start/request/index"),
+      "@vue-start/store": path.resolve(__dirname, "@vue-start/store/index"),
     },
   },
-  plugins: [vue(), vueJsx()],
+  plugins: [
+    vue(),
+    vueJsx(),
+    htmlPlugin({
+      scripts: [
+        "",
+        {
+          src: `/${devData.entry}/index.ts`,
+          type: "module",
+        },
+      ],
+    }),
+  ],
   build: buildData
     ? {
         outDir: buildData.outDir,
