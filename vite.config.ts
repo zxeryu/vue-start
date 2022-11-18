@@ -25,15 +25,17 @@ export default defineConfig({
   plugins: [
     vue(),
     vueJsx(),
-    htmlPlugin({
-      scripts: [
-        "",
-        {
-          src: `/${devData.entry}/index.ts`,
-          type: "module",
-        },
-      ],
-    }),
+    devData
+      ? htmlPlugin({
+          scripts: [
+            "",
+            {
+              src: `/${devData.entry}/index.ts`,
+              type: "module",
+            },
+          ],
+        })
+      : undefined,
   ],
   build: buildData
     ? {

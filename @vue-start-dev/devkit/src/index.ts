@@ -6,3 +6,4 @@ export * from "./file";
 export * from "./preset/html";
 
 export * from "./clients";
+export * from "./routes";
