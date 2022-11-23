@@ -3,7 +3,7 @@
  *
  */
 import { Dirent, existsSync, readdirSync } from "fs";
-import { endsWith, filter, indexOf, map, size, some, camelCase, join, toLower, upperFirst, reduce } from "lodash";
+import { endsWith, filter, indexOf, map, size, some, camelCase, join, toLower, upperFirst, forEach } from "lodash";
 import { resolve } from "path";
 
 const dirOrFileName = (name: string) => {
@@ -27,6 +27,9 @@ type TRouteOptions = {
 type NodeType = {
   parent: string[];
   name: string;
+  //文件夹从属于某个组件
+  comp?: string;
+  //文件夹
   children?: NodeType[];
 };
 
@@ -87,14 +90,50 @@ const fileToRoute = (data: NodeType[], parent: NodeType[] = [], options: TRouteO
     return true;
   });
 
-  return map(validData, (item) => {
+  //标记从属关系
+  const fileMap: { [key: string]: true } = {};
+  const fileNameMap: { [key: string]: string } = {};
+  const dirMap: { [key: string]: true } = {};
+  forEach(validData, (item) => {
+    if (item.children) {
+      dirMap[item.name] = true;
+    } else {
+      fileMap[item.name] = true;
+      const name = dirOrFileName(item.name);
+      fileNameMap[name] = item.name;
+    }
+  });
+
+  //2.屏蔽包含文件夹的文件
+  const realData: NodeType[] = [];
+  forEach(validData, (item) => {
+    const name = dirOrFileName(item.name);
+    if (!item.children && dirMap[name]) {
+      return;
+    }
+    //文件夹
+    if (item.children) {
+      const fileName = fileNameMap[name];
+      realData.push({ ...item, comp: fileName });
+      return;
+    }
+    realData.push(item);
+  });
+
+  return map(realData, (item) => {
     const path = dirOrFileName(item.name);
     //name根据层级拼接而成
     const name = camelCase(join([...map(parent, ({ name }) => name), path]));
     const nextItem = { name: upperFirst(name), path };
     if (size(item.children) > 0) {
+      const arr = [...map(parent, (item) => item.name), item.comp];
+      let obj = null;
+      if (item.comp) {
+        obj = { component: `$rm$() => import('${options.importPrefix + "/" + join(arr, "/")}')$rm$` };
+      }
       return {
         ...nextItem,
+        ...obj,
         children: fileToRoute(item.children as NodeType[], [...parent, item], options),
       };
     }
@@ -124,8 +163,6 @@ export const createRouteData = (
   const fileData = readFileData(path, [], options);
   const routeData = fileToRoute(fileData, [], options);
   const str = routeDataToStr(routeData);
-
-  console.log(str);
 
   return str;
 };
