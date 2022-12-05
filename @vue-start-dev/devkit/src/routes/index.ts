@@ -145,10 +145,36 @@ const fileToRoute = (data: NodeType[], parent: NodeType[] = [], options: TRouteO
   }) as RouteType[];
 };
 
+/**
+ * 生成路由js内容
+ * @param routeData
+ */
 const routeDataToStr = (routeData: RouteType[]) => {
   const jsonStr = JSON.stringify(routeData);
   const content = jsonStr.replace(/"\$rm\$/g, "").replace(/\$rm\$"/g, "");
   return `export const routes = ${content}`;
+};
+
+/**
+ * 获取所有路由name名称
+ * @param routeData
+ * @param nameList
+ */
+const routeDataNameList = (routeData: RouteType[], nameList: string[]) => {
+  forEach(routeData, (item) => {
+    nameList.push(item.name);
+    if (item.children && size(item.children) > 0) {
+      routeDataNameList(item.children, nameList);
+    }
+  });
+};
+
+const nameListToStr = (list: string[]) => {
+  let str = "";
+  forEach(list, (item) => {
+    str += `export const ${item} = "${item}";`;
+  });
+  return str;
 };
 
 export const createRouteData = (
@@ -162,7 +188,12 @@ export const createRouteData = (
 ) => {
   const fileData = readFileData(path, [], options);
   const routeData = fileToRoute(fileData, [], options);
-  const str = routeDataToStr(routeData);
+  //路由内容
+  const routeStr = routeDataToStr(routeData);
+  const routeNameList: string[] = [];
+  routeDataNameList(routeData, routeNameList);
+  //路由名称
+  const routeNameStr = nameListToStr(routeNameList);
 
-  return str;
+  return { routeData, routeStr, routeNameStr };
 };
