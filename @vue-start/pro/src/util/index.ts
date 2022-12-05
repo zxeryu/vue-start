@@ -1,5 +1,5 @@
 import { Ref } from "vue";
-import { reduce } from "lodash";
+import { forEach, reduce, size } from "lodash";
 
 export * from "./state";
 
@@ -7,7 +7,7 @@ export * from "./state";
  * ref 传递
  */
 export const createExpose = (methods: string[], targetRef: Ref) => {
-  return reduce(
+  const exposeObj: Record<string, any> = reduce(
     methods,
     (pair, method) => {
       return {
@@ -19,4 +19,18 @@ export const createExpose = (methods: string[], targetRef: Ref) => {
     },
     {},
   );
+  exposeObj.originRef = targetRef;
+  return exposeObj;
+};
+
+export const createExposeObj = (targetRef: Ref, methods?: string[], opts?: Record<string, any>) => {
+  const exposeObj: Record<string, any> = { originRef: targetRef, ...opts };
+  if (methods && size(methods) > 0) {
+    forEach(methods, (method) => {
+      exposeObj[method] = (...params: any[]) => {
+        return targetRef.value?.[method]?.(...params);
+      };
+    });
+  }
+  return exposeObj;
 };

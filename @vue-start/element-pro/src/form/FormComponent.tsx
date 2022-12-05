@@ -4,7 +4,6 @@ import {
   ElDatePicker,
   ElTimePicker,
   ElTreeSelect,
-  ElCheckboxGroup,
   ElSwitch,
   ElCascader,
   ElButton,
@@ -12,7 +11,7 @@ import {
 
 import { createFormItemComponent } from "./createFormItemComponent";
 import { Component, defineComponent } from "vue";
-import { ProRadio, ProSelect } from "../field";
+import { ProCheckbox, ProRadio, ProSelect } from "../field";
 import { useProForm } from "@vue-start/pro";
 
 export const ProFormText = createFormItemComponent({
@@ -46,7 +45,7 @@ export const ProFormTreeSelect = createFormItemComponent({
   name: "PFormTreeSelect",
 });
 export const ProFormCheckbox = createFormItemComponent({
-  InputComp: ElCheckboxGroup,
+  InputComp: ProCheckbox,
   valueType: "checkbox",
   name: "PFromCheckbox",
 });

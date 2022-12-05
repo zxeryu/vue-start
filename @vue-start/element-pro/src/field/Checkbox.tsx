@@ -1,30 +1,30 @@
 import { defineComponent, ExtractPropTypes, PropType, ref } from "vue";
-import { ElSelect, ElOption } from "element-plus";
 import { TOptions } from "../../types";
+import { ElCheckboxGroup, ElCheckbox } from "element-plus";
 import { keys, map, omit } from "lodash";
 import { createExposeObj } from "@vue-start/pro";
 
-const proSelectProps = () => ({
+const proCheckboxProps = () => ({
   options: Array as PropType<TOptions>,
 });
 
-export type ProSelectProps = Partial<ExtractPropTypes<ReturnType<typeof proSelectProps>>> & typeof ElSelect.props;
+export type ProCheckboxProps = Partial<ExtractPropTypes<ReturnType<typeof proCheckboxProps>>> &
+  typeof ElCheckboxGroup.props;
 
-export const ProSelect = defineComponent<ProSelectProps>({
-  name: "PSelect",
+export const ProCheckbox = defineComponent({
   props: {
-    ...ElSelect.props,
-    ...proSelectProps(),
+    ...ElCheckboxGroup.props,
+    ...proCheckboxProps(),
   },
   setup: (props, { slots, emit, expose }) => {
     const originRef = ref();
 
     expose(createExposeObj(originRef));
 
-    const invalidKeys = keys(proSelectProps());
+    const invalidKeys = keys(proCheckboxProps());
     return () => {
       return (
-        <ElSelect
+        <ElCheckboxGroup
           ref={originRef}
           {...omit(props, invalidKeys)}
           onUpdate:modelValue={(v) => {
@@ -33,12 +33,16 @@ export const ProSelect = defineComponent<ProSelectProps>({
           v-slots={omit(slots, "default")}>
           {slots.start?.()}
 
-          {map(props.options, (item) => (
-            <ElOption key={item.value} {...item} />
-          ))}
+          {map(props.options, (item) => {
+            return (
+              <ElCheckbox {...item} label={item.value}>
+                {item.label}
+              </ElCheckbox>
+            );
+          })}
 
           {slots.default?.()}
-        </ElSelect>
+        </ElCheckboxGroup>
       );
     };
   },
