@@ -14,6 +14,28 @@ export const updateKV = StateActor.named<(prev: any) => any, { key: string }>("u
 
 export type TUpdater<T> = (prev: T) => T;
 
+export const useDispatchStore = <T>() => {
+  const store$ = useStore();
+
+  return (key: string, stateOrUpdater: T | TUpdater<T>, persist: boolean, initialState?: T | (() => T)) => {
+    const realKey = `${persist ? "$" : ""}${key}`;
+
+    const initials = isFunction(initialState) ? initialState() : initialState;
+
+    updateKV
+      .with(
+        (prevState = initials) => {
+          if (isFunction(stateOrUpdater)) {
+            return stateOrUpdater(prevState);
+          }
+          return stateOrUpdater;
+        },
+        { key: realKey },
+      )
+      .invoke(store$);
+  };
+};
+
 export const useStoreState$ = <T>(k: string, initialState: undefined | T | (() => T), persist: boolean) => {
   const key = `${persist ? "$" : ""}${k}`;
 

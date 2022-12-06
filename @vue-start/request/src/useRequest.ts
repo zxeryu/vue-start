@@ -4,6 +4,8 @@ import { merge as rxMerge, filter as rxFilter, tap as rxTap, BehaviorSubject } f
 import { get, isFunction } from "lodash";
 import { useRequestProvide } from "./provide";
 import { generateId, useEffect, useState } from "@vue-start/hooks";
+import { useObservableRef } from "../../store";
+import { Ref } from "@vue/reactivity";
 
 export interface IUseRequestOptions<TReq, TRes, TErr> {
   defaultLoading?: boolean;
@@ -88,6 +90,21 @@ export const useRequest = <TReq, TRes, TErr>(
   return [request, requesting$];
 };
 
+export const useRequest$ = <TReq, TRes, TErr>(
+  requestActor: IRequestActor<TReq, TRes, TErr>,
+  options?: IUseRequestOptions<TReq, TRes, TErr>,
+): readonly [
+  (
+    params: IRequestActor<TReq, TRes, TErr>["req"],
+    options?: Pick<IUseRequestOptions<TReq, TRes, TErr>, "onSuccess" | "onFail">,
+  ) => void,
+  Ref<boolean>,
+] => {
+  const [request, requesting$] = useRequest(requestActor, options);
+  const requesting = useObservableRef(requesting$);
+  return [request, requesting as Ref<boolean>];
+};
+
 /**
  * 直接发起请求
  */
@@ -123,4 +140,14 @@ export const useDirectRequest = <TRequestActor extends IRequestActor>(
   }, deps);
 
   return [state, req, requesting$];
+};
+
+export const useDirectRequest$ = <TRequestActor extends IRequestActor>(
+  requestActor: TRequestActor,
+  params: TRequestActor["req"] | (() => TRequestActor["req"]),
+  deps: any | any[],
+) => {
+  const [state, request, requesting$] = useDirectRequest(requestActor, params, deps);
+  const requesting = useObservableRef(requesting$ as any);
+  return [state, request, requesting];
 };

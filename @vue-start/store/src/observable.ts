@@ -3,6 +3,8 @@ import { distinctUntilChanged, map as rxMap } from "rxjs/operators";
 import { shallowEqual } from "./utils";
 import { useStore } from "./ctx";
 import { useState, useEffect } from "@vue-start/hooks";
+import { Ref } from "@vue/reactivity";
+import { ref } from "vue";
 
 export type TEqualFn = (a: any, b: any) => boolean;
 
@@ -57,6 +59,22 @@ export const useObservable = <T>(ob$: Observable<T>, defaultValue?: T): T => {
   }, undefined);
 
   return state;
+};
+
+// useObservable 使用的是 useState 有隐患
+export const useObservableRef = <T>(ob$: Observable<T>, defaultValue?: T): Ref<T | undefined> => {
+  const valueRef = ref(defaultValue || (ob$ as any).value);
+
+  useEffect(() => {
+    const sub = ob$.subscribe((val: T) => {
+      valueRef.value = val;
+    });
+    return () => {
+      sub && sub.unsubscribe();
+    };
+  }, []);
+
+  return valueRef;
 };
 
 export const useConn = <T, TOutput = T>(ob$: Observable<T>, mapper: IMapper<T, TOutput>): Observable<TOutput> => {
