@@ -1,4 +1,4 @@
-import { isUndefined, forEach, isArray, isObject, omit, isNull } from "lodash";
+import { isUndefined, forEach, isArray, isObject, omit, isNull, get, size, pick } from "lodash";
 import { IRequestActor } from "./createRequest";
 
 const getContentType = (headers: any = {}) => headers["Content-Type"] || headers["content-type"] || "";
@@ -85,7 +85,17 @@ export const getRequestConfig = (actor: IRequestActor) => {
   if (actor.requestFromReq) {
     axiosRequestConfig = actor.requestFromReq(actor.req || {});
   } else if (actor.req) {
-    axiosRequestConfig.params = omit(actor.req, "body");
+    const queryInPath = get(actor, ["extra", "queryInPath"], []);
+    if (size(queryInPath) > 0) {
+      //转换url
+      const qps = pick(actor.req, queryInPath);
+      let url: string = axiosRequestConfig.url!;
+      forEach(queryInPath, (name) => {
+        url = url.replace("${" + name + "}", qps[name]);
+      });
+      axiosRequestConfig.url = url;
+    }
+    axiosRequestConfig.params = omit(actor.req, "body", ...queryInPath);
     axiosRequestConfig.data = actor.req.body;
   }
   return axiosRequestConfig;

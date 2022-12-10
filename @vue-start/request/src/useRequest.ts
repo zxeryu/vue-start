@@ -1,10 +1,9 @@
-import { isReactive, isRef, toRaw } from "vue";
+import { isReactive, isRef, ref, toRaw } from "vue";
 import { IRequestActor, isDoneRequestActor, isFailedRequestActor } from "./createRequest";
-import { merge as rxMerge, filter as rxFilter, tap as rxTap, BehaviorSubject } from "rxjs";
+import { merge as rxMerge, filter as rxFilter, tap as rxTap, BehaviorSubject, Observable } from "rxjs";
 import { get, isFunction } from "lodash";
 import { useRequestProvide } from "./provide";
 import { generateId, useEffect, useState } from "@vue-start/hooks";
-import { useObservableRef } from "../../store";
 import { Ref } from "@vue/reactivity";
 
 export interface IUseRequestOptions<TReq, TRes, TErr> {
@@ -88,6 +87,21 @@ export const useRequest = <TReq, TRes, TErr>(
   };
 
   return [request, requesting$];
+};
+
+const useObservableRef = <T>(ob$: Observable<T>, defaultValue?: T): Ref<T | undefined> => {
+  const valueRef = ref(defaultValue || (ob$ as any).value);
+
+  useEffect(() => {
+    const sub = ob$.subscribe((val: T) => {
+      valueRef.value = val;
+    });
+    return () => {
+      sub && sub.unsubscribe();
+    };
+  }, []);
+
+  return valueRef;
 };
 
 export const useRequest$ = <TReq, TRes, TErr>(

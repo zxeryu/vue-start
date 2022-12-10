@@ -96,6 +96,7 @@ ${join(apiListStr, "")}
 
 export const transformApiData = (data: Record<string, any>, customApiName: TApiNameFun, basePath: string) => {
   const apiList = createApiList(data, customApiName, basePath);
+
   const tagDataGroup = groupBy(apiList, "tag");
 
   const apiGroupStr = map(tagDataGroup, (apiList, tag) => {
@@ -107,4 +108,35 @@ import { createRequestActor } from "@vue-start/request"
 
 ${join(apiGroupStr, "")}  
   `;
+};
+
+export const createApiData = (data: Record<string, any>, customApiName: TApiNameFun, basePath: string) => {
+  const apiList = createApiList(data, customApiName, basePath);
+
+  const apiJson = map(apiList, (item) => {
+    const queryInPath = map(
+      filter(item.query, (i) => i.in === "path"),
+      (i) => i.name,
+    );
+    return {
+      name: item.name,
+      requestConfig: {
+        method: item.method,
+        url: item.path,
+      },
+      extra: size(queryInPath) > 0 ? { queryInPath } : undefined,
+    };
+  });
+
+  const tagDataGroup = groupBy(apiList, "tag");
+  const apiGroupStr = map(tagDataGroup, (apiList, tag) => {
+    return generateFragment(apiList, tag);
+  });
+  const apiStr = `
+import { createRequestActor } from "@vue-start/request"
+
+${join(apiGroupStr, "")}  
+  `;
+
+  return { apiList, apiStr, apiJson: JSON.stringify(apiJson) };
 };

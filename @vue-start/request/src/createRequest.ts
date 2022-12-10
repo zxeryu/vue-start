@@ -37,6 +37,12 @@ export interface IRequestActor<TReq = any, TRes = any, TErr = any> {
   stage?: "DONE" | "FAILED" | "CANCEL";
   id?: string;
   //拓展 用于dispatchRequest
+  /**
+   * {
+   *   // url中 参数名称 集合
+   *   queryInPath:string[]
+   * }
+   */
   extra?: Record<string, any>;
 }
 
