@@ -1,4 +1,4 @@
-import { camelCase, filter, forEach, get, groupBy, isString, join, map, replace, size } from "lodash";
+import { camelCase, filter, forEach, get, groupBy, isString, join, map, reduce, replace, size } from "lodash";
 
 const isValidParamName = (paramName: string) => {
   return isString(paramName) && paramName.indexOf(".") === -1;
@@ -17,10 +17,18 @@ const getApiName = (methodType: string, path: string, basePath: string) => {
   return camelCase(`${methodType}/${str}`);
 };
 
-const createApiList = (data: Record<string, any>, customApiName: TApiNameFun, basePath: string) => {
+const createApiList = (
+  data: Record<string, any>,
+  customApiName: TApiNameFun,
+  basePath: string,
+  ignorePathMap?: Record<string, boolean>,
+) => {
   const apiList: Record<string, any>[] = [];
   const apiNameSet = new Set();
   forEach(data, (nodule, path) => {
+    if (ignorePathMap && ignorePathMap[path]) {
+      return;
+    }
     forEach(nodule, (methodDesc, methodType) => {
       const apiName = customApiName
         ? customApiName(methodDesc, methodType, path, basePath)
@@ -110,8 +118,19 @@ ${join(apiGroupStr, "")}
   `;
 };
 
-export const createApiData = (data: Record<string, any>, customApiName: TApiNameFun, basePath: string) => {
-  const apiList = createApiList(data, customApiName, basePath);
+export const createApiData = (
+  data: Record<string, any>,
+  customApiName: TApiNameFun,
+  {
+    basePath,
+    ignorePaths,
+  }: {
+    basePath: string;
+    ignorePaths?: string[];
+  },
+) => {
+  const ignorePathMap = reduce(ignorePaths, (pair, item) => ({ ...pair, [item]: true }), {});
+  const apiList = createApiList(data, customApiName, basePath, ignorePathMap);
 
   const apiJson = map(apiList, (item) => {
     const queryInPath = map(
@@ -120,10 +139,7 @@ export const createApiData = (data: Record<string, any>, customApiName: TApiName
     );
     return {
       name: item.name,
-      requestConfig: {
-        method: item.method,
-        url: item.path,
-      },
+      requestConfig: { method: item.method, url: item.path },
       extra: size(queryInPath) > 0 ? { queryInPath } : undefined,
     };
   });
