@@ -23,7 +23,7 @@ import {
   ICurdSubAction,
   provideProCurd,
 } from "./ctx";
-import { IOperateItem } from "../table";
+import { IOperateItem } from "../comp";
 import { IRequestActor } from "@vue-start/request";
 import { mergeStateToList } from "../util";
 import { getColumnFormItemName, getFormItemEl, getItemEl } from "../core";

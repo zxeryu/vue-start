@@ -137,9 +137,7 @@ export default defineComponent(() => {
   return () => {
     return (
       <ProConfig
-        config={{
-          formElementMap: { text: ProFormText, select: ProFormSelect },
-        }}>
+        formElementMap={{ text: ProFormText, select: ProFormSelect }}>
         <div>
           content
           <ProForm

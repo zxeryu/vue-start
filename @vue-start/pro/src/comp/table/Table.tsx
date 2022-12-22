@@ -1,9 +1,9 @@
 import { computed, defineComponent, ExtractPropTypes, inject, PropType, provide, ref, VNode } from "vue";
-import { TColumn, TElementMap } from "../types";
+import { TColumn, TElementMap } from "../../types";
 import { filter, get, isFunction, keys, map, omit, some, sortBy } from "lodash";
-import { getItemEl, proBaseProps, ProBaseProps, useProConfig } from "../core";
+import { getItemEl, proBaseProps, ProBaseProps, useProConfig } from "../../core";
 import { Ref } from "@vue/reactivity";
-import { createExpose, mergeStateToList } from "../util";
+import { createExpose, mergeStateToList } from "../../util";
 
 const ProTableKey = Symbol("pro-table");
 

@@ -1,11 +1,11 @@
 import { Ref, UnwrapNestedRefs } from "@vue/reactivity";
 import { computed, defineComponent, ExtractPropTypes, inject, PropType, provide, reactive, ref } from "vue";
-import { BooleanObjType, BooleanRulesObjType, TColumns, TElementMap } from "../types";
+import { BooleanObjType, BooleanRulesObjType, TColumns, TElementMap } from "../../types";
 import { useEffect } from "@vue-start/hooks";
 import { forEach, get, keys, map, omit, size } from "lodash";
-import { getColumnFormItemName, getFormItemEl, proBaseProps, ProBaseProps, useProConfig } from "../core";
-import { createExpose, getValidValues, mergeStateToList } from "../util";
-import { GridProps } from "../comp";
+import { getColumnFormItemName, getFormItemEl, proBaseProps, ProBaseProps, useProConfig } from "../../core";
+import { createExpose, getValidValues, mergeStateToList } from "../../util";
+import { GridProps } from "../index";
 import { provideProFormList } from "./FormList";
 
 const ProFormKey = Symbol("pro-form");

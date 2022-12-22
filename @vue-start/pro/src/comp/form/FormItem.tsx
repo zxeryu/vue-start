@@ -1,9 +1,9 @@
 import { computed, defineComponent, ExtractPropTypes } from "vue";
-import { TValueType } from "../types";
+import { TValueType } from "../../types";
 import { useProForm } from "./Form";
 import { useProFormList } from "./FormList";
 import { get, isBoolean, keys, omit, set } from "lodash";
-import { convertPathToList } from "../util";
+import { convertPathToList } from "../../util";
 
 export interface FormItemProps {
   name?: string | number | (string | number)[];

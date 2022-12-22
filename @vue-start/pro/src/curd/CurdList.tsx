@@ -2,7 +2,7 @@ import { defineComponent, ExtractPropTypes, PropType, reactive } from "vue";
 import { defaultPage, ICurdOperateOpts, TPageState } from "./Curd";
 import { CurdAction, CurdSubAction, useProCurd } from "./ctx";
 import { concat, filter, isArray, isUndefined, map, mergeWith, omit, pick } from "lodash";
-import { IOperateItem } from "../table";
+import { IOperateItem } from "../comp";
 
 const proCurdListProps = () => ({
   /**

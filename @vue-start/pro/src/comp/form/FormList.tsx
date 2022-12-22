@@ -1,7 +1,7 @@
 import { defineComponent, ExtractPropTypes, inject, PropType, provide } from "vue";
 import { get, isArray, map, omit, set, size } from "lodash";
 import { useProForm } from "./Form";
-import { convertPathToList } from "../util";
+import { convertPathToList } from "../../util";
 
 /**
  * ProFormList ctx

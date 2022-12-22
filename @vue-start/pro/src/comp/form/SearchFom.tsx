@@ -1,8 +1,8 @@
 import { defineComponent, ExtractPropTypes, PropType, reactive, ref } from "vue";
 import { clone, debounce, filter, get, keys, map, omit, size, some } from "lodash";
 import { useEffect, useWatch } from "@vue-start/hooks";
-import { getColumnFormItemName, getColumnValueType } from "../core";
-import { createExpose } from "../util";
+import { getColumnFormItemName, getColumnValueType } from "../../core";
+import { createExpose } from "../../util";
 import { ProFormProps } from "./Form";
 
 export enum SearchMode {
