@@ -3,7 +3,7 @@ import { TActionEvent, TActionState, TElementMap } from "../types";
 import { get, isArray, isFunction, isObject, keys, reduce, size } from "lodash";
 import { UnwrapNestedRefs } from "@vue/reactivity";
 import { Subject } from "rxjs";
-import { setReactiveValue } from "@vue-start/hooks";
+import { setReactiveValue, useEffect } from "@vue-start/hooks";
 import { IRequestActor, useRequestProvide } from "@vue-start/request";
 import { useComposeRequestActor } from "./request";
 import { IElementConfig, renderElement, renderElements } from "./core";
@@ -27,6 +27,22 @@ export const useProModule = (): IProModuleProvide => inject(ProModuleKey) as IPr
 
 export const provideProModule = (ctx: IProModuleProvide) => {
   provide(ProModuleKey, ctx);
+};
+
+//订阅module事件
+export const useModuleEvent = (cb: (action: TActionEvent) => void) => {
+  const { subject$ } = useProModule();
+
+  useEffect(() => {
+    const sub = subject$.subscribe({
+      next: (action) => {
+        cb(action);
+      },
+    });
+    return () => {
+      return sub.unsubscribe();
+    };
+  }, []);
 };
 
 export interface IRequestOpts {
