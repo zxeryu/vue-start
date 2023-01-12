@@ -1,9 +1,10 @@
 import { watch, onMounted, onBeforeUnmount, isRef, isReactive, toRaw } from "vue";
 import { isArray, map, isFunction, isUndefined, filter } from "lodash";
+import { WatchOptions } from "@vue/runtime-core";
 
 type cbType = ((...args: any) => void) | ((...args: any) => () => void);
 
-export default function useEffect(cb: cbType, deps: any | any[]): void {
+export default function useEffect(cb: cbType, deps: any | any[], options?: WatchOptions): void {
   let stopFn: (() => void) | undefined = undefined;
   const stop = () => {
     stopFn && stopFn();
@@ -24,10 +25,14 @@ export default function useEffect(cb: cbType, deps: any | any[]): void {
         return false;
       });
     }
-    stopHandler = watch(validDeps, (...v) => {
-      stop();
-      stopFn = cb(...v) as any;
-    });
+    stopHandler = watch(
+      validDeps,
+      (...v) => {
+        stop();
+        stopFn = cb(...v) as any;
+      },
+      options,
+    );
   }
 
   onMounted(() => {

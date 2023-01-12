@@ -11,6 +11,7 @@ import { useWatch } from "./useWatch";
 export * from "./useState";
 export * from "./useMemo";
 export * from "./useUpdateKey";
+export * from "./useResizeObserver";
 
 export {
   useToggle,
