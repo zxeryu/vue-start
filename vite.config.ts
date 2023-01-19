@@ -20,6 +20,9 @@ export default defineConfig({
       "@vue-start/pro": path.resolve(__dirname, "@vue-start/pro/index"),
       "@vue-start/request": path.resolve(__dirname, "@vue-start/request/index"),
       "@vue-start/store": path.resolve(__dirname, "@vue-start/store/index"),
+      //
+      "@": path.resolve(__dirname, "src"),
+      "@el": path.resolve(__dirname, "src-el"),
     },
   },
   plugins: [

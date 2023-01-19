@@ -9,7 +9,7 @@ const proRadioProps = () => ({
   buttonStyle: { type: String as PropType<"default" | "button">, default: "default" },
 });
 
-export type ProRadioProps = Partial<ExtractPropTypes<ReturnType<typeof proRadioProps>>> & RadioGroupProps;
+export type ProRadioProps = Partial<ExtractPropTypes<ReturnType<typeof proRadioProps>>> & Partial<RadioGroupProps>;
 
 export const ProRadio = defineComponent<ProRadioProps>({
   props: {

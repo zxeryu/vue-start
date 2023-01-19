@@ -1,0 +1,40 @@
+* {
+  padding: 0px;
+  margin: 0px;
+}
+
+:root {
+  --header-hei: 59px;
+  --divide-vertical-hei: 10px;
+  --pro-page-header-hei: 40px;
+}
+
+.pro-page-header {
+  height: var(--pro-page-header-hei);
+  display: flex;
+  align-items: center;
+}
+
+.pro-page-header .pro-page-header-back {
+  margin-right: 10px;
+}
+
+.pro-page-header .pro-page-header-space {
+  flex-grow: 1;
+}
+
+.pro-page {
+  height: calc(100vh - var(--header-hei) - 2 * var(--divide-vertical-hei));
+  display: flex;
+  flex-direction: column;
+  padding: 0 20px;
+}
+
+.pro-page .pro-loading-dom {
+  height: 20vh;
+}
+
+.pro-page .pro-page-content {
+  flex: 1;
+  overflow-y: auto;
+}

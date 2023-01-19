@@ -1,5 +1,9 @@
 {
   "compilerOptions": {
+    "paths": {
+      "@/*": ["src/*"],
+      "@el/*": ["src-el/*"]
+    },
     "target": "ESNext",
     "useDefineForClassFields": true,
     "module": "ESNext",
@@ -19,6 +23,6 @@
     "emitDeclarationOnly": true,
     "outDir": ".tmp"
   },
-  "include": ["@vue-start/**/*", "@vue-start-dev/**/*", "src/**/*"],
+  "include": ["@vue-start/**/*", "@vue-start-dev/**/*", "src/**/*", "src-el/**/*"],
   "references": [{ "path": "./tsconfig.node.json" }]
 }

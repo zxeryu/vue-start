@@ -1,0 +1,8 @@
+import { defineComponent } from "vue";
+import { columns } from "@el/common/columns";
+
+export default defineComponent(() => {
+  return () => {
+    return <pro-form columns={columns} row={{}} col={{ span: 8 }} />;
+  };
+});
