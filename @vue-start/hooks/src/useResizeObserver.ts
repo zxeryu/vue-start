@@ -1,5 +1,5 @@
-import { Ref } from "@vue/reactivity";
 import useEffect from "./useEffect";
+import { Ref } from "vue";
 
 export const useResizeObserver = (
   domRef: Ref<Element | undefined>,
