@@ -1,11 +1,8 @@
+/*---
+title: 基础使用
+---*/
 import { defineComponent, ref } from "vue";
 import { columns } from "@el/common/columns";
-
-/*
----
-
----
-*/
 
 export default defineComponent(() => {
   const formRef = ref();

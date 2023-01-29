@@ -1,21 +1,24 @@
+/*---
+md: src-el/views/form/FORM.md
+---*/
 import { defineComponent } from "vue";
-import { ProPage } from "@vue-start/element-pro";
-import Basic from "./component/basic";
-import FieldChange from "./component/field-change";
-import Readonly from "./component/readonly";
-import HighState from "./component/high-state";
-import Layout from "./component/layout";
+import Basic from "./demo/basic";
+import FieldChange from "./demo/field-change";
+import Readonly from "./demo/readonly";
+import HighState from "./demo/high-state";
+import Layout from "./demo/layout";
+
 
 export default defineComponent(() => {
   return () => {
     return (
-      <ProPage>
+      <>
         <Basic />
         <FieldChange />
         <Readonly />
         <HighState />
         <Layout />
-      </ProPage>
+      </>
     );
   };
 });

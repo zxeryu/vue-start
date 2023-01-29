@@ -3,6 +3,7 @@ import vue from "@vitejs/plugin-vue";
 import vueJsx from "@vitejs/plugin-vue-jsx";
 import htmlPlugin from "vite-plugin-html-config";
 import path from "path";
+import { plugins } from "./plugin";
 
 const devData = process.env.VITE_DEV ? JSON.parse(process.env.VITE_DEV) : undefined;
 const buildData = process.env.VITE_BUILD ? JSON.parse(process.env.VITE_BUILD) : undefined;
@@ -39,6 +40,7 @@ export default defineConfig({
           ],
         })
       : undefined,
+    ...plugins
   ],
   build: buildData
     ? {

@@ -5,7 +5,7 @@ import { App } from "./App";
 import "./index.css";
 import { createRouter } from "@el/router";
 
-import { ProForm, ProSearchForm, ProTable } from "@vue-start/element-pro";
+import { ProForm, ProPage, ProSearchForm, ProTable } from "@vue-start/element-pro";
 import { ProCurd, ProModalCurd } from "@vue-start/pro";
 
 import ElementPlus from "element-plus";
@@ -13,6 +13,7 @@ import "element-plus/dist/index.css";
 import locale from "element-plus/lib/locale/lang/zh-cn";
 import * as ElementPlusIconsVue from "@element-plus/icons-vue";
 import { createRequest } from "@vue-start/request";
+import { DemoBox } from "@el/layout/DemoBox";
 
 const init = (store$: any) => {
   const router = createRouter();
@@ -26,11 +27,14 @@ const init = (store$: any) => {
   }
 
   //注册组件
+  app.component("pro-page", ProPage);
   app.component("pro-form", ProForm);
   app.component("pro-search-form", ProSearchForm);
   app.component("pro-table", ProTable);
   app.component("pro-curd", ProCurd);
   app.component("pro-modal-curd", ProModalCurd);
+  //
+  app.component("demo-box", DemoBox);
 
   app.mount("#root");
 };
