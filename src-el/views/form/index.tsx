@@ -1,5 +1,5 @@
 /*---
-md: src-el/views/form/FORM.md
+md: src-el/views/form/README.md
 ---*/
 import { defineComponent } from "vue";
 import Basic from "./demo/basic";

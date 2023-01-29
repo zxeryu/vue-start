@@ -1,5 +1,6 @@
 /*---
-title: 项改变监听
+title: 表单项联动
+desc: gender切换age设置为空
 ---*/
 import { defineComponent, reactive } from "vue";
 import { take } from "lodash";

@@ -1,3 +1,7 @@
+/*---
+title: showStateRules、readonlyStateRules、disableStateRules
+desc: 根据不同的Rules，渲染不同的表单项状态
+---*/
 import { defineComponent, reactive } from "vue";
 import { take } from "lodash";
 import { columns } from "@el/common/columns";
@@ -7,7 +11,6 @@ export default defineComponent(() => {
     name: "aaa",
     age: 18,
     gender: "man",
-    treeOperate: "v-1-1",
   });
 
   return () => {
@@ -16,11 +19,9 @@ export default defineComponent(() => {
         <div>
           <p>gender === man，age只读</p>
           <p>gender === woman，age禁用</p>
-          <p>
-            gender === other，age不渲染&nbsp;
-            <span style={"color:red;font-size:12px"}>finish事件第一个参数不包含隐藏组件的值</span>
-          </p>
+          <p>gender === other，age不渲染</p>
         </div>
+        <br />
         <pro-form
           model={formState}
           columns={take(columns, 3)}

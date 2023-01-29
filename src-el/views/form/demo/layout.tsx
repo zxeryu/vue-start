@@ -1,3 +1,6 @@
+/*---
+title: row col 布局
+---*/
 import { defineComponent } from "vue";
 import { columns } from "@el/common/columns";
 
