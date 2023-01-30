@@ -1,7 +1,7 @@
 import { endsWith } from "lodash";
 import { Plugin } from "vite";
 import { relative } from "path";
-import { readFileSync } from "fs";
+import { readFileSync, existsSync } from "fs";
 import matter from "gray-matter";
 import MarkdownIt from "markdown-it";
 import { encode } from "js-base64";
@@ -28,17 +28,27 @@ ${content}
         
           const title = "${info.title || ""}";
           const desc = "${info.desc || ""}";
-          const codeStr = "${encodeURIComponent(codeStr)}";
+          const codeStr = "${encode(codeStr)}";
+        
+          const domRef = _ref();  
+        
+          _useEffect(()=>{
+            if(domRef.value){
+              domRef.value.innerHTML = decode(codeStr);
+            }
+          },domRef);
         
           return ()=>{
             return _createVNode(
             _resolveComponent("demo-box"),
             {
               title,
-              desc,
-              codeStr
+              desc
             },
-            [_createVNode(Default,null,null)]
+            {
+              default:()=>_createVNode(Default,null,null),
+              codeStr:()=>_createVNode('div',{ref:domRef},null),
+            }
             )
           }
         });
@@ -46,6 +56,13 @@ ${content}
       `;
 
       targetStr = targetStr.replace("export default __default__", demoBoxStr);
+
+      targetStr =
+        `
+      import { ref as _ref} from "vue";
+      import { useEffect as _useEffect } from "@vue-start/hooks";
+      import { decode } from 'js-base64';
+      ` + targetStr;
 
       return targetStr;
     }
@@ -57,14 +74,10 @@ ${content}
 //index页面（demo集合）集成md文档
 const createTsxWithMd = (root = process.cwd(), md: any) => {
   return (src: string, file: string) => {
-    const relativePath = relative(root, file);
 
-    //原始文件内容
-    const str = readFileSync(relativePath, { encoding: "utf-8" });
-    const { data: info } = matter(str, { delimiters: ["/*---", "---*/"] });
+    const mdPath = file.substring(0, file.lastIndexOf("/")) + "/README.md";
 
-    if (info?.md) {
-      const mdPath = relative(root, info.md);
+    if (existsSync(mdPath)) {
       const mdStr = readFileSync(mdPath, { encoding: "utf-8" });
       const mdStrList = mdStr?.split?.("## API");
       let descHtml = "",
@@ -85,13 +98,13 @@ const createTsxWithMd = (root = process.cwd(), md: any) => {
       const proPageStr = `
       const __default__ = defineComponent(()=>{
           
-          const descRef = ref();
-          const apiRef = ref();
+          const descRef = _ref();
+          const apiRef = _ref();
           
           const descHtml = "${descHtml}";
           const apiHtml = "${apiHtml}";
           
-          useEffect(()=>{
+          _useEffect(()=>{
             if(descRef.value && apiRef.value){
               descRef.value.innerHTML = decode(descHtml);
               apiRef.value.innerHTML = decode(apiHtml);
@@ -116,8 +129,8 @@ const createTsxWithMd = (root = process.cwd(), md: any) => {
 
       targetStr =
         `
-      import { resolveComponent as _resolveComponent, ref} from "vue";
-      import { useEffect } from "@vue-start/hooks";
+      import { resolveComponent as _resolveComponent, ref as _ref} from "vue";
+      import { useEffect as _useEffect} from "@vue-start/hooks";
       import { decode } from 'js-base64';
       ` + targetStr;
 

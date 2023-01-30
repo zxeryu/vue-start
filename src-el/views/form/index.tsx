@@ -1,6 +1,3 @@
-/*---
-md: src-el/views/form/README.md
----*/
 import { defineComponent } from "vue";
 import Basic from "./demo/basic";
 import FieldChange from "./demo/field-change";

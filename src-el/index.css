@@ -8,7 +8,7 @@
   --divide-vertical-hei: 10px;
   --pro-page-header-hei: 40px;
 }
-
+/********************************** pro-page ***********************************/
 .pro-page-header {
   height: var(--pro-page-header-hei);
   display: flex;
@@ -37,4 +37,13 @@
 .pro-page .pro-page-content {
   flex: 1;
   overflow-y: auto;
+}
+
+/********************************** pro-table ***********************************/
+.pro-table-operate{
+  display: flex;
+}
+
+.pro-table-operate .pro-table-operate-item:not(:last-child){
+  margin-right: 10px;
 }

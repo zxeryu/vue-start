@@ -1,5 +1,4 @@
-import { defineComponent, reactive, createVNode, ref } from "vue";
-import { useEffect } from "@vue-start/hooks";
+import { defineComponent, reactive } from "vue";
 
 const ToolActions = defineComponent({
   props: {
@@ -34,20 +33,11 @@ export const DemoBox = defineComponent({
   props: {
     title: String,
     desc: String,
-    codeStr: String,
   },
   setup: (props, { slots }) => {
     const state = reactive({
       codeExpand: false,
     });
-
-    const codeRef = ref();
-
-    useEffect(() => {
-      if (codeRef.value && props.codeStr) {
-        codeRef.value.innerHTML = decodeURIComponent(props.codeStr);
-      }
-    }, codeRef);
 
     return () => {
       return (
@@ -55,10 +45,10 @@ export const DemoBox = defineComponent({
           <div style={"padding:40px 20px"}>{slots.default?.()}</div>
           <div style={"padding:0 20px;line-height:2"}>
             <div style={""}>{props.title}</div>
-            <div>{props.desc}</div>
+            <div style={"white-space:pre-wrap"}>{props.desc}</div>
           </div>
           <ToolActions v-model:codeExpand={state.codeExpand} />
-          {state.codeExpand && <div ref={codeRef} style={"padding:0 20px"} />}
+          {state.codeExpand && <div style={"padding:0 20px"}>{slots.codeStr?.()}</div>}
         </div>
       );
     };

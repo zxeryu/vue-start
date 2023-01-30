@@ -1,3 +1,7 @@
+/*---
+title: 布局自定义
+desc: 本质上还是对Form的布局
+---*/
 import { defineComponent, ref } from "vue";
 import { columns } from "@el/common/columns";
 import { SearchMode } from "@vue-start/pro";

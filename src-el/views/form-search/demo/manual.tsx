@@ -1,3 +1,7 @@
+/*---
+title: 手动触发
+desc: 提交按钮触发 onFinish
+---*/
 import { defineComponent, ref } from "vue";
 import { columns } from "@el/common/columns";
 import { SearchMode } from "@vue-start/pro";

@@ -1,6 +1,3 @@
-/*---
-md: src-el/views/form-search/README.md
----*/
 import { defineComponent } from "vue";
 
 import Basic from "./demo/basic";
