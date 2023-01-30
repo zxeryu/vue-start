@@ -18,7 +18,6 @@ const Header = defineComponent(() => {
     { title: "search-form", name: "FormSearchIndex" },
     { title: "table", name: "TableIndex" },
     { title: "curd", name: "CurdIndex" },
-    { title: "modal-curd", name: "CurdModalIndex" },
   ];
 
   useEffect(() => {

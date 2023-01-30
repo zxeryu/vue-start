@@ -11,17 +11,6 @@ export const routes = [
     ],
   },
   {
-    name: "CurdModal",
-    path: "curd-modal",
-    children: [
-      {
-        name: "CurdModalIndex",
-        path: "index",
-        component: () => import("@el/views/curd-modal/index"),
-      },
-    ],
-  },
-  {
     name: "CurdPage",
     path: "curd-page",
     children: [

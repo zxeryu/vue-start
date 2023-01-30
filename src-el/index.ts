@@ -5,20 +5,29 @@ import { App } from "./App";
 import "./index.css";
 import { createRouter } from "@el/router";
 
-import { ProForm, ProPage, ProSearchForm, ProTable } from "@vue-start/element-pro";
+import { ProForm, ProPage, ProSearchForm, ProTable, ProCurdList } from "@vue-start/element-pro";
 import { ProCurd, ProModalCurd } from "@vue-start/pro";
 
 import ElementPlus from "element-plus";
 import "element-plus/dist/index.css";
 import locale from "element-plus/lib/locale/lang/zh-cn";
 import * as ElementPlusIconsVue from "@element-plus/icons-vue";
-import { createRequest } from "@vue-start/request";
+import { ContentTypeInterceptor, createRequest } from "@vue-start/request";
 import { DemoBox } from "@el/layout/DemoBox";
+import { AxiosInterceptorManager, AxiosRequestConfig } from "axios";
+
+//request
+const urlInterceptor = (request: AxiosInterceptorManager<AxiosRequestConfig>) => {
+  request.use((requestConfig) => {
+    requestConfig.url = `http://localhost:7070${requestConfig.url}`;
+    return requestConfig;
+  });
+};
 
 const init = (store$: any) => {
   const router = createRouter();
 
-  const request = createRequest({}, []);
+  const request = createRequest({}, [ContentTypeInterceptor, urlInterceptor]);
 
   const app = createApp(App).use(store$).use(router).use(request).use(ElementPlus, { locale });
 
@@ -33,6 +42,7 @@ const init = (store$: any) => {
   app.component("pro-table", ProTable);
   app.component("pro-curd", ProCurd);
   app.component("pro-modal-curd", ProModalCurd);
+  app.component("pro-curd-list", ProCurdList);
   //
   app.component("demo-box", DemoBox);
 
