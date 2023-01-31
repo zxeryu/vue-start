@@ -36,17 +36,17 @@ export type TColumn = {
 
 ### 属性
 
-| 名称              | 类型            | 说明             | 默认值 |
-| ----------------- | --------------- | ---------------- | ------ |
-| `columns`         | `TColumns`      | 通用项配置       | --     |
-| `columnState`     | `object`        | 通用项拓展       | --     |
-| `elementMap`      | `object`        | 展示组件集       | --     |
-| `formElementMap`  | `object`        | 录入组件集       | --     |
-| `column`          | `TTableColumn`  | 公共 column 配置 | --     |
-| `columnEmptyText` | `string`        | 默认空字符串     | --     |
-| `serialNumber`    | `boolean`       | 是否展示序号     | --     |
-| `paginationState` | `TPageState`    | 计算分页         | --     |
-| `operate`         | `ITableOperate` | 操作栏配置       | --     |
+| 名称              | 说明             | 类型            | 默认值 |
+| ----------------- | ---------------- | --------------- | ------ |
+| `columns`         | 通用项配置       | `TColumns`      | --     |
+| `columnState`     | 通用项拓展       | `object`        | --     |
+| `elementMap`      | 展示组件集       | `object`        | --     |
+| `formElementMap`  | 录入组件集       | `object`        | --     |
+| `column`          | 公共 column 配置 | `TTableColumn`  | --     |
+| `columnEmptyText` | 默认空字符串     | `string`        | --     |
+| `serialNumber`    | 是否展示序号     | `boolean`       | --     |
+| `paginationState` | 计算分页         | `TPageState`    | --     |
+| `operate`         | 操作栏配置       | `ITableOperate` | --     |
 
 ```ts
 export type TPageState = { page?: number; pageSize?: number };

@@ -53,21 +53,21 @@ useWatch(
 
 ### 属性
 
-| 名称                 | 类型       | 说明                    | 默认值 |
-| -------------------- | ---------- | ----------------------- | ------ |
-| `columns`            | `TColumns` | 通用项配置              | --     |
-| `columnState`        | `object`   | 通用项拓展              | --     |
-| `elementMap`         | `object`   | 展示组件集              | --     |
-| `formElementMap`     | `object`   | 录入组件集              | --     |
-| `readonly`           | `boolean`  | 是否展示只读模式        | --     |
-| `showState`          | `object`   | item 项是否展示控制     | --     |
-| `showStateRules`     | `object`   | item 项是否展示规则配置 | --     |
-| `readonlyState`      | `object`   | item 项是否只读控制     | --     |
-| `readonlyStateRules` | `object`   | item 项是否只读规则配置 | --     |
-| `disableState`       | `object`   | item 项是否禁用控制     | --     |
-| `disableStateRules`  | `object`   | item 项是否禁用规则配置 | --     |
-| `row`                | `object`   | 启用 Grid 布局 row 配置 | --     |
-| `col`                | `object`   | col 配置                | --     |
+| 名称                 | 说明                    | 类型       | 默认值 |
+| -------------------- | ----------------------- | ---------- | ------ |
+| `columns`            | 通用项配置              | `TColumns` | --     |
+| `columnState`        | 通用项拓展              | `object`   | --     |
+| `elementMap`         | 展示组件集              | `object`   | --     |
+| `formElementMap`     | 录入组件集              | `object`   | --     |
+| `readonly`           | 是否展示只读模式        | `boolean`  | --     |
+| `showState`          | item 项是否展示控制     | `object`   | --     |
+| `showStateRules`     | item 项是否展示规则配置 | `object`   | --     |
+| `readonlyState`      | item 项是否只读控制     | `object`   | --     |
+| `readonlyStateRules` | item 项是否只读规则配置 | `object`   | --     |
+| `disableState`       | item 项是否禁用控制     | `object`   | --     |
+| `disableStateRules`  | item 项是否禁用规则配置 | `object`   | --     |
+| `row`                | 启用 Grid 布局 row 配置 | `object`   | --     |
+| `col`                | col 配置                | `object`   | --     |
 
 - readonly 为 true 时，会从 elementMap 查找对应的组件进行渲染
 - showState readonlyState disableState 及各自对应的 ${prefix}Rules 都是用来配置 column 项的状态；在使用 columns 渲染组件的情况下推荐使用。

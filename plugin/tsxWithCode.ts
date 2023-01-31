@@ -3,8 +3,8 @@ import { Plugin } from "vite";
 import { relative } from "path";
 import { readFileSync, existsSync } from "fs";
 import matter from "gray-matter";
-import MarkdownIt from "markdown-it";
 import { encode } from "js-base64";
+import { createMD } from "./md";
 
 //demo组件中注入title、desc、codeStr
 const createTsxWithCode = (root = process.cwd(), md: any) => {
@@ -74,7 +74,6 @@ ${content}
 //index页面（demo集合）集成md文档
 const createTsxWithMd = (root = process.cwd(), md: any) => {
   return (src: string, file: string) => {
-
     const mdPath = file.substring(0, file.lastIndexOf("/")) + "/README.md";
 
     if (existsSync(mdPath)) {
@@ -116,9 +115,9 @@ const createTsxWithMd = (root = process.cwd(), md: any) => {
               _resolveComponent("pro-page"),
               null,
               [
-                _createVNode('div',{ ref:descRef, style:"margin-bottom:20px" },null),
+                _createVNode('div',{ ref:descRef, style:"margin-bottom:20px", class: "markdown" },null),
                 _createVNode(Default,null,null),
-                _createVNode('div',{ref:apiRef},null),
+                _createVNode('div',{ ref:apiRef, class: "markdown" },null),
               ]
             )
           }
@@ -144,10 +143,7 @@ const createTsxWithMd = (root = process.cwd(), md: any) => {
 export const tsxWithCode = (options: any = {}): Plugin => {
   const { root, markdown } = options;
 
-  const md = new MarkdownIt({
-    html: true,
-    linkify: true,
-  });
+  const md = createMD();
   const tsxWithCodeStr = createTsxWithCode(root, md);
   const tsxWithCodeMd = createTsxWithMd(root, md);
 

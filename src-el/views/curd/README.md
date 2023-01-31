@@ -29,19 +29,19 @@
 
 ### 属性
 
-| 名称             | 类型                 | 说明        | 默认值 |
-| ---------------- | -------------------- | ----------- | ------ |
-| `curdState`      | `ICurdState`         | 状态        | --     |
-| `columns`        | `TColumns`           | 通用项配置  | --     |
-| `columnState`    | `object`             | 通用项拓展  | --     |
-| `elementMap`     | `object`             | 展示组件集  | --     |
-| `formElementMap` | `object`             | 录入组件集  | --     |
-| `rowKey`         | `string`             | 唯一 id     | --     |
-| `operates`       | `ICurdOperateOpts[]` | 操作配置    | --     |
-| `listProps`      | `object`             | 列表 props  | --     |
-| `formProps`      | `object`             | form props  | --     |
-| `descProps`      | `object`             | desc props  | --     |
-| `modalProps`     | `object`             | modal props | --     |
+| 名称             | 说明        | 类型                 | 默认值 |
+| ---------------- | ----------- | -------------------- | ------ |
+| `curdState`      | 状态        | `ICurdState`         | --     |
+| `columns`        | 通用项配置  | `TColumns`           | --     |
+| `columnState`    | 通用项拓展  | `object`             | --     |
+| `elementMap`     | 展示组件集  | `object`             | --     |
+| `formElementMap` | 录入组件集  | `object`             | --     |
+| `rowKey`         | 唯一 id     | `string`             | --     |
+| `operates`       | 操作配置    | `ICurdOperateOpts[]` | --     |
+| `listProps`      | 列表 props  | `object`             | --     |
+| `formProps`      | form props  | `object`             | --     |
+| `descProps`      | desc props  | `object`             | --     |
+| `modalProps`     | modal props | `object`             | --     |
 
 ```ts
 export interface ICurdState extends Record<string, any> {
@@ -112,11 +112,11 @@ export interface ICurdOperateOpts {
 
 ### 方法
 
-| 名称            | 类型                                                      | 说明           |
-| --------------- | --------------------------------------------------------- | -------------- |
-| `sendCurdEvent` | `(event: TCurdActionEvent) => void`                       | 发送 curd 事件 |
-| `refreshList`   | `(extra?: Record<string, any>) => void`                   | 刷新列表       |
-| `sendRequest`   | `(requestNameOrAction: string, ...params: any[]) => void` | 发送网络请求   |
+| 名称            | 说明           | 类型                                                      |
+| --------------- | -------------- | --------------------------------------------------------- |
+| `sendCurdEvent` | 发送 curd 事件 | `(event: TCurdActionEvent) => void`                       |
+| `refreshList`   | 刷新列表       | `(extra?: Record<string, any>) => void`                   |
+| `sendRequest`   | 发送网络请求   | `(requestNameOrAction: string, ...params: any[]) => void` |
 
 ### useProCurd
 
@@ -183,14 +183,14 @@ SearchForm Table Pagination 三个组件组合成的复合组件
 
 #### 属性
 
-| 名称              | 类型      | 说明                          | 默认值 |
-| ----------------- | --------- | ----------------------------- | ------ |
-| `searchProps`     | `object`  | SearchForm props              | --     |
-| `tableProps`      | `object`  | Table props                   | --     |
-| `paginationProps` | `object`  | Pagination props              | --     |
-| `showPagination`  | `boolean` | 是否展示分页                  | true   |
-| `pageState`       | `object`  | 分页状态                      | --     |
-| `extraInSearch`   | `boolean` | extra 插槽是否放入 SearchForm | false  |
+| 名称              | 说明                          | 类型      | 默认值 |
+| ----------------- | ----------------------------- | --------- | ------ |
+| `searchProps`     | SearchForm props              | `object`  | --     |
+| `tableProps`      | Table props                   | `object`  | --     |
+| `paginationProps` | Pagination props              | `object`  | --     |
+| `showPagination`  | 是否展示分页                  | `boolean` | true   |
+| `pageState`       | 分页状态                      | `object`  | --     |
+| `extraInSearch`   | extra 插槽是否放入 SearchForm | `boolean` | false  |
 
 #### 插槽
 
@@ -210,10 +210,10 @@ SearchForm Table Pagination 三个组件组合成的复合组件
 
 #### 属性
 
-| 名称        | 类型     | 说明                              | 默认值     |
-| ----------- | -------- | --------------------------------- | ---------- |
-| `signName`  | `string` | column 中标记的属性名             | --         |
-| `modelName` | `string` | model 取值， curdState 中的属性名 | detailData |
+| 名称        | 说明                              | 类型     | 默认值     |
+| ----------- | --------------------------------- | -------- | ---------- |
+| `signName`  | column 中标记的属性名             | `string` | --         |
+| `modelName` | model 取值， curdState 中的属性名 | `string` | detailData |
 
 ### CurdDesc
 

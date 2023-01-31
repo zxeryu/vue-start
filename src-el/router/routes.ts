@@ -11,17 +11,6 @@ export const routes = [
     ],
   },
   {
-    name: "CurdPage",
-    path: "curd-page",
-    children: [
-      {
-        name: "CurdPageIndex",
-        path: "index",
-        component: () => import("@el/views/curd-page/index"),
-      },
-    ],
-  },
-  {
     name: "Form",
     path: "form",
     children: [

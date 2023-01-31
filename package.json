@@ -21,6 +21,7 @@
     "ant-design-vue": "^3.2.5",
     "axios": "^0.21.0",
     "element-plus": "^2.2.13",
+    "highlight.js": "^11.7.0",
     "js-base64": "^3.7.4",
     "lodash": "^4.17.20",
     "rxjs": "^7.3.0",

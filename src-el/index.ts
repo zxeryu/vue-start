@@ -8,13 +8,16 @@ import { createRouter } from "@el/router";
 import { ProForm, ProPage, ProSearchForm, ProTable, ProCurdList } from "@vue-start/element-pro";
 import { ProCurd, ProModalCurd } from "@vue-start/pro";
 
+import { ContentTypeInterceptor, createRequest } from "@vue-start/request";
+import { DemoBox } from "@el/layout/DemoBox";
+import { AxiosInterceptorManager, AxiosRequestConfig } from "axios";
+
 import ElementPlus from "element-plus";
 import "element-plus/dist/index.css";
 import locale from "element-plus/lib/locale/lang/zh-cn";
 import * as ElementPlusIconsVue from "@element-plus/icons-vue";
-import { ContentTypeInterceptor, createRequest } from "@vue-start/request";
-import { DemoBox } from "@el/layout/DemoBox";
-import { AxiosInterceptorManager, AxiosRequestConfig } from "axios";
+
+import "highlight.js/styles/github.css";
 
 //request
 const urlInterceptor = (request: AxiosInterceptorManager<AxiosRequestConfig>) => {
