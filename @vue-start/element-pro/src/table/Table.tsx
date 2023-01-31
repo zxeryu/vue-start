@@ -2,7 +2,7 @@ import { DefineComponent, defineComponent, isVNode, ref } from "vue";
 import { ElTable, ElTableColumn } from "element-plus";
 import { TableProps } from "element-plus/es/components/table/src/table/defaults";
 import { TableColumnCtx, TColumns } from "../../types";
-import { map, omit, size } from "lodash";
+import { map, omit, pick, size } from "lodash";
 import { createExpose, createTable, ProTableProps as ProTablePropsOrigin } from "@vue-start/pro";
 import { createLoadingId, ProLoading } from "../comp";
 
@@ -16,7 +16,7 @@ export const ProTableColumn = defineComponent<ProTableColumnProps>({
     children: { type: Array },
     customRender: { type: Function },
   } as any,
-  setup: (props) => {
+  setup: (props, { slots }) => {
     return () => {
       return (
         <ElTableColumn
@@ -41,8 +41,10 @@ export const ProTableColumn = defineComponent<ProTableColumnProps>({
               }
               return value;
             }) as any
-          }>
-          {size(props.children) > 0 && map(props.children, (item) => <ProTableColumn key={item.dataIndex} {...item} />)}
+          }
+          v-slots={{ default: slots[props.dataIndex!], header: slots[`${props.dataIndex!}_header`] }}>
+          {size(props.children) > 0 &&
+            map(props.children, (item) => <ProTableColumn key={item.dataIndex} {...item} v-slots={slots} />)}
         </ElTableColumn>
       );
     };
@@ -96,10 +98,10 @@ const Table = defineComponent({
           id={id}
           {...omit(props, "columns", "dataSource", "loading")}
           data={props.dataSource || props.data}
-          v-slots={omit(slots, "default", "start")}>
+          v-slots={pick(slots, "append", "empty")}>
           {slots.start?.()}
           {map(props.columns, (item) => (
-            <ProTableColumn key={item.dataIndex} {...item} />
+            <ProTableColumn key={item.dataIndex} {...item} v-slots={slots} />
           ))}
           {slots.default?.()}
 

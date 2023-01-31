@@ -3,6 +3,7 @@ import { defineComponent } from "vue";
 import Basic from "./demo/basic";
 import Operate from "./demo/operate";
 import Extra from "./demo/extra";
+import Slots from "./demo/slots";
 
 export default defineComponent(() => {
   return () => {
@@ -11,6 +12,7 @@ export default defineComponent(() => {
         <Basic />
         <Operate />
         <Extra />
+        <Slots />
       </>
     );
   };
