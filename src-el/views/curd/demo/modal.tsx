@@ -42,7 +42,7 @@ const CurdModal = defineComponent({
                       <el-button onClick={handleCancel}>取消</el-button>
                       <el-button
                         type={"primary"}
-                        loading={curdState.detailLoading}
+                        loading={curdState.operateLoading}
                         onClick={() => {
                           formRef.value?.submit();
                         }}>

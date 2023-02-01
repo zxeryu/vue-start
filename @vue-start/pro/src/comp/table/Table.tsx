@@ -1,9 +1,10 @@
 import { computed, defineComponent, ExtractPropTypes, inject, PropType, provide, ref, VNode } from "vue";
-import { TColumn, TElementMap } from "../../types";
+import { TColumn } from "../../types";
 import { filter, get, isFunction, keys, map, omit, some, sortBy } from "lodash";
 import { getItemEl, proBaseProps, ProBaseProps, useProConfig } from "../../core";
 import { Ref } from "@vue/reactivity";
 import { createExpose, mergeStateToList } from "../../util";
+import { IOpeItem, Operate, ProOperateProps } from "../Operate";
 
 const ProTableKey = Symbol("pro-table");
 
@@ -41,11 +42,14 @@ export type TTableColumns = TTableColumn[];
 export interface IOperateItem {
   value: string | number;
   label?: string | VNode;
-  element?: (record: Record<string, any>, item: IOperateItem) => VNode;
   show?: boolean | ((record: Record<string, any>) => boolean);
   disabled?: boolean | ((record: Record<string, any>) => boolean);
+  loading?: boolean | ((record: Record<string, any>) => boolean);
+  //
+  extraProps?: object | ((record: Record<string, any>) => Record<string, any>);
   onClick?: (record: Record<string, any>) => void;
   sort?: number;
+  element?: (record: Record<string, any>, item: IOperateItem) => VNode;
 }
 
 /**
@@ -56,6 +60,9 @@ export interface ITableOperate {
   items?: IOperateItem[];
   //对item的补充 key为item的value
   itemState?: { [key: string]: Omit<IOperateItem, "value"> };
+  //
+  clsName?: ProOperateProps["clsName"];
+  elementKey?: ProOperateProps["elementKey"];
 }
 
 const proTableProps = () => ({
@@ -124,35 +131,31 @@ export const createTable = (Table: any, Props?: any, tableMethods?: string[]): a
           fixed: "right",
           ...operate.column,
           customRender: ({ record }) => {
-            const showItems = filter(sortedItems, (item) => {
-              if (item.show && isFunction(item.show)) {
-                return item.show(record);
-              }
-              if (item.show === false) {
-                return false;
-              }
-              return true;
+            const opeItems = map(sortedItems, (item) => {
+              return {
+                value: item.value,
+                label: item.label,
+                show: isFunction(item.show) ? item.show(record) : item.show,
+                disabled: isFunction(item.disabled) ? item.disabled(record) : item.disabled,
+                loading: isFunction(item.loading) ? item.loading(record) : item.loading,
+                extraProps: isFunction(item.extraProps) ? item.extraProps(record) : item.extraProps,
+                onClick: () => {
+                  item.onClick?.(record);
+                },
+                element: isFunction(item.element)
+                  ? () => {
+                      return item.element!(record, item);
+                    }
+                  : item.element,
+              } as IOpeItem;
             });
 
             return (
-              <div class={"pro-table-operate"}>
-                {map(showItems, (item) => {
-                  //自定义
-                  if (isFunction(item.element)) {
-                    return item.element(record, item);
-                  }
-                  return (
-                    <div
-                      class={"pro-table-operate-item"}
-                      key={item.value}
-                      onClick={() => {
-                        item.onClick?.(record);
-                      }}>
-                      {item.label}
-                    </div>
-                  );
-                })}
-              </div>
+              <Operate
+                clsName={operate.clsName || "pro-table-operate"}
+                items={opeItems}
+                elementKey={operate.elementKey}
+              />
             );
           },
         };

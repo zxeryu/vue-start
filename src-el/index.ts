@@ -5,8 +5,9 @@ import { App } from "./App";
 import "./index.css";
 import { createRouter } from "@el/router";
 
-import { ProForm, ProPage, ProSearchForm, ProTable, ProCurdList } from "@vue-start/element-pro";
+import { ProPage, ProSearchForm, ProCurdList } from "@vue-start/element-pro";
 import { ProCurd, ProModalCurd } from "@vue-start/pro";
+import { Form } from "@el/component/Form";
 
 import { ContentTypeInterceptor, createRequest } from "@vue-start/request";
 import { DemoBox } from "@el/layout/DemoBox";
@@ -18,6 +19,7 @@ import locale from "element-plus/lib/locale/lang/zh-cn";
 import * as ElementPlusIconsVue from "@element-plus/icons-vue";
 
 import "highlight.js/styles/github.css";
+import { Table } from "@el/component/Table";
 
 //request
 const urlInterceptor = (request: AxiosInterceptorManager<AxiosRequestConfig>) => {
@@ -40,9 +42,9 @@ const init = (store$: any) => {
 
   //注册组件
   app.component("pro-page", ProPage);
-  app.component("pro-form", ProForm);
+  app.component("pro-form", Form);
   app.component("pro-search-form", ProSearchForm);
-  app.component("pro-table", ProTable);
+  app.component("pro-table", Table);
   app.component("pro-curd", ProCurd);
   app.component("pro-modal-curd", ProModalCurd);
   app.component("pro-curd-list", ProCurdList);

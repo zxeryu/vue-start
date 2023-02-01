@@ -2,10 +2,10 @@ import { Ref, UnwrapNestedRefs } from "@vue/reactivity";
 import { computed, defineComponent, ExtractPropTypes, inject, PropType, provide, reactive, ref } from "vue";
 import { BooleanObjType, BooleanRulesObjType, TColumns, TElementMap } from "../../types";
 import { useEffect } from "@vue-start/hooks";
-import { forEach, get, keys, map, omit, size } from "lodash";
+import { forEach, get, has, keys, map, omit, size } from "lodash";
 import { getColumnFormItemName, getFormItemEl, proBaseProps, ProBaseProps, useProConfig } from "../../core";
 import { createExpose, getValidValues, mergeStateToList } from "../../util";
-import { GridProps } from "../index";
+import { GridProps, IOpeItem, Operate, ProOperateProps } from "../index";
 import { provideProFormList } from "./FormList";
 
 const ProFormKey = Symbol("pro-form");
@@ -32,6 +32,10 @@ const provideProForm = (ctx: IProFormProvide) => {
 };
 
 const proFormProps = () => ({
+  /**
+   * class名称
+   */
+  clsName: { type: String, default: "pro-form" },
   /**
    * 同 antd 或 element  form中的model
    */
@@ -64,6 +68,11 @@ const proFormProps = () => ({
    * provide传递
    */
   provideExtra: { type: Object as PropType<IProFormProvideExtra> },
+  /**
+   * 操作按钮
+   */
+  operate: { type: Object as PropType<ProOperateProps> },
+  submitLoading: { type: Boolean },
 });
 
 export type ProFormProps = Partial<ExtractPropTypes<ReturnType<typeof proFormProps>>> & ProBaseProps;
@@ -144,6 +153,23 @@ export const createForm = (Form: any, Grid: any, formMethods: string[]): any => 
         ...props.provideExtra,
       });
 
+      //默认处理 reset submit方法，submit dom 赋值loading
+      const operateItems = computed(() => {
+        return map(props.operate?.items, (item) => {
+          if (!item.onClick) {
+            if (item.value === "reset") {
+              item.onClick = () => formRef.value?.resetFields();
+            } else if (item.value === "submit") {
+              item.onClick = () => formRef.value?.submit();
+            }
+          }
+          if (item.value === "submit" && !has(item, "loading")) {
+            item.loading = props.submitLoading;
+          }
+          return item;
+        });
+      });
+
       //为了不warning ...
       provideProFormList({} as any);
 
@@ -154,6 +180,7 @@ export const createForm = (Form: any, Grid: any, formMethods: string[]): any => 
         return (
           <Form
             ref={formRef}
+            class={props.clsName}
             {...omit(attrs, "onFinish")}
             {...omit(props, ...invalidKeys, ...gridKeys, "onFinish")}
             model={formState}
@@ -180,6 +207,12 @@ export const createForm = (Form: any, Grid: any, formMethods: string[]): any => 
             )}
 
             {slots.default?.()}
+
+            {props.operate && (
+              <Operate clsName={"pro-form-operate"} items={operateItems.value} {...omit(props.operate, "items")} />
+            )}
+
+            {slots.end?.()}
           </Form>
         );
       };

@@ -11,8 +11,14 @@ import {
   ProFormTreeSelect,
 } from "@vue-start/element-pro";
 import { SelectShow, TextNumberShow, TextShow } from "@el/component/show";
+import { ElButton } from "element-plus";
+import { ProOperateItemKey } from "@vue-start/pro";
+import { TableOperateItem, TableOperateItemKey } from "@el/component/Table";
 
 export const elementMap = {
+  [ProOperateItemKey]: ElButton,
+  [TableOperateItemKey]: TableOperateItem,
+
   text: TextShow,
   digit: TextNumberShow,
   date: TextShow,
