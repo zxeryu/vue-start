@@ -1,14 +1,12 @@
 import { Persist } from "@bridge-start/persist";
-import { createStore } from "@vue-start/store";
+import { createStore as createStoreOrigin } from "@vue-start/store";
 
-const persist = new Persist({ name: "vue-start" });
-const store$ = createStore({});
-persist.loadPersistData((values) => {
-  store$.next({
-    ...values,
-    ...store$.value,
+export const createStore = (cb: (store$: any) => void) => {
+  const persist = new Persist({ name: "pro" });
+  persist.loadPersistData((values) => {
+    const store$ = createStoreOrigin(values);
+    persist.persistRx(store$);
+
+    cb(store$);
   });
-  persist.persistRx(store$);
-});
-
-export default store$;
+};

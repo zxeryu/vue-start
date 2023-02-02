@@ -1,47 +1,32 @@
-import { createRouter, createWebHistory, RouteRecordRaw } from "vue-router";
-import Home from "../views/Home.vue";
+import { forEach, size } from "lodash";
+import { RouterView, createRouter as createRouterOrigin, createWebHistory } from "vue-router";
+import { routes } from "./routes";
+import { BasicLayout } from "@/layout";
 
-const routes: RouteRecordRaw[] = [
+export const replenishRoute = (routes: any[]) => {
+  forEach(routes, (route) => {
+    if (!route.component && !route.redirect) {
+      route.component = RouterView;
+    }
+    if (size(route.children) > 0) {
+      replenishRoute(route.children);
+    }
+  });
+};
+
+const reRoutes = [
   {
     path: "/",
-    name: "Home",
-    component: Home,
-  },
-  {
-    path: "/about",
-    name: "About",
-    component: () => import("../views/About.vue"),
-  },
-  {
-    path: "/counter",
-    name: "Counter",
-    component: () => import("../views/Counter.vue"),
-  },
-  {
-    path: "/network",
-    name: "Network",
-    component: () => import("../views/Network.vue"),
-  },
-  {
-    path: "/hooks",
-    name: "Hooks",
-    component: () => import("../views/Hooks.vue"),
-  },
-  {
-    path: "/comp",
-    name: "Comp",
-    component: () => import("../views/Comp"),
-  },
-  {
-    path: "/comp-el",
-    name: "CompElement",
-    component: () => import("../views/CompElement"),
+    component: BasicLayout,
+    children: routes,
   },
 ];
 
-const router = createRouter({
-  history: createWebHistory(),
-  routes,
-});
+replenishRoute(reRoutes);
 
-export default router;
+export const createRouter = () => {
+  return createRouterOrigin({
+    history: createWebHistory(),
+    routes: reRoutes as any[],
+  });
+};
