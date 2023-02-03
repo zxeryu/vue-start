@@ -6,20 +6,19 @@ import { css } from "@emotion/css";
 import { useEffect } from "@vue-start/hooks";
 
 const menus = [
+  { title: "概述", name: "OverviewIndexMd" },
   {
-    title: "网络请求",
-    children: [{ title: "基础", name: "RequestIndex" }],
+    title: "@vue-start/request",
+    children: [
+      { title: "index", name: "RequestIndexMd" },
+    ],
   },
   {
     title: "状态",
-    children: [{ title: "基础", name: "StoreIndex" }],
+    children: [{ title: "基础", name: "StoreIndexMd" }],
   },
   {
-    title: "路由",
-    children: [{ title: "生成", name: "RouteIndex" }],
-  },
-  {
-    title: "pro-组件",
+    title: "@vue-start/pro",
     children: [
       { title: "Operate", name: "ElementOperateIndex" },
       { title: "Grid", name: "ElementGridIndex" },
@@ -45,7 +44,7 @@ export const BasicLayout = defineComponent(() => {
 
   useEffect(() => {
     if (location.pathname === "/") {
-      router.replace({ name: "RequestIndex" });
+      router.replace({ name: "OverviewIndexMd" });
     }
   }, []);
 
@@ -73,6 +72,13 @@ export const BasicLayout = defineComponent(() => {
             height={"calc(100vh - var(--header-hei) - var(--divide-vertical-hei))"}>
             <el-menu default-active={route.name}>
               {map(menus, (group) => {
+                if (!group.children && group.name) {
+                  return (
+                    <el-menu-item index={group.name} onClick={() => handleClick(group)}>
+                      {group.title}
+                    </el-menu-item>
+                  );
+                }
                 return (
                   <el-menu-item-group title={group.title}>
                     {map(group.children, (item) => {

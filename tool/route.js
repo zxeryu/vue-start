@@ -5,7 +5,7 @@ const { createRouteData, generate } = require("@vue-start-dev/devkit/dist");
 const baseDir = process.cwd();
 
 const defaultOptions = {
-  ignoreDirs: ["component", "components"],
+  ignoreDirs: ["component", "components", "demo", "demo-vue"],
   ignoreFiles: ["component", "components"],
   fileTypes: [".js", ".jsx", ".ts", ".tsx", ".vue"],
 };
@@ -13,7 +13,8 @@ const defaultOptions = {
 const generateRoutes = ({ name, path, importPrefix }) => {
   const opts = { ...defaultOptions, importPrefix };
   const { routeStr } = createRouteData(path, opts);
-  generate(join(baseDir, name, "router", `routes.ts`), prettier.format(routeStr));
+  const str = routeStr.replace(/.tsx/g, "");
+  generate(join(baseDir, name, "router", `routes.ts`), prettier.format(str));
 };
 
 const RoutesMap = {
@@ -21,11 +22,6 @@ const RoutesMap = {
     name: "src",
     path: join(baseDir, "src", "views"),
     importPrefix: "@/views",
-  },
-  "src-el": {
-    name: "src-el",
-    path: join(baseDir, "src-el", "views"),
-    importPrefix: "@el/views",
   },
 };
 

@@ -11,6 +11,17 @@ export const routes = [
     component: () => import("@/views/CompElement"),
   },
   {
+    name: "Config",
+    path: "config",
+    children: [
+      {
+        name: "ConfigIndexMd",
+        path: "index-md",
+        component: () => import("@/views/config/index-md"),
+      },
+    ],
+  },
+  {
     name: "Counter",
     path: "counter",
     component: () => import("@/views/Counter.vue"),
@@ -60,6 +71,34 @@ export const routes = [
             name: "CurdModalIndex",
             path: "index",
             component: () => import("@/views/curd/modal/index"),
+          },
+        ],
+      },
+    ],
+  },
+  {
+    name: "Devkit",
+    path: "devkit",
+    children: [
+      {
+        name: "DevkitClients",
+        path: "clients",
+        children: [
+          {
+            name: "DevkitClientsIndexMd",
+            path: "index-md",
+            component: () => import("@/views/devkit/clients/index-md"),
+          },
+        ],
+      },
+      {
+        name: "DevkitRoute",
+        path: "route",
+        children: [
+          {
+            name: "DevkitRouteIndexMd",
+            path: "index-md",
+            component: () => import("@/views/devkit/route/index-md"),
           },
         ],
       },
@@ -138,24 +177,24 @@ export const routes = [
     component: () => import("@/views/Network.vue"),
   },
   {
-    name: "Request",
-    path: "request",
+    name: "Overview",
+    path: "overview",
     children: [
       {
-        name: "RequestIndex",
-        path: "index",
-        component: () => import("@/views/request/index"),
+        name: "OverviewIndexMd",
+        path: "index-md",
+        component: () => import("@/views/overview/index-md"),
       },
     ],
   },
   {
-    name: "Route",
-    path: "route",
+    name: "Request",
+    path: "request",
     children: [
       {
-        name: "RouteIndex",
-        path: "index",
-        component: () => import("@/views/route/index"),
+        name: "RequestIndexMd",
+        path: "index-md",
+        component: () => import("@/views/request/index-md"),
       },
     ],
   },
@@ -164,9 +203,9 @@ export const routes = [
     path: "server",
     children: [
       {
-        name: "ServerIndex",
-        path: "index",
-        component: () => import("@/views/server/index"),
+        name: "ServerIndexMd",
+        path: "index-md",
+        component: () => import("@/views/server/index-md"),
       },
     ],
   },
@@ -175,9 +214,9 @@ export const routes = [
     path: "store",
     children: [
       {
-        name: "StoreIndex",
-        path: "index",
-        component: () => import("@/views/store/index"),
+        name: "StoreIndexMd",
+        path: "index-md",
+        component: () => import("@/views/store/index-md"),
       },
     ],
   },

@@ -44,12 +44,16 @@ const readFileData = (path: string, parent: string[] = [], options: TRouteOption
       const name = file.name;
       //屏蔽配置的目录
       if (options.ignoreDirs && file.isDirectory()) {
-        return indexOf(options.ignoreDirs, name) === -1;
+        if (indexOf(options.ignoreDirs, name) !== -1) {
+          return false;
+        }
       }
       //屏蔽配置的文件
       if (options.ignoreFiles && file.isFile()) {
         const fileName = dirOrFileName(name);
-        return indexOf(options.ignoreFiles, fileName) === -1;
+        if (indexOf(options.ignoreFiles, fileName) !== -1) {
+          return false;
+        }
       }
       //只处理配置了文件类型的数据
       if (options.fileTypes && file.isFile()) {
