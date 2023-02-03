@@ -1,6 +1,7 @@
 import { defineComponent, ExtractPropTypes, ref } from "vue";
 import { keys, pick } from "lodash";
 import { useResizeObserver } from "@vue-start/hooks";
+import { LoadingKey, useGetCompByKey } from "./comp";
 
 const proPageHeaderProps = () => ({
   title: { type: String },
@@ -49,55 +50,56 @@ const proPageProps = () => ({
 
 export type ProPageProps = Partial<ExtractPropTypes<ReturnType<typeof proPageProps>>> & PageHeaderProps;
 
-export const createPage = (Loading: any): any => {
-  return defineComponent({
-    props: {
-      ...PageHeader.props,
-      ...proPageProps(),
-    },
-    setup: (props, { slots, emit }) => {
-      const domRef = ref();
-      const domHeiRef = ref(0);
+export const ProPage = defineComponent<ProPageProps>({
+  props: {
+    ...PageHeader.props,
+    ...proPageProps(),
+  },
+  setup: (props, { slots, emit }) => {
+    const getComp = useGetCompByKey();
+    const Loading = getComp(LoadingKey);
 
-      useResizeObserver(domRef, (entries) => {
-        const rect = entries[0]?.contentRect;
-        domHeiRef.value = rect?.height;
-      });
+    const domRef = ref();
+    const domHeiRef = ref(0);
 
-      const headerKeys = keys(PageHeader.props);
+    useResizeObserver(domRef, (entries) => {
+      const rect = entries[0]?.contentRect;
+      domHeiRef.value = rect?.height;
+    });
 
-      return () => {
-        const hasHeader = props.title || slots.title || props.subTitle || slots.subTitle || slots.extra;
-        const hasFooter = !!slots.footer;
+    const headerKeys = keys(PageHeader.props);
 
-        return (
-          <div class={"pro-page"}>
-            {hasHeader && (
-              <PageHeader
-                {...pick(props, headerKeys)}
-                // @ts-ignore
-                onBack={() => {
-                  emit("back");
-                }}
-                v-slots={pick(slots, "backIcon", "title", "subTitle", "space", "extra")}
-              />
-            )}
-            {props.loading ? (
-              <Loading loading {...props.loadingOpts}>
-                <div class={"pro-loading-dom"} />
-              </Loading>
-            ) : (
-              <div
-                ref={domRef}
-                style={domHeiRef.value > 0 ? `height:${domHeiRef.value > 0}` : ""}
-                class={"pro-page-content"}>
-                {props.fillMode ? <>{domHeiRef.value > 0 && slots.default?.()}</> : slots.default?.()}
-              </div>
-            )}
-            {!props.loading && hasFooter && <div class={"pro-page-footer"}>{slots.footer?.()}</div>}
-          </div>
-        );
-      };
-    },
-  });
-};
+    return () => {
+      const hasHeader = props.title || slots.title || props.subTitle || slots.subTitle || slots.extra;
+      const hasFooter = !!slots.footer;
+
+      return (
+        <div class={"pro-page"}>
+          {hasHeader && (
+            <PageHeader
+              {...pick(props, headerKeys)}
+              // @ts-ignore
+              onBack={() => {
+                emit("back");
+              }}
+              v-slots={pick(slots, "backIcon", "title", "subTitle", "space", "extra")}
+            />
+          )}
+          {props.loading && Loading ? (
+            <Loading loading {...props.loadingOpts}>
+              <div class={"pro-loading-dom"} />
+            </Loading>
+          ) : (
+            <div
+              ref={domRef}
+              style={domHeiRef.value > 0 ? `height:${domHeiRef.value > 0}` : ""}
+              class={"pro-page-content"}>
+              {props.fillMode ? <>{domHeiRef.value > 0 && slots.default?.()}</> : slots.default?.()}
+            </div>
+          )}
+          {!props.loading && hasFooter && <div class={"pro-page-footer"}>{slots.footer?.()}</div>}
+        </div>
+      );
+    };
+  },
+});

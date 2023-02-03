@@ -1,9 +1,8 @@
-import { DefineComponent, defineComponent, isVNode, ref } from "vue";
+import { defineComponent, isVNode, ref } from "vue";
 import { ElTable, ElTableColumn } from "element-plus";
-import { TableProps } from "element-plus/es/components/table/src/table/defaults";
-import { TableColumnCtx, TColumns } from "../../types";
+import { TableColumnCtx } from "../../types";
 import { map, omit, pick, size } from "lodash";
-import { createExpose, createTable, ProTableProps as ProTablePropsOrigin } from "@vue-start/pro";
+import { createExpose } from "@vue-start/pro";
 import { createLoadingId, ProLoading } from "../comp";
 
 export type ProTableColumnProps = TableColumnCtx<any>;
@@ -51,15 +50,6 @@ export const ProTableColumn = defineComponent<ProTableColumnProps>({
   },
 });
 
-export type ProTableProps = Omit<ProTablePropsOrigin, "columns"> & {
-  columns?: TColumns;
-} & Omit<TableProps<any>, "tableLayout" | "flexible" | "data"> & {
-    tableLayout?: "fixed" | "auto";
-    flexible?: boolean;
-    data?: any;
-    loading?: boolean;
-  };
-
 export const TableMethods = [
   "clearSelection",
   "getSelectionRows",
@@ -76,7 +66,7 @@ export const TableMethods = [
   "setScrollLeft",
 ];
 
-const Table = defineComponent({
+export const Table = defineComponent({
   props: {
     ...ElTable.props,
     columns: { type: Array },
@@ -111,5 +101,3 @@ const Table = defineComponent({
     };
   },
 });
-
-export const ProTable: DefineComponent<ProTableProps> = createTable(Table, undefined, TableMethods);

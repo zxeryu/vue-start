@@ -1,5 +1,5 @@
 import { defineComponent } from "vue";
-import { ProPage } from "@vue-start/element-pro";
+import { ProPage } from "@vue-start/pro";
 import { omit } from "lodash";
 
 export const Page = defineComponent({

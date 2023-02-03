@@ -4,6 +4,7 @@ import { useEffect, useWatch } from "@vue-start/hooks";
 import { getColumnFormItemName, getColumnValueType } from "../../core";
 import { createExpose } from "../../util";
 import { ProFormProps } from "./Form";
+import { ProFormKey, useGetCompByKey } from "../comp";
 
 export enum SearchMode {
   //自动触发搜索
@@ -34,83 +35,80 @@ const proSearchFormProps = () => ({
 
 export type ProSearchFormProps = Partial<ExtractPropTypes<ReturnType<typeof proSearchFormProps>>> & ProFormProps;
 
-/**
- * 该组件只是个模式，最终返回null，不做任何渲染，应配合着ProForm的包装类一起使用
- * 针对传入的model（监听对象）做相应的finish（回调）处理
- */
-export const createSearchForm = (Form: any, Props: any, formMethods: string[]): any => {
-  return defineComponent<ProSearchFormProps>({
-    props: {
-      ...Form.props,
-      //覆盖Form props
-      ...Props,
-      ...proSearchFormProps(),
-    },
-    setup: (props, { slots, expose }) => {
-      const formState = props.model || reactive({});
+export const ProSearchForm = defineComponent<ProSearchFormProps>({
+  props: {
+    ...proSearchFormProps(),
+  } as any,
+  setup: (props, { slots, expose }) => {
+    const getComp = useGetCompByKey();
+    const Form = getComp(ProFormKey);
 
-      const valueTypeSet = new Set(props.debounceTypes);
-      //根据column valueType 算出默认需要debounce处理的属性集合
-      const defaultDebounceKeys = map(
-        filter(props.columns, (column) => {
-          const valueType = getColumnValueType(column);
-          //默认input组件的触发事件需要debounce处理
-          return valueTypeSet.has(valueType);
-        }),
-        (column) => {
-          return getColumnFormItemName(column);
-        },
-      );
+    const formState = props.model || reactive({});
 
-      const formRef = ref();
+    const valueTypeSet = new Set(props.debounceTypes);
+    //根据column valueType 算出默认需要debounce处理的属性集合
+    const defaultDebounceKeys = map(
+      filter(props.columns, (column) => {
+        const valueType = getColumnValueType(column);
+        //默认input组件的触发事件需要debounce处理
+        return valueTypeSet.has(valueType);
+      }),
+      (column) => {
+        return getColumnFormItemName(column);
+      },
+    );
 
-      expose(createExpose(formMethods, formRef));
+    const formRef = ref();
+    const formMethods = props.formMethods || [];
+    expose(createExpose(formMethods, formRef));
 
-      const handleFinish = () => {
-        formRef.value?.submit();
-      };
+    const handleFinish = () => {
+      formRef.value?.submit();
+    };
 
-      const debounceFinish = debounce(() => {
+    const debounceFinish = debounce(() => {
+      handleFinish();
+    }, props.debounceTime);
+
+    //初始化
+    useEffect(() => {
+      if (props.initEmit) {
         handleFinish();
-      }, props.debounceTime);
+      }
+    }, []);
 
-      //初始化
-      useEffect(() => {
-        if (props.initEmit) {
-          handleFinish();
+    const isDebounceDataChange = (
+      state: Record<string, any>,
+      prevState: Record<string, any>,
+      debounceKeys: string[],
+    ) => {
+      return some(debounceKeys, (key) => get(state, key) !== get(prevState, key));
+    };
+
+    //监听
+    useWatch(
+      (state, prevState) => {
+        if (props.searchMode !== SearchMode.AUTO) {
+          return;
         }
-      }, []);
+        //如果改变的值中包括debounceKeys中注册的 延时触发
+        const debounceKeys = size(props.debounceKeys) > 0 ? props.debounceKeys : defaultDebounceKeys;
+        if (size(debounceKeys) > 0 && isDebounceDataChange(state, prevState, debounceKeys as string[])) {
+          debounceFinish();
+          return;
+        }
+        handleFinish();
+      },
+      () => clone(formState),
+    );
 
-      const isDebounceDataChange = (
-        state: Record<string, any>,
-        prevState: Record<string, any>,
-        debounceKeys: string[],
-      ) => {
-        return some(debounceKeys, (key) => get(state, key) !== get(prevState, key));
-      };
+    const invalidKeys = keys(omit(proSearchFormProps(), "columns"));
 
-      //监听
-      useWatch(
-        (state, prevState) => {
-          if (props.searchMode !== SearchMode.AUTO) {
-            return;
-          }
-          //如果改变的值中包括debounceKeys中注册的 延时触发
-          const debounceKeys = size(props.debounceKeys) > 0 ? props.debounceKeys : defaultDebounceKeys;
-          if (size(debounceKeys) > 0 && isDebounceDataChange(state, prevState, debounceKeys as string[])) {
-            debounceFinish();
-            return;
-          }
-          handleFinish();
-        },
-        () => clone(formState),
-      );
-
-      const invalidKeys = keys(omit(proSearchFormProps(), "columns"));
-
-      return () => {
-        return <Form ref={formRef} {...omit(props, invalidKeys)} model={formState} v-slots={slots} />;
-      };
-    },
-  });
-};
+    return () => {
+      if (!Form) {
+        return null;
+      }
+      return <Form ref={formRef} {...omit(props, invalidKeys)} model={formState} v-slots={slots} />;
+    };
+  },
+});

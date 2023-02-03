@@ -9,15 +9,17 @@ import {
   ProFormTextNumber,
   ProFormTimePicker,
   ProFormTreeSelect,
+  ProLoading,
 } from "@vue-start/element-pro";
 import { SelectShow, TextNumberShow, TextShow } from "@/component/show";
 import { ElButton } from "element-plus";
-import { ProOperateItemKey } from "@vue-start/pro";
+import { LoadingKey, ProOperateItemKey } from "@vue-start/pro";
 import { TableOperateItem, TableOperateItemKey } from "@/component/Table";
 
 export const elementMap = {
   [ProOperateItemKey]: ElButton,
   [TableOperateItemKey]: TableOperateItem,
+  [LoadingKey]: ProLoading,
 
   text: TextShow,
   digit: TextNumberShow,

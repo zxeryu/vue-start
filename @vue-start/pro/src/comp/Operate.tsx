@@ -1,6 +1,6 @@
 import { defineComponent, ExtractPropTypes, PropType, VNode } from "vue";
-import { filter, get, isBoolean, isFunction, map, omit } from "lodash";
-import { useProConfig } from "../core";
+import { filter, isBoolean, isFunction, map, omit } from "lodash";
+import { ProOperateItemKey, useGetCompByKey } from "./comp";
 
 export interface IOpeItem {
   value: string | number;
@@ -15,8 +15,6 @@ export interface IOpeItem {
     item?: Omit<IOpeItem, "show" | "disabled" | "opeProps" | "element"> & { disabled?: boolean },
   ) => VNode | null;
 }
-
-export const ProOperateItemKey = "ProOperateItem$";
 
 const proOperateProps = () => ({
   /**
@@ -34,13 +32,13 @@ export const Operate = defineComponent<ProOperateProps>({
     ...(proOperateProps() as any),
   },
   setup: (props, { slots }) => {
-    const { elementMap } = useProConfig();
+    const getComp = useGetCompByKey();
 
     const handleItemClick = (item: IOpeItem) => {
       item.onClick?.(item.value);
     };
 
-    const Comp = props.elementKey ? get(elementMap, props.elementKey) : undefined;
+    const Comp = props.elementKey ? getComp(props.elementKey) : undefined;
 
     return () => {
       //去除不显示的

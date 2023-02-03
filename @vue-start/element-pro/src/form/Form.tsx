@@ -1,15 +1,7 @@
-import { DefineComponent, defineComponent, ExtractPropTypes, PropType, reactive, ref, toRaw } from "vue";
+import { defineComponent, ExtractPropTypes, PropType, reactive, ref, toRaw } from "vue";
 import { ElForm, FormInstance, ElFormItem, FormItemProps } from "element-plus";
 import { keys, omit } from "lodash";
-import { FormItemRule } from "element-plus/es/tokens/form";
-import {
-  createExpose,
-  createForm,
-  createSearchForm,
-  ProFormProps as ProFormPropsOrigin,
-  ProSearchFormProps as ProSearchFormPropsOrigin,
-} from "@vue-start/pro";
-import { ProGrid, ProGridProps } from "../comp";
+import { createExpose } from "@vue-start/pro";
 import { useEffect } from "@vue-start/hooks";
 
 const proFormItemProps = () => ({
@@ -38,26 +30,9 @@ export const ProFormItem = defineComponent<ProFormItemProps>({
   },
 });
 
-interface FormProps {
-  model?: Record<string, any>;
-  rules?: FormItemRule[];
-  labelPosition?: "left" | "right" | "top";
-  labelWidth?: string | number;
-  labelSuffix?: string;
-  inline?: boolean;
-  inlineMessage?: boolean;
-  statusIcon?: boolean;
-  showMessage?: boolean;
-  size?: "large" | "default" | "small";
-  disabled?: boolean;
-  validateOnRuleChange?: boolean;
-  hideRequiredAsterisk?: boolean;
-  scrollToError?: boolean;
-}
-
 export const FormMethods = ["clearValidate", "resetFields", "scrollToField", "validate", "validateField", "submit"];
 
-const Form = defineComponent({
+export const Form = defineComponent({
   props: {
     ...ElForm.props,
   },
@@ -87,23 +62,3 @@ const Form = defineComponent({
     };
   },
 });
-
-export type ProFormProps = ProFormPropsOrigin &
-  FormProps &
-  Omit<ProGridProps, "items"> & {
-    onFinish?: (showValues: Record<string, any>, values: Record<string, any>) => void;
-    onFinishFailed?: (invalidFields: Record<string, any>) => void;
-  }; //emit;
-
-export const ProForm: DefineComponent<ProFormProps> = createForm(Form, ProGrid, FormMethods);
-
-export type ProSearchFormProps = ProSearchFormPropsOrigin & ProFormProps;
-
-export const ProSearchForm: DefineComponent<ProSearchFormProps> = createSearchForm(
-  ProForm,
-  {
-    needRules: { type: Boolean, default: false },
-    inline: { type: Boolean, default: true },
-  },
-  FormMethods,
-);
