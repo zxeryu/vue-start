@@ -33,7 +33,7 @@
 //ant-design-vue
  yarn add @vue-start/antd-pro
  
- yarn add @vue-start-dev/devkit
+ yarn add @vue-start-dev/devkit -D
 ```
 
 ## 使用

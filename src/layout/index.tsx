@@ -6,22 +6,20 @@ import { css } from "@emotion/css";
 import { useEffect } from "@vue-start/hooks";
 
 const menus = [
-  { title: "概述", name: "OverviewIndexMd" },
+  { title: "综述", name: "OverviewIndexMd" },
   {
     title: "@vue-start/request",
-    children: [
-      { title: "index", name: "RequestIndexMd" },
-    ],
+    children: [{ title: "概述", name: "RequestIndexMd" }],
   },
   {
-    title: "状态",
-    children: [{ title: "基础", name: "StoreIndexMd" }],
+    title: "@vue-start/store",
+    children: [{ title: "概述", name: "StoreIndexMd" }],
   },
   {
     title: "@vue-start/pro",
     children: [
-      { title: "Operate", name: "ElementOperateIndex" },
-      { title: "Grid", name: "ElementGridIndex" },
+      // { title: "Operate", name: "ElementOperateIndex" },
+      // { title: "Grid", name: "ElementGridIndex" },
       { title: "Form", name: "ElementFormIndex" },
       { title: "SearchForm", name: "ElementFormSearchIndex" },
       { title: "Table", name: "ElementTableIndex" },
