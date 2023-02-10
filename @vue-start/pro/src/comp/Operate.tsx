@@ -1,6 +1,6 @@
-import { defineComponent, ExtractPropTypes, PropType, VNode } from "vue";
-import { filter, isBoolean, isFunction, map, omit } from "lodash";
-import { ProOperateItemKey, useGetCompByKey } from "./comp";
+import { computed, defineComponent, ExtractPropTypes, PropType, VNode } from "vue";
+import { filter, get, has, isBoolean, isFunction, map, omit } from "lodash";
+import { OperateItemKey, useGetCompByKey } from "./comp";
 
 export interface IOpeItem {
   value: string | number;
@@ -22,7 +22,9 @@ const proOperateProps = () => ({
    */
   clsName: { type: String, default: "pro-operate" },
   items: { type: Array as PropType<IOpeItem[]> },
-  elementKey: { type: String, default: ProOperateItemKey },
+  //items 的补充
+  itemState: { type: Object as PropType<Record<string, IOpeItem>> },
+  elementKey: { type: String, default: OperateItemKey },
 });
 
 export type ProOperateProps = Partial<ExtractPropTypes<ReturnType<typeof proOperateProps>>>;
@@ -33,16 +35,11 @@ export const Operate = defineComponent<ProOperateProps>({
   },
   setup: (props, { slots }) => {
     const getComp = useGetCompByKey();
-
-    const handleItemClick = (item: IOpeItem) => {
-      item.onClick?.(item.value);
-    };
-
     const Comp = props.elementKey ? getComp(props.elementKey) : undefined;
 
-    return () => {
+    const showItems = computed(() => {
       //去除不显示的
-      const showItems: IOpeItem[] = filter(props.items, (item) => {
+      const items = filter(props.items, (item) => {
         if (isFunction(item.show)) {
           return item.show();
         } else if (isBoolean(item.show)) {
@@ -51,10 +48,23 @@ export const Operate = defineComponent<ProOperateProps>({
           return true;
         }
       });
+      //合并itemState
+      return map(items, (item) => {
+        if (has(props.itemState, item.value)) {
+          return { ...item, ...get(props.itemState, item.value) };
+        }
+        return item;
+      });
+    });
 
+    const handleItemClick = (item: IOpeItem) => {
+      item.onClick?.(item.value);
+    };
+
+    return () => {
       return (
         <div class={props.clsName}>
-          {map(showItems, (item) => {
+          {map(showItems.value, (item) => {
             //是否禁用
             const disabled = isFunction(item.disabled) ? item.disabled() : item.disabled;
             const loading = isFunction(item.loading) ? item.loading() : item.loading;

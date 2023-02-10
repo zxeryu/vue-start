@@ -72,7 +72,7 @@ export const mergeStateToList = (
     return list;
   }
   return map(list, (item) => {
-    const idName = isFunction(id) ? id(item) : id;
+    const idName = isFunction(id) ? id(item) : get(item, id);
     //如果listState中有值，merge处理
     const stateData = get(listState, idName);
     if (!stateData || isEmpty(stateData) || isFunction(stateData) || !isObject(stateData)) {

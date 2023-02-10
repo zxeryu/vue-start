@@ -4,12 +4,14 @@ import { ColKey, RowKey, useGetCompByKey } from "./comp";
 
 const proGridProps = () => ({
   row: { type: Object as PropType<Record<string, any>>, default: undefined },
+  //公共col
   col: { type: Object as PropType<Record<string, any>> },
   items: {
     type: Array as PropType<
       {
         vNode: VNode;
         rowKey?: string | number;
+        //当前item 独有col
         col?: Record<string, any>;
       }[]
     >,

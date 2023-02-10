@@ -1,5 +1,5 @@
 import { Ref } from "vue";
-import { forEach, reduce, size } from "lodash";
+import { filter, forEach, keys, pick, reduce, size, startsWith } from "lodash";
 
 export * from "./state";
 
@@ -33,4 +33,19 @@ export const createExposeObj = (targetRef: Ref, methods?: string[], opts?: Recor
     });
   }
   return exposeObj;
+};
+
+/**
+ * 从slots对象中找出`${prefix}`开头的属性组成一个对象
+ * {
+ *   `${prefix}${slot name}}`: ()=>Function,
+ *   ...
+ * }
+ * @param slots
+ * @param prefix
+ */
+export const filterSlotsByPrefix = (slots: Record<string, any>, prefix: string) => {
+  const slotKeys = keys(slots);
+  const targetKeys = filter(slotKeys, (key) => startsWith(key, prefix));
+  return pick(slots, targetKeys);
 };

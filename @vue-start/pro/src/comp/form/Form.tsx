@@ -5,7 +5,7 @@ import { useEffect } from "@vue-start/hooks";
 import { forEach, get, has, keys, map, omit, size } from "lodash";
 import { getColumnFormItemName, getFormItemEl, proBaseProps, ProBaseProps, useProConfig } from "../../core";
 import { createExpose, getValidValues, mergeStateToList } from "../../util";
-import { ProGridProps, Operate, ProGrid, ProOperateProps } from "../index";
+import { ProGridProps, Operate, ProGrid, ProOperateProps, IOpeItem } from "../index";
 import { provideProFormList } from "./FormList";
 
 const ProFormKey = Symbol("pro-form");
@@ -29,6 +29,18 @@ export const useProForm = (): IProFormProvide => inject(ProFormKey) as IProFormP
 
 const provideProForm = (ctx: IProFormProvide) => {
   provide(ProFormKey, ctx);
+};
+
+export enum FormAction {
+  RESET = "RESET",
+  SUBMIT = "SUBMIT",
+  CONTINUE = "CONTINUE",
+}
+
+export type TProFormOperate = ProOperateProps & {
+  onReset?: () => void;
+  onSubmit?: () => void;
+  onContinue?: () => void;
 };
 
 const proFormProps = () => ({
@@ -71,7 +83,7 @@ const proFormProps = () => ({
   /**
    * 操作按钮
    */
-  operate: { type: Object as PropType<ProOperateProps> },
+  operate: { type: Object as PropType<TProFormOperate> },
   submitLoading: { type: Boolean },
 
   /**
@@ -157,17 +169,42 @@ export const ProForm = defineComponent<ProFormProps>({
       ...props.provideExtra,
     });
 
+    const defaultOpeItems = [
+      { value: FormAction.RESET, label: "重置" },
+      { value: FormAction.SUBMIT, label: "提交", extraProps: { type: "primary" } },
+    ];
+
     //默认处理 reset submit方法，submit dom 赋值loading
     const operateItems = computed(() => {
-      return map(props.operate?.items, (item) => {
-        if (!item.onClick) {
-          if (item.value === "reset") {
-            item.onClick = () => formRef.value?.resetFields();
-          } else if (item.value === "submit") {
-            item.onClick = () => formRef.value?.submit();
+      const operate = props.operate;
+      const items: IOpeItem[] = operate?.items || defaultOpeItems;
+      return map(items, (item) => {
+        //没有onClick
+        if (!item.onClick && !get(operate?.itemState, [item.value, "onClick"])) {
+          if (item.value === FormAction.RESET) {
+            item.onClick = () => {
+              //如果注册了onReset方法，优先执行onReset
+              if (operate?.onReset) {
+                operate.onReset();
+                return;
+              }
+              formRef.value?.resetFields();
+            };
+          } else if (item.value === FormAction.SUBMIT) {
+            item.onClick = () => {
+              if (operate?.onSubmit) {
+                operate.onSubmit();
+                return;
+              }
+              formRef.value?.submit();
+            };
+          } else if (item.value === FormAction.CONTINUE && operate?.onContinue) {
+            item.onClick = () => {
+              operate.onContinue!();
+            };
           }
         }
-        if (item.value === "submit" && !has(item, "loading")) {
+        if (item.value === FormAction.SUBMIT && !has(item, "loading")) {
           item.loading = props.submitLoading;
         }
         return item;
@@ -191,7 +228,7 @@ export const ProForm = defineComponent<ProFormProps>({
           ref={formRef}
           class={props.clsName}
           {...omit(attrs, "onFinish")}
-          {...omit(props, ...invalidKeys, ...gridKeys, "onFinish")}
+          {...omit(props, ...invalidKeys, ...gridKeys, "onFinish", "operate")}
           model={formState}
           onFinish={handleFinish}
           v-slots={omit(slots, "default")}>
@@ -218,7 +255,11 @@ export const ProForm = defineComponent<ProFormProps>({
           {slots.default?.()}
 
           {props.operate && (
-            <Operate clsName={"pro-form-operate"} items={operateItems.value} {...omit(props.operate, "items")} />
+            <Operate
+              clsName={"pro-form-operate"}
+              items={operateItems.value}
+              {...omit(props.operate, "items", "onReset", "onSubmit", "onContinue")}
+            />
           )}
 
           {slots.end?.()}

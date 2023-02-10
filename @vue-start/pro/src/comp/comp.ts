@@ -9,7 +9,14 @@ export const RowKey = "ProRow$";
 //Col
 export const ColKey = "ProCol$";
 //Operate Item
-export const ProOperateItemKey = "ProOperateItem$";
+export const OperateItemKey = "ProOperateItem$";
+//Descriptions
+export const DescriptionsKey = "ProDescriptions$";
+export const DescriptionsItemKey = "ProDescriptionsItem$";
+//Pagination
+export const PaginationKey = "Pagination$";
+//Modal
+export const ModalKey = "Modal$";
 //Form
 export const FormKey = "ProForm$";
 //FormItem
@@ -20,6 +27,8 @@ export const TableKey = "ProTable$";
 /******************************** pro组件key ********************************/
 //ProForm
 export const ProFormKey = "ProForm$";
+//ProSearchForm
+export const ProSearchFormKey = "ProSearchForm$";
 //ProTable
 export const ProTableKey = "ProTable$";
 

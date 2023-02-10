@@ -13,11 +13,11 @@ import {
 } from "@vue-start/element-pro";
 import { SelectShow, TextNumberShow, TextShow } from "@/component/show";
 import { ElButton } from "element-plus";
-import { LoadingKey, ProOperateItemKey } from "@vue-start/pro";
+import { LoadingKey, OperateItemKey } from "@vue-start/pro";
 import { TableOperateItem, TableOperateItemKey } from "@/component/Table";
 
 export const elementMap = {
-  [ProOperateItemKey]: ElButton,
+  [OperateItemKey]: ElButton,
   [TableOperateItemKey]: TableOperateItem,
   [LoadingKey]: ProLoading,
 
