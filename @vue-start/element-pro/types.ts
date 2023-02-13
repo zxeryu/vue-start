@@ -1,9 +1,8 @@
-import { DescriptionsProps, ProCurdFormProps, ProCurdListProps, ProFormItemProps } from "./src";
+import { ProFormItemProps } from "./src";
 import { VNode } from "vue";
 import { FilterMethods, Filters } from "element-plus/es/components/table/src/table-column/defaults";
 import { IProCurdProvide as IProCurdProvideOrigin, TTableColumn } from "@vue-start/pro";
 import { ComputedRef, Ref } from "@vue/reactivity";
-import { ModalProps } from "./src/curd/CurdModal";
 import { ColSizeObject } from "element-plus/es/components/col/src/col";
 
 export type TOption = {
@@ -90,10 +89,10 @@ export interface IProCurdProvide
   tableColumns: Ref<TColumns>;
   searchColumns: Ref<TColumns>;
   /******************子组件参数*******************/
-  listProps?: ComputedRef<ProCurdListProps | undefined>;
-  formProps?: ComputedRef<ProCurdFormProps | undefined>;
-  descProps?: ComputedRef<DescriptionsProps | undefined>;
-  modalProps?: ComputedRef<ModalProps | undefined>;
+  listProps?: ComputedRef<Record<string, any> | undefined>;
+  formProps?: ComputedRef<Record<string, any> | undefined>;
+  descProps?: ComputedRef<Record<string, any> | undefined>;
+  modalProps?: ComputedRef<Record<string, any> | undefined>;
 }
 
 export interface IRow {

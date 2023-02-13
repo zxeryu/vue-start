@@ -1,14 +1,7 @@
 import { defineComponent, reactive } from "vue";
 import { CurdAction, ProCurd, ProModule, useModuleEvent, useProModule, ProConfig } from "@vue-start/pro";
-import {
-  ProCurdListConnect,
-  ProForm,
-  ProFormSelect,
-  ProFormText,
-  ProSearchForm,
-  ProSubmitButton,
-  ProTable,
-} from "@vue-start/element-pro";
+import { ProFormSelect, ProFormText } from "@vue-start/element-pro";
+import { ProCurdListConnect, ProForm, ProSearchForm, ProTable } from "@vue-start/pro";
 import "element-plus/dist/index.css";
 import { size } from "lodash";
 import { useEffect } from "@vue-start/hooks";
@@ -136,12 +129,12 @@ export default defineComponent(() => {
 
   return () => {
     return (
-      <ProConfig
-        formElementMap={{ text: ProFormText, select: ProFormSelect }}>
+      <ProConfig formElementMap={{ text: ProFormText, select: ProFormSelect }}>
         <div>
           content
           <ProForm
-            onFinish={(values: Record<string, any>) => {
+            operate={{}}
+            onFinish={(values) => {
               console.log("##########onFinish", values);
             }}
             onFinishFailed={(invalidFields: any) => {
@@ -160,16 +153,14 @@ export default defineComponent(() => {
                 ],
               }}
             />
-
-            <ProSubmitButton>提交</ProSubmitButton>
           </ProForm>
           <ProForm
             onFinish={(values: any) => {
               console.log("######", values);
             }}
-            columns={columns as any}>
-            <ProSubmitButton>submit</ProSubmitButton>
-          </ProForm>
+            columns={columns as any}
+            operate={{}}
+          />
           <ProSearchForm
             onFinish={(values: any) => {
               console.log("######search", values);
@@ -205,27 +196,29 @@ export default defineComponent(() => {
                 },
               ],
             }}
-            columns={[
-              {
-                title: "Date",
-                dataIndex: "date",
-                width: "180",
-              },
-              {
-                title: "Name",
-                dataIndex: "name",
-                width: "180",
-              },
-              {
-                title: "Address",
-                dataIndex: "address",
-                children: [
-                  { title: "Address1", dataIndex: "address1" },
-                  { title: "Address2", dataIndex: "address2" },
-                ],
-              },
-            ]}
-            data={[
+            columns={
+              [
+                {
+                  title: "Date",
+                  dataIndex: "date",
+                  width: "180",
+                },
+                {
+                  title: "Name",
+                  dataIndex: "name",
+                  width: "180",
+                },
+                {
+                  title: "Address",
+                  dataIndex: "address",
+                  children: [
+                    { title: "Address1", dataIndex: "address1" },
+                    { title: "Address2", dataIndex: "address2" },
+                  ],
+                },
+              ] as any
+            }
+            dataSource={[
               {
                 date: "2016-05-03",
                 name: "Tom",

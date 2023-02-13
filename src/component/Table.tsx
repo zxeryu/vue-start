@@ -1,6 +1,6 @@
 import { computed, defineComponent } from "vue";
 import { ElButton } from "element-plus";
-import { ProTable } from "@vue-start/element-pro";
+import { ProTable } from "@vue-start/pro";
 import { omit } from "lodash";
 
 export const TableOperateItemKey = "TableOperateItem$";

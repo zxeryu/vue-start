@@ -7,10 +7,8 @@ import { createStore } from "./store";
 import { createConfig } from "@vue-start/config";
 import { createRequest, ContentTypeInterceptor } from "@vue-start/request";
 
-import { ProSearchForm, ProCurdList } from "@vue-start/element-pro";
-import { ProCurd, ProModalCurd } from "@vue-start/pro";
+import { ProCurd, ProSearchForm, ProForm, ProCurdList, ProModalCurd } from "@vue-start/pro";
 import { Page } from "@/component/Page";
-import { Form } from "@/component/Form";
 import { Table } from "@/component/Table";
 import { DemoBox } from "@/layout/DemoBox";
 
@@ -46,7 +44,7 @@ const init = (store$: any) => {
 
   //注册组件
   app.component("pro-page", Page);
-  app.component("pro-form", Form);
+  app.component("pro-form", ProForm);
   app.component("pro-search-form", ProSearchForm);
   app.component("pro-table", Table);
   app.component("pro-curd", ProCurd);

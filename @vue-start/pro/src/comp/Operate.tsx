@@ -29,7 +29,7 @@ const proOperateProps = () => ({
 
 export type ProOperateProps = Partial<ExtractPropTypes<ReturnType<typeof proOperateProps>>>;
 
-export const Operate = defineComponent<ProOperateProps>({
+export const ProOperate = defineComponent<ProOperateProps>({
   props: {
     ...(proOperateProps() as any),
   },

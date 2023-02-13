@@ -5,7 +5,7 @@ import { useEffect } from "@vue-start/hooks";
 import { forEach, get, has, keys, map, omit, size } from "lodash";
 import { getColumnFormItemName, getFormItemEl, proBaseProps, ProBaseProps, useProConfig } from "../../core";
 import { createExpose, getValidValues, mergeStateToList } from "../../util";
-import { ProGridProps, Operate, ProGrid, ProOperateProps, IOpeItem } from "../index";
+import { ProGridProps, ProOperate, ProGrid, ProOperateProps, IOpeItem, FormKey } from "../index";
 import { provideProFormList } from "./FormList";
 
 const ProFormKey = Symbol("pro-form");
@@ -94,7 +94,10 @@ const proFormProps = () => ({
 
 export type ProFormProps = Partial<ExtractPropTypes<ReturnType<typeof proFormProps>>> &
   ProBaseProps &
-  Omit<ProGridProps, "items">;
+  Omit<ProGridProps, "items"> & {
+    onFinish?: (showValues?: Record<string, any>, values?: Record<string, any>) => void;
+    onFinishFailed?: (errs: any) => void;
+  };
 
 export const ProForm = defineComponent<ProFormProps>({
   props: {
@@ -148,8 +151,7 @@ export const ProForm = defineComponent<ProFormProps>({
     };
 
     const formRef = ref();
-    const formMethods = props.formMethods || [];
-    expose(createExpose(formMethods, formRef));
+    expose(createExpose(props.formMethods || [], formRef));
 
     provideProForm({
       formState,
@@ -217,7 +219,7 @@ export const ProForm = defineComponent<ProFormProps>({
     const invalidKeys = keys(proFormProps());
     const gridKeys = keys(omit(ProGrid.props, "items"));
 
-    const Form = get(elementMapP, ProFormKey);
+    const Form = get(elementMapP, FormKey);
 
     return () => {
       if (!Form) {
@@ -255,7 +257,7 @@ export const ProForm = defineComponent<ProFormProps>({
           {slots.default?.()}
 
           {props.operate && (
-            <Operate
+            <ProOperate
               clsName={"pro-form-operate"}
               items={operateItems.value}
               {...omit(props.operate, "items", "onReset", "onSubmit", "onContinue")}

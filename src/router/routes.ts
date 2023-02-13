@@ -4,7 +4,6 @@ export const routes = [
     path: "about",
     component: () => import("@/views/About.vue"),
   },
-  { name: "Comp", path: "comp", component: () => import("@/views/Comp") },
   {
     name: "Compelement",
     path: "compelement",

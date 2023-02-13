@@ -38,6 +38,7 @@ export type ProSearchFormProps = Partial<ExtractPropTypes<ReturnType<typeof proS
 export const ProSearchForm = defineComponent<ProSearchFormProps>({
   props: {
     ...proSearchFormProps(),
+    needRules: { type: Boolean, default: false },
   } as any,
   setup: (props, { slots, expose }) => {
     const getComp = useGetCompByKey();

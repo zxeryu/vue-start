@@ -10,16 +10,50 @@ import {
   ProFormTimePicker,
   ProFormTreeSelect,
   ProLoading,
+  ProForm as Form,
+  ProFormItem,
+  ProModal,
+  ProTable as Table,
 } from "@vue-start/element-pro";
 import { SelectShow, TextNumberShow, TextShow } from "@/component/show";
-import { ElButton } from "element-plus";
-import { LoadingKey, OperateItemKey } from "@vue-start/pro";
+import { ElButton, ElRow, ElCol, ElDescriptions, ElDescriptionsItem } from "element-plus";
+import {
+  ColKey,
+  DescriptionsItemKey,
+  DescriptionsKey,
+  FormItemKey,
+  FormKey,
+  LoadingKey,
+  ModalKey,
+  OperateItemKey,
+  RowKey,
+  TableKey,
+  ProFormKey,
+  ProSearchFormKey,
+  ProTableKey,
+  ProForm,
+  ProSearchForm,
+  ProTable,
+} from "@vue-start/pro";
 import { TableOperateItem, TableOperateItemKey } from "@/component/Table";
 
 export const elementMap = {
-  [OperateItemKey]: ElButton,
-  [TableOperateItemKey]: TableOperateItem,
   [LoadingKey]: ProLoading,
+  [RowKey]: ElRow,
+  [ColKey]: ElCol,
+  [OperateItemKey]: ElButton,
+  [DescriptionsKey]: ElDescriptions,
+  [DescriptionsItemKey]: ElDescriptionsItem,
+  [ModalKey]: ProModal,
+  [FormKey]: Form,
+  [FormItemKey]: ProFormItem,
+  [TableKey]: Table,
+
+  [TableOperateItemKey]: TableOperateItem,
+
+  [ProFormKey]: ProForm,
+  [ProSearchFormKey]: ProSearchForm,
+  [ProTableKey]: ProTable,
 
   text: TextShow,
   digit: TextNumberShow,

@@ -1,7 +1,6 @@
 import { defineComponent, ref } from "vue";
 import { ElDialog } from "element-plus";
-import { CurdAction, useProCurd } from "@vue-start/pro";
-import { ProCurdForm } from "@vue-start/element-pro";
+import { CurdAction, useProCurd, ProCurdForm } from "@vue-start/pro";
 import { omit } from "lodash";
 import { columns } from "@/common/columns";
 import { userAdd, userDel, userDetail, userEdit, userList } from "@/clients/client";
@@ -52,7 +51,7 @@ const CurdModal = defineComponent({
                   ),
             ...slots,
           }}>
-          <ProCurdForm ref={formRef} operateBar={false} {...formProps?.value} />
+          <ProCurdForm ref={formRef} {...formProps?.value} />
         </el-dialog>
       );
     };

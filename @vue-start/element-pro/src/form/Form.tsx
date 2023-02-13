@@ -32,7 +32,7 @@ export const ProFormItem = defineComponent<ProFormItemProps>({
 
 export const FormMethods = ["clearValidate", "resetFields", "scrollToField", "validate", "validateField", "submit"];
 
-export const Form = defineComponent({
+export const ProForm = defineComponent({
   props: {
     ...ElForm.props,
   },

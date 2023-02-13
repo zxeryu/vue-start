@@ -18,11 +18,11 @@ export const PaginationKey = "Pagination$";
 //Modal
 export const ModalKey = "Modal$";
 //Form
-export const FormKey = "ProForm$";
+export const FormKey = "Form$";
 //FormItem
-export const FormItemKey = "ProFormItem$";
+export const FormItemKey = "FormItem$";
 //Table
-export const TableKey = "ProTable$";
+export const TableKey = "Table$";
 
 /******************************** pro组件key ********************************/
 //ProForm

@@ -66,7 +66,7 @@ export const TableMethods = [
   "setScrollLeft",
 ];
 
-export const Table = defineComponent({
+export const ProTable = defineComponent({
   props: {
     ...ElTable.props,
     columns: { type: Array },

@@ -12,7 +12,7 @@ import {
   useProModule,
 } from "../core";
 import { filter, get, keys, map, omit, pick, reduce, sortBy } from "lodash";
-import { TActionEvent, TColumn, TColumns, TElementMap } from "../types";
+import { TActionEvent, TColumn } from "../types";
 import { UnwrapNestedRefs } from "@vue/reactivity";
 import {
   CurdAction,
@@ -27,16 +27,6 @@ import { IOperateItem } from "../comp";
 import { IRequestActor } from "@vue-start/request";
 import { mergeStateToList } from "../util";
 import { getColumnFormItemName, getFormItemEl, getItemEl } from "../core";
-
-export type TPageState = {
-  page: number;
-  pageSize: number;
-};
-
-export const defaultPage: TPageState = {
-  page: 1,
-  pageSize: 10,
-};
 
 export interface IListData extends Record<string, any> {
   total: number;

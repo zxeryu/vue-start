@@ -104,7 +104,7 @@ export const ProCurdList = defineComponent<ProListProps>({
   },
 });
 
-export const ProCurdListConnector = defineComponent(() => {
+export const ProCurdListConnect = defineComponent(() => {
   const { listProps } = useProCurd();
   return () => {
     return <ProCurdList {...omit(listProps?.value, "slots")} v-slots={get(listProps?.value, "slots")} />;

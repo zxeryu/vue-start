@@ -4,7 +4,7 @@ import { get, isFunction, keys, map, omit, some, sortBy } from "lodash";
 import { getItemEl, proBaseProps, ProBaseProps, useProConfig } from "../../core";
 import { Ref } from "@vue/reactivity";
 import { createExpose, mergeStateToList } from "../../util";
-import { IOpeItem, Operate, ProOperateProps } from "../Operate";
+import { IOpeItem, ProOperate, ProOperateProps } from "../Operate";
 
 const ProTableKey = Symbol("pro-table");
 
@@ -95,7 +95,11 @@ const proTableProps = () => ({
   tableMethods: { type: Array as PropType<string[]> },
 });
 
-export type ProTableProps = Partial<ExtractPropTypes<ReturnType<typeof proTableProps>>> & ProBaseProps;
+export type ProTableProps = Partial<ExtractPropTypes<ReturnType<typeof proTableProps>>> &
+  ProBaseProps & {
+    loading?: boolean;
+    dataSource?: Record<string, any>[];
+  };
 
 export const ProTable = defineComponent<ProTableProps>({
   props: {
@@ -153,7 +157,7 @@ export const ProTable = defineComponent<ProTableProps>({
           });
 
           return (
-            <Operate
+            <ProOperate
               clsName={operate.clsName || "pro-table-operate"}
               items={opeItems}
               elementKey={operate.elementKey}

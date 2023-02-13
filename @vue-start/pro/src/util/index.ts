@@ -1,5 +1,5 @@
 import { Ref } from "vue";
-import { filter, forEach, keys, pick, reduce, size, startsWith } from "lodash";
+import { filter, forEach, keys, pick, reduce, size, startsWith, mapKeys } from "lodash";
 
 export * from "./state";
 
@@ -46,6 +46,10 @@ export const createExposeObj = (targetRef: Ref, methods?: string[], opts?: Recor
  */
 export const filterSlotsByPrefix = (slots: Record<string, any>, prefix: string) => {
   const slotKeys = keys(slots);
-  const targetKeys = filter(slotKeys, (key) => startsWith(key, prefix));
-  return pick(slots, targetKeys);
+  const prefixStr = `${prefix}-`;
+  const targetKeys = filter(slotKeys, (key) => startsWith(key, prefixStr));
+  const targetSlots = pick(slots, targetKeys);
+  return mapKeys(targetSlots, (key) => {
+    return key.replace(prefixStr, "");
+  });
 };
