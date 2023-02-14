@@ -5,6 +5,18 @@ export const routes = [
     component: () => import("@/views/About.vue"),
   },
   {
+    name: "Column",
+    path: "column",
+    children: [
+      {
+        name: "ColumnIndexMd",
+        path: "index-md",
+        component: () => import("@/views/column/index-md"),
+      },
+    ],
+  },
+  { name: "Comp", path: "comp", component: () => import("@/views/Comp") },
+  {
     name: "Compelement",
     path: "compelement",
     component: () => import("@/views/CompElement"),

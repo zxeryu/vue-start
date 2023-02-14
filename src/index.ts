@@ -11,6 +11,7 @@ import { ProCurd, ProSearchForm, ProForm, ProCurdList, ProModalCurd } from "@vue
 import { Page } from "@/component/Page";
 import { Table } from "@/component/Table";
 import { DemoBox } from "@/layout/DemoBox";
+import { ProModal } from "@vue-start/element-pro";
 
 import "tailwindcss/tailwind.css";
 import "./style/index.css";
@@ -50,6 +51,7 @@ const init = (store$: any) => {
   app.component("pro-curd", ProCurd);
   app.component("pro-modal-curd", ProModalCurd);
   app.component("pro-curd-list", ProCurdList);
+  app.component("pro-modal", ProModal);
   //
   app.component("demo-box", DemoBox);
 

@@ -16,7 +16,7 @@ const proModalProps = () => ({
   confirmLoading: Boolean,
   footer: { type: Boolean, default: true },
   //兼容ant-v
-  maskClosable: { type: [Boolean, Object] },
+  maskClosable: { type: [Object, Boolean], default: undefined },
 });
 
 export type ProModalProps = Partial<ExtractPropTypes<ReturnType<typeof proModalProps>>> & DialogProps;

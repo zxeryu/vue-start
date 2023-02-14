@@ -36,7 +36,7 @@ export const ProForm = defineComponent({
   props: {
     ...ElForm.props,
     //兼容ant-v
-    hideRequiredMark: { type: [Boolean, Object] },
+    hideRequiredMark: { type: [Boolean, Object], default: undefined },
   },
   setup: (props, { slots, emit, expose }) => {
     const formState = props.model || reactive({});
