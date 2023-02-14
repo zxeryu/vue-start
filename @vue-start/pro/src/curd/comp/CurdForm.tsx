@@ -17,9 +17,8 @@ export type ProCurdFormProps = Partial<ExtractPropTypes<ReturnType<typeof proCur
 
 export const ProCurdForm = defineComponent<ProCurdFormProps>({
   props: {
-    ...ProForm.props,
     ...proCurdFormProps(),
-  },
+  } as any,
   setup: (props, { slots, expose, attrs }) => {
     const { elementMap, formElementMap, curdState, formColumns, getSignColumns, sendCurdEvent } = useProCurd();
 
@@ -70,16 +69,18 @@ export const ProCurdForm = defineComponent<ProCurdFormProps>({
           formElementMap={props.formElementMap || formElementMap}
           columns={props.columns || columns.value}
           readonly={curdState.mode === CurdAction.DETAIL}
-          // @ts-ignore ant-design-vue
+          model={props.model || curdState.detailData}
           hideRequiredMark={curdState.mode === CurdAction.DETAIL}
-          // element-plus
-          hideRequiredAsterisk={curdState.mode === CurdAction.DETAIL}
-          operate={{
-            items: defaultOpeItems,
-            onSubmit: handleSubmit,
-            onContinue: handleContinue,
-            ...props.operate,
-          }}
+          operate={
+            props.operate
+              ? {
+                  items: defaultOpeItems,
+                  onSubmit: handleSubmit,
+                  onContinue: handleContinue,
+                  ...props.operate,
+                }
+              : undefined
+          }
           // @ts-ignore
           onFinish={handleFinish}
           v-slots={slots}

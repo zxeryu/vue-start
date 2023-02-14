@@ -1,6 +1,6 @@
 import { defineComponent, ExtractPropTypes, PropType, reactive, ref, toRaw } from "vue";
 import { ElForm, FormInstance, ElFormItem, FormItemProps } from "element-plus";
-import { keys, omit } from "lodash";
+import { isBoolean, keys, omit } from "lodash";
 import { createExpose } from "@vue-start/pro";
 import { useEffect } from "@vue-start/hooks";
 
@@ -35,6 +35,8 @@ export const FormMethods = ["clearValidate", "resetFields", "scrollToField", "va
 export const ProForm = defineComponent({
   props: {
     ...ElForm.props,
+    //兼容ant-v
+    hideRequiredMark: { type: [Boolean, Object] },
   },
   setup: (props, { slots, emit, expose }) => {
     const formState = props.model || reactive({});
@@ -58,7 +60,15 @@ export const ProForm = defineComponent({
     expose(createExpose(FormMethods, formRef));
 
     return () => {
-      return <ElForm ref={formRef} {...omit(props, "model")} model={formState} v-slots={slots} />;
+      return (
+        <ElForm
+          ref={formRef}
+          {...omit(props, "model")}
+          hideRequiredAsterisk={isBoolean(props.hideRequiredMark) ? props.hideRequiredMark : props.hideRequiredAsterisk}
+          model={formState}
+          v-slots={slots}
+        />
+      );
     };
   },
 });

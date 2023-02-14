@@ -1,6 +1,6 @@
 import { defineComponent, ExtractPropTypes, PropType, ref } from "vue";
 import { DialogProps, ElDialog, ElButton, ButtonProps } from "element-plus";
-import { keys, omit } from "lodash";
+import { isBoolean, keys, omit } from "lodash";
 import { useWatch } from "@vue-start/hooks";
 
 const proModalProps = () => ({
@@ -14,7 +14,9 @@ const proModalProps = () => ({
   okText: { type: String, default: "确认" },
   okButtonProps: { type: Object as PropType<ButtonProps & { onClick?: () => void }> },
   confirmLoading: Boolean,
-  footer: Boolean,
+  footer: { type: Boolean, default: true },
+  //兼容ant-v
+  maskClosable: { type: [Boolean, Object] },
 });
 
 export type ProModalProps = Partial<ExtractPropTypes<ReturnType<typeof proModalProps>>> & DialogProps;
@@ -29,7 +31,9 @@ export const ProModal = defineComponent<ProModalProps>({
 
     useWatch(
       () => {
-        visibleRef.value = props.visible;
+        if (visibleRef.value !== props.visible) {
+          visibleRef.value = props.visible;
+        }
       },
       () => props.visible,
     );
@@ -57,6 +61,7 @@ export const ProModal = defineComponent<ProModalProps>({
         <ElDialog
           class={props.clsName}
           {...omit(props, ...invalidKeys, "modelValue")}
+          closeOnClickModal={isBoolean(props.maskClosable) ? props.maskClosable : props.closeOnClickModal}
           v-model:modelValue={visibleRef.value}
           onUpdate:modelValue={(v) => {
             emit("update:visible", v);

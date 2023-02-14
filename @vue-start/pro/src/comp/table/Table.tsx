@@ -5,6 +5,7 @@ import { getItemEl, proBaseProps, ProBaseProps, useProConfig } from "../../core"
 import { Ref } from "@vue/reactivity";
 import { createExpose, mergeStateToList } from "../../util";
 import { IOpeItem, ProOperate, ProOperateProps } from "../Operate";
+import { TableKey } from "../comp";
 
 const ProTableKey = Symbol("pro-table");
 
@@ -111,6 +112,8 @@ export const ProTable = defineComponent<ProTableProps>({
 
     const elementMap = props.elementMap || elementMapP;
 
+    const Table = get(elementMapP, TableKey);
+
     const createNumberColumn = (): TTableColumn => ({
       title: "序号",
       dataIndex: "serialNumber",
@@ -210,8 +213,6 @@ export const ProTable = defineComponent<ProTableProps>({
     expose(createExpose(tableMethods, tableRef));
 
     const invalidKeys = keys(proTableProps());
-
-    const Table = get(elementMapP, ProTableKey);
 
     return () => {
       if (!Table) {

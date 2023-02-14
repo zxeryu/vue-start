@@ -14,6 +14,7 @@ import {
   ProFormItem,
   ProModal,
   ProTable as Table,
+  ProPagination,
 } from "@vue-start/element-pro";
 import { SelectShow, TextNumberShow, TextShow } from "@/component/show";
 import { ElButton, ElRow, ElCol, ElDescriptions, ElDescriptionsItem } from "element-plus";
@@ -32,10 +33,9 @@ import {
   ProSearchFormKey,
   ProTableKey,
   ProForm,
-  ProSearchForm,
-  ProTable,
+  ProSearchForm, PaginationKey,
 } from "@vue-start/pro";
-import { TableOperateItem, TableOperateItemKey } from "@/component/Table";
+import { TableOperateItem, TableOperateItemKey, Table as ProTable } from "@/component/Table";
 
 export const elementMap = {
   [LoadingKey]: ProLoading,
@@ -45,6 +45,7 @@ export const elementMap = {
   [DescriptionsKey]: ElDescriptions,
   [DescriptionsItemKey]: ElDescriptionsItem,
   [ModalKey]: ProModal,
+  [PaginationKey]: ProPagination,
   [FormKey]: Form,
   [FormItemKey]: ProFormItem,
   [TableKey]: Table,

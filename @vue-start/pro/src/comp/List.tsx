@@ -133,7 +133,7 @@ export const ProList = defineComponent<ProListProps>({
                   {...omit(props.paginationProps, "onChange")}
                   page={pageState.page}
                   pageSize={pageState.pageSize}
-                  onChange={handlePageChange}
+                  onComposeChange={handlePageChange}
                   v-slots={paginationSlots}
                 />
               ) : null}

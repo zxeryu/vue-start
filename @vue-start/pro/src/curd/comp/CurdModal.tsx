@@ -51,6 +51,7 @@ export const ProCurdModal = defineComponent<ProCurdModalProps>({
           visible={some(props.validMode, (item) => item === mode)}
           title={props.title || getOperate(curdState.mode!)?.label}
           confirmLoading={curdState.operateLoading}
+          maskClosable={curdState.mode === CurdAction.DETAIL}
           onCancel={handleCancel}
           v-slots={omit(slots, "default")}>
           {curdState.detailLoading && Loading ? (

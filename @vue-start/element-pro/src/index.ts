@@ -1,6 +1,17 @@
-import { ProForm, ProSearchForm, ProFormList, ProTable, ProDesc } from "@vue-start/pro";
+import {
+  ProForm,
+  ProSearchForm,
+  ProFormList,
+  ProTable,
+  ProDesc,
+  ProCurdModal,
+  ProCurdForm,
+  ProCurdDesc,
+} from "@vue-start/pro";
 import { ElForm, ElFormItem, ElDescriptions } from "element-plus";
-import { FormMethods, ProForm as Form } from "./form/Form";
+import { FormMethods } from "./form";
+import { ProTable as Table } from "./table";
+import { ProModal as Modal } from "./comp/Modal";
 
 export * from "./form";
 export * from "./table";
@@ -26,11 +37,26 @@ ProFormList.props = {
 };
 
 ProTable.props = {
-  ...Form.props,
+  ...Table.props,
   ...ProTable.props,
 };
 
 ProDesc.props = {
   ...ElDescriptions.props,
   ...ProDesc.props,
+};
+
+ProCurdDesc.props = {
+  ...ProDesc.props,
+  ...ProCurdDesc.props,
+};
+
+ProCurdForm.props = {
+  ...ProForm.props,
+  ...ProCurdForm.props,
+};
+
+ProCurdModal.props = {
+  ...Modal.props,
+  ...ProCurdModal.props,
 };

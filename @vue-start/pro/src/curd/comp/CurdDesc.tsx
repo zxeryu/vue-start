@@ -19,9 +19,8 @@ export type ProCurdDescProps = Partial<ExtractPropTypes<ReturnType<typeof proCur
 
 export const ProCurdDesc = defineComponent<ProCurdDescProps>({
   props: {
-    ...ProDesc.props,
     ...proCurdDescProps(),
-  },
+  } as any,
   setup: (props, { slots }) => {
     const { curdState, descColumns, getSignColumns } = useProCurd();
 

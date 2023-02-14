@@ -100,6 +100,7 @@ export type ProFormProps = Partial<ExtractPropTypes<ReturnType<typeof proFormPro
   };
 
 export const ProForm = defineComponent<ProFormProps>({
+  inheritAttrs: false,
   props: {
     ...proBaseProps,
     ...proFormProps(),
