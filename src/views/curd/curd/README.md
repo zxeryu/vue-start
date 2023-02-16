@@ -203,18 +203,3 @@ SearchForm Table Pagination 三个组件组合成的复合组件
 | `divide2`    | Table 之后渲染        |
 | `pagination` | 覆盖默认的 Pagination |
 | `end`        | end                   |
-
-### CurdForm
-
-继承 Form 的所有配置。
-
-#### 属性
-
-| 名称        | 说明                              | 类型     | 默认值     |
-| ----------- | --------------------------------- | -------- | ---------- |
-| `signName`  | column 中标记的属性名             | `string` | --         |
-| `modelName` | model 取值， curdState 中的属性名 | `string` | detailData |
-
-### CurdDesc
-
-### CurdModal

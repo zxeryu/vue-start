@@ -1,9 +1,13 @@
 import { defineComponent } from "vue";
 
-export default defineComponent(()=>{
-  return()=>{
-    return(
-      <div>desc</div>
-    )
-  }
-})
+import Basic from "./demo/basic";
+
+export default defineComponent(() => {
+  return () => {
+    return (
+      <>
+        <Basic />
+      </>
+    );
+  };
+});

@@ -1,9 +1,15 @@
 import { defineComponent } from "vue";
 
-export default defineComponent(()=>{
-  return()=>{
-    return(
-      <div>form</div>
-    )
-  }
-})
+import Basic from "./demo/basic";
+import Sign from "./demo/sign";
+
+export default defineComponent(() => {
+  return () => {
+    return (
+      <>
+        <Basic />
+        <Sign />
+      </>
+    );
+  };
+});
