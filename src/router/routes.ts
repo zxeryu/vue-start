@@ -26,9 +26,9 @@ export const routes = [
     path: "config",
     children: [
       {
-        name: "ConfigIndexMd",
-        path: "index-md",
-        component: () => import("@/views/config/index-md"),
+        name: "ConfigIndex",
+        path: "index",
+        component: () => import("@/views/config/index"),
       },
     ],
   },
@@ -180,7 +180,13 @@ export const routes = [
   {
     name: "Hooks",
     path: "hooks",
-    component: () => import("@/views/Hooks.vue"),
+    children: [
+      {
+        name: "HooksIndexMd",
+        path: "index-md",
+        component: () => import("@/views/hooks/index-md"),
+      },
+    ],
   },
   {
     name: "Network",

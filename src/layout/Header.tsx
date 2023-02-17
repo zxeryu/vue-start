@@ -1,5 +1,6 @@
 import { defineComponent, ref } from "vue";
 import DemoData from "@/views/column/index-md";
+import { useConfig } from "@vue-start/config";
 
 const DemoDataModal = defineComponent(() => {
   const visibleRef = ref(false);
@@ -22,10 +23,12 @@ const DemoDataModal = defineComponent(() => {
 });
 
 export const Header = defineComponent(() => {
+  const { VITE_APP_TITLE } = useConfig();
+
   return () => {
     return (
       <header class="shadow flex items-center px-5" style="height:var(--header-hei)">
-        @vue-start &nbsp;
+        {VITE_APP_TITLE} &nbsp;
         <DemoDataModal />
       </header>
     );
