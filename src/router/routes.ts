@@ -182,9 +182,37 @@ export const routes = [
     path: "hooks",
     children: [
       {
-        name: "HooksIndexMd",
-        path: "index-md",
-        component: () => import("@/views/hooks/index-md"),
+        name: "HooksChildren",
+        path: "children",
+        children: [
+          {
+            name: "HooksChildrenIndexMd",
+            path: "index-md",
+            component: () => import("@/views/hooks/children/index-md"),
+          },
+        ],
+      },
+      {
+        name: "HooksEffect",
+        path: "effect",
+        children: [
+          {
+            name: "HooksEffectIndexMd",
+            path: "index-md",
+            component: () => import("@/views/hooks/effect/index-md"),
+          },
+        ],
+      },
+      {
+        name: "HooksUtil",
+        path: "util",
+        children: [
+          {
+            name: "HooksUtilIndexMd",
+            path: "index-md",
+            component: () => import("@/views/hooks/util/index-md"),
+          },
+        ],
       },
     ],
   },

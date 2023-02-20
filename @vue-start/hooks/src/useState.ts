@@ -17,6 +17,11 @@ export const isEmptyState = (state: UnwrapNestedRefs<any>) => {
   return isEmpty(state) || (size(keys(state)) === 1 && has(state, "value") && !state.value);
 };
 
+/**
+ *快速为reactive对象赋值
+ * @param r     reactive对象
+ * @param obj   赋值内容对象
+ */
 export const setReactiveValue = (r: UnwrapNestedRefs<any>, obj: any) => {
   if (!r) {
     return;

@@ -11,7 +11,15 @@ const menus = [
   { title: "@vue-start/request", name: "RequestIndexMd" },
   { title: "@vue-start/store", name: "StoreIndexMd" },
   { title: "@vue-start/config", name: "ConfigIndex" },
-  { title: "@vue-start/hooks", name: "HooksIndexMd" },
+  {
+    title: "@vue-start/hooks",
+    name: "Hooks",
+    children: [
+      { title: "useEffect", name: "HooksEffectIndexMd" },
+      { title: "其他hooks", name: "HooksChildrenIndexMd" },
+      { title: "工具方法", name: "HooksUtilIndexMd" },
+    ],
+  },
   {
     title: "@vue-start/pro",
     children: [
