@@ -21,7 +21,7 @@ ${content}
 
     let codeStrVue = "";
 
-    const vuePath = file.replace("/demo/", "/demo-vue/").replace('.tsx','.vue');
+    const vuePath = file.replace("/demo/", "/demo-vue/").replace(".tsx", ".vue");
     if (existsSync(vuePath)) {
       const str = readFileSync(vuePath, { encoding: "utf-8" });
       codeStrVue = md.render(`\`\`\`xml
@@ -30,11 +30,11 @@ ${str}
     }
 
     //实际代码包裹<demo-box>组件
-    if (src.indexOf("const __default__ =") > -1) {
-      let targetStr = src.replace("const __default__ =", "const Default =");
+    if (src.indexOf("export default") > -1) {
+      let targetStr = src.replace("export default", "const Default =");
 
       const demoBoxStr = `
-        const __default__ = defineComponent(()=>{
+        export default defineComponent(()=>{
         
           const title = "${info.title || ""}";
           const desc = "${info.desc || ""}";
@@ -68,17 +68,16 @@ ${str}
             )
           }
         });
-        export default __default__
       `;
-
-      targetStr = targetStr.replace("export default __default__", demoBoxStr);
 
       targetStr =
         `
-      import { ref as _ref} from "vue";
+      import { ref as _ref, createVNode as _createVNode, resolveComponent as _resolveComponent } from "vue";
       import { useEffect as _useEffect } from "@vue-start/hooks";
       import { decode } from 'js-base64';
-      ` + targetStr;
+      ` +
+        targetStr +
+        demoBoxStr;
 
       return targetStr;
     }
@@ -108,10 +107,10 @@ const createTsxWithMd = (root = process.cwd(), md: any) => {
         // apiHtml = Buffer.from(apiHtml).toString("base64");
       }
 
-      let targetStr = src.replace("const __default__ =", "const Default =");
+      let targetStr = src.replace("export default", "const Default =");
 
       const proPageStr = `
-      const __default__ = defineComponent(()=>{
+      export default defineComponent(()=>{
           
           const descRef = _ref();
           const apiRef = _ref();
@@ -138,16 +137,16 @@ const createTsxWithMd = (root = process.cwd(), md: any) => {
             )
           }
         });
-        export default __default__
       `;
-      targetStr = targetStr.replace("export default __default__", proPageStr);
 
       targetStr =
         `
-      import { resolveComponent as _resolveComponent, ref as _ref} from "vue";
+      import { resolveComponent as _resolveComponent, ref as _ref, createVNode as _createVNode} from "vue";
       import { useEffect as _useEffect} from "@vue-start/hooks";
       import { decode } from 'js-base64';
-      ` + targetStr;
+      ` +
+        targetStr +
+        proPageStr;
 
       return targetStr;
     }
@@ -159,6 +158,7 @@ const createTsxWithMd = (root = process.cwd(), md: any) => {
 const createTsxToMd = (root = process.cwd(), md: any) => {
   return (src: string, file: string) => {
     const mdPath = file.substring(0, file.lastIndexOf("/")) + "/README.md";
+
     if (existsSync(mdPath)) {
       const mdStr = readFileSync(mdPath, { encoding: "utf-8" });
       const mdHtml = md.render(mdStr);
@@ -168,7 +168,7 @@ const createTsxToMd = (root = process.cwd(), md: any) => {
         import { useEffect } from "@vue-start/hooks";
         import { decode } from 'js-base64';
         
-        const __default__ = defineComponent(()=>{
+        export default defineComponent(()=>{
           
           const mdHtml = "${encode(mdHtml)}";
           
@@ -188,9 +188,6 @@ const createTsxToMd = (root = process.cwd(), md: any) => {
             );
           }
         });
-        
-        export default __default__
-        
       `;
     }
     return src;

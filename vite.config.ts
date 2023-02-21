@@ -31,6 +31,7 @@ export default defineConfig(({ mode }) => {
     },
     plugins: [
       vue(),
+      tsxWithCode(),
       vueJsx(),
       devData
         ? htmlPlugin({
@@ -43,7 +44,6 @@ export default defineConfig(({ mode }) => {
             ],
           })
         : undefined,
-      tsxWithCode(),
       createHtml(omit(env, "VITE_DEV")),
     ],
     build: buildData
