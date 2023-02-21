@@ -1,6 +1,6 @@
 import { Ref, UnwrapNestedRefs } from "@vue/reactivity";
 import { computed, defineComponent, ExtractPropTypes, inject, PropType, provide, reactive, ref } from "vue";
-import { BooleanObjType, BooleanRulesObjType, TColumns, TElementMap } from "../../types";
+import { BooleanObjType, BooleanRulesObjType, TColumn, TColumns, TElementMap } from "../../types";
 import { useEffect } from "@vue-start/hooks";
 import { forEach, get, has, keys, map, omit, size } from "lodash";
 import { getColumnFormItemName, getFormItemEl, proBaseProps, ProBaseProps, useProConfig } from "../../core";
@@ -214,6 +214,16 @@ export const ProForm = defineComponent<ProFormProps>({
       });
     });
 
+    //item render
+    const renderItem = (item: TColumn) => {
+      const rowKey = getColumnFormItemName(item);
+      //插槽优先
+      if (rowKey && slots[rowKey]) {
+        return slots[rowKey]!(item, formState);
+      }
+      return getFormItemEl(formElementMap, item, props.needRules)!;
+    };
+
     //为了不warning ...
     provideProFormList({} as any);
 
@@ -233,8 +243,7 @@ export const ProForm = defineComponent<ProFormProps>({
           {...omit(attrs, "onFinish")}
           {...omit(props, ...invalidKeys, ...gridKeys, "onFinish", "operate")}
           model={formState}
-          onFinish={handleFinish}
-          v-slots={omit(slots, "default")}>
+          onFinish={handleFinish}>
           {slots.start?.()}
 
           {formElementMap && size(columns.value) > 0 && (
@@ -245,12 +254,12 @@ export const ProForm = defineComponent<ProFormProps>({
                   col={props.col}
                   items={map(columns.value, (item) => ({
                     rowKey: getColumnFormItemName(item),
-                    vNode: getFormItemEl(formElementMap, item, props.needRules)!,
+                    vNode: renderItem(item) as any,
                     col: get(item, ["extra", "col"]),
                   }))}
                 />
               ) : (
-                map(columns.value, (item) => getFormItemEl(formElementMap, item, props.needRules))
+                map(columns.value, (item) => renderItem(item))
               )}
             </>
           )}

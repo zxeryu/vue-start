@@ -4,6 +4,7 @@ import FieldChange from "./demo/field-change";
 import Readonly from "./demo/readonly";
 import HighState from "./demo/high-state";
 import Layout from "./demo/layout";
+import Slots from "./demo/slots";
 
 
 export default defineComponent(() => {
@@ -15,6 +16,7 @@ export default defineComponent(() => {
         <Readonly />
         <HighState />
         <Layout />
+        <Slots />
       </>
     );
   };
