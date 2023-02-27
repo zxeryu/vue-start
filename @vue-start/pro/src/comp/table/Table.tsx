@@ -1,11 +1,23 @@
-import { computed, defineComponent, ExtractPropTypes, inject, PropType, provide, ref, VNode } from "vue";
+import {
+  computed,
+  defineComponent,
+  ExtractPropTypes,
+  inject,
+  PropType,
+  provide,
+  reactive,
+  ref,
+  toRef,
+  VNode,
+} from "vue";
 import { TColumn } from "../../types";
-import { get, isFunction, keys, map, omit, some, sortBy } from "lodash";
+import { filter, get, isBoolean, isFunction, keys, map, omit, pick, reduce, some, sortBy } from "lodash";
 import { getItemEl, proBaseProps, ProBaseProps, useProConfig } from "../../core";
-import { Ref } from "@vue/reactivity";
-import { createExpose, mergeStateToList } from "../../util";
+import { Ref, UnwrapNestedRefs } from "@vue/reactivity";
+import { createExpose, getSignValue, mergeStateToList } from "../../util";
 import { IOpeItem, ProOperate, ProOperateProps } from "../Operate";
 import { TableKey } from "../comp";
+import { ColumnSetting, ProColumnSettingProps } from "./ColumnSetting";
 
 const ProTableKey = Symbol("pro-table");
 
@@ -13,6 +25,10 @@ export interface IProTableProvideExtra extends Record<string, any> {}
 
 export interface IProTableProvide extends IProTableProvideExtra {
   columns: Ref<TTableColumns>;
+  originColumns: Ref<TTableColumns>;
+  state: UnwrapNestedRefs<{
+    selectIds: (string | number)[];
+  }>;
 }
 
 export const useProTable = () => inject(ProTableKey) as IProTableProvide;
@@ -67,6 +83,10 @@ export interface ITableOperate {
 }
 
 const proTableProps = () => ({
+  /**
+   * class名称
+   */
+  clsName: { type: String, default: "pro-table" },
   //操作栏
   operate: {
     type: Object as PropType<ITableOperate>,
@@ -80,16 +100,23 @@ const proTableProps = () => ({
   /**
    * 序号
    */
-  serialNumber: { type: Boolean },
+  serialNumber: { type: [Boolean, Object] },
   /**
    * 分页
    */
   paginationState: { type: Object as PropType<{ page?: number; pageSize?: number }> },
   /**
+   * 操作栏
+   */
+  toolbar: {
+    type: Object as PropType<{
+      columnSetting?: ProColumnSettingProps;
+    }>,
+  },
+  /**
    * provide传递
    */
   provideExtra: { type: Object as PropType<IProTableProvideExtra> },
-
   /**
    * ref 默认中转方法
    */
@@ -103,11 +130,12 @@ export type ProTableProps = Partial<ExtractPropTypes<ReturnType<typeof proTableP
   };
 
 export const ProTable = defineComponent<ProTableProps>({
+  inheritAttrs: false,
   props: {
     ...proBaseProps,
     ...proTableProps(),
   } as any,
-  setup: (props, { slots, expose }) => {
+  setup: (props, { slots, expose, attrs }) => {
     const { elementMap: elementMapP } = useProConfig();
 
     const elementMap = props.elementMap || elementMapP;
@@ -119,6 +147,7 @@ export const ProTable = defineComponent<ProTableProps>({
       dataIndex: "serialNumber",
       width: 80,
       ...props.column,
+      ...(!isBoolean(props.serialNumber) ? props.serialNumber : undefined),
       customRender: ({ index }) => {
         if (props.paginationState?.page && props.paginationState?.pageSize) {
           return props.paginationState.pageSize * (props.paginationState.page - 1) + index + 1;
@@ -161,7 +190,7 @@ export const ProTable = defineComponent<ProTableProps>({
 
           return (
             <ProOperate
-              clsName={operate.clsName || "pro-table-operate"}
+              clsName={operate.clsName || `${props.clsName}-operate`}
               items={opeItems}
               elementKey={operate.elementKey}
             />
@@ -170,8 +199,35 @@ export const ProTable = defineComponent<ProTableProps>({
       };
     };
 
+    //初始化选中的columns
+    const initSelectIds = (): (string | number)[] => {
+      const signName = props.toolbar?.columnSetting?.signName || "columnSetting";
+      const showColumns = filter(props.columns, (item) => {
+        //标记初始化不展示
+        if (getSignValue(item, signName)?.initShow === false) {
+          return false;
+        }
+        return true;
+      });
+      if (props.serialNumber) {
+        showColumns.unshift(createNumberColumn());
+      }
+      return map(showColumns, (c) => c.dataIndex!);
+    };
+
+    const state = reactive({
+      selectIds: initSelectIds(),
+    });
+
+    const originColumns = toRef(props, "columns");
+
+    const showColumns = computed(() => {
+      const selectIdMap = reduce(state.selectIds, (pair, item) => ({ ...pair, [item]: true }), {});
+      return filter(props.columns, (item) => get(selectIdMap, item.dataIndex!));
+    });
+
     const columns = computed(() => {
-      const mergeColumns = mergeStateToList(props.columns!, props.columnState!, (item) => item.dataIndex);
+      const mergeColumns = mergeStateToList(showColumns.value as any, props.columnState!, (item) => item.dataIndex);
       //根据valueType选择对应的展示组件
       const columns = map(mergeColumns, (item) => {
         //merge公共item
@@ -207,10 +263,16 @@ export const ProTable = defineComponent<ProTableProps>({
 
     const tableRef = ref();
 
-    provideProTable({ columns: columns as any, tableRef, ...props.provideExtra });
+    provideProTable({
+      columns: columns as any,
+      originColumns: originColumns as any,
+      state: state as any,
+      tableRef,
+      toolbar: props.toolbar,
+      ...props.provideExtra,
+    });
 
-    const tableMethods = props.tableMethods || [];
-    expose(createExpose(tableMethods, tableRef));
+    expose(createExpose(props.tableMethods || [], tableRef));
 
     const invalidKeys = keys(proTableProps());
 
@@ -218,7 +280,25 @@ export const ProTable = defineComponent<ProTableProps>({
       if (!Table) {
         return null;
       }
-      return <Table ref={tableRef} {...omit(props, invalidKeys)} columns={columns.value} v-slots={slots} />;
+
+      const toolbarDom = slots.toolbar ? slots.toolbar() : undefined;
+      return (
+        <div class={props.clsName} {...(pick(attrs, "class") as any)}>
+          {(toolbarDom || props.toolbar?.columnSetting) && (
+            <div class={`${props.clsName}-toolbar`}>
+              {toolbarDom}
+              {props.toolbar?.columnSetting && <ColumnSetting {...props.toolbar?.columnSetting} />}
+            </div>
+          )}
+          <Table
+            ref={tableRef}
+            {...omit(attrs, "class")}
+            {...omit(props, invalidKeys)}
+            columns={columns.value}
+            v-slots={slots}
+          />
+        </div>
+      );
     };
   },
 });

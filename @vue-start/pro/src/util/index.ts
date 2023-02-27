@@ -1,5 +1,6 @@
 import { Ref } from "vue";
-import { filter, forEach, keys, pick, reduce, size, startsWith, mapKeys } from "lodash";
+import { filter, forEach, keys, pick, reduce, size, startsWith, mapKeys, get } from "lodash";
+import { TColumn } from "../types";
 
 export * from "./state";
 
@@ -33,6 +34,15 @@ export const createExposeObj = (targetRef: Ref, methods?: string[], opts?: Recor
     });
   }
   return exposeObj;
+};
+
+/**
+ * 从TColumn中查找标记值
+ * @param item
+ * @param signName
+ */
+export const getSignValue = <T = any>(item: TColumn, signName: string): T => {
+  return get(item, ["extra", signName]) || get(item, signName);
 };
 
 /**

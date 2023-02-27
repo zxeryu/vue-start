@@ -15,6 +15,10 @@ export const DescriptionsKey = "ProDescriptions$";
 export const DescriptionsItemKey = "ProDescriptionsItem$";
 //Pagination
 export const PaginationKey = "Pagination$";
+//Popover
+export const PopoverKey = "Popover$";
+//Checkbox
+export const CheckboxKey = "Checkbox$";
 //Modal
 export const ModalKey = "Modal$";
 //Form
