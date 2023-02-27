@@ -3,13 +3,13 @@ import { get } from "lodash";
 
 /******************************** 原始组件key ********************************/
 //Loading
-export const LoadingKey = "ProLoading$";
+export const LoadingKey = "Loading$";
 //Row
-export const RowKey = "ProRow$";
+export const RowKey = "Row$";
 //Col
-export const ColKey = "ProCol$";
-//Operate Item
-export const OperateItemKey = "ProOperateItem$";
+export const ColKey = "Col$";
+//Button
+export const ButtonKey = "Button$";
 //Descriptions
 export const DescriptionsKey = "ProDescriptions$";
 export const DescriptionsItemKey = "ProDescriptionsItem$";

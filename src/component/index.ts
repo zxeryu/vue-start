@@ -27,7 +27,6 @@ import {
   FormKey,
   LoadingKey,
   ModalKey,
-  OperateItemKey,
   RowKey,
   TableKey,
   ProFormKey,
@@ -38,6 +37,7 @@ import {
   PaginationKey,
   PopoverKey,
   CheckboxKey,
+  ButtonKey,
 } from "@vue-start/pro";
 import { TableOperateItem, TableOperateItemKey, Table as ProTable } from "@/component/Table";
 
@@ -45,7 +45,7 @@ export const elementMap = {
   [LoadingKey]: ProLoading,
   [RowKey]: ElRow,
   [ColKey]: ElCol,
-  [OperateItemKey]: ElButton,
+  [ButtonKey]: ElButton,
   [DescriptionsKey]: ElDescriptions,
   [DescriptionsItemKey]: ElDescriptionsItem,
   [ModalKey]: ProModal,

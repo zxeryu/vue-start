@@ -1,6 +1,6 @@
 import { computed, defineComponent, ExtractPropTypes, PropType, VNode } from "vue";
 import { filter, get, has, isBoolean, isFunction, map, omit } from "lodash";
-import { OperateItemKey, useGetCompByKey } from "./comp";
+import { ButtonKey, useGetCompByKey } from "./comp";
 
 export interface IOpeItem {
   value: string | number;
@@ -24,7 +24,7 @@ const proOperateProps = () => ({
   items: { type: Array as PropType<IOpeItem[]> },
   //items 的补充
   itemState: { type: Object as PropType<Record<string, IOpeItem>> },
-  elementKey: { type: String, default: OperateItemKey },
+  elementKey: { type: String, default: ButtonKey },
 });
 
 export type ProOperateProps = Partial<ExtractPropTypes<ReturnType<typeof proOperateProps>>>;
