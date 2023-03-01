@@ -1,6 +1,5 @@
-import { reactive } from "vue";
+import { reactive, UnwrapNestedRefs } from "vue";
 import { forEach, isArray, isObject, keys, union, has, isEmpty, size } from "lodash";
-import { UnwrapNestedRefs } from "@vue/reactivity";
 
 export const isRefRule = (v: any) => {
   if (!isObject(v)) {

@@ -89,7 +89,7 @@ export const useRequest = <TReq, TRes, TErr>(
   return [request, requesting$];
 };
 
-const useObservableRef = <T>(ob$: Observable<T>, defaultValue?: T): Ref<T | undefined> => {
+export const useObservableRef = <T>(ob$: Observable<T>, defaultValue?: T): Ref<T | undefined> => {
   const valueRef = ref(defaultValue || (ob$ as any).value);
 
   useEffect(() => {
