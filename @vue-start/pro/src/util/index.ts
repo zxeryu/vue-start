@@ -59,7 +59,7 @@ export const filterSlotsByPrefix = (slots: Record<string, any>, prefix: string) 
   const prefixStr = `${prefix}-`;
   const targetKeys = filter(slotKeys, (key) => startsWith(key, prefixStr));
   const targetSlots = pick(slots, targetKeys);
-  return mapKeys(targetSlots, (key) => {
+  return mapKeys(targetSlots, (_, key) => {
     return key.replace(prefixStr, "");
   });
 };

@@ -14,7 +14,7 @@ import { TColumn } from "../../types";
 import { filter, get, isBoolean, isFunction, keys, map, omit, pick, reduce, some, sortBy } from "lodash";
 import { getItemEl, proBaseProps, ProBaseProps, useProConfig } from "../../core";
 import { Ref, UnwrapNestedRefs } from "@vue/reactivity";
-import { createExpose, getSignValue, mergeStateToList } from "../../util";
+import { createExpose, filterSlotsByPrefix, getSignValue, mergeStateToList } from "../../util";
 import { IOpeItem, ProOperate, ProOperateProps } from "../Operate";
 import { TableKey } from "../comp";
 import { ColumnSetting, ProColumnSettingProps } from "./ColumnSetting";
@@ -276,6 +276,7 @@ export const ProTable = defineComponent<ProTableProps>({
 
     const invalidKeys = keys(proTableProps());
 
+    const columnSettingSlots = filterSlotsByPrefix(slots, "columnSetting");
     return () => {
       if (!Table) {
         return null;
@@ -287,7 +288,9 @@ export const ProTable = defineComponent<ProTableProps>({
           {(toolbarDom || props.toolbar?.columnSetting) && (
             <div class={`${props.clsName}-toolbar`}>
               {toolbarDom}
-              {props.toolbar?.columnSetting && <ColumnSetting {...props.toolbar?.columnSetting} />}
+              {props.toolbar?.columnSetting && (
+                <ColumnSetting {...props.toolbar?.columnSetting} v-slots={columnSettingSlots} />
+              )}
             </div>
           )}
           <Table

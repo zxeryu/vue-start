@@ -14,6 +14,9 @@ export default defineComponent(() => {
         columns={columns}
         dataSource={dataSource}
         toolbar={{ columnSetting: {} }}
+        v-slots={{
+          "columnSetting-default": () => <span style={"color:red"}>自定义图标</span>,
+        }}
       />
     );
   };
