@@ -36,6 +36,26 @@ export const ProSearchFormKey = "ProSearchForm$";
 //ProTable
 export const ProTableKey = "ProTable$";
 
+export const ElementKeys = {
+  LoadingKey: "Loading$",
+  RowKey: "Row$",
+  ColKey: "Col$",
+  ButtonKey: "Button$",
+  DescriptionsKey: "ProDescriptions$",
+  DescriptionsItemKey: "ProDescriptionsItem$",
+  PaginationKey: "Pagination$",
+  PopoverKey: "Popover$",
+  CheckboxKey: "Checkbox$",
+  ModalKey: "Modal$",
+  FormKey: "Form$",
+  FormItemKey: "FormItem$",
+  TableKey: "Table$",
+  //pro
+  ProFormKey: "ProForm$",
+  ProSearchFormKey: "ProSearchForm$",
+  ProTableKey: "ProTable$",
+};
+
 /**
  * 根据elementKey获取组件
  */

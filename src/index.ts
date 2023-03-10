@@ -32,30 +32,27 @@ const urlInterceptor = (request: AxiosInterceptorManager<AxiosRequestConfig>) =>
   });
 };
 
-const init = (store$: any) => {
-  const router = createRouter();
-  const config = createConfig();
-  const request = createRequest({}, [ContentTypeInterceptor, urlInterceptor]);
+const router = createRouter();
+const config = createConfig();
+const request = createRequest({}, [ContentTypeInterceptor, urlInterceptor]);
+const store$ = await createStore();
 
-  const app = createApp(App).use(store$).use(router).use(config).use(request).use(ElementPlus, { locale });
+const app = createApp(App).use(store$).use(router).use(config).use(request).use(ElementPlus, { locale });
 
-  for (const [key, component] of Object.entries(ElementPlusIconsVue)) {
-    app.component(key, component);
-  }
+for (const [key, component] of Object.entries(ElementPlusIconsVue)) {
+  app.component(key, component);
+}
 
-  //注册组件
-  app.component("pro-page", Page);
-  app.component("pro-form", ProForm);
-  app.component("pro-search-form", ProSearchForm);
-  app.component("pro-table", Table);
-  app.component("pro-curd", ProCurd);
-  app.component("pro-modal-curd", ProModalCurd);
-  app.component("pro-curd-list", ProCurdList);
-  app.component("pro-modal", ProModal);
-  //
-  app.component("demo-box", DemoBox);
+//注册组件
+app.component("pro-page", Page);
+app.component("pro-form", ProForm);
+app.component("pro-search-form", ProSearchForm);
+app.component("pro-table", Table);
+app.component("pro-curd", ProCurd);
+app.component("pro-modal-curd", ProModalCurd);
+app.component("pro-curd-list", ProCurdList);
+app.component("pro-modal", ProModal);
+//
+app.component("demo-box", DemoBox);
 
-  app.mount("#root");
-};
-
-createStore(init);
+app.mount("#root");
