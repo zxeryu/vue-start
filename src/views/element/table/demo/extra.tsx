@@ -1,6 +1,6 @@
 /*---
 title: 其他
-desc: 序号(serialNumber)、 空字符占位(columnEmptyText)、列设置
+desc: 序号(serialNumber)、 空字符占位(columnEmptyText)、列设置、居中
 ---*/
 import { defineComponent } from "vue";
 import { columns, dataSource } from "@/common/columns";
@@ -11,6 +11,7 @@ export default defineComponent(() => {
       <pro-table
         serialNumber
         columnEmptyText={"--"}
+        column={{ align: "center" }}
         columns={columns}
         dataSource={dataSource}
         toolbar={{ columnSetting: {} }}
