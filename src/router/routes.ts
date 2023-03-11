@@ -116,6 +116,89 @@ export const routes = [
     ],
   },
   {
+    name: "El",
+    path: "el",
+    children: [
+      {
+        name: "ElCheckbox",
+        path: "checkbox",
+        children: [
+          {
+            name: "ElCheckboxIndex",
+            path: "index",
+            component: () => import("@/views/el/checkbox/index"),
+          },
+        ],
+      },
+      {
+        name: "ElLoading",
+        path: "loading",
+        children: [
+          {
+            name: "ElLoadingIndex",
+            path: "index",
+            component: () => import("@/views/el/loading/index"),
+          },
+        ],
+      },
+      {
+        name: "ElModal",
+        path: "modal",
+        children: [
+          {
+            name: "ElModalIndex",
+            path: "index",
+            component: () => import("@/views/el/modal/index"),
+          },
+        ],
+      },
+      {
+        name: "ElPagination",
+        path: "pagination",
+        children: [
+          {
+            name: "ElPaginationIndex",
+            path: "index",
+            component: () => import("@/views/el/pagination/index"),
+          },
+        ],
+      },
+      {
+        name: "ElRadio",
+        path: "radio",
+        children: [
+          {
+            name: "ElRadioIndex",
+            path: "index",
+            component: () => import("@/views/el/radio/index"),
+          },
+        ],
+      },
+      {
+        name: "ElSelect",
+        path: "select",
+        children: [
+          {
+            name: "ElSelectIndex",
+            path: "index",
+            component: () => import("@/views/el/select/index"),
+          },
+        ],
+      },
+      {
+        name: "ElTabs",
+        path: "tabs",
+        children: [
+          {
+            name: "ElTabsIndex",
+            path: "index",
+            component: () => import("@/views/el/tabs/index"),
+          },
+        ],
+      },
+    ],
+  },
+  {
     name: "Element",
     path: "element",
     children: [

@@ -7,12 +7,6 @@ import { createStore } from "./store";
 import { createConfig } from "@vue-start/config";
 import { createRequest, ContentTypeInterceptor } from "@vue-start/request";
 
-import { ProCurd, ProSearchForm, ProForm, ProCurdList, ProModalCurd } from "@vue-start/pro";
-import { Page } from "@/component/Page";
-import { Table } from "@/component/Table";
-import { DemoBox } from "@/layout/DemoBox";
-import { ProModal } from "@vue-start/element-pro";
-
 import "tailwindcss/tailwind.css";
 import "./style/index.css";
 import "./style/pro.css";
@@ -23,6 +17,9 @@ import ElementPlus from "element-plus";
 import "element-plus/dist/index.css";
 import locale from "element-plus/lib/locale/lang/zh-cn";
 import * as ElementPlusIconsVue from "@element-plus/icons-vue";
+
+import { DemoBox } from "@/layout/DemoBox";
+import { initComp } from "@/component";
 
 //request
 const urlInterceptor = (request: AxiosInterceptorManager<AxiosRequestConfig>) => {
@@ -44,15 +41,8 @@ for (const [key, component] of Object.entries(ElementPlusIconsVue)) {
 }
 
 //注册组件
-app.component("pro-page", Page);
-app.component("pro-form", ProForm);
-app.component("pro-search-form", ProSearchForm);
-app.component("pro-table", Table);
-app.component("pro-curd", ProCurd);
-app.component("pro-modal-curd", ProModalCurd);
-app.component("pro-curd-list", ProCurdList);
-app.component("pro-modal", ProModal);
-//
 app.component("demo-box", DemoBox);
+
+initComp(app);
 
 app.mount("#root");

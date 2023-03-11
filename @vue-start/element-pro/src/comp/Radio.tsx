@@ -1,15 +1,14 @@
 import { defineComponent, ExtractPropTypes, PropType, ref } from "vue";
-import { ElRadioGroup, ElRadio, ElRadioButton } from "element-plus";
-import { createExposeObj, TOptions } from "@vue-start/pro";
-import { RadioGroupProps } from "element-plus/es/components/radio/src/radio-group";
+import { ElRadioGroup, RadioGroupProps, ElRadio, RadioProps, ElRadioButton, RadioButtonProps } from "element-plus";
+import { createExposeObj, TOption } from "@vue-start/pro";
 import { keys, map, omit } from "lodash";
 
 const proRadioProps = () => ({
-  options: { type: Array as PropType<TOptions> },
+  options: { type: Array as PropType<Array<TOption & RadioProps & RadioButtonProps>> },
   buttonStyle: { type: String as PropType<"default" | "button">, default: "default" },
 });
 
-export type ProRadioProps = Partial<ExtractPropTypes<ReturnType<typeof proRadioProps>>> & Partial<RadioGroupProps>;
+export type ProRadioProps = Partial<ExtractPropTypes<ReturnType<typeof proRadioProps>>> & RadioGroupProps;
 
 export const ProRadio = defineComponent<ProRadioProps>({
   props: {
@@ -29,22 +28,28 @@ export const ProRadio = defineComponent<ProRadioProps>({
           {...omit(props, invalidKeys)}
           onUpdate:modelValue={(v) => {
             emit("update:modelValue", v);
-          }}
-          v-slots={slots}>
+          }}>
+          {slots.start?.()}
+
           {map(props.options, (item) => {
+            //插槽重写label
+            const labelEl = slots.label?.(item);
+
             if (props.buttonStyle === "button") {
               return (
-                <ElRadioButton key={item.value} {...item} label={item.value}>
-                  {item.label}
+                <ElRadioButton key={item.value} {...omit(item, "value")} label={item.value}>
+                  {labelEl || item.label}
                 </ElRadioButton>
               );
             }
             return (
-              <ElRadio key={item.value} {...item} label={item.value}>
-                {item.label}
+              <ElRadio key={item.value} {...omit(item, "value")} label={item.value}>
+                {labelEl || item.label}
               </ElRadio>
             );
           })}
+
+          {slots.default?.()}
         </ElRadioGroup>
       );
     };

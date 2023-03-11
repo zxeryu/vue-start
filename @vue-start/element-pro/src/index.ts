@@ -16,7 +16,6 @@ import { ProModal as Modal } from "./comp/Modal";
 export * from "./form";
 export * from "./table";
 export * from "./comp";
-export * from "./field";
 
 //注入element-plus组件props
 ProForm.props = {

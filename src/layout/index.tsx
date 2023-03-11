@@ -21,6 +21,18 @@ const menus = [
     ],
   },
   {
+    title: "@vue-start/element-pro",
+    children: [
+      { title: "Checkbox", name: "ElCheckboxIndex" },
+      { title: "Loading", name: "ElLoadingIndex" },
+      { title: "Modal", name: "ElModalIndex" },
+      { title: "Pagination", name: "ElPaginationIndex" },
+      { title: "Radio", name: "ElRadioIndex" },
+      { title: "Select", name: "ElSelectIndex" },
+      { title: "Tabs", name: "ElTabsIndex" },
+    ],
+  },
+  {
     title: "@vue-start/pro",
     children: [
       // { title: "Operate", name: "ElementOperateIndex" },

@@ -1,17 +1,16 @@
 import { defineComponent, ExtractPropTypes, PropType, ref } from "vue";
-import { ElSelect, ElOption } from "element-plus";
-import { TOptions } from "../../types";
+import { ElSelect, ISelectProps, ElOption, IOptionProps } from "element-plus";
+import { TOption } from "@vue-start/pro";
 import { keys, map, omit } from "lodash";
 import { createExposeObj } from "@vue-start/pro";
 
 const proSelectProps = () => ({
-  options: Array as PropType<TOptions>,
+  options: Array as PropType<Array<TOption & IOptionProps>>,
 });
 
-export type ProSelectProps = Partial<ExtractPropTypes<ReturnType<typeof proSelectProps>>> & typeof ElSelect.props;
+export type ProSelectProps = Partial<ExtractPropTypes<ReturnType<typeof proSelectProps>>> & ISelectProps;
 
 export const ProSelect = defineComponent<ProSelectProps>({
-  name: "PSelect",
   props: {
     ...ElSelect.props,
     ...proSelectProps(),
@@ -33,9 +32,16 @@ export const ProSelect = defineComponent<ProSelectProps>({
           v-slots={omit(slots, "default")}>
           {slots.start?.()}
 
-          {map(props.options, (item) => (
-            <ElOption key={item.value} {...item} />
-          ))}
+          {map(props.options, (item: TOption & IOptionProps) => {
+            //插槽重写label
+            const labelEl = slots.label?.(item);
+
+            return (
+              <ElOption key={item.value} {...omit(item, "label")}>
+                {labelEl || item.label}
+              </ElOption>
+            );
+          })}
 
           {slots.default?.()}
         </ElSelect>

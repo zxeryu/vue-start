@@ -16,11 +16,18 @@ import {
   ProTable as Table,
   ProPagination,
   ProPopover,
+  ProCheckbox,
+  ProRadio,
+  ProSelect,
+  ProTabs,
 } from "@vue-start/element-pro";
 import { SelectShow, TextNumberShow, TextShow } from "@/component/show";
 import { ElButton, ElRow, ElCol, ElDescriptions, ElDescriptionsItem, ElCheckbox } from "element-plus";
-import { ElementKeys, ProForm, ProSearchForm } from "@vue-start/pro";
-import { TableOperateItem, TableOperateItemKey, Table as ProTable } from "@/component/Table";
+import { ElementKeys, ProCurd, ProCurdList, ProForm, ProModalCurd, ProSearchForm } from "@vue-start/pro";
+import { TableOperateItem, TableOperateItemKey, ProTable } from "@/component/Table";
+import { App } from "@vue/runtime-core";
+
+import { ProPage } from "@/component/Page";
 
 export const elementMap = {
   [ElementKeys.LoadingKey]: ProLoading,
@@ -63,4 +70,23 @@ export const formElementMap = {
   radio: ProFormRadio,
   switch: ProFormSwitch,
   cascader: ProFormCascader,
+};
+
+export const initComp = (app: App) => {
+  app.component("pro-page", ProPage);
+  app.component("pro-table", ProTable);
+  app.component("pro-form", ProForm);
+  app.component("pro-search-form", ProSearchForm);
+  app.component("pro-curd", ProCurd);
+  app.component("pro-modal-curd", ProModalCurd);
+  app.component("pro-curd-list", ProCurdList);
+  //
+  app.component("pro-loading", ProLoading);
+  app.component("pro-modal", ProModal);
+  app.component("pro-pagination", ProPagination);
+  app.component("pro-popover", ProPopover);
+  app.component("pro-checkbox", ProCheckbox);
+  app.component("pro-radio", ProRadio);
+  app.component("pro-select", ProSelect);
+  app.component("pro-tabs", ProTabs);
 };

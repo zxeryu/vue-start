@@ -1,6 +1,6 @@
 import { computed, defineComponent } from "vue";
 import { ElButton } from "element-plus";
-import { ProTable } from "@vue-start/pro";
+import { ProTable as ProTableOrigin } from "@vue-start/pro";
 import { omit } from "lodash";
 
 export const TableOperateItemKey = "TableOperateItem$";
@@ -18,9 +18,9 @@ export const TableOperateItem = defineComponent({
   },
 });
 
-export const Table = defineComponent({
+export const ProTable = defineComponent({
   props: {
-    ...ProTable.props,
+    ...ProTableOrigin.props,
   },
   setup: (props, { slots }) => {
     const operate = computed(() => {
@@ -34,7 +34,7 @@ export const Table = defineComponent({
     });
 
     return () => {
-      return <ProTable {...omit(props, "operate")} operate={operate.value} v-slots={slots} />;
+      return <ProTableOrigin {...omit(props, "operate")} operate={operate.value} v-slots={slots} />;
     };
   },
 });
