@@ -156,6 +156,7 @@ export const ProTable = defineComponent<ProTableProps>({
       },
     });
 
+    const operateSlots = filterSlotsByPrefix(slots, "operate");
     const createOperateColumn = (): TTableColumn => {
       const operate = props.operate!;
       //将itemState补充的信息拼到item中
@@ -193,6 +194,18 @@ export const ProTable = defineComponent<ProTableProps>({
               clsName={operate.clsName || `${props.clsName}-operate`}
               items={opeItems}
               elementKey={operate.elementKey}
+              v-slots={reduce(
+                keys(operateSlots),
+                (pair, key) => {
+                  return {
+                    ...pair,
+                    [key]: (item: string) => {
+                      return operateSlots[key]?.(record, item);
+                    },
+                  };
+                },
+                {},
+              )}
             />
           );
         },

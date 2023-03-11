@@ -41,7 +41,7 @@ export const ProTableColumn = defineComponent<ProTableColumnProps>({
               return value;
             }) as any
           }
-          v-slots={{ default: slots[props.dataIndex!], header: slots[`${props.dataIndex!}_header`] }}>
+          v-slots={{ default: slots[props.dataIndex!], header: slots[`${props.dataIndex!}-header`] }}>
           {size(props.children) > 0 &&
             map(props.children, (item) => <ProTableColumn key={item.dataIndex} {...item} v-slots={slots} />)}
         </ElTableColumn>
