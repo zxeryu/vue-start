@@ -4,7 +4,7 @@ import { useEffect, useWatch } from "@vue-start/hooks";
 import { getColumnFormItemName, getColumnValueType } from "../../core";
 import { createExpose } from "../../util";
 import { ProFormProps } from "./Form";
-import { ProFormKey, useGetCompByKey } from "../comp";
+import { ElementKeys, useGetCompByKey } from "../comp";
 
 export enum SearchMode {
   //自动触发搜索
@@ -42,7 +42,7 @@ export const ProSearchForm = defineComponent<ProSearchFormProps>({
   } as any,
   setup: (props, { slots, expose }) => {
     const getComp = useGetCompByKey();
-    const Form = getComp(ProFormKey);
+    const Form = getComp(ElementKeys.ProFormKey);
 
     const formState = props.model || reactive({});
 

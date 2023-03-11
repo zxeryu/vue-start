@@ -1,5 +1,5 @@
 import { defineComponent, ExtractPropTypes, ref } from "vue";
-import { LoadingKey, ModalKey, useGetCompByKey } from "../../comp";
+import { ElementKeys, useGetCompByKey } from "../../comp";
 import { CurdAction, useProCurd } from "../ctx";
 import { get, keys, omit, some } from "lodash";
 import { setReactiveValue } from "@vue-start/hooks";
@@ -23,8 +23,8 @@ export const ProCurdModal = defineComponent<ProCurdModalProps>({
   } as any,
   setup: (props, { slots }) => {
     const getComp = useGetCompByKey();
-    const Modal = getComp(ModalKey);
-    const Loading = getComp(LoadingKey);
+    const Modal = getComp(ElementKeys.ModalKey);
+    const Loading = getComp(ElementKeys.LoadingKey);
 
     const { curdState, getOperate } = useProCurd();
 

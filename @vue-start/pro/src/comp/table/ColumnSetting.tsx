@@ -1,5 +1,5 @@
 import { computed, defineComponent, ExtractPropTypes } from "vue";
-import { CheckboxKey, PopoverKey, useGetCompByKey } from "../comp";
+import { ElementKeys, useGetCompByKey } from "../comp";
 import { filter, get, isObject, map, omit, reduce, some, every } from "lodash";
 import { TTableColumn, useProTable } from "./Table";
 import { useUpdateKey, useWatch } from "@vue-start/hooks";
@@ -22,8 +22,8 @@ export const ColumnSetting = defineComponent<ProColumnSettingProps>({
   } as any,
   setup: (props, { slots }) => {
     const getComp = useGetCompByKey();
-    const Popover = getComp(PopoverKey);
-    const Checkbox = getComp(CheckboxKey);
+    const Popover = getComp(ElementKeys.PopoverKey);
+    const Checkbox = getComp(ElementKeys.CheckboxKey);
 
     const { originColumns, state: tableState } = useProTable();
 

@@ -5,7 +5,7 @@ import { useEffect } from "@vue-start/hooks";
 import { forEach, get, has, keys, map, omit, size } from "lodash";
 import { getColumnFormItemName, getFormItemEl, proBaseProps, ProBaseProps, useProConfig } from "../../core";
 import { createExpose, getValidValues, mergeStateToList } from "../../util";
-import { ProGridProps, ProOperate, ProGrid, ProOperateProps, IOpeItem, FormKey } from "../index";
+import { ProGridProps, ProOperate, ProGrid, ProOperateProps, IOpeItem, ElementKeys } from "../index";
 import { provideProFormList } from "./FormList";
 
 const ProFormKey = Symbol("pro-form");
@@ -230,7 +230,7 @@ export const ProForm = defineComponent<ProFormProps>({
     const invalidKeys = keys(proFormProps());
     const gridKeys = keys(omit(ProGrid.props, "items"));
 
-    const Form = get(elementMapP, FormKey);
+    const Form = get(elementMapP, ElementKeys.FormKey);
 
     return () => {
       if (!Form) {

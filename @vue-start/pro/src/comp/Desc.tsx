@@ -1,5 +1,5 @@
 import { computed, defineComponent, ExtractPropTypes, PropType } from "vue";
-import { DescriptionsItemKey, DescriptionsKey, useGetCompByKey } from "./comp";
+import { ElementKeys, useGetCompByKey } from "./comp";
 import { get, keys, map, omit } from "lodash";
 import { getItemEl, ProBaseProps, proBaseProps, useProConfig } from "../core";
 import { UnwrapNestedRefs } from "@vue/reactivity";
@@ -26,8 +26,8 @@ export const ProDesc = defineComponent<ProDescProps>({
     const elementMap = props.elementMap || elementMapP;
 
     const getComp = useGetCompByKey();
-    const Descriptions = getComp(DescriptionsKey);
-    const DescriptionsItem = getComp(DescriptionsItemKey);
+    const Descriptions = getComp(ElementKeys.DescriptionsKey);
+    const DescriptionsItem = getComp(ElementKeys.DescriptionsItemKey);
 
     const columns = computed(() => {
       return mergeStateToList(props.columns!, props.columnState!, "dataIndex");

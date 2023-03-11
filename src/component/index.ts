@@ -19,48 +19,29 @@ import {
 } from "@vue-start/element-pro";
 import { SelectShow, TextNumberShow, TextShow } from "@/component/show";
 import { ElButton, ElRow, ElCol, ElDescriptions, ElDescriptionsItem, ElCheckbox } from "element-plus";
-import {
-  ColKey,
-  DescriptionsItemKey,
-  DescriptionsKey,
-  FormItemKey,
-  FormKey,
-  LoadingKey,
-  ModalKey,
-  RowKey,
-  TableKey,
-  ProFormKey,
-  ProSearchFormKey,
-  ProTableKey,
-  ProForm,
-  ProSearchForm,
-  PaginationKey,
-  PopoverKey,
-  CheckboxKey,
-  ButtonKey,
-} from "@vue-start/pro";
+import { ElementKeys, ProForm, ProSearchForm } from "@vue-start/pro";
 import { TableOperateItem, TableOperateItemKey, Table as ProTable } from "@/component/Table";
 
 export const elementMap = {
-  [LoadingKey]: ProLoading,
-  [RowKey]: ElRow,
-  [ColKey]: ElCol,
-  [ButtonKey]: ElButton,
-  [DescriptionsKey]: ElDescriptions,
-  [DescriptionsItemKey]: ElDescriptionsItem,
-  [ModalKey]: ProModal,
-  [PaginationKey]: ProPagination,
-  [PopoverKey]: ProPopover,
-  [CheckboxKey]: ElCheckbox,
-  [FormKey]: Form,
-  [FormItemKey]: ProFormItem,
-  [TableKey]: Table,
+  [ElementKeys.LoadingKey]: ProLoading,
+  [ElementKeys.RowKey]: ElRow,
+  [ElementKeys.ColKey]: ElCol,
+  [ElementKeys.ButtonKey]: ElButton,
+  [ElementKeys.DescriptionsKey]: ElDescriptions,
+  [ElementKeys.DescriptionsItemKey]: ElDescriptionsItem,
+  [ElementKeys.ModalKey]: ProModal,
+  [ElementKeys.PaginationKey]: ProPagination,
+  [ElementKeys.PopoverKey]: ProPopover,
+  [ElementKeys.CheckboxKey]: ElCheckbox,
+  [ElementKeys.FormKey]: Form,
+  [ElementKeys.FormItemKey]: ProFormItem,
+  [ElementKeys.TableKey]: Table,
 
   [TableOperateItemKey]: TableOperateItem,
 
-  [ProFormKey]: ProForm,
-  [ProSearchFormKey]: ProSearchForm,
-  [ProTableKey]: ProTable,
+  [ElementKeys.ProFormKey]: ProForm,
+  [ElementKeys.ProSearchFormKey]: ProSearchForm,
+  [ElementKeys.ProTableKey]: ProTable,
 
   text: TextShow,
   digit: TextNumberShow,

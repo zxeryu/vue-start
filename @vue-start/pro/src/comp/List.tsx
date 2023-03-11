@@ -1,5 +1,5 @@
 import { defineComponent, ExtractPropTypes, PropType, reactive } from "vue";
-import { PaginationKey, ProSearchFormKey, ProTableKey, useGetCompByKey } from "./comp";
+import { ElementKeys, useGetCompByKey } from "./comp";
 import { omit } from "lodash";
 import { filterSlotsByPrefix } from "../util";
 
@@ -50,9 +50,9 @@ export const ProList = defineComponent<ProListProps>({
   } as any,
   setup: (props, { slots, emit }) => {
     const getComp = useGetCompByKey();
-    const SearchForm = getComp(ProSearchFormKey);
-    const Table = getComp(ProTableKey);
-    const Pagination = getComp(PaginationKey);
+    const SearchForm = getComp(ElementKeys.ProSearchFormKey);
+    const Table = getComp(ElementKeys.ProTableKey);
+    const Pagination = getComp(ElementKeys.PaginationKey);
 
     const pageState = props.pageState || reactive({ ...defaultPage });
 

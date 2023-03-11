@@ -2,7 +2,7 @@ import { defineComponent, ExtractPropTypes, inject, PropType, provide } from "vu
 import { get, isArray, map, omit, set, size } from "lodash";
 import { useProForm } from "./Form";
 import { convertPathToList } from "../../util";
-import { FormItemKey, useGetCompByKey } from "../comp";
+import { ElementKeys, useGetCompByKey } from "../comp";
 
 /**
  * ProFormList ctx
@@ -47,7 +47,7 @@ export const ProFormList = defineComponent<ProFormListProps>({
   } as any,
   setup: (props, { slots }) => {
     const getComp = useGetCompByKey();
-    const FormItem = getComp(FormItemKey);
+    const FormItem = getComp(ElementKeys.FormItemKey);
 
     const { formState, readonly } = useProForm();
 

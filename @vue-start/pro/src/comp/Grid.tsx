@@ -1,6 +1,6 @@
 import { defineComponent, ExtractPropTypes, PropType, VNode } from "vue";
 import { map } from "lodash";
-import { ColKey, RowKey, useGetCompByKey } from "./comp";
+import { ElementKeys, useGetCompByKey } from "./comp";
 
 const proGridProps = () => ({
   row: { type: Object as PropType<Record<string, any>>, default: undefined },
@@ -27,8 +27,8 @@ export const ProGrid = defineComponent<ProGridProps>({
   setup: (props) => {
     const getComp = useGetCompByKey();
 
-    const Row = getComp(RowKey);
-    const Col = getComp(ColKey);
+    const Row = getComp(ElementKeys.RowKey);
+    const Col = getComp(ElementKeys.ColKey);
 
     return () => {
       if (!Row || !Col) {

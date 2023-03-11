@@ -1,7 +1,7 @@
 import { defineComponent, ExtractPropTypes, ref } from "vue";
 import { keys, pick } from "lodash";
 import { useResizeObserver } from "@vue-start/hooks";
-import { LoadingKey, useGetCompByKey } from "./comp";
+import { ElementKeys, useGetCompByKey } from "./comp";
 
 const proPageHeaderProps = () => ({
   title: { type: String },
@@ -57,7 +57,7 @@ export const ProPage = defineComponent<ProPageProps>({
   },
   setup: (props, { slots, emit }) => {
     const getComp = useGetCompByKey();
-    const Loading = getComp(LoadingKey);
+    const Loading = getComp(ElementKeys.LoadingKey);
 
     const domRef = ref();
     const domHeiRef = ref(0);

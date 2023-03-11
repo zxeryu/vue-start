@@ -16,7 +16,7 @@ import { getItemEl, proBaseProps, ProBaseProps, useProConfig } from "../../core"
 import { Ref, UnwrapNestedRefs } from "@vue/reactivity";
 import { createExpose, filterSlotsByPrefix, getSignValue, mergeStateToList } from "../../util";
 import { IOpeItem, ProOperate, ProOperateProps } from "../Operate";
-import { TableKey } from "../comp";
+import { ElementKeys } from "../comp";
 import { ColumnSetting, ProColumnSettingProps } from "./ColumnSetting";
 
 const ProTableKey = Symbol("pro-table");
@@ -140,7 +140,7 @@ export const ProTable = defineComponent<ProTableProps>({
 
     const elementMap = props.elementMap || elementMapP;
 
-    const Table = get(elementMapP, TableKey);
+    const Table = get(elementMapP, ElementKeys.TableKey);
 
     const createNumberColumn = (): TTableColumn => ({
       title: "序号",
