@@ -1,6 +1,6 @@
 import { defineComponent, ExtractPropTypes, PropType, reactive } from "vue";
 import { ElementKeys, useGetCompByKey } from "./comp";
-import { omit } from "lodash";
+import { isBoolean, omit } from "lodash";
 import { filterSlotsByPrefix } from "../util";
 
 export type TPageState = {
@@ -22,8 +22,8 @@ const proListProps = () => ({
   searchProps: { type: Object as PropType<Record<string, any>> },
   //table
   tableProps: { type: Object as PropType<Record<string, any>> },
-  //pagination是否展示
-  paginationProps: { type: Object as PropType<Record<string, any>> },
+  //为false 不展示
+  paginationProps: { type: [Object as PropType<Record<string, any>>, Boolean as PropType<boolean>] },
   //pageState
   pageState: { type: Object as PropType<TPageState> },
 });
@@ -105,19 +105,17 @@ export const ProList = defineComponent<ProListProps>({
           {slots.divide?.()}
 
           {slots.table ? (
-            slots.table()
+            slots.table({ pageState })
           ) : (
             <>
-              <>
-                {Table ? (
-                  <Table
-                    clsName={`${props.clsName}-table`}
-                    paginationState={{ page: pageState.page, pageSize: pageState.pageSize }}
-                    {...props.tableProps}
-                    v-slots={tableSlots}
-                  />
-                ) : null}
-              </>
+              {Table ? (
+                <Table
+                  clsName={`${props.clsName}-table`}
+                  paginationState={{ page: pageState.page, pageSize: pageState.pageSize }}
+                  {...props.tableProps}
+                  v-slots={tableSlots}
+                />
+              ) : null}
             </>
           )}
 
@@ -127,10 +125,10 @@ export const ProList = defineComponent<ProListProps>({
             slots.pagination({ executePageChange: handlePageChange, pageState })
           ) : (
             <>
-              {Pagination ? (
+              {props.paginationProps !== false && Pagination ? (
                 <Pagination
                   clsName={`${props.clsName}-pagination`}
-                  {...omit(props.paginationProps, "onChange")}
+                  {...omit(!isBoolean(props.paginationProps) ? props.paginationProps : {}, "onChange")}
                   page={pageState.page}
                   pageSize={pageState.pageSize}
                   onComposeChange={handlePageChange}

@@ -255,7 +255,7 @@ export const ProTable = defineComponent<ProTableProps>({
           nextItem.customRender = ({ text }) => {
             const vn = getItemEl(
               elementMap,
-              { ...item, showProps: { ...item.showProps, content: props.columnEmptyText } },
+              { ...item, showProps: { ...item.showProps, content: item.showProps?.content || props.columnEmptyText } },
               text,
             );
             //如果找不到注册的组件，使用当前值 及 columnEmptyText

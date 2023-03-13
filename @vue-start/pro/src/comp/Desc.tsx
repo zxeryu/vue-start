@@ -33,10 +33,6 @@ export const ProDesc = defineComponent<ProDescProps>({
       return mergeStateToList(props.columns!, props.columnState!, "dataIndex");
     });
 
-    const propNames = map(props.columns, (item) => item.dataIndex!);
-
-    const descSlots = omit(slots, ...propNames, ...map(propNames, (item) => item + "Label"));
-
     const proBaseKeys = keys(proBaseProps);
     const invalidKeys = keys(proDescProps());
 
@@ -45,10 +41,7 @@ export const ProDesc = defineComponent<ProDescProps>({
         return null;
       }
       return (
-        <Descriptions
-          class={props.clsName}
-          {...omit(props, ...proBaseKeys, ...invalidKeys, "model")}
-          v-slots={descSlots}>
+        <Descriptions class={props.clsName} {...omit(props, ...proBaseKeys, ...invalidKeys, "model")} v-slots={slots}>
           {map(columns.value, (item) => {
             const dataIndex = item.dataIndex!;
             const value = get(props.model, dataIndex);
@@ -56,8 +49,12 @@ export const ProDesc = defineComponent<ProDescProps>({
               <DescriptionsItem
                 class={`${props.clsName}-item`}
                 {...get(item.extra, "desc")}
-                label={slots[`${dataIndex}Label`] ? slots[`${dataIndex}Label`]!() : item.title}>
-                {slots[dataIndex] ? slots[dataIndex]!() : getItemEl(elementMap, item, value)}
+                v-slots={{
+                  label: () => {
+                    return slots.label?.(item) || item.title;
+                  },
+                }}>
+                {slots.value?.(value, item) || getItemEl(elementMap, item, value)}
               </DescriptionsItem>
             );
           })}

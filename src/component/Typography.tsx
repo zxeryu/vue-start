@@ -6,7 +6,7 @@ export const Typography = defineComponent({
   },
   setup: (props, { slots }) => {
     return () => {
-      return <div>{slots.default?.() || props.content}</div>;
+      return <span>{slots.default?.() || props.content}</span>;
     };
   },
 });

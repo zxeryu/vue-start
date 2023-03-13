@@ -35,11 +35,13 @@ const menus = [
   {
     title: "@vue-start/pro",
     children: [
-      // { title: "Operate", name: "ElementOperateIndex" },
-      // { title: "Grid", name: "ElementGridIndex" },
       { title: "Form", name: "ElementFormIndex" },
       { title: "SearchForm", name: "ElementFormSearchIndex" },
       { title: "Table", name: "ElementTableIndex" },
+      { title: "Operate", name: "ElementOperateIndex" },
+      { title: "List", name: "ElementListIndex" },
+      { title: "Desc", name: "ElementDescIndex" },
+      { title: "Page", name: "ElementPageIndex" },
     ],
   },
   {

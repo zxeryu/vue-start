@@ -203,6 +203,17 @@ export const routes = [
     path: "element",
     children: [
       {
+        name: "ElementDesc",
+        path: "desc",
+        children: [
+          {
+            name: "ElementDescIndex",
+            path: "index",
+            component: () => import("@/views/element/desc/index"),
+          },
+        ],
+      },
+      {
         name: "ElementForm",
         path: "form",
         children: [
@@ -225,13 +236,13 @@ export const routes = [
         ],
       },
       {
-        name: "ElementGrid",
-        path: "grid",
+        name: "ElementList",
+        path: "list",
         children: [
           {
-            name: "ElementGridIndex",
+            name: "ElementListIndex",
             path: "index",
-            component: () => import("@/views/element/grid/index"),
+            component: () => import("@/views/element/list/index"),
           },
         ],
       },
@@ -243,6 +254,17 @@ export const routes = [
             name: "ElementOperateIndex",
             path: "index",
             component: () => import("@/views/element/operate/index"),
+          },
+        ],
+      },
+      {
+        name: "ElementPage",
+        path: "page",
+        children: [
+          {
+            name: "ElementPageIndex",
+            path: "index",
+            component: () => import("@/views/element/page/index"),
           },
         ],
       },

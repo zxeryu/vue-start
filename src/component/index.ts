@@ -23,7 +23,18 @@ import {
 } from "@vue-start/element-pro";
 import { SelectShow, TextNumberShow, TextShow } from "@/component/show";
 import { ElButton, ElRow, ElCol, ElDescriptions, ElDescriptionsItem, ElCheckbox } from "element-plus";
-import { ElementKeys, ProCurd, ProCurdList, ProForm, ProModalCurd, ProSearchForm } from "@vue-start/pro";
+import {
+  ElementKeys,
+  ProCurd,
+  ProCurdList,
+  ProForm,
+  ProModalCurd,
+  ProSearchForm,
+  ProDesc,
+  ProGrid,
+  ProList,
+  ProOperate,
+} from "@vue-start/pro";
 import { TableOperateItem, TableOperateItemKey, ProTable } from "@/component/Table";
 import { App } from "@vue/runtime-core";
 
@@ -77,10 +88,14 @@ export const initComp = (app: App) => {
   app.component("pro-table", ProTable);
   app.component("pro-form", ProForm);
   app.component("pro-search-form", ProSearchForm);
+  app.component("pro-desc", ProDesc);
+  app.component("pro-grid", ProGrid);
+  app.component("pro-list", ProList);
+  app.component("pro-operate", ProOperate);
   app.component("pro-curd", ProCurd);
   app.component("pro-modal-curd", ProModalCurd);
   app.component("pro-curd-list", ProCurdList);
-  //
+  //element-plus
   app.component("pro-loading", ProLoading);
   app.component("pro-modal", ProModal);
   app.component("pro-pagination", ProPagination);
