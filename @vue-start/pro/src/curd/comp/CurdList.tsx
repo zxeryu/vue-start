@@ -1,7 +1,7 @@
 import { defineComponent } from "vue";
 import { PaginationSlotProps, ProList, ProListProps, SearchSlotProps } from "../../comp";
 import { CurdAction, CurdSubAction, useProCurd } from "../ctx";
-import { filter, get, map, omit, pick } from "lodash";
+import { filter, get, isBoolean, map, omit, pick } from "lodash";
 import { ICurdOperateOpts } from "../Curd";
 
 /**
@@ -74,7 +74,7 @@ export const ProCurdList = defineComponent<ProListProps>({
       const paginationProps = props.paginationProps;
       const rePaginationProps = {
         total: curdState.listData?.total,
-        ...paginationProps,
+        ...(isBoolean(paginationProps) ? {} : paginationProps),
       };
 
       return (
