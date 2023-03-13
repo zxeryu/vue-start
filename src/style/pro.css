@@ -6,7 +6,17 @@
 }
 
 .pro-page-header .pro-page-header-back {
-  margin-right: 10px;
+  margin-right: 6px;
+}
+
+.pro-page-header .pro-page-header-title {
+  font-size: 16px;
+  color: black;
+  margin-right: 12px;
+}
+
+.pro-page-header .pro-page-header-sub-title {
+  color: #00000073;
 }
 
 .pro-page-header .pro-page-header-space {

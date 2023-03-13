@@ -42,6 +42,8 @@ export const ProDesc = defineComponent<ProDescProps>({
       }
       return (
         <Descriptions class={props.clsName} {...omit(props, ...proBaseKeys, ...invalidKeys, "model")} v-slots={slots}>
+          {slots.start?.()}
+
           {map(columns.value, (item) => {
             const dataIndex = item.dataIndex!;
             const value = get(props.model, dataIndex);
@@ -58,6 +60,8 @@ export const ProDesc = defineComponent<ProDescProps>({
               </DescriptionsItem>
             );
           })}
+
+          {slots.default?.()}
         </Descriptions>
       );
     };

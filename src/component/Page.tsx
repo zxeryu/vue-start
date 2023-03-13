@@ -9,7 +9,16 @@ export const ProPage = defineComponent({
   setup: (props, { slots }) => {
     return () => {
       return (
-        <ProPageOrign {...props} v-slots={omit(slots, "default")}>
+        <ProPageOrign
+          {...props}
+          v-slots={{
+            backIcon: () => (
+              <el-button type={"primary"} link>
+                &#8610;返回
+              </el-button>
+            ),
+            ...omit(slots, "default"),
+          }}>
           <div class={"page-content"}>{slots.default?.()}</div>
         </ProPageOrign>
       );
