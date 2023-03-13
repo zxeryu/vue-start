@@ -8,7 +8,7 @@ import { useEffect } from "@vue-start/hooks";
 const menus = [
   { title: "综述", name: "OverviewIndexMd" },
   { title: "demo公共数据", name: "ColumnIndexMd" },
-  { title: "@vue-start/request", name: "RequestIndexMd" },
+  { title: "@vue-start/request", name: "RequestIndex" },
   { title: "@vue-start/store", name: "StoreIndexMd" },
   { title: "@vue-start/config", name: "ConfigIndex" },
   {

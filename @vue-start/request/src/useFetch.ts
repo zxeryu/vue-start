@@ -8,7 +8,7 @@ import { filter as rxFilter, merge as rxMerge, tap as rxTap } from "rxjs";
 export interface IUseFetchOptions<TRequestActor extends IRequestActor> {
   initEmit?: boolean;
   params?: TRequestActor["req"] | (() => TRequestActor["req"]);
-  deps?: WatchSource;
+  deps?: WatchSource[];
   convertData?: (response: TRequestActor["res"]) => any;
   onSuccess?: (actor: TRequestActor, data?: any) => void;
   onFail?: (actor: TRequestActor) => void;

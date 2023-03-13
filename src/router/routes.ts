@@ -4,6 +4,23 @@ export const routes = [
     path: "about",
     component: () => import("@/views/About.vue"),
   },
+  { name: "Comp", path: "comp", component: () => import("@/views/Comp") },
+  {
+    name: "Compelement",
+    path: "compelement",
+    component: () => import("@/views/CompElement"),
+  },
+  {
+    name: "Counter",
+    path: "counter",
+    component: () => import("@/views/Counter.vue"),
+  },
+  { name: "Home", path: "home", component: () => import("@/views/Home.vue") },
+  {
+    name: "Network",
+    path: "network",
+    component: () => import("@/views/Network.vue"),
+  },
   {
     name: "Column",
     path: "column",
@@ -15,12 +32,6 @@ export const routes = [
       },
     ],
   },
-  { name: "Comp", path: "comp", component: () => import("@/views/Comp") },
-  {
-    name: "Compelement",
-    path: "compelement",
-    component: () => import("@/views/CompElement"),
-  },
   {
     name: "Config",
     path: "config",
@@ -31,11 +42,6 @@ export const routes = [
         component: () => import("@/views/config/index"),
       },
     ],
-  },
-  {
-    name: "Counter",
-    path: "counter",
-    component: () => import("@/views/Counter.vue"),
   },
   {
     name: "Curd",
@@ -281,7 +287,6 @@ export const routes = [
       },
     ],
   },
-  { name: "Home", path: "home", component: () => import("@/views/Home.vue") },
   {
     name: "Hooks",
     path: "hooks",
@@ -322,11 +327,6 @@ export const routes = [
     ],
   },
   {
-    name: "Network",
-    path: "network",
-    component: () => import("@/views/Network.vue"),
-  },
-  {
     name: "Overview",
     path: "overview",
     children: [
@@ -342,9 +342,9 @@ export const routes = [
     path: "request",
     children: [
       {
-        name: "RequestIndexMd",
-        path: "index-md",
-        component: () => import("@/views/request/index-md"),
+        name: "RequestIndex",
+        path: "index",
+        component: () => import("@/views/request/index"),
       },
     ],
   },
