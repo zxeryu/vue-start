@@ -11,8 +11,18 @@ export default defineComponent(() => {
         columns={columns}
         dataSource={dataSource}
         v-slots={{
-          name: ({ row }: { row: Record<string, any> }) => <div style={"color:red"}>重写：{row.name}</div>,
-          "name-header": () => <span style={"color:red"}>重写：名称</span>,
+          bodyCell: ({ value, column }: any) => {
+            if (column.dataIndex === "name") {
+              return <span style={"color:red"}>重写：{value}</span>;
+            }
+            return undefined;
+          },
+          headerCell: ({ title, column }: any) => {
+            if (column.dataIndex === "name") {
+              return <span style={"color:red"}>重写：{title}</span>;
+            }
+            return title;
+          },
         }}
       />
     );

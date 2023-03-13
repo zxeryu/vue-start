@@ -11,7 +11,7 @@ import {
   VNode,
 } from "vue";
 import { TColumn } from "../../types";
-import { filter, get, isBoolean, isFunction, keys, map, omit, pick, reduce, some, sortBy } from "lodash";
+import { filter, get, isBoolean, isFunction, keys, map, omit, pick, reduce, size, some, sortBy } from "lodash";
 import { getItemEl, proBaseProps, ProBaseProps, useProConfig } from "../../core";
 import { Ref, UnwrapNestedRefs } from "@vue/reactivity";
 import { createExpose, filterSlotsByPrefix, getSignValue, mergeStateToList } from "../../util";
@@ -38,6 +38,7 @@ const provideProTable = (ctx: IProTableProvide) => {
 };
 
 export type TTableColumn = {
+  children?: TTableColumn[];
   //antd 自定义列
   customRender?: (opt: {
     value: any;
@@ -239,20 +240,22 @@ export const ProTable = defineComponent<ProTableProps>({
       return filter(props.columns, (item) => get(selectIdMap, item.dataIndex!));
     });
 
-    const columns = computed(() => {
-      const mergeColumns = mergeStateToList(showColumns.value as any, props.columnState!, (item) => item.dataIndex);
-      //根据valueType选择对应的展示组件
-      const columns = map(mergeColumns, (item) => {
-        //merge公共item
+    //转换column
+    const convertColumns = (list: TTableColumns) => {
+      return map(list, (item) => {
+        //merge公共column
         const nextItem = { ...props.column, ...item };
+        //如果有子column，转换子节点 再返回
+        if (item.children && size(item.children) > 0) {
+          nextItem.children = convertColumns(item.children);
+          return nextItem;
+        }
+        //如果是子节点，且不存在 customRender ，重写
         if (!item.customRender) {
           nextItem.customRender = ({ text }) => {
             const vn = getItemEl(
               elementMap,
-              {
-                ...item,
-                showProps: { ...item.showProps, content: props.columnEmptyText },
-              },
+              { ...item, showProps: { ...item.showProps, content: props.columnEmptyText } },
               text,
             );
             //如果找不到注册的组件，使用当前值 及 columnEmptyText
@@ -261,6 +264,12 @@ export const ProTable = defineComponent<ProTableProps>({
         }
         return nextItem;
       });
+    };
+
+    const columns = computed(() => {
+      const mergeColumns = mergeStateToList(showColumns.value as any, props.columnState!, (item) => item.dataIndex);
+      //根据valueType选择对应的展示组件
+      const columns = convertColumns(mergeColumns);
       //处理序号
       if (props.serialNumber) {
         columns.unshift(createNumberColumn());

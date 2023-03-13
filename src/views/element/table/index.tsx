@@ -4,6 +4,7 @@ import Basic from "./demo/basic";
 import Operate from "./demo/operate";
 import Extra from "./demo/extra";
 import Slots from "./demo/slots";
+import Group from "./demo/group";
 
 export default defineComponent(() => {
   return () => {
@@ -13,6 +14,7 @@ export default defineComponent(() => {
         <Operate />
         <Extra />
         <Slots />
+        <Group />
       </>
     );
   };

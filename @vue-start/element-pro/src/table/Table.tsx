@@ -1,7 +1,7 @@
 import { defineComponent, isVNode, ref } from "vue";
 import { ElTable, ElTableColumn } from "element-plus";
 import { TableColumnCtx } from "../../types";
-import { map, omit, pick, size } from "lodash";
+import { get, map, omit, pick, size } from "lodash";
 import { createExpose } from "@vue-start/pro";
 import { createLoadingId, ProLoading } from "../comp";
 
@@ -16,32 +16,56 @@ export const ProTableColumn = defineComponent<ProTableColumnProps>({
     customRender: { type: Function },
   } as any,
   setup: (props, { slots }) => {
+    const defaultSlot = ({
+      row,
+      column: columnOrigin,
+      $index,
+    }: {
+      row: Record<string, any>;
+      column: Record<string, any>;
+      $index: number;
+    }) => {
+      const record = row;
+      const index = $index;
+      const column = { ...columnOrigin, title: columnOrigin.label, dataIndex: columnOrigin.property };
+
+      const value = get(row, column.dataIndex);
+      const nextParams = { value, text: value, record, column, index };
+
+      const sv = slots.bodyCell?.(nextParams);
+      if (sv) {
+        return sv;
+      }
+
+      if (props.customRender) {
+        return props.customRender(nextParams);
+      }
+      return value;
+    };
+
+    const headerSlot = ({ column: columnOrigin, $index }: { column: Record<string, any>; $index: number }) => {
+      const index = $index;
+      const title = columnOrigin.label;
+      const column = { ...columnOrigin, title, dataIndex: columnOrigin.property };
+
+      const sv = slots.headerCell?.({ title, column, index });
+
+      return sv || title;
+    };
+
+    const reSlots: Record<string, any> = { header: headerSlot };
+    //不包含children，重写default
+    if (!props.children || size(props.children) <= 0) {
+      reSlots.default = defaultSlot;
+    }
+
     return () => {
       return (
         <ElTableColumn
-          {...omit(
-            props,
-            "title",
-            "label",
-            "renderHeader",
-            "prop",
-            "dataIndex",
-            "formatter",
-            "customRender",
-            "children",
-          )}
-          label={isVNode(props.title) ? undefined : props.title}
-          renderHeader={isVNode(props.title) ? () => props.title as any : undefined}
+          {...(omit(props, "title", "dataIndex", "prop", "customRender", "children") as any)}
           prop={props.dataIndex as any}
-          formatter={
-            ((record: Record<string, any>, column: TableColumnCtx<any>, value: any, index: number) => {
-              if (props.customRender) {
-                return props.customRender({ value, text: value, record, column, index } as any);
-              }
-              return value;
-            }) as any
-          }
-          v-slots={{ default: slots[props.dataIndex!], header: slots[`${props.dataIndex!}-header`] }}>
+          label={props.title as any}
+          v-slots={reSlots}>
           {size(props.children) > 0 &&
             map(props.children, (item) => <ProTableColumn key={item.dataIndex} {...item} v-slots={slots} />)}
         </ElTableColumn>
