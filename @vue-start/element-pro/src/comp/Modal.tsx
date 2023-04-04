@@ -24,6 +24,8 @@ export type ProModalProps = Partial<ExtractPropTypes<ReturnType<typeof proModalP
 export const ProModal = defineComponent<ProModalProps>({
   props: {
     ...ElDialog.props,
+    //覆盖原始值，默认true
+    appendToBody: { type: Boolean, default: true },
     ...proModalProps(),
   },
   setup: (props, { slots, emit }) => {

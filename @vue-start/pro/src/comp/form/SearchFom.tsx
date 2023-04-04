@@ -17,6 +17,10 @@ export type ISearchMode = keyof typeof SearchMode;
 
 const proSearchFormProps = () => ({
   /**
+   * class名称
+   */
+  clsName: { type: String, default: "pro-search-form" },
+  /**
    * 初始化触发 onFinish
    */
   initEmit: { type: Boolean, default: true },
@@ -103,7 +107,7 @@ export const ProSearchForm = defineComponent<ProSearchFormProps>({
       () => clone(formState),
     );
 
-    const invalidKeys = keys(omit(proSearchFormProps(), "columns"));
+    const invalidKeys = keys(omit(proSearchFormProps(), "clsName", "columns"));
 
     return () => {
       if (!Form) {
