@@ -5,7 +5,9 @@ import { createExposeObj, TOption } from "@vue-start/pro";
 
 const proCheckboxProps = () => ({
   options: Array as PropType<Array<TOption & CheckboxProps>>,
+  //待删除，使用 optionType
   buttonStyle: { type: String as PropType<"default" | "button">, default: "default" },
+  optionType: { type: String as PropType<"default" | "button">, default: "default" },
 });
 
 export type ProCheckboxProps = Partial<ExtractPropTypes<ReturnType<typeof proCheckboxProps>>> & IUseCheckboxGroupProps;
@@ -35,7 +37,7 @@ export const ProCheckbox = defineComponent<ProCheckboxProps>({
             //插槽重写label
             const labelEl = slots.label?.(item);
 
-            if (props.buttonStyle === "button") {
+            if (props.optionType === "button" || props.buttonStyle === "button") {
               return (
                 <ElCheckboxButton key={item.value} {...omit(item, "value")} label={item.value}>
                   {labelEl || item.label}
