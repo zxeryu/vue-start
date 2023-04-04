@@ -1,11 +1,11 @@
 <template>
-  <ProRadio
+  <pro-radio
     v-model="state.readonly"
     :options="[
       { value: false, label: '操作' },
       { value: true, label: '只读' },
     ]"
-    buttonStyle="button"
+    optionType="button"
   />
   <br />
   <br />
@@ -14,7 +14,6 @@
 
 <script setup>
 import { columns, dataSource } from "@/common/columns";
-import { ProRadio } from "@vue-start/element-pro";
 import { take } from "lodash";
 import { reactive } from "vue";
 

@@ -18,6 +18,6 @@ export default defineComponent(() => {
   );
 
   return () => {
-    return <pro-form model={formState} columns={take(columns, 3)} labelWidth={80} />;
+    return <pro-form model={formState} columns={take(columns, 3)}/>;
   };
 });

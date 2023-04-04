@@ -15,8 +15,8 @@ export default defineComponent(() => {
     return (
       <pro-form
         columns={take(columns, 3)}
-        labelWidth={80}
         operate={{}}
+
         onFinish={handleFinish}
         v-slots={{
           age: (column: TColumn, state: any) => {

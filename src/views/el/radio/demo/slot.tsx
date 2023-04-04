@@ -13,7 +13,7 @@ export default defineComponent(() => {
       <pro-radio
         v-model={valueRef.value}
         options={options}
-        buttonStyle={"button"}
+        optionType={"button"}
         v-slots={{
           label: (item: any) => {
             if (item.value === "man") {

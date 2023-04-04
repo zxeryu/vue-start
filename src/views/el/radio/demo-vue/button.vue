@@ -1,5 +1,5 @@
 <template>
-  <pro-radio v-model="valueRef" :options="options" buttonStyle="button" />
+  <pro-radio v-model="valueRef" :options="options" optionType="button" />
 </template>
 
 <script setup>

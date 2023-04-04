@@ -1,9 +1,9 @@
 <template>
   <pro-form :columns="take(columns, 3)" :operate="{}" @finish="handleFinish">
     <template #age="_, state">
-      <el-form-item prop="age" label="age">
-        <el-input-number v-model="state.age" />
-      </el-form-item>
+      <pro-form-item name="age" label="age">
+        <pro-input-number v-model="state.age" />
+      </pro-form-item>
     </template>
     <template #gender>
       <div>gender重写</div>

@@ -34,7 +34,6 @@ export default defineComponent(() => {
           disableStateRules={{
             age: (record: Record<string, any>) => record.gender === "woman",
           }}
-          labelWidth={80}
         />
       </>
     );

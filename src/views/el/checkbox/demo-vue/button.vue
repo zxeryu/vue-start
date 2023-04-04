@@ -1,5 +1,5 @@
 <template>
-  <pro-checkbox v-model="valueRef" :options="options" buttonStyle="button" />
+  <pro-checkbox v-model="valueRef" :options="options" optionType="button" />
 </template>
 
 <script setup>

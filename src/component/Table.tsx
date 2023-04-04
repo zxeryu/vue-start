@@ -1,19 +1,20 @@
 import { computed, defineComponent } from "vue";
-import { ElButton } from "element-plus";
 import { ProTable as ProTableOrigin } from "@vue-start/pro";
 import { omit } from "lodash";
+import { isElementPlus } from "@/common/platform";
 
 export const TableOperateItemKey = "TableOperateItem$";
 
 export const TableOperateItem = defineComponent({
   props: {
-    ...ElButton.props,
-    type: { type: String, default: "primary" },
+    disabled: { type: Boolean, default: false },
+    loading: { type: Boolean, default: false },
+    type: { type: String, default: isElementPlus() ? "primary" : "link" },
     link: { type: Boolean, default: true },
   },
   setup: (props, { slots }) => {
     return () => {
-      return <ElButton {...props} v-slots={slots} />;
+      return <pro-button {...props} v-slots={slots} />;
     };
   },
 });

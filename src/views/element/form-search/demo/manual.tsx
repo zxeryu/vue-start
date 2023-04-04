@@ -18,7 +18,6 @@ export default defineComponent(() => {
       ref={formRef}
       searchMode={SearchMode.MANUAL}
       columns={columns}
-      labelWidth={80}
       operate={{}}
       onFinish={handleSubmit}
     />

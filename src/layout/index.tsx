@@ -4,58 +4,11 @@ import { RouterView, useRoute, useRouter } from "vue-router";
 import { map } from "lodash";
 import { css } from "@emotion/css";
 import { useEffect } from "@vue-start/hooks";
-
-const menus = [
-  { title: "综述", name: "OverviewIndexMd" },
-  { title: "demo公共数据", name: "ColumnIndexMd" },
-  { title: "@vue-start/request", name: "RequestIndex" },
-  { title: "@vue-start/store", name: "StoreIndexMd" },
-  { title: "@vue-start/config", name: "ConfigIndex" },
-  {
-    title: "@vue-start/hooks",
-    name: "Hooks",
-    children: [
-      { title: "useEffect", name: "HooksEffectIndexMd" },
-      { title: "其他hooks", name: "HooksChildrenIndexMd" },
-      { title: "工具方法", name: "HooksUtilIndexMd" },
-    ],
-  },
-  {
-    title: "@vue-start/element-pro",
-    children: [
-      { title: "Checkbox", name: "ElCheckboxIndex" },
-      { title: "Loading", name: "ElLoadingIndex" },
-      { title: "Modal", name: "ElModalIndex" },
-      { title: "Pagination", name: "ElPaginationIndex" },
-      { title: "Radio", name: "ElRadioIndex" },
-      { title: "Select", name: "ElSelectIndex" },
-      { title: "Tabs", name: "ElTabsIndex" },
-    ],
-  },
-  {
-    title: "@vue-start/pro",
-    children: [
-      { title: "Form", name: "ElementFormIndex" },
-      { title: "SearchForm", name: "ElementFormSearchIndex" },
-      { title: "Table", name: "ElementTableIndex" },
-      { title: "Operate", name: "ElementOperateIndex" },
-      { title: "List", name: "ElementListIndex" },
-      { title: "Desc", name: "ElementDescIndex" },
-      { title: "Page", name: "ElementPageIndex" },
-    ],
-  },
-  {
-    title: "curd",
-    children: [
-      { title: "Curd", name: "CurdCurdIndex" },
-      { title: "CurdForm", name: "CurdFormIndex" },
-      { title: "CurdModal", name: "CurdModalIndex" },
-      { title: "CurdDesc", name: "CurdDescIndex" },
-    ],
-  },
-];
+import { useLogonUser } from "@vue-start/pro";
 
 export const BasicLayout = defineComponent(() => {
+  const { per } = useLogonUser();
+
   const router = useRouter();
   const route = useRoute();
 
@@ -74,43 +27,52 @@ export const BasicLayout = defineComponent(() => {
       <main>
         <Header />
         <div style="height:var(--divide-vertical-hei)" />
-        <div class="flex" style="height: calc(100vh - var(--header-hei) - var(--divide-vertical-hei))">
-          <el-scrollbar
+        <div class={css({ display: "flex", height: "calc(100vh - var(--header-hei) - var(--divide-vertical-hei))" })}>
+          <div
             class={css({
+              height: "calc(100vh - var(--header-hei) - var(--divide-vertical-hei))",
+              overflowY: "auto",
               borderRight: "1px solid #f0f0f0",
-              ".el-menu": {
-                width: 290,
-                borderRight: "none",
+              color: "#606266",
+              lineHeight: "36px",
+              width: 200,
+              minWidth: 200,
+              ".item": {
+                paddingLeft: 16,
+                cursor: "pointer",
               },
-              ".el-menu-item": {
-                height: 48,
-              },
-            })}
-            height={"calc(100vh - var(--header-hei) - var(--divide-vertical-hei))"}>
-            <el-menu default-active={route.name}>
-              {map(menus, (group) => {
-                if (!group.children && group.name) {
-                  return (
-                    <el-menu-item index={group.name} onClick={() => handleClick(group)}>
-                      {group.title}
-                    </el-menu-item>
-                  );
-                }
+            })}>
+            {map(per.menus, (item) => {
+              if (!item.children && item.name) {
                 return (
-                  <el-menu-item-group title={group.title}>
-                    {map(group.children, (item) => {
-                      return (
-                        <el-menu-item index={item.name} onClick={() => handleClick(item)}>
-                          {item.title}
-                        </el-menu-item>
-                      );
-                    })}
-                  </el-menu-item-group>
+                  <div
+                    class={`item ${css({
+                      color: item.name === route.name ? "var(--pro-color-primary)" : undefined,
+                    })}`}
+                    onClick={() => handleClick(item)}>
+                    {item.title}
+                  </div>
                 );
-              })}
-            </el-menu>
-          </el-scrollbar>
-          <section class="flex flex-1 justify-center">
+              }
+              return (
+                <div>
+                  <div class={css({ fontSize: 12, color: "#999", paddingLeft: 16 })}>{item.title}</div>
+                  {map(item.children, (subItem) => {
+                    return (
+                      <div
+                        class={`item ${css({
+                          color: subItem.name === route.name ? "var(--pro-color-primary)" : undefined,
+                        })}`}
+                        onClick={() => handleClick(subItem)}>
+                        {subItem.title}
+                      </div>
+                    );
+                  })}
+                </div>
+              );
+            })}
+          </div>
+          <section class={css({ display: "flex", flexGrow: 1, justifyContent: "center" })}>
             <RouterView />
           </section>
         </div>

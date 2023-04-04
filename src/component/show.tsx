@@ -1,8 +1,7 @@
 import { computed, defineComponent } from "vue";
 import { Typography } from "./Typography";
-import { ElInput, ElInputNumber } from "element-plus";
-import { ProSelect } from "@vue-start/element-pro";
-import { get, isArray, join, map, reduce } from "lodash";
+import { get, isArray, join, map } from "lodash";
+import { listToOptionsMap } from "@vue-start/hooks";
 
 export const BaseShow = defineComponent({
   props: {
@@ -19,7 +18,6 @@ export const BaseShow = defineComponent({
 export const TextShow = defineComponent({
   props: {
     ...BaseShow.props,
-    ...ElInput.props,
   },
   setup: (props) => {
     return () => {
@@ -31,7 +29,6 @@ export const TextShow = defineComponent({
 export const TextNumberShow = defineComponent({
   props: {
     ...BaseShow.props,
-    ...ElInputNumber.props,
   },
   setup: (props) => {
     return () => {
@@ -43,11 +40,11 @@ export const TextNumberShow = defineComponent({
 export const SelectShow = defineComponent({
   props: {
     ...BaseShow.props,
-    ...ProSelect.props,
+    options: Array,
   },
   setup: (props) => {
     const optionsMap = computed(() => {
-      return reduce(props.options, (pair, item) => ({ ...pair, [item.value]: item.label }), {});
+      return listToOptionsMap(props.options, { value: "value", label: "label" });
     });
 
     const valueStr = computed(() => {

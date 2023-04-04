@@ -10,7 +10,7 @@
 
 | 名称          | 说明                                        | 类型                                      | 默认值  |
 | ------------- | ------------------------------------------- | ----------------------------------------- | ------- |
-| `buttonStyle` | 展示按钮类型                                | `default` `button`                        | default |
+| `optionType` | 展示按钮类型                                | `default` `button`                        | default |
 | `options`     | Option 属性 & Radio 属性 & RadioButton 属性 | `TOption & RadioProps & RadioButtonProps` | --      |
 
 ### 事件

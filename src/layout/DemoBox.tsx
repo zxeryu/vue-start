@@ -1,4 +1,5 @@
 import { defineComponent, reactive } from "vue";
+import { css } from "@emotion/css";
 
 const ToolActions = defineComponent({
   props: {
@@ -24,8 +25,14 @@ const ToolActions = defineComponent({
 
     return () => {
       return (
-        <div class={"flex justify-center"} style="border-top:1px dashed #f0f0f0;padding:12px 0">
-          <div class="flex items-center cursor-pointer" onClick={handleCodeExpand}>
+        <div
+          class={css({
+            display: "flex",
+            justifyContent: "center",
+            borderTop: "1px dashed #f0f0f0",
+            padding: "12px 0",
+          })}>
+          <div class={css({ display: "flex", alignItems: "center", cursor: "pointer" })} onClick={handleCodeExpand}>
             <img
               src={
                 props.codeExpand
@@ -39,7 +46,14 @@ const ToolActions = defineComponent({
             <span>jsx</span>
           </div>
 
-          <div class="flex items-center ml-4 cursor-pointer" onClick={handleCodeExpandVue}>
+          <div
+            class={css({
+              display: "flex",
+              alignItems: "center",
+              marginLeft: 10,
+              cursor: "pointer",
+            })}
+            onClick={handleCodeExpandVue}>
             <img
               src={
                 props.codeExpandVue

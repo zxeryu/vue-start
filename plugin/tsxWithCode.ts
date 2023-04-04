@@ -1,10 +1,21 @@
-import { endsWith } from "lodash";
+import { endsWith, forEach } from "lodash";
 import { Plugin } from "vite";
 import { relative } from "path";
 import { readFileSync, existsSync } from "fs";
 import matter from "gray-matter";
 import { encode } from "js-base64";
 import { createMD } from "./md";
+
+const appendModelValue = (content) => {
+  let appendContent = content;
+  // 匹配 v-model={*} 类数据，补充 v-model:value={*} 确保ant-design-vue模式可用
+  const models = content.match(/v-model={[^}]+}/g);
+  forEach(models, (item) => {
+    const mv = item.replace("v-model=", "v-model:value=");
+    appendContent = content.replace(item, `${item} ${mv}`);
+  });
+  return appendContent;
+};
 
 //demo组件中注入title、desc、codeStr
 const createTsxWithCode = (root = process.cwd(), md: any) => {
@@ -32,6 +43,7 @@ ${str}
     //实际代码包裹<demo-box>组件
     if (src.indexOf("export default") > -1) {
       let targetStr = src.replace("export default", "const Default =");
+      targetStr = appendModelValue(targetStr);
 
       const demoBoxStr = `
         export default defineComponent(()=>{

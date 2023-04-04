@@ -27,7 +27,6 @@ export default defineComponent(() => {
       initEmit={false}
       inline={false}
       columns={columns}
-      labelWidth={80}
       row={{ gutter: 30 }}
       col={{ span: 8 }}
       operate={{}}

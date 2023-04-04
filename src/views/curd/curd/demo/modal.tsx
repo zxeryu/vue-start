@@ -43,12 +43,7 @@ export default defineComponent(() => {
 
   return () => {
     return (
-      <pro-modal-curd
-        columns={columns}
-        operates={operates}
-        formProps={{
-          labelWidth: 80,
-        }}>
+      <pro-modal-curd columns={columns} operates={operates}>
         <pro-curd-list />
         <ProCurdModalFormConnect />
       </pro-modal-curd>

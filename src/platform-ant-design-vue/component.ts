@@ -1,4 +1,20 @@
-import { ElButton, ElRow, ElCol, ElDescriptions, ElDescriptionsItem, ElCheckbox, ElInputNumber } from "element-plus";
+import { App } from "@vue/runtime-core";
+import {
+  Button,
+  Row,
+  Col,
+  Descriptions,
+  DescriptionsItem,
+  Checkbox,
+  InputNumber,
+  Table,
+  Modal,
+  Popover,
+  FormItem,
+  CheckboxGroup,
+  RadioGroup,
+  Select,
+} from "ant-design-vue";
 import {
   ProFormCascader,
   ProFormCheckbox,
@@ -10,18 +26,11 @@ import {
   ProFormTextNumber,
   ProFormTimePicker,
   ProFormTreeSelect,
-  ProLoading,
-  ProForm as Form,
-  ProFormItem,
-  ProModal,
-  ProTable as Table,
-  ProPagination,
-  ProPopover,
-  ProCheckbox,
-  ProRadio,
-  ProSelect,
-  ProTabs,
-} from "@vue-start/element-pro";
+  Loading,
+  Pagination,
+  Tabs,
+  Form,
+} from "@vue-start/antd-pro";
 import { SelectShow, TextNumberShow, TextShow } from "@/component/show";
 import {
   ElementKeys,
@@ -36,25 +45,22 @@ import {
   ProOperate,
 } from "@vue-start/pro";
 import { TableOperateItem, TableOperateItemKey, ProTable } from "@/component/Table";
-import { App } from "@vue/runtime-core";
-
 import { ProPage } from "@/component/Page";
 
 export const elementMap = {
-  [ElementKeys.LoadingKey]: ProLoading,
-  [ElementKeys.RowKey]: ElRow,
-  [ElementKeys.ColKey]: ElCol,
-  [ElementKeys.ButtonKey]: ElButton,
-  [ElementKeys.DescriptionsKey]: ElDescriptions,
-  [ElementKeys.DescriptionsItemKey]: ElDescriptionsItem,
-  [ElementKeys.ModalKey]: ProModal,
-  [ElementKeys.PaginationKey]: ProPagination,
-  [ElementKeys.PopoverKey]: ProPopover,
-  [ElementKeys.CheckboxKey]: ElCheckbox,
+  [ElementKeys.LoadingKey]: Loading,
+  [ElementKeys.RowKey]: Row,
+  [ElementKeys.ColKey]: Col,
+  [ElementKeys.ButtonKey]: Button,
+  [ElementKeys.DescriptionsKey]: Descriptions,
+  [ElementKeys.DescriptionsItemKey]: DescriptionsItem,
+  [ElementKeys.ModalKey]: Modal,
+  [ElementKeys.PaginationKey]: Pagination,
+  [ElementKeys.PopoverKey]: Popover,
+  [ElementKeys.CheckboxKey]: Checkbox,
   [ElementKeys.FormKey]: Form,
-  [ElementKeys.FormItemKey]: ProFormItem,
+  [ElementKeys.FormItemKey]: FormItem,
   [ElementKeys.TableKey]: Table,
-
   [TableOperateItemKey]: TableOperateItem,
 
   [ElementKeys.ProFormKey]: ProForm,
@@ -87,7 +93,7 @@ export const initComp = (app: App) => {
   app.component("pro-page", ProPage);
   app.component("pro-table", ProTable);
   app.component("pro-form", ProForm);
-  app.component("pro-form-item", ProFormItem);
+  app.component("pro-form-item", FormItem);
   app.component("pro-search-form", ProSearchForm);
   app.component("pro-desc", ProDesc);
   app.component("pro-grid", ProGrid);
@@ -96,14 +102,16 @@ export const initComp = (app: App) => {
   app.component("pro-curd", ProCurd);
   app.component("pro-modal-curd", ProModalCurd);
   app.component("pro-curd-list", ProCurdList);
-  //element-plus
-  app.component("pro-loading", ProLoading);
-  app.component("pro-modal", ProModal);
-  app.component("pro-pagination", ProPagination);
-  app.component("pro-popover", ProPopover);
-  app.component("pro-checkbox", ProCheckbox);
-  app.component("pro-radio", ProRadio);
-  app.component("pro-select", ProSelect);
-  app.component("pro-tabs", ProTabs);
-  app.component("pro-input-number", ElInputNumber);
+  //
+  app.component("pro-loading", Loading);
+  app.component("pro-modal", Modal);
+  app.component("pro-pagination", Pagination);
+  app.component("pro-popover", Popover);
+  app.component("pro-checkbox", CheckboxGroup);
+  app.component("pro-radio", RadioGroup);
+  app.component("pro-select", Select);
+  app.component("pro-tabs", Tabs);
+  //兼容演示
+  app.component("pro-input-number", InputNumber);
+  app.component("pro-button", Button);
 };

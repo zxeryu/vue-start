@@ -2,6 +2,12 @@
   --header-hei: 60px;
   --divide-vertical-hei: 10px;
   --pro-page-header-hei: 48px;
+  /*color*/
+  --pro-color-primary: #1890ff;
+}
+
+html body {
+  font-size: 14px;
 }
 
 /********************************** html ***********************************/

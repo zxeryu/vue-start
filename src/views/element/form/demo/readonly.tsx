@@ -3,7 +3,6 @@ title: 只读状态
 ---*/
 import { defineComponent, reactive } from "vue";
 import { columns, dataSource } from "@/common/columns";
-import { ProRadio } from "@vue-start/element-pro";
 import { take } from "lodash";
 
 export default defineComponent(() => {
@@ -13,17 +12,17 @@ export default defineComponent(() => {
   return () => {
     return (
       <>
-        <ProRadio
+        <pro-radio
           v-model={state.readonly}
           options={[
             { value: false as any, label: "操作" },
             { value: true, label: "只读" },
           ]}
-          buttonStyle={"button"}
+          optionType={"button"}
         />
         <br />
         <br />
-        <pro-form model={formState} columns={take(columns, 3)} readonly={state.readonly} labelWidth={80} />
+        <pro-form model={formState} columns={take(columns, 3)} readonly={state.readonly} />
       </>
     );
   };

@@ -1,27 +1,5 @@
 export const routes = [
   {
-    name: "About",
-    path: "about",
-    component: () => import("@/views/About.vue"),
-  },
-  { name: "Comp", path: "comp", component: () => import("@/views/Comp") },
-  {
-    name: "Compelement",
-    path: "compelement",
-    component: () => import("@/views/CompElement"),
-  },
-  {
-    name: "Counter",
-    path: "counter",
-    component: () => import("@/views/Counter.vue"),
-  },
-  { name: "Home", path: "home", component: () => import("@/views/Home.vue") },
-  {
-    name: "Network",
-    path: "network",
-    component: () => import("@/views/Network.vue"),
-  },
-  {
     name: "Column",
     path: "column",
     children: [
