@@ -1,5 +1,5 @@
 import { createApp } from "vue";
-import App from "./App.vue";
+import { App } from "./App";
 
 import { AxiosInterceptorManager, AxiosRequestConfig } from "axios";
 import { createRouter } from "./router";
@@ -45,4 +45,4 @@ app.component("demo-box", DemoBox);
 
 initComp(app);
 
-app.mount("#root");
+app.mount("#app");
