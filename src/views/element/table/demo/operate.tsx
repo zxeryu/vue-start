@@ -4,6 +4,7 @@ desc: element方法可以重写dom；\nshow：boolean/()=>boolean，可以隐藏
 ---*/
 import { defineComponent } from "vue";
 import { columns, dataSource } from "@/common/columns";
+import { css } from "@emotion/css";
 
 export default defineComponent(() => {
   const operate = {
@@ -33,16 +34,22 @@ export default defineComponent(() => {
         //重写按钮
         //id为1 禁用删除按钮
         element: (record: Record<string, any>, item: Record<string, any>) => {
+          const isDisabled = record.id === "1";
           return (
-            <el-button
-              type={"danger"}
-              link
-              disabled={record.id === "1"}
+            <span
+              class={css({
+                color: "red",
+                cursor: isDisabled ? "no-drop" : "pointer",
+                marginLeft: 12,
+              })}
               onClick={() => {
+                if (isDisabled) {
+                  return;
+                }
                 console.log(item.value, record);
               }}>
               {item.label}
-            </el-button>
+            </span>
           );
         },
       },

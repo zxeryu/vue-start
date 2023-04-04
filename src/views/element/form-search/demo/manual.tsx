@@ -19,13 +19,8 @@ export default defineComponent(() => {
       searchMode={SearchMode.MANUAL}
       columns={columns}
       labelWidth={80}
-      onFinish={handleSubmit}>
-      <div style={'display:inline-flex;vertical-align:middle;margin-bottom:18px'}>
-        <el-button onClick={() => formRef.value?.resetFields()}>重置</el-button>
-        <el-button type={"primary"} onClick={() => formRef.value?.submit()}>
-          提交
-        </el-button>
-      </div>
-    </pro-search-form>
+      operate={{}}
+      onFinish={handleSubmit}
+    />
   );
 });

@@ -1,7 +1,6 @@
 import { defineComponent, reactive } from "vue";
 import { columns } from "@/common/columns";
 import { CurdAction, ProCurdModal, ProCurdModalFormConnect, useProCurd } from "@vue-start/pro";
-import { map } from "lodash";
 
 const SelfMode = "SelfMode";
 
@@ -38,15 +37,17 @@ export default defineComponent(() => {
     };
   };
 
-  const actions = [CurdAction.ADD, CurdAction.EDIT, CurdAction.DETAIL];
+  const opeItems = [
+    { label: CurdAction.ADD, value: CurdAction.ADD, onClick: () => handleClick(CurdAction.ADD) },
+    { label: CurdAction.EDIT, value: CurdAction.EDIT, onClick: () => handleClick(CurdAction.EDIT) },
+    { label: CurdAction.DETAIL, value: CurdAction.DETAIL, onClick: () => handleClick(CurdAction.DETAIL) },
+    { label: "自定义mode", value: SelfMode, onClick: () => handleClick(SelfMode) },
+  ];
 
   return () => {
     return (
       <>
-        {map(actions, (item) => {
-          return <el-button onClick={() => handleClick(item)}>{item}</el-button>;
-        })}
-        <el-button onClick={() => handleClick(SelfMode)}>自定义mode</el-button>
+        <pro-operate items={opeItems} />
         <pro-curd curdState={curdState} columns={columns}>
           {/*内置 mode*/}
           <ProCurdModalFormConnect />

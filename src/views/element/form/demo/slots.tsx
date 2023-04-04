@@ -21,9 +21,9 @@ export default defineComponent(() => {
         v-slots={{
           age: (column: TColumn, state: any) => {
             return (
-              <el-form-item prop={column.dataIndex} label={column.title} {...column.formItemProps}>
-                <el-input-number v-model:modelValue={state[column.dataIndex!]} {...column.formFieldProps} />
-              </el-form-item>
+              <pro-form-item name={column.dataIndex} label={column.title} {...column.formItemProps}>
+                <pro-input-number v-model={state[column.dataIndex!]} {...column.formFieldProps} />
+              </pro-form-item>
             );
           },
           gender: () => {

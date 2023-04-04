@@ -14,7 +14,7 @@ export default defineComponent(() => {
   return () => {
     return (
       <>
-        <el-button onClick={handleClick}>set loading state</el-button>
+        <pro-operate items={[{ value: "value", label: "set loading state", onClick: handleClick }]} />
         <pro-loading loading={valueRef.value}>
           <div style={"height:10vh;background-color:pink"}>content</div>
         </pro-loading>

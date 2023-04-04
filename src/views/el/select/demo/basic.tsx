@@ -9,6 +9,6 @@ export default defineComponent(() => {
   const valueRef = ref();
 
   return () => {
-    return <pro-select v-model:modelValue={valueRef.value} options={options} />;
+    return <pro-select v-model={valueRef.value} options={options} />;
   };
 });

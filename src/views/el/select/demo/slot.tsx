@@ -11,7 +11,7 @@ export default defineComponent(() => {
   return () => {
     return (
       <pro-select
-        v-model:modelValue={valueRef.value}
+        v-model={valueRef.value}
         options={options}
         v-slots={{
           label: (item: any) => {

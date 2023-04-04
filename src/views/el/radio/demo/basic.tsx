@@ -9,6 +9,6 @@ export default defineComponent(() => {
   const valueRef = ref();
 
   return () => {
-    return <pro-radio v-model:modelValue={valueRef.value} options={options} />;
+    return <pro-radio v-model={valueRef.value} options={options} />;
   };
 });

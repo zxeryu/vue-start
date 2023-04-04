@@ -5,6 +5,7 @@ desc: 本质上还是对Form的布局
 import { defineComponent, ref } from "vue";
 import { columns } from "@/common/columns";
 import { SearchMode } from "@vue-start/pro";
+import { css } from "@emotion/css";
 
 export default defineComponent(() => {
   const formRef = ref();
@@ -16,6 +17,12 @@ export default defineComponent(() => {
   return () => (
     <pro-search-form
       ref={formRef}
+      class={css({
+        ".pro-search-form-operate": {
+          display: "flex",
+          justifyContent: "center",
+        },
+      })}
       searchMode={SearchMode.MANUAL}
       initEmit={false}
       inline={false}
@@ -23,13 +30,8 @@ export default defineComponent(() => {
       labelWidth={80}
       row={{ gutter: 30 }}
       col={{ span: 8 }}
-      onFinish={handleSubmit}>
-      <div style={"display:flex;justify-content:center"}>
-        <el-button onClick={() => formRef.value?.resetFields()}>重置</el-button>
-        <el-button type={"primary"} onClick={() => formRef.value?.submit()}>
-          提交
-        </el-button>
-      </div>
-    </pro-search-form>
+      operate={{}}
+      onFinish={handleSubmit}
+    />
   );
 });

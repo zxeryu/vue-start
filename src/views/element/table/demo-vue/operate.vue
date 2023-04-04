@@ -1,9 +1,9 @@
 <template>
   <pro-table :columns="columns" :dataSource="dataSource" :operate="operate">
     <template #operate-delete="record, item">
-      <el-button type="danger" link :disabled="record.id === '1'" @click="handleDelete(item)">
+      <span @click="handleDelete(item)">
         {{ item.label }}
-      </el-button>
+      </span>
     </template>
   </pro-table>
 </template>

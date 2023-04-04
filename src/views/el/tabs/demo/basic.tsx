@@ -9,6 +9,6 @@ export default defineComponent(() => {
   const valueRef = ref("man");
 
   return () => {
-    return <pro-tabs v-model:modelValue={valueRef.value} options={options} />;
+    return <pro-tabs v-model={valueRef.value} options={options} />;
   };
 });

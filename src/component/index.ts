@@ -1,3 +1,4 @@
+import { ElButton, ElRow, ElCol, ElDescriptions, ElDescriptionsItem, ElCheckbox, ElInputNumber } from "element-plus";
 import {
   ProFormCascader,
   ProFormCheckbox,
@@ -22,7 +23,6 @@ import {
   ProTabs,
 } from "@vue-start/element-pro";
 import { SelectShow, TextNumberShow, TextShow } from "@/component/show";
-import { ElButton, ElRow, ElCol, ElDescriptions, ElDescriptionsItem, ElCheckbox } from "element-plus";
 import {
   ElementKeys,
   ProCurd,
@@ -87,6 +87,7 @@ export const initComp = (app: App) => {
   app.component("pro-page", ProPage);
   app.component("pro-table", ProTable);
   app.component("pro-form", ProForm);
+  app.component("pro-form-item", ProFormItem);
   app.component("pro-search-form", ProSearchForm);
   app.component("pro-desc", ProDesc);
   app.component("pro-grid", ProGrid);
@@ -104,4 +105,5 @@ export const initComp = (app: App) => {
   app.component("pro-radio", ProRadio);
   app.component("pro-select", ProSelect);
   app.component("pro-tabs", ProTabs);
+  app.component("pro-input-number", ElInputNumber);
 };

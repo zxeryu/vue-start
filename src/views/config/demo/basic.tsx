@@ -17,7 +17,7 @@ export default defineComponent(() => {
         {JSON.stringify(config)}
         <br />
         <br />
-        <el-button onClick={handleClick}>变量</el-button>
+        <pro-operate items={[{ value: "value", label: "变量", onClick: handleClick }]} />
       </div>
     );
   };

@@ -2,7 +2,7 @@
   <div>{{ JSON.stringify(config) }}}</div>
   <br />
   <br />
-  <el-button @click="handleClick">变量</el-button>
+  <pro-operate :items="opeItems" />
 </template>
 
 <script setup>
@@ -13,6 +13,8 @@ const config = useConfig();
 const handleClick = () => {
   console.log(config);
 };
+
+const opeItems = [{ value: "value", label: "变量", onClick: handleClick }];
 </script>
 
 <style scoped></style>

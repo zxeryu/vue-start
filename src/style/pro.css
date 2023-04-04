@@ -1,3 +1,13 @@
+/********************************** pro-search-form ***********************************/
+.pro-search-form {
+}
+
+.pro-search-form .pro-search-form-operate {
+  display: inline-flex;
+  vertical-align: middle;
+  margin-bottom: 18px;
+}
+
 /********************************** pro-page ***********************************/
 .pro-page-header {
   height: var(--pro-page-header-hei);

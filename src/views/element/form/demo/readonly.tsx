@@ -14,7 +14,7 @@ export default defineComponent(() => {
     return (
       <>
         <ProRadio
-          v-model:modelValue={state.readonly}
+          v-model={state.readonly}
           options={[
             { value: false as any, label: "操作" },
             { value: true, label: "只读" },

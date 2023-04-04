@@ -14,7 +14,7 @@ export default defineComponent(() => {
   return () => {
     return (
       <>
-        <el-button onClick={handleClick}>open modal</el-button>
+        <pro-operate items={[{ value: "value", label: "open modal", onClick: handleClick }]} />
         <pro-modal v-model:visible={valueRef.value} title={"modal"}>
           <div>content</div>
         </pro-modal>

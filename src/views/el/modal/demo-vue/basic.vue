@@ -1,16 +1,18 @@
 <template>
-  <el-button @click="handleClick">set loading state</el-button>
-  <pro-loading :loading="valueRef">
-    <div style="height: 10vh; background-color: pink">content</div>
-  </pro-loading>
+  <pro-operate :items="opeItems" />
+  <pro-modal v-model:visible="valueRef" title="modal">
+    <div>content</div>
+  </pro-modal>
 </template>
 
 <script setup>
 import { ref } from "vue";
 
-const valueRef = ref(true);
+const valueRef = ref(false);
 
 const handleClick = () => {
-  valueRef.value = !valueRef.value;
+  valueRef.value = true;
 };
+
+const opeItems = [{ value: "value", label: "open modal", onClick: handleClick }];
 </script>

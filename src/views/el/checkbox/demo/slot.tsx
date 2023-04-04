@@ -11,7 +11,7 @@ export default defineComponent(() => {
   return () => {
     return (
       <pro-checkbox
-        v-model:modelValue={valueRef.value}
+        v-model={valueRef.value}
         options={options}
         buttonStyle={"button"}
         v-slots={{
