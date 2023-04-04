@@ -166,9 +166,10 @@ const routeDataToStr = (routeData: RouteType[]) => {
  */
 const routeDataNameList = (routeData: RouteType[], nameList: string[]) => {
   forEach(routeData, (item) => {
-    nameList.push(item.name);
     if (item.children && size(item.children) > 0) {
       routeDataNameList(item.children, nameList);
+    } else {
+      nameList.push(item.name);
     }
   });
 };
