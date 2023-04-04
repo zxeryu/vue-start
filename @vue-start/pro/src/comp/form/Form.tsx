@@ -1,7 +1,7 @@
 import { Ref, UnwrapNestedRefs } from "@vue/reactivity";
 import { computed, defineComponent, ExtractPropTypes, inject, PropType, provide, reactive, ref } from "vue";
 import { BooleanObjType, BooleanRulesObjType, TColumn, TColumns, TElementMap } from "../../types";
-import { useEffect } from "@vue-start/hooks";
+import { useEffect, useRuleState } from "@vue-start/hooks";
 import { forEach, get, has, keys, map, omit, size } from "lodash";
 import { getColumnFormItemName, getFormItemEl, proBaseProps, ProBaseProps, useProConfig } from "../../core";
 import { createExpose, getValidValues, mergeStateToList } from "../../util";
@@ -114,28 +114,9 @@ export const ProForm = defineComponent<ProFormProps>({
 
     const formState = props.model || reactive({});
     //组件状态相关
-    const showState = props.showState || reactive({});
-    const readonlyState = props.readonlyState || reactive({});
-    const disableState = props.disableState || reactive({});
-
-    //formState改变情况下，更新 showState，readonlyState，disableState状态
-    useEffect(() => {
-      if (props.showStateRules) {
-        forEach(props.showStateRules, (fn, key) => {
-          showState[key] = fn(formState);
-        });
-      }
-      if (props.readonlyStateRules) {
-        forEach(props.readonlyStateRules, (fn, key) => {
-          readonlyState[key] = fn(formState);
-        });
-      }
-      if (props.disableStateRules) {
-        forEach(props.disableStateRules, (fn, key) => {
-          disableState[key] = fn(formState);
-        });
-      }
-    }, formState);
+    const showState = useRuleState(formState, props.showStateRules!, props.showState);
+    const readonlyState = useRuleState(formState, props.readonlyStateRules!, props.readonlyState);
+    const disableState = useRuleState(formState, props.disableStateRules!, props.disableState);
 
     //readonly
     const readonly = computed(() => props.readonly);

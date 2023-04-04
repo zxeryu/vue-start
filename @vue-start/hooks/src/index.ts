@@ -7,11 +7,12 @@ import useEventListener from "./useEventListener";
 import useDocumentVisibility from "./useDocumentVisibility";
 import useHover from "./useHover";
 import useEffect from "./useEffect";
-import { useWatch } from "./useWatch";
+export * from "./useWatch";
 export * from "./useState";
 export * from "./useMemo";
 export * from "./useUpdateKey";
 export * from "./useResizeObserver";
+export * from "./useRuleState";
 
 export {
   useToggle,
@@ -23,7 +24,6 @@ export {
   useDocumentVisibility,
   useHover,
   useEffect,
-  useWatch,
 };
 
 export * from "./util";

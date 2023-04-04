@@ -104,9 +104,7 @@ export type BooleanObjType = {
   [key: string]: boolean;
 };
 
-export type BooleanRulesObjType = {
-  [key: string]: (record: any) => boolean;
-};
+export type BooleanRulesObjType = Record<string, (record: Record<string, any>) => boolean>
 
 /**
  *
