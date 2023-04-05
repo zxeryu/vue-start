@@ -1,24 +1,20 @@
 ## ProTabs
 
-基于 ElTabs 实现，支持 options 配置
+基于 [Tabs(el)](https://element-plus.org/zh-CN/component/tabs.html) / [Tabs(ant)](https://www.antdv.com/components/tabs-cn) 实现，支持 options 配置
 
 ## API
 
 ### 属性
 
-继承 ElTabs 所有属性
-
 | 名称      | 说明                       | 类型                      | 默认值 |
 | --------- | -------------------------- | ------------------------- | ------ |
 | `options` | Option 属性 & TabPane 属性 | `TOption & TabPaneProps ` | --     |
 
-### 属性
+### 事件
 
-继承 ElTabs 所有事件
+--
 
 ### 插槽
-
-继承 ElTabs 所有插槽
 
 | 名称      | 说明         | 类型                                 |
 | --------- | ------------ | ------------------------------------ |

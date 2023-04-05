@@ -1,4 +1,4 @@
-/********************************** pro-search-form ***********************************/
+/********************************** pro-form ***********************************/
 .pro-form {
 }
 
@@ -23,6 +23,17 @@
   margin-left: 12px;
 }
 
+/********************************** pro-curd-form***********************************/
+
+.pro-curd-form {
+}
+
+.pro-curd-form .pro-curd-form-operate {
+}
+
+.pro-curd-form .pro-curd-form-operate button:not(:first-child) {
+  margin-left: 12px;
+}
 
 /********************************** pro-page ***********************************/
 .pro-page-header {

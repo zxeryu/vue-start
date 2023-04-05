@@ -6,8 +6,6 @@ ProSearchForm+ProTable+Pagination 组合而成的组件
 
 ### 属性
 
-继承 ElTabs 所有属性
-
 | 名称              | 类型                      | 说明                               | 默认值   |
 | ----------------- | ------------------------- | ---------------------------------- | -------- |
 | `clsName`         | `string`                  | class name                         | pro-list |

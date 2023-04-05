@@ -112,6 +112,7 @@ export const ProList = defineComponent<ProListProps>({
                 <Table
                   clsName={`${props.clsName}-table`}
                   paginationState={{ page: pageState.page, pageSize: pageState.pageSize }}
+                  pagination={false}
                   {...props.tableProps}
                   v-slots={tableSlots}
                 />

@@ -31,7 +31,9 @@ export default defineComponent(() => {
     {
       action: CurdAction.EDIT,
       actor: userEdit,
-      convertParams: (body: Record<string, any>) => ({ body }),
+      convertParams: (values: Record<string, any>, origin: Record<string, any>) => {
+        return { body: { ...origin, ...values } };
+      },
       show: true,
     },
     {
