@@ -26,7 +26,6 @@ export const ProTabs = defineComponent({
                 name={item.value}
                 v-slots={{
                   label: () => {
-                    //插槽重写label
                     return slots.label?.(item) || item.label;
                   },
                 }}

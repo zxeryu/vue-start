@@ -17,7 +17,7 @@ export type ISearchMode = keyof typeof SearchMode;
 
 const proSearchFormProps = () => ({
   /**
-   * class名称
+   * class
    */
   clsName: { type: String, default: "pro-search-form" },
   /**
