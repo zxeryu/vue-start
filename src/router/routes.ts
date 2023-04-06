@@ -1,16 +1,5 @@
 export const routes = [
   {
-    name: "Column",
-    path: "column",
-    children: [
-      {
-        name: "ColumnIndexMd",
-        path: "index-md",
-        component: () => import("@/views/column/index-md"),
-      },
-    ],
-  },
-  {
     name: "Config",
     path: "config",
     children: [

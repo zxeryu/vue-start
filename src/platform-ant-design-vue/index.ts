@@ -31,16 +31,20 @@ const urlInterceptor = (request: AxiosInterceptorManager<AxiosRequestConfig>) =>
   });
 };
 
-const router = createRouter();
-const config = createConfig();
-const request = createRequest({}, [ContentTypeInterceptor, urlInterceptor]);
-const store$ = await createStore();
+const init = async () => {
+  const router = createRouter();
+  const config = createConfig();
+  const request = createRequest({}, [ContentTypeInterceptor, urlInterceptor]);
+  const store$ = await createStore();
 
-const app = createApp(App).use(store$).use(router).use(config).use(request).use(Antd);
+  const app = createApp(App).use(store$).use(router).use(config).use(request).use(Antd);
 
-//注册组件
-app.component("demo-box", DemoBox);
+  //注册组件
+  app.component("demo-box", DemoBox);
 
-initComp(app);
+  initComp(app);
 
-app.mount("#app");
+  app.mount("#app");
+};
+
+init();

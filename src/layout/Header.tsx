@@ -1,17 +1,25 @@
 import { defineComponent, ref } from "vue";
-import DemoData from "@/views/column/index-md";
 import { useConfig } from "@vue-start/config";
 import { css } from "@emotion/css";
 import { getPlatform, PlatformOptions, setPlatform } from "@/common/platform";
+import { columnStr } from "@/common/columns";
+import { useEffect } from "@vue-start/hooks";
+import {} from "./";
+import { TopMenu } from "@/layout/Menu";
 
 const DemoDataModal = defineComponent(() => {
   const visibleRef = ref(false);
+  const domRef = ref();
+
+  useEffect(() => {
+    domRef.value && (domRef.value.innerHTML = columnStr);
+  }, domRef);
 
   return () => {
     return (
       <>
         <pro-modal v-model:visible={visibleRef.value} title={"demo数据"}>
-          <DemoData />
+          <div ref={domRef} />
         </pro-modal>
         <pro-operate
           items={[
@@ -63,7 +71,9 @@ export const Header = defineComponent(() => {
           padding: "0 16px",
           height: "var(--header-hei)",
         })}>
-        {VITE_APP_TITLE}
+        <div class={css({ fontWeight: "bold", fontSize: 20 })}>{VITE_APP_TITLE}</div>
+        <div class={css({ width: 60 })} />
+        <TopMenu />
         <div class={css({ flexGrow: 1 })} />
         <DemoDataModal />
         <div class={css({ width: 16 })} />

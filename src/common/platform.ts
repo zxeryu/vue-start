@@ -1,7 +1,7 @@
 const PlatformKey = "platform";
 
 export const getPlatform = () => {
-  return localStorage.getItem(PlatformKey);
+  return localStorage.getItem(PlatformKey) || "element-plus";
 };
 
 export const setPlatform = (platform: string) => {
