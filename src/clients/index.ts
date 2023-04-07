@@ -1,4 +1,4 @@
-import { createRequestActor } from "../../@vue-start/request/src";
+import { createRequestActor } from "@vue-start/request";
 
 export const test = createRequestActor<
   {},

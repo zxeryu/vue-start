@@ -101,12 +101,12 @@ export const ProCurdModalFormConnect = defineComponent(() => {
   return () => {
     return (
       <ProCurdModal
-        {...omit(modalProps, "slots")}
+        {...omit(modalProps?.value, "slots")}
         onOk={() => {
           formRef.value?.submit();
         }}
-        v-slots={get(modalProps, "slots")}>
-        <ProCurdForm ref={formRef} {...omit(formProps, "slots")} v-slots={get(formProps, "slots")} />
+        v-slots={get(modalProps?.value, "slots")}>
+        <ProCurdForm ref={formRef} {...omit(formProps?.value, "slots")} v-slots={get(formProps?.value, "slots")} />
       </ProCurdModal>
     );
   };

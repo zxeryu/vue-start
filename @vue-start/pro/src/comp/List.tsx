@@ -91,14 +91,14 @@ export const ProList = defineComponent<ProListProps>({
             slots.search({ executeSearchWithResetPage, pageState })
           ) : (
             <>
-              {SearchForm ? (
+              {SearchForm && (
                 <SearchForm
                   clsName={`${props.clsName}-search`}
                   {...omit(props.searchProps, "onFinish")}
                   onFinish={(values: Record<string, any>) => executeSearchWithResetPage(values)}
                   v-slots={searchSlots}
                 />
-              ) : null}
+              )}
             </>
           )}
 
@@ -108,7 +108,7 @@ export const ProList = defineComponent<ProListProps>({
             slots.table({ pageState })
           ) : (
             <>
-              {Table ? (
+              {Table && (
                 <Table
                   clsName={`${props.clsName}-table`}
                   paginationState={{ page: pageState.page, pageSize: pageState.pageSize }}
@@ -116,7 +116,7 @@ export const ProList = defineComponent<ProListProps>({
                   {...props.tableProps}
                   v-slots={tableSlots}
                 />
-              ) : null}
+              )}
             </>
           )}
 
@@ -126,16 +126,17 @@ export const ProList = defineComponent<ProListProps>({
             slots.pagination({ executePageChange: handlePageChange, pageState })
           ) : (
             <>
-              {props.paginationProps !== false && Pagination ? (
-                <Pagination
-                  clsName={`${props.clsName}-pagination`}
-                  {...omit(!isBoolean(props.paginationProps) ? props.paginationProps : {}, "onChange")}
-                  page={pageState.page}
-                  pageSize={pageState.pageSize}
-                  onComposeChange={handlePageChange}
-                  v-slots={paginationSlots}
-                />
-              ) : null}
+              {props.paginationProps !== false && Pagination && (
+                <div class={`${props.clsName}-pagination`}>
+                  <Pagination
+                    {...omit(!isBoolean(props.paginationProps) ? props.paginationProps : {}, "onChange")}
+                    page={pageState.page}
+                    pageSize={pageState.pageSize}
+                    onComposeChange={handlePageChange}
+                    v-slots={paginationSlots}
+                  />
+                </div>
+              )}
             </>
           )}
 

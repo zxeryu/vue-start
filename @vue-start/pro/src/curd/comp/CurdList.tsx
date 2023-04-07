@@ -1,5 +1,5 @@
 import { defineComponent } from "vue";
-import { PaginationSlotProps, ProList, ProListProps, SearchSlotProps } from "../../comp";
+import { PaginationSlotProps, ProList, ProListProps, SearchSlotProps, TPageState } from "../../comp";
 import { CurdAction, CurdSubAction, useProCurd } from "../ctx";
 import { filter, get, isBoolean, map, omit, pick } from "lodash";
 import { ICurdOperateOpts } from "../Curd";
@@ -90,6 +90,11 @@ export const ProCurdList = defineComponent<ProListProps>({
             search: slots.search
               ? (opts: SearchSlotProps) => {
                   return slots.search!(opts, reSearchProps);
+                }
+              : undefined,
+            table: slots.table
+              ? (opts: { pageState: TPageState }) => {
+                  return slots.table!(opts, reTableProps);
                 }
               : undefined,
             pagination: slots.pagination
