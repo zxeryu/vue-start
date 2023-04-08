@@ -1,6 +1,7 @@
 import { find, findIndex, forEach, get, isFunction, size } from "lodash";
-import { FieldNames, TOption } from "../../../pro";
+import { FieldNames, TOption } from "@vue-start/pro";
 import { getFieldNames } from "./options";
+import { isValidInRules, TConvert, TRules } from "./base";
 
 type TData = Record<string, any>;
 
@@ -68,4 +69,112 @@ export const findTargetListInTree = (
       findTargetListInTree(children, value, fieldNames, cb, [...parent, item]);
     }
   });
+};
+
+type TFindTarget = {
+  index?: number;
+  target?: TData;
+  list?: TData[]; //目标所在的list
+  parentList?: TData[];
+};
+
+/**
+ * 根据规则从tree数据中查找目标
+ * @param data
+ * @param rules
+ * @param fieldNames
+ * @param targetObj
+ * @param parent
+ */
+const findTreeItemRecursion = (
+  data: TData[],
+  rules: TRules,
+  fieldNames: { children: string } | undefined = { children: "children" },
+  targetObj: TFindTarget,
+  parent?: TData[],
+) => {
+  const index = findIndex(data, (item) => isValidInRules(item, rules));
+  if (index > -1) {
+    const target = data[index];
+    const parentList = parent ? [...parent, target] : undefined;
+    targetObj.index = index;
+    targetObj.target = target;
+    targetObj.list = data;
+    targetObj.parentList = parentList;
+    return;
+  }
+  forEach(data, (item) => {
+    const children = get(item, fieldNames?.children);
+    if (children && size(children) > 0) {
+      const parentList = parent ? [...parent, item] : undefined;
+      findTreeItemRecursion(children, rules, fieldNames, targetObj, parentList);
+    }
+  });
+};
+
+/**
+ * 根据规则从tree数据中查找目标
+ * @param data
+ * @param rules
+ * @param fieldNames
+ * @param parent
+ */
+export const findTreeItem = (
+  data: TData[],
+  rules: TRules,
+  fieldNames: { children: string } | undefined = { children: "children" },
+  parent?: TData[],
+): TFindTarget => {
+  const obj: TFindTarget = {};
+  findTreeItemRecursion(data, rules, fieldNames, obj, parent);
+  return obj;
+};
+
+/**
+ * tree数据转化为Map对象
+ * @param data
+ * @param convert
+ * @param fieldNames
+ * @param mapObj
+ * @param onlyLeaf 只需要子节点数据
+ */
+const treeToMapRecursion = (
+  data: TData[],
+  convert: TConvert,
+  fieldNames: { children: string; value: string } | undefined = { children: "children", value: "value" },
+  mapObj: Record<string, any>,
+  onlyLeaf?: boolean,
+) => {
+  forEach(data, (item) => {
+    const children = get(item, fieldNames?.children);
+    let isAdd = true;
+    if (children && size(children) > 0 && onlyLeaf) {
+      //只需要添加子节点，设置为false
+      isAdd = false;
+    }
+    if (isAdd) {
+      mapObj[get(item, fieldNames?.value)] = convert(item);
+    }
+    if (children && size(children) > 0) {
+      treeToMapRecursion(children, convert, fieldNames, mapObj);
+    }
+  });
+};
+
+/**
+ * tree数据转化为Map对象
+ * @param data
+ * @param convert
+ * @param fieldNames
+ * @param onlyLeaf 只需要子节点数据
+ */
+export const treeToMap = (
+  data: TData[],
+  convert: TConvert,
+  fieldNames: { children: string; value: string } | undefined = { children: "children", value: "value" },
+  onlyLeaf?: boolean,
+): Record<string, any> => {
+  const mapObj = {};
+  treeToMapRecursion(data, convert, fieldNames, mapObj, onlyLeaf);
+  return mapObj;
 };

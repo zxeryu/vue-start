@@ -1,5 +1,5 @@
 import { forEach, get, map, omit, reduce, size } from "lodash";
-import { FieldNames, TOptions, TreeOptions } from "../../../pro";
+import { FieldNames, TOptions, TreeOptions } from "@vue-start/pro";
 
 export const getFieldNames = (fieldNames?: FieldNames) => {
   const labelName = fieldNames?.label || "label";
