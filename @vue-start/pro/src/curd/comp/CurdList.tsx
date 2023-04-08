@@ -82,7 +82,7 @@ export const ProCurdList = defineComponent<ProListProps>({
           {...omit(props, "searchProps", "tableProps", "paginationProps")}
           searchProps={reSearchProps}
           tableProps={reTableProps}
-          paginationProps={rePaginationProps}
+          paginationProps={paginationProps === false ? false : rePaginationProps}
           // @ts-ignore
           onSearch={handleSearch}
           v-slots={{

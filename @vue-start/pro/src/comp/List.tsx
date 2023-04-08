@@ -23,7 +23,10 @@ const proListProps = () => ({
   //table
   tableProps: { type: Object as PropType<Record<string, any>> },
   //为false 不展示
-  paginationProps: { type: [Object as PropType<Record<string, any>>, Boolean as PropType<boolean>] },
+  paginationProps: {
+    type: [Object as PropType<Record<string, any>>, Boolean as PropType<boolean>],
+    default: undefined,
+  },
   //pageState
   pageState: { type: Object as PropType<TPageState> },
 });
