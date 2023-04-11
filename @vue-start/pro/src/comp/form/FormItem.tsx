@@ -2,8 +2,9 @@ import { computed, defineComponent, ExtractPropTypes } from "vue";
 import { TValueType } from "../../types";
 import { useProForm } from "./Form";
 import { useProFormList } from "./FormList";
-import { get, isBoolean, keys, omit, set } from "lodash";
+import { get, isBoolean, keys, map, omit, set } from "lodash";
 import { convertPathToList } from "../../util";
+import { useProConfig } from "../../core";
 
 export interface FormItemProps {
   name?: string | number | (string | number)[];
@@ -30,6 +31,7 @@ export const createFormItemCompFn = <T extends FormItemProps>(
         ...proFormItemProps(),
       },
       setup: (props, { slots }) => {
+        const { formExtraMap } = useProConfig();
         const { formState, showState, readonlyState, disableState, readonly: formReadonly, elementMap } = useProForm();
         const formListCtx = useProFormList();
 
@@ -41,6 +43,30 @@ export const createFormItemCompFn = <T extends FormItemProps>(
             return readonlyState[props.name as string];
           }
           return formReadonly.value;
+        });
+
+        const combineRuleMessage = () => {
+          const prefix = get(formExtraMap?.rulePrefixMap, valueType);
+          return `${prefix || "请输入"}${props.label || ""}`;
+        };
+
+        //补充required message
+        const rules = computed(() => {
+          if (!formExtraMap?.rulePrefixMap) {
+            return props.rules;
+          }
+          if (props.required === true && !props.rules) {
+            return [{ required: true, message: combineRuleMessage() }];
+          }
+          if (!props.rules) {
+            return props.rules;
+          }
+          return map(props.rules, (item) => {
+            if (item.required && !item.message) {
+              item.message = combineRuleMessage();
+            }
+            return item;
+          });
         });
 
         const nameList = convertPathToList(props.name)!;
@@ -63,7 +89,11 @@ export const createFormItemCompFn = <T extends FormItemProps>(
           const ShowComp: any = get(elementMap, valueType);
 
           return (
-            <FormItem {...omit(props, ...invalidKeys, "name", "slots")} name={path} v-slots={props.slots}>
+            <FormItem
+              {...omit(props, ...invalidKeys, "name", "rules", "slots")}
+              name={path}
+              rules={rules.value}
+              v-slots={props.slots}>
               {readonly.value ? (
                 <>
                   {ShowComp ? (

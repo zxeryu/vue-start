@@ -261,3 +261,16 @@ export const ProForm = defineComponent<ProFormProps>({
     };
   },
 });
+
+export const FormRulePrefixMap = {
+  text: "请输入",
+  digit: "请输入",
+  select: "请选择",
+  treeSelect: "请选择",
+  cascader: "请选择",
+  checkbox: "请选择",
+  radio: "请选择",
+  switch: "请选择",
+  date: "请选择",
+  time: "请选择",
+};

@@ -36,6 +36,10 @@ export type ProDispatchRequestType = (
   extra?: IRequestActor["extra"],
 ) => IRequestActor | undefined;
 
+export type TFormExtraMap = {
+  rulePrefixMap?: Record<string, string>;
+};
+
 export interface IProConfigProvide {
   /**
    * 组件集
@@ -45,6 +49,8 @@ export interface IProConfigProvide {
    * form组件集（使用FormItem包裹的组件集合）
    */
   formElementMap?: TElementMap;
+  // requirePrefixMap form item required 前缀字符串，如：请输入、请选择 等
+  formExtraMap?: TFormExtraMap;
   /**
    * 注册的全局状态
    */
@@ -69,6 +75,7 @@ export interface IProConfigProvide {
 const proConfigProps = () => ({
   elementMap: { type: Object as PropType<TElementMap> },
   formElementMap: { type: Object as PropType<TElementMap> },
+  formExtraMap: { type: Object as PropType<TFormExtraMap> },
   //全局状态
   registerStores: { type: Array as PropType<TRegisterStore[]> },
   //全局接口 （设计成对象为了拓展）
@@ -116,6 +123,7 @@ export const ProConfig = defineComponent<ProConfigProps>({
     provide(ProConfigKey, {
       elementMap: props.elementMap,
       formElementMap: props.formElementMap,
+      formExtraMap: props.formExtraMap,
       //
       registerStoreMap,
       //
