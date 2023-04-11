@@ -1,8 +1,9 @@
 import { computed, defineComponent, PropType } from "vue";
 import { ProTypographyProps, ProTypography } from "./Typography";
-import { get, isArray, isNumber, join, map, omit } from "lodash";
+import { get, isArray, isNumber, join, map, omit, pick } from "lodash";
 import { TOptions } from "../types";
 import { decimalFixed, listToMap, TConvert, thousandDivision, treeToMap } from "@vue-start/hooks";
+import dayjs from "dayjs";
 
 const baseProps = {
   value: { type: [String, Number] },
@@ -11,10 +12,11 @@ const baseProps = {
 };
 
 export const ProShowText = defineComponent({
+  inheritAttrs: false,
   props: {
     ...baseProps,
   },
-  setup: (props) => {
+  setup: (props, { attrs }) => {
     const v = computed(() => {
       const content = props.showProps?.content;
       const v = props.value || isNumber(props.value) ? props.value : content;
@@ -22,12 +24,15 @@ export const ProShowText = defineComponent({
     });
 
     return () => {
-      return <ProTypography {...omit(props.showProps, "content")} content={v.value} />;
+      return (
+        <ProTypography {...pick(attrs, "style", "class")} {...omit(props.showProps, "content")} content={v.value} />
+      );
     };
   },
 });
 
 export const ProShowDigit = defineComponent({
+  inheritAttrs: false,
   props: {
     ...baseProps,
     //保留小数位
@@ -35,7 +40,7 @@ export const ProShowDigit = defineComponent({
     //千分位处理
     thousandDivision: { type: Boolean, default: false },
   },
-  setup: (props) => {
+  setup: (props, { attrs }) => {
     const v = computed(() => {
       let v = props.value;
       if (v && props.decimalFixed) {
@@ -48,20 +53,23 @@ export const ProShowDigit = defineComponent({
     });
 
     return () => {
-      return <ProShowText value={v.value} showProps={props.showProps} />;
+      return <ProShowText {...pick(attrs, "style", "class")} value={v.value} showProps={props.showProps} />;
     };
   },
 });
 
 // select radio-group checkbox-group
 export const ProShowOptions = defineComponent({
+  inheritAttrs: false,
   props: {
     ...baseProps,
     value: { type: [String, Number, Array] },
     options: Array as PropType<TOptions>,
     splitStr: { type: String, default: "," },
+    //颜色 单个值生效
+    colorMap: { type: Object },
   },
-  setup: (props) => {
+  setup: (props, { attrs }) => {
     const optionsMap = computed(() => listToMap(props.options!, (item) => item.label), undefined);
 
     const v = computed(() => {
@@ -78,14 +86,26 @@ export const ProShowOptions = defineComponent({
       return props.convert ? props.convert(v, props) : v;
     });
 
+    const color = computed(() => {
+      return get(props.colorMap, props.value as string);
+    });
+
     return () => {
-      return <ProShowText value={v.value} showProps={props.showProps} />;
+      return (
+        <ProShowText
+          {...pick(attrs, "style", "class")}
+          style={`color:${color.value || ""}`}
+          value={v.value}
+          showProps={props.showProps}
+        />
+      );
     };
   },
 });
 
 // tree cascader
 export const ProShowTree = defineComponent({
+  inheritAttrs: false,
   props: {
     ...baseProps,
     value: { type: [String, Number, Array] },
@@ -98,7 +118,7 @@ export const ProShowTree = defineComponent({
     fieldNames: Object, //ant
     props: Object, //el
   },
-  setup: (props) => {
+  setup: (props, { attrs }) => {
     const optionsMap = computed(() => {
       const data = props.treeData || props.data || props.options;
       const fieldNames = props.fieldNames || props.props;
@@ -123,7 +143,43 @@ export const ProShowTree = defineComponent({
     });
 
     return () => {
-      return <ProShowText value={v.value} showProps={props.showProps} />;
+      return <ProShowText {...pick(attrs, "style", "class")} value={v.value} showProps={props.showProps} />;
+    };
+  },
+});
+
+export const ProShowDate = defineComponent({
+  props: {
+    ...baseProps,
+    value: { type: [String, Number, Array] },
+    splitStr: { type: String, default: "-" },
+    format: { type: String, default: "YYYY-MM-DD" },
+    isUnix: { type: Boolean, default: false },
+  },
+  setup: (props, { attrs }) => {
+    const formatDate = (date: number | string) => {
+      if (!date) return date;
+      if (props.isUnix) {
+        return dayjs.unix(date as number).format(props.format);
+      }
+      return dayjs(date).format(props.format);
+    };
+
+    const v = computed(() => {
+      let v = props.value;
+      if (isArray(props.value)) {
+        v = join(
+          map(props.value, (item) => formatDate(item) || ""),
+          props.splitStr,
+        );
+      } else {
+        v = formatDate(props.value!) || "";
+      }
+      return props.convert ? props.convert(v, props) : v;
+    });
+
+    return () => {
+      return <ProShowText {...pick(attrs, "style", "class")} value={v.value} showProps={props.showProps} />;
     };
   },
 });
