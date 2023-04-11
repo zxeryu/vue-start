@@ -1,5 +1,5 @@
 import { defineComponent } from "vue";
-import { LogonUser, ProConfig, useLogonUser } from "@vue-start/pro";
+import { FormRulePrefixMap, LogonUser, ProConfig, useLogonUser } from "@vue-start/pro";
 import { elementMap, formElementMap } from "./component";
 import { RouterView } from "vue-router";
 import { useEffect } from "@vue-start/hooks";
@@ -21,7 +21,10 @@ export const App = defineComponent(() => {
   return () => {
     return (
       <LogonUser>
-        <ProConfig elementMap={elementMap} formElementMap={formElementMap}>
+        <ProConfig
+          elementMap={elementMap}
+          formElementMap={formElementMap}
+          formExtraMap={{ rulePrefixMap: FormRulePrefixMap }}>
           <RouterView />
           <SetMenu />
         </ProConfig>

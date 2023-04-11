@@ -29,7 +29,7 @@ export const columns = [
     title: "name",
     dataIndex: "name",
     formItemProps: {
-      rules: [{ required: true, message: "请输入name" }],
+      required: true,
     },
     formFieldProps: {},
     search: true,
@@ -40,7 +40,7 @@ export const columns = [
     dataIndex: "age",
     valueType: "digit",
     formItemProps: {
-      rules: [{ required: true, message: "请输入年龄" }],
+      rules: [{ required: true }],
     },
     formFieldProps: {},
   },
@@ -48,6 +48,9 @@ export const columns = [
     title: "gender",
     dataIndex: "gender",
     valueType: "select",
+    formItemProps: {
+      required: true,
+    },
     formFieldProps: {
       options,
     },

@@ -77,6 +77,7 @@ export default defineConfig(({ mode }) => {
               "fs",
               "path",
               "querystring",
+              "dayjs",
               //
               "@vue-start/hooks",
               "@vue-start/request",

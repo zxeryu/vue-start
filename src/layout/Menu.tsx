@@ -1,9 +1,9 @@
 import { computed, defineComponent } from "vue";
 import { useLogonUser } from "@vue-start/pro";
-import { map, find, reduce, get, size, forEach, findLast } from "lodash";
+import { map, get, size, forEach, findLast } from "lodash";
 import { useRoute, useRouter } from "vue-router";
 import { css } from "@emotion/css";
-import { findTargetInTree } from "@vue-start/hooks";
+import { findTreeItem, getMenuTopNameMap } from "@vue-start/hooks";
 
 export interface IMenu {
   title: string;
@@ -20,25 +20,13 @@ export const findValidMenu = (item: IMenu): IMenu | null => {
   return null;
 };
 
-const setMenuFirstLevelMap = (menus: IMenu[], obj: Record<string, string>, parent?: string) => {
-  forEach(menus, (item) => {
-    const parentName = parent || item.name;
-    obj[item.name] = parentName;
-    if (item.children && size(item.children) > 0) {
-      setMenuFirstLevelMap(item.children, obj, parentName);
-    }
-  });
-};
-
 export const TopMenu = defineComponent(() => {
   const { per } = useLogonUser();
   const router = useRouter();
   const route = useRoute();
 
   const menuTopMap = computed(() => {
-    const obj = {};
-    setMenuFirstLevelMap(per.menus, obj);
-    return obj;
+    return getMenuTopNameMap(per.menus, { children: "children", value: "name" });
   });
 
   const current = computed(() => {
@@ -82,17 +70,13 @@ export const LeftMenu = defineComponent(() => {
   const route = useRoute();
 
   const menuTopMap = computed(() => {
-    const obj = {};
-    setMenuFirstLevelMap(per.menus, obj);
-    return obj;
+    return getMenuTopNameMap(per.menus, { children: "children", value: "name" });
   });
 
   const menuData = computed(() => {
     const target = findLast(route.matched, (item) => !!get(menuTopMap.value, item.name!));
-    if (target) {
-      const obj: { target?: IMenu } = {};
-      findTargetInTree(per.menus, get(menuTopMap.value, target.name as string), { value: "name" }, obj);
-      return obj.target;
+    if (target?.name) {
+      return findTreeItem(per.menus, (item) => get(menuTopMap.value, target.name!) === item.name, undefined).target;
     }
     return null;
   });

@@ -1,5 +1,16 @@
 export const routes = [
   {
+    name: "About",
+    path: "about",
+    component: () => import("@/views/About.vue"),
+  },
+  { name: "Comp", path: "comp", component: () => import("@/views/Comp") },
+  {
+    name: "Compelement",
+    path: "compelement",
+    component: () => import("@/views/CompElement"),
+  },
+  {
     name: "Config",
     path: "config",
     children: [
@@ -9,6 +20,11 @@ export const routes = [
         component: () => import("@/views/config/index"),
       },
     ],
+  },
+  {
+    name: "Counter",
+    path: "counter",
+    component: () => import("@/views/Counter.vue"),
   },
   {
     name: "Curd",
@@ -254,6 +270,7 @@ export const routes = [
       },
     ],
   },
+  { name: "Home", path: "home", component: () => import("@/views/Home.vue") },
   {
     name: "Hooks",
     path: "hooks",
@@ -292,6 +309,11 @@ export const routes = [
         ],
       },
     ],
+  },
+  {
+    name: "Network",
+    path: "network",
+    component: () => import("@/views/Network.vue"),
   },
   {
     name: "Overview",
@@ -337,4 +359,5 @@ export const routes = [
       },
     ],
   },
+  { name: "Test", path: "test", component: () => import("@/views/Test") },
 ];
