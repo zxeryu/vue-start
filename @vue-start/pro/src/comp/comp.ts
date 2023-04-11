@@ -4,6 +4,7 @@ import { get } from "lodash";
 /******************************** 组件key ********************************/
 
 export const ElementKeys = {
+  TypographyKey: "Typography$", //Typography
   LoadingKey: "Loading$", //Loading
   RowKey: "Row$", //Row
   ColKey: "Col$", //Col

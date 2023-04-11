@@ -11,7 +11,7 @@ export const generateId = (): string => {
 export type TRule = (target: Record<string, any>) => boolean;
 export type TRules = TRule | TRule[];
 //转换
-export type TConvert = (target: Record<string, any>) => Record<string, any>;
+export type TConvert = (...params: any[]) => any;
 
 /**
  * 当前target对象 是否满足 rules 规则集

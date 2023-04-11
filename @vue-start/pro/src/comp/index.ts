@@ -5,5 +5,7 @@ export * from "./Page";
 export * from "./Operate";
 export * from "./List";
 export * from "./Desc";
+export * from "./Typography";
+export * from "./show";
 
 export * from "./comp";
