@@ -18,6 +18,7 @@ import { createExpose, filterSlotsByPrefix, getSignValue, mergeStateToList } fro
 import { IOpeItem, ProOperate, ProOperateProps } from "../Operate";
 import { ElementKeys } from "../comp";
 import { ColumnSetting, ProColumnSettingProps } from "./ColumnSetting";
+import { useWatch } from "@vue-start/hooks";
 
 const ProTableKey = Symbol("pro-table");
 
@@ -173,6 +174,7 @@ export const ProTable = defineComponent<ProTableProps>({
         customRender: ({ record }) => {
           const opeItems = map(sortedItems, (item) => {
             return {
+              ...item,
               value: item.value,
               label: item.label,
               show: isFunction(item.show) ? item.show(record) : item.show,
@@ -232,6 +234,13 @@ export const ProTable = defineComponent<ProTableProps>({
     const state = reactive({
       selectIds: initSelectIds(),
     });
+
+    useWatch(
+      () => {
+        state.selectIds = initSelectIds();
+      },
+      () => props.columns,
+    );
 
     const originColumns = toRef(props, "columns");
 
@@ -303,7 +312,6 @@ export const ProTable = defineComponent<ProTableProps>({
       if (!Table) {
         return null;
       }
-
       const toolbarDom = slots.toolbar ? slots.toolbar() : undefined;
       return (
         <div class={props.clsName} {...(pick(attrs, "class") as any)}>
