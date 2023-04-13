@@ -1,24 +1,11 @@
-import {
-  computed,
-  defineComponent,
-  ExtractPropTypes,
-  inject,
-  PropType,
-  provide,
-  reactive,
-  ref,
-  toRef,
-  VNode,
-} from "vue";
+import { computed, defineComponent, ExtractPropTypes, inject, PropType, provide, ref, toRef, VNode, Ref } from "vue";
 import { TColumn } from "../../types";
 import { filter, get, isBoolean, isFunction, keys, map, omit, pick, reduce, size, some, sortBy } from "lodash";
 import { getItemEl, proBaseProps, ProBaseProps, useProConfig } from "../../core";
-import { Ref, UnwrapNestedRefs } from "@vue/reactivity";
-import { createExpose, filterSlotsByPrefix, getSignValue, mergeStateToList } from "../../util";
+import { createExpose, filterSlotsByPrefix, mergeStateToList } from "../../util";
 import { IOpeItem, ProOperate, ProOperateProps } from "../Operate";
 import { ElementKeys } from "../comp";
 import { ColumnSetting, ProColumnSettingProps } from "./ColumnSetting";
-import { useWatch } from "@vue-start/hooks";
 
 const ProTableKey = Symbol("pro-table");
 
@@ -27,9 +14,7 @@ export interface IProTableProvideExtra extends Record<string, any> {}
 export interface IProTableProvide extends IProTableProvideExtra {
   columns: Ref<TTableColumns>;
   originColumns: Ref<TTableColumns>;
-  state: UnwrapNestedRefs<{
-    selectIds: (string | number)[];
-  }>;
+  selectIdsRef: Ref<Array<string | number>>;
 }
 
 export const useProTable = () => inject(ProTableKey) as IProTableProvide;
@@ -137,7 +122,7 @@ export const ProTable = defineComponent<ProTableProps>({
     ...proBaseProps,
     ...proTableProps(),
   } as any,
-  setup: (props, { slots, expose, attrs }) => {
+  setup: (props, { slots, expose, attrs, emit }) => {
     const { elementMap: elementMapP } = useProConfig();
 
     const elementMap = props.elementMap || elementMapP;
@@ -215,37 +200,18 @@ export const ProTable = defineComponent<ProTableProps>({
       };
     };
 
-    //初始化选中的columns
-    const initSelectIds = (): (string | number)[] => {
-      const signName = props.toolbar?.columnSetting?.signName || "columnSetting";
-      const showColumns = filter(props.columns, (item) => {
-        //标记初始化不展示
-        if (getSignValue(item, signName)?.initShow === false) {
-          return false;
-        }
-        return true;
-      });
-      if (props.serialNumber) {
-        showColumns.unshift(createNumberColumn());
-      }
-      return map(showColumns, (c) => c.dataIndex!);
-    };
+    // ColumnSetting 开启后
+    const selectIdsRef = ref<Array<string | number>>([]);
 
-    const state = reactive({
-      selectIds: initSelectIds(),
-    });
-
-    useWatch(
-      () => {
-        state.selectIds = initSelectIds();
-      },
-      () => props.columns,
-    );
+    const isColumnSetting = computed(() => !!props.toolbar?.columnSetting);
 
     const originColumns = toRef(props, "columns");
 
     const showColumns = computed(() => {
-      const selectIdMap = reduce(state.selectIds, (pair, item) => ({ ...pair, [item]: true }), {});
+      if (!isColumnSetting.value) {
+        return props.columns;
+      }
+      const selectIdMap = reduce(selectIdsRef.value, (pair, item) => ({ ...pair, [item]: true }), {});
       return filter(props.columns, (item) => get(selectIdMap, item.dataIndex!));
     });
 
@@ -297,7 +263,7 @@ export const ProTable = defineComponent<ProTableProps>({
     provideProTable({
       columns: columns as any,
       originColumns: originColumns as any,
-      state: state as any,
+      selectIdsRef: selectIdsRef as any,
       tableRef,
       toolbar: props.toolbar,
       ...props.provideExtra,
@@ -315,10 +281,10 @@ export const ProTable = defineComponent<ProTableProps>({
       const toolbarDom = slots.toolbar ? slots.toolbar() : undefined;
       return (
         <div class={props.clsName} {...(pick(attrs, "class") as any)}>
-          {(toolbarDom || props.toolbar?.columnSetting) && (
+          {(toolbarDom || isColumnSetting.value) && (
             <div class={`${props.clsName}-toolbar`}>
               {toolbarDom}
-              {props.toolbar?.columnSetting && (
+              {isColumnSetting.value && (
                 <ColumnSetting {...props.toolbar?.columnSetting} v-slots={columnSettingSlots} />
               )}
             </div>
