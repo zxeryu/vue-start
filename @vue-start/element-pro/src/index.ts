@@ -7,6 +7,7 @@ import {
   ProCurdModal,
   ProCurdForm,
   ProCurdDesc,
+  ProLayout,
 } from "@vue-start/pro";
 import { ElForm, ElFormItem, ElDescriptions } from "element-plus";
 import { FormMethods } from "./form";
@@ -58,4 +59,33 @@ ProCurdForm.props = {
 ProCurdModal.props = {
   ...Modal.props,
   ...ProCurdModal.props,
+};
+
+/*********** ProLayout **********/
+ProLayout.props = {
+  ...ProLayout.props,
+  convertMenuParams: {
+    type: Function,
+    default: ({ mode, activeKey, openKeys }: any) => ({ mode, defaultActive: activeKey }),
+  },
+  convertSubMenuParams: {
+    type: Function,
+    default: (menu: any) => ({ index: menu.value }),
+  },
+  convertMenuItemParams: {
+    type: Function,
+    default: (menu: any) => ({ index: menu.value }),
+  },
+  subMenuSlots: {
+    type: Object,
+    default: {
+      title: (menu: any) => menu.label,
+    },
+  },
+  menuItemSlots: {
+    type: Object,
+    default: {
+      title: (menu: any) => menu.label,
+    },
+  },
 };

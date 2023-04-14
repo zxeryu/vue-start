@@ -7,6 +7,7 @@ import {
   ProCurdModal,
   ProCurdForm,
   ProCurdDesc,
+  ProLayout,
 } from "@vue-start/pro";
 import { Form, FormItem, Descriptions, Table, Modal } from "ant-design-vue";
 import { FormMethods } from "./form";
@@ -55,4 +56,36 @@ ProCurdForm.props = {
 ProCurdModal.props = {
   ...Modal.props,
   ...ProCurdModal.props,
+};
+
+/*********** ProLayout **********/
+ProLayout.props = {
+  ...ProLayout.props,
+  convertMenuParams: {
+    type: Function,
+    default: ({ mode, activeKey, openKeys }: any) => ({
+      mode: mode === "horizontal" ? mode : "inline",
+      selectedKeys: [activeKey],
+    }),
+  },
+  convertSubMenuParams: {
+    type: Function,
+    default: (menu: any) => ({ key: menu.value, title: menu.label }),
+  },
+  convertMenuItemParams: {
+    type: Function,
+    default: (menu: any) => ({ key: menu.value, title: menu.label }),
+  },
+  subMenuSlots: {
+    type: Object,
+    default: {
+      title: (menu: any) => menu.label,
+    },
+  },
+  menuItemSlots: {
+    type: Object,
+    default: {
+      default: (menu: any) => menu.label,
+    },
+  },
 };

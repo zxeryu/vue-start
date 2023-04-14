@@ -14,6 +14,9 @@ export const ElementKeys = {
   PaginationKey: "Pagination$", //Pagination
   PopoverKey: "Popover$", //Popover
   CheckboxKey: "Checkbox$", //Checkbox
+  MenuKey: "Menu$",
+  MenuSubKey: "MenuSub$",
+  MenuItemKey: "MenuItem$",
   ModalKey: "Modal$", //Modal
   FormKey: "Form$", //Form
   FormItemKey: "FormItem$", //FormItem

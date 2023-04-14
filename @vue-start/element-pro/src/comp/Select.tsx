@@ -37,7 +37,7 @@ export const ProSelect = defineComponent<ProSelectProps>({
             const labelEl = slots.label?.(item);
 
             return (
-              <ElOption key={item.value} {...omit(item, "label")}>
+              <ElOption key={item.value} {...item}>
                 {labelEl || item.label}
               </ElOption>
             );
