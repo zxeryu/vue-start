@@ -4,8 +4,6 @@ import { css } from "@emotion/css";
 import { getPlatform, PlatformOptions, setPlatform } from "@/common/platform";
 import { columnStr } from "@/common/columns";
 import { useEffect } from "@vue-start/hooks";
-import {} from "./";
-import { TopMenu } from "@/layout/Menu";
 
 const DemoDataModal = defineComponent(() => {
   const visibleRef = ref(false);
@@ -58,27 +56,26 @@ const Platform = defineComponent(() => {
   };
 });
 
-export const Header = defineComponent(() => {
+export const HeaderLeft = defineComponent(() => {
   const { VITE_APP_TITLE } = useConfig();
-
   return () => {
     return (
-      <header
-        class={css({
-          display: "flex",
-          alignItems: "center",
-          boxShadow: "0 1px 3px 0 rgba(0, 0, 0, 0.1)",
-          padding: "0 16px",
-          height: "var(--header-hei)",
-        })}>
+      <>
         <div class={css({ fontWeight: "bold", fontSize: 20 })}>{VITE_APP_TITLE}</div>
         <div class={css({ width: 60 })} />
-        <TopMenu />
-        <div class={css({ flexGrow: 1 })} />
+      </>
+    );
+  };
+});
+
+export const HeaderRight = defineComponent(() => {
+  return () => {
+    return (
+      <>
         <DemoDataModal />
         <div class={css({ width: 16 })} />
         <Platform />
-      </header>
+      </>
     );
   };
 });

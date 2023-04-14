@@ -2,12 +2,24 @@ import { defineComponent } from "vue";
 import { css } from "@emotion/css";
 import { ProTypography, ProShowText, ProShowDigit, ProShowOptions, ProShowTree, ProShowDate } from "@vue-start/pro";
 import dayjs from "dayjs";
+import { useRouter } from "vue-router";
 
 export default defineComponent(() => {
+  const router = useRouter();
+
   return () => {
     return (
-      <div>
+      <pro-page
+
+        title={"这是一个标题"}
+        subTitle={"这是一个副标题"}
+        // fillMode={false}
+        v-slots={{
+          extra: () => <div>extra</div>,
+          footer: () => <>底部内容</>,
+        }}>
         Test
+        <div onClick={() => router.push({ name: "TestDetail" })}>to detail</div>
         <div
           class={css({
             width: 300,
@@ -67,8 +79,10 @@ export default defineComponent(() => {
         <br />
         <ProShowDate value={dayjs().valueOf()} />
         <br />
-        <ProShowDate value={dayjs().unix()} isUnix format={'YYYY-MM-DD HH:mm:ss'}/>
-      </div>
+        <ProShowDate value={dayjs().unix()} isUnix format={"YYYY-MM-DD HH:mm:ss"} />
+        <div class={css({ height: 900, backgroundColor: "pink" })} />
+        <div>end</div>
+      </pro-page>
     );
   };
 });

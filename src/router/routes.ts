@@ -359,5 +359,20 @@ export const routes = [
       },
     ],
   },
-  { name: "Test", path: "test", component: () => import("@/views/Test") },
+  {
+    name: "Test",
+    path: "test",
+    children: [
+      {
+        name: "TestDetail",
+        path: "detail",
+        component: () => import("@/views/test/Detail"),
+      },
+      {
+        name: "TestIndex",
+        path: "index",
+        component: () => import("@/views/test/index"),
+      },
+    ],
+  },
 ];

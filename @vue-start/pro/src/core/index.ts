@@ -6,5 +6,3 @@ export * from "./pro";
 export * from "./store";
 
 export * from "./request";
-
-export * from "./access";

@@ -33,7 +33,7 @@ const findFirstValidMenuRecursion = (
 export const findFirstValidMenu = (
   menus: TMenu[],
   rules: TRules,
-  fieldNames: { children: string; value: string } | undefined = { children: "children", value: "value" },
+  fieldNames: { children: string } | undefined = { children: "children" },
 ): TMenu | undefined => {
   const mapObj: { target?: TMenu } = {};
   findFirstValidMenuRecursion(menus, rules, fieldNames, mapObj);

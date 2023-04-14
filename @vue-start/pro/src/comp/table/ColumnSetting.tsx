@@ -1,8 +1,8 @@
-import { computed, defineComponent, ExtractPropTypes } from "vue";
+import { computed, defineComponent, ExtractPropTypes, PropType } from "vue";
 import { ElementKeys, useGetCompByKey } from "../comp";
-import { filter, get, isObject, map, omit, reduce, some, every } from "lodash";
+import { filter, get, isObject, map, omit, reduce, some, every, forEach, has } from "lodash";
 import { TTableColumn, useProTable } from "./Table";
-import { useUpdateKey, useWatch } from "@vue-start/hooks";
+import { useEffect, useUpdateKey, useWatch } from "@vue-start/hooks";
 import { getSignValue as getSignValueOrigin } from "../../util";
 
 const proColumnSetting = () => ({
@@ -12,6 +12,10 @@ const proColumnSetting = () => ({
   clsName: { type: String, default: "pro-table-toolbar-column" },
   signName: { type: String, default: "columnSetting" },
   popoverProps: Object,
+  //使用保留状态
+  useSelectedStatus: { type: Boolean, default: true },
+  //select改变监听
+  onColumnSelectChange: { type: Function as PropType<(selectIds: Array<string | number>) => void> },
 });
 
 export type ProColumnSettingProps = Partial<ExtractPropTypes<ReturnType<typeof proColumnSetting>>>;
@@ -25,56 +29,73 @@ export const ColumnSetting = defineComponent<ProColumnSettingProps>({
     const Popover = getComp(ElementKeys.PopoverKey);
     const Checkbox = getComp(ElementKeys.CheckboxKey);
 
-    const { originColumns, state: tableState } = useProTable();
+    const { originColumns, selectIdsRef } = useProTable();
 
     const [listKey, updateListKey] = useUpdateKey();
 
-    useWatch(
-      () => {
-        updateListKey();
-      },
-      () => tableState.selectIds,
-    );
+    // 当前操作过的的状态
+    // 当originColumns改变的时，重新赋值的时候使用保留状态
+    let selectedMap: Record<string, boolean> = {};
+    const setSelectedItemFalse = (item: string | number) => {
+      selectedMap[item] = false;
+    };
+    const setSelectedMapValue = () => {
+      forEach(selectIdsRef.value, (item) => {
+        selectedMap[item] = true;
+      });
+    };
 
     const selectIdMap = computed(() => {
-      return reduce(tableState.selectIds, (pair, item) => ({ ...pair, [item]: true }), {});
+      return reduce(selectIdsRef.value, (pair, item) => ({ ...pair, [item]: true }), {});
     });
 
     const getSignValue = (item: TTableColumn) => {
       return getSignValueOrigin(item, props.signName!);
     };
 
+    //originColumns 发生改变
+    useEffect(() => {
+      selectIdsRef.value = map(
+        filter(originColumns.value, (item) => {
+          if (props.useSelectedStatus && has(selectedMap, item.dataIndex!)) {
+            return selectedMap[item.dataIndex!];
+          }
+          return getSignValue(item)?.initShow !== false;
+        }),
+        (item) => item.dataIndex!,
+      );
+    }, originColumns);
+
+    useWatch(() => {
+      updateListKey();
+      setSelectedMapValue();
+      // @ts-ignore
+      props.onColumnSelectChange?.(selectIdsRef.value);
+    }, selectIdsRef);
+
     const allValue = computed(() => {
       const allSelect = every(originColumns.value, (item) => {
-        const sign = getSignValue(item);
-        if (sign?.disabled) {
-          return true;
-        }
+        if (getSignValue(item)?.disabled) return true;
         return get(selectIdMap.value, item.dataIndex!);
       });
       const hasSelect = some(originColumns.value, (item) => {
-        const sign = getSignValue(item);
-        if (sign?.disabled) {
-          return true;
-        }
+        if (getSignValue(item)?.disabled) return true;
         return get(selectIdMap.value, item.dataIndex!);
       });
-      return {
-        checked: allSelect,
-        indeterminate: allSelect ? false : hasSelect,
-      };
+      return { checked: allSelect, indeterminate: allSelect ? false : hasSelect };
     });
 
     const handleAllChecked = (e: boolean | { target: { checked: boolean } }) => {
       const v = isObject(e) ? e.target?.checked : e;
       if (v) {
-        tableState.selectIds = map(originColumns.value, (c) => c.dataIndex!);
+        selectIdsRef.value = map(originColumns.value, (c) => c.dataIndex!);
       } else {
-        tableState.selectIds = map(
+        selectIdsRef.value = map(
           filter(originColumns.value, (item) => {
             if (getSignValue(item)?.disabled) {
               return true;
             }
+            setSelectedItemFalse(item.dataIndex!);
             return false;
           }),
           (c) => c.dataIndex!,
@@ -83,9 +104,10 @@ export const ColumnSetting = defineComponent<ProColumnSettingProps>({
     };
 
     const handleReset = () => {
-      tableState.selectIds = map(
+      selectIdsRef.value = map(
         filter(originColumns.value, (item) => {
           if (getSignValue(item)?.initShow === false) {
+            setSelectedItemFalse(item.dataIndex!);
             return false;
           }
           return true;
@@ -97,10 +119,11 @@ export const ColumnSetting = defineComponent<ProColumnSettingProps>({
     const handleChecked = (item: TTableColumn, e: boolean | { target: { checked: boolean } }) => {
       const v = isObject(e) ? e.target?.checked : e;
       if (v) {
-        tableState.selectIds = [...tableState.selectIds, item.dataIndex!];
+        selectIdsRef.value = [...selectIdsRef.value, item.dataIndex!];
       } else {
-        tableState.selectIds = filter(tableState.selectIds, (i) => {
+        selectIdsRef.value = filter(selectIdsRef.value, (i) => {
           if (item.dataIndex === i) {
+            setSelectedItemFalse(item.dataIndex!);
             return false;
           }
           return true;
@@ -131,9 +154,10 @@ export const ColumnSetting = defineComponent<ProColumnSettingProps>({
                 <div key={listKey.value} class={`${props.clsName}-list`}>
                   {map(originColumns.value, (item) => {
                     const sign = getSignValue(item);
+                    const checked = get(selectIdMap.value, item.dataIndex!, false);
                     return (
                       <Checkbox
-                        checked={get(selectIdMap.value, item.dataIndex!, false)}
+                        checked={checked}
                         disabled={sign?.disabled}
                         onChange={(e: boolean | { target: { checked: boolean } }) => {
                           handleChecked(item, e);

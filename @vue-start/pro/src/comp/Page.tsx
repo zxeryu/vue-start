@@ -63,6 +63,7 @@ export const ProPage = defineComponent<ProPageProps>({
     const domHeiRef = ref(0);
 
     useResizeObserver(domRef, (entries) => {
+      if (!props.fillMode) return;
       const rect = entries[0]?.contentRect;
       domHeiRef.value = rect?.height;
     });
@@ -75,6 +76,7 @@ export const ProPage = defineComponent<ProPageProps>({
 
       return (
         <div class={"pro-page"}>
+          {slots.start?.()}
           {hasHeader && (
             <PageHeader
               {...pick(props, headerKeys)}
@@ -92,7 +94,7 @@ export const ProPage = defineComponent<ProPageProps>({
           ) : (
             <div
               ref={domRef}
-              style={domHeiRef.value > 0 ? `height:${domHeiRef.value > 0}` : ""}
+              style={props.fillMode && domHeiRef.value > 0 ? `height:${domHeiRef.value};overflow-y:auto` : ""}
               class={"pro-page-content"}>
               {props.fillMode ? <>{domHeiRef.value > 0 && slots.default?.()}</> : slots.default?.()}
             </div>
