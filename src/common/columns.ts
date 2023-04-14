@@ -66,7 +66,7 @@ export const columns = [
   },
   {
     title: "cascader",
-    dataIndex: "treeOperate",
+    dataIndex: "treeOperate2",
     valueType: "cascader",
     formFieldProps: {
       options: treeOptions,

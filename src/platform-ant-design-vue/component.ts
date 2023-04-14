@@ -14,6 +14,9 @@ import {
   CheckboxGroup,
   RadioGroup,
   Select,
+  Menu,
+  SubMenu,
+  MenuItem,
 } from "ant-design-vue";
 import {
   ProFormCascader,
@@ -54,6 +57,9 @@ export const elementMap = {
   [ElementKeys.ButtonKey]: Button,
   [ElementKeys.DescriptionsKey]: Descriptions,
   [ElementKeys.DescriptionsItemKey]: DescriptionsItem,
+  [ElementKeys.MenuKey]: Menu,
+  [ElementKeys.MenuSubKey]: SubMenu,
+  [ElementKeys.MenuItemKey]: MenuItem,
   [ElementKeys.ModalKey]: Modal,
   [ElementKeys.PaginationKey]: Pagination,
   [ElementKeys.PopoverKey]: Popover,

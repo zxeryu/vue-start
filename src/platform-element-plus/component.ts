@@ -1,4 +1,16 @@
-import { ElButton, ElRow, ElCol, ElDescriptions, ElDescriptionsItem, ElCheckbox, ElInputNumber } from "element-plus";
+import {
+  ElButton,
+  ElRow,
+  ElCol,
+  ElDescriptions,
+  ElDescriptionsItem,
+  ElCheckbox,
+  ElInputNumber,
+  ElMenu,
+  ElSubMenu,
+  ElMenuItem,
+} from "element-plus";
+
 import {
   ProFormCascader,
   ProFormCheckbox,
@@ -47,6 +59,9 @@ export const elementMap = {
   [ElementKeys.ButtonKey]: ElButton,
   [ElementKeys.DescriptionsKey]: ElDescriptions,
   [ElementKeys.DescriptionsItemKey]: ElDescriptionsItem,
+  [ElementKeys.MenuKey]: ElMenu,
+  [ElementKeys.MenuSubKey]: ElSubMenu,
+  [ElementKeys.MenuItemKey]: ElMenuItem,
   [ElementKeys.ModalKey]: ProModal,
   [ElementKeys.PaginationKey]: ProPagination,
   [ElementKeys.PopoverKey]: ProPopover,
