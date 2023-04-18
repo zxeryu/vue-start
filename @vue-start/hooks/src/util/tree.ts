@@ -1,4 +1,4 @@
-import { find, findIndex, forEach, get, isFunction, size } from "lodash";
+import { find, findIndex, forEach, get, isFunction, size, map, omit } from "lodash";
 import { FieldNames, TOption } from "@vue-start/pro";
 import { getFieldNames } from "./options";
 import { isValidInRules, TConvert, TRules } from "./base";
@@ -177,4 +177,28 @@ export const treeToMap = (
   const mapObj = {};
   treeToMapRecursion(data, convert, fieldNames, mapObj, onlyLeaf);
   return mapObj;
+};
+
+/**
+ * tree数据转换
+ * @param data
+ * @param convert
+ * @param fieldNames
+ */
+export const convertTreeData = (
+  data: TData[],
+  convert: TConvert,
+  //children：data数据中子集属性名；childrenName：转换后数据的子集属性名
+  fieldNames: { children: string; childrenName: string } | undefined = {
+    children: "children",
+    childrenName: "children",
+  },
+): TData[] => {
+  return map(data, (item) => {
+    const childrenKey = fieldNames.children;
+    return {
+      ...convert(omit(item, childrenKey)),
+      [fieldNames.childrenName]: convertTreeData(get(item, childrenKey), convert, fieldNames),
+    };
+  });
 };

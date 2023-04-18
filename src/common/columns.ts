@@ -8,20 +8,34 @@ export const treeOptions = [
   {
     key: "v-1",
     value: "v-1",
-    label: "l-1",
+    label: "l-1-label",
     children: [
       {
         key: "v-1-1",
         value: "v-1-1",
-        label: "l-1-1",
+        label: "l-1-1-label",
       },
       {
         key: "v-1-2",
         value: "v-1-2",
-        label: "l-1-2",
+        label: "l-1-2-label",
       },
     ],
   },
+  {
+    value:"v-2",
+    label:"v-2-label",
+    children: [
+      {
+        value: "v-2-1",
+        label: "v-2-1-label",
+      },
+      {
+        value: "v-2-2",
+        label: "v-2-2-label",
+      },
+    ]
+  }
 ];
 
 export const columns = [

@@ -131,6 +131,17 @@ export const routes = [
         ],
       },
       {
+        name: "ElMenus",
+        path: "menus",
+        children: [
+          {
+            name: "ElMenusIndex",
+            path: "index",
+            component: () => import("@/views/el/menus/index"),
+          },
+        ],
+      },
+      {
         name: "ElModal",
         path: "modal",
         children: [

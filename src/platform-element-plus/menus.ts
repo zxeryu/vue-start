@@ -20,13 +20,14 @@ export const menus = [
         title: "@vue-start/element-pro",
         name: "El",
         children: [
-          { title: "Checkbox", name: "ElCheckboxIndex" },
           { title: "Loading", name: "ElLoadingIndex" },
-          { title: "Modal", name: "ElModalIndex" },
           { title: "Pagination", name: "ElPaginationIndex" },
+          { title: "Tabs", name: "ElTabsIndex" },
+          { title: "Menus", name: "ElMenusIndex" },
+          { title: "Checkbox", name: "ElCheckboxIndex" },
+          { title: "Modal", name: "ElModalIndex" },
           { title: "Radio", name: "ElRadioIndex" },
           { title: "Select", name: "ElSelectIndex" },
-          { title: "Tabs", name: "ElTabsIndex" },
         ],
       },
       {

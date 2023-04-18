@@ -1,10 +1,25 @@
 import { computed, defineComponent, PropType } from "vue";
-import { Header } from "./Header";
-import { commonKeys, Menus, TMenu } from "./Menu";
-import { findTreeItem, getMenuTopNameMap } from "@vue-start/hooks";
+import { findTreeItem, getMenuTopNameMap, convertTreeData } from "@vue-start/hooks";
 import { useRoute } from "vue-router";
 import { findLast, get, map, omit, pick, size } from "lodash";
-import { filterSlotsByPrefix } from "../../util";
+import { filterSlotsByPrefix } from "../util";
+import { ElementKeys, useGetCompByKey } from "./comp";
+import { TreeOption } from "../types";
+
+const Header = defineComponent((_, { slots }) => {
+  return () => {
+    return (
+      <header>
+        {slots.start?.()}
+
+        {slots.menus?.()}
+        {slots.default?.()}
+
+        {slots.end?.()}
+      </header>
+    );
+  };
+});
 
 const layoutProps = () => ({
   /**
@@ -27,7 +42,12 @@ const layoutProps = () => ({
     type: Object as PropType<{ children: string; value: string; label: string }>,
     default: { children: "children", value: "value", label: "label" },
   },
-  ...pick(Menus.props, ...commonKeys, "convertMenuParams"),
+  //SubMenu props 转换
+  convertSubMenuProps: { type: Function },
+  //MenuItem props 转换
+  convertMenuItemProps: { type: Function },
+  //MenuItem点击事件
+  onMenuItemClick: { type: Function },
 });
 
 export const ProLayout = defineComponent({
@@ -36,19 +56,22 @@ export const ProLayout = defineComponent({
     ...layoutProps(),
   },
   setup: (props, { slots, attrs }) => {
+    const getComp = useGetCompByKey();
+    const Menus = getComp(ElementKeys.MenusKey);
+
     const route = useRoute();
 
-    const convertMenus = (menus: Record<string, any>): TMenu[] => {
-      return map(menus, (item) => {
-        return {
-          value: get(item, props.fieldNames?.value || "value"),
-          label: get(item, props.fieldNames?.label || "label"),
-          children: convertMenus(get(item, props.fieldNames?.children || "children")),
-        };
-      });
-    };
-
-    const reMenus = computed(() => convertMenus(props.menus!));
+    const reMenus = computed(() =>
+      convertTreeData(
+        props.menus!,
+        (item) => {
+          const valueKey = props.fieldNames?.value || "value";
+          const labelKey = props.fieldNames?.label || "label";
+          return { ...omit(item, valueKey, labelKey), value: get(item, valueKey), label: get(item, labelKey) };
+        },
+        { children: props.fieldNames?.children || "children", childrenName: "children" },
+      ),
+    );
 
     //所有菜单 第一级 映射关系
     const menuTopMap = computed(() => getMenuTopNameMap(reMenus.value));
@@ -80,19 +103,23 @@ export const ProLayout = defineComponent({
     });
 
     //compose 模式 header中的menu item 事件
-    const handleComposeTopMenuClick = (menu: TMenu) => {
+    const handleComposeTopMenuClick = (menu: TreeOption) => {
       const target = findTreeItem(reMenus.value, (item) => item.value === menu.value).target;
       props.onMenuItemClick?.(target);
     };
 
     const headerSlots = filterSlotsByPrefix(slots, "header");
+    const menuSlots = filterSlotsByPrefix(slots, "menu");
 
     return () => {
+      if (!Menus) return null;
       const pickAttrs = pick(attrs, "class");
 
       const menuProps = {
-        ...pick(props, ...commonKeys, "convertMenuParams"),
-        ...pick(slots, "title", "icon", "default"),
+        class: "pro-layout-menus",
+        options: reMenus.value,
+        activeKey: activeKey.value,
+        ...pick(props, "convertSubMenuProps", "convertMenuItemProps", "onMenuItemClick"),
       };
 
       if (props.layout === "vertical") {
@@ -101,14 +128,7 @@ export const ProLayout = defineComponent({
             <Header
               class={`${props.clsName}-header`}
               v-slots={{
-                menus: () => (
-                  <Menus
-                    mode={"horizontal"}
-                    menus={reMenus.value}
-                    activeKey={activeKey.value as string}
-                    {...(menuProps as any)}
-                  />
-                ),
+                menus: () => <Menus mode={"horizontal"} {...menuProps} v-slots={menuSlots} />,
                 ...headerSlots,
               }}
             />
@@ -119,7 +139,7 @@ export const ProLayout = defineComponent({
       if (props.layout === "horizontal") {
         return (
           <main {...pickAttrs} class={`${props.clsName} ${props.clsName}-${props.layout}`}>
-            <Menus menus={reMenus.value} activeKey={activeKey.value as string} {...(menuProps as any)} />
+            <Menus {...menuProps} v-slots={menuSlots} />
             <div class={`${props.clsName}-structure`}>
               <Header class={`${props.clsName}-header`} v-slots={headerSlots} />
               <div class={`${props.clsName}-section`}>{slots.default?.()}</div>
@@ -134,11 +154,13 @@ export const ProLayout = defineComponent({
             v-slots={{
               menus: () => (
                 <Menus
+                  class={"pro-layout-menus"}
                   mode={"horizontal"}
-                  menus={map(reMenus.value, (item) => omit(item, "children")) as any}
+                  options={map(reMenus.value, (item) => omit(item, "children"))}
                   activeKey={currentTopName.value}
-                  {...omit(menuProps, "onMenuItemClick")}
+                  {...pick(props, "convertSubMenuProps", "convertMenuItemProps")}
                   onMenuItemClick={handleComposeTopMenuClick}
+                  v-slots={menuSlots}
                 />
               ),
               ...headerSlots,
@@ -146,7 +168,7 @@ export const ProLayout = defineComponent({
           />
           <div class={`${props.clsName}-structure`}>
             {currentTop.value && size(currentTop.value.children) > 0 && (
-              <Menus menus={currentTop.value.children} activeKey={activeKey.value as string} {...(menuProps as any)} />
+              <Menus options={currentTop.value.children} {...omit(menuProps, "options")} v-slots={menuSlots} />
             )}
             <div class={`${props.clsName}-section`}>{slots.default?.()}</div>
           </div>

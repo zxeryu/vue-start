@@ -1,15 +1,4 @@
-import {
-  ElButton,
-  ElRow,
-  ElCol,
-  ElDescriptions,
-  ElDescriptionsItem,
-  ElCheckbox,
-  ElInputNumber,
-  ElMenu,
-  ElSubMenu,
-  ElMenuItem,
-} from "element-plus";
+import { ElButton, ElRow, ElCol, ElDescriptions, ElDescriptionsItem, ElCheckbox, ElInputNumber } from "element-plus";
 
 import {
   ProFormCascader,
@@ -33,8 +22,8 @@ import {
   ProRadio,
   ProSelect,
   ProTabs,
+  ProMenus,
 } from "@vue-start/element-pro";
-import { SelectShow, TextNumberShow, TextShow } from "@/component/show";
 import {
   ElementKeys,
   ProCurd,
@@ -46,6 +35,11 @@ import {
   ProGrid,
   ProList,
   ProOperate,
+  ProShowText,
+  ProShowDigit,
+  ProShowDate,
+  ProShowOptions,
+  ProShowTree,
 } from "@vue-start/pro";
 import { TableOperateItem, TableOperateItemKey, ProTable } from "@/component/Table";
 import { App } from "@vue/runtime-core";
@@ -59,9 +53,7 @@ export const elementMap = {
   [ElementKeys.ButtonKey]: ElButton,
   [ElementKeys.DescriptionsKey]: ElDescriptions,
   [ElementKeys.DescriptionsItemKey]: ElDescriptionsItem,
-  [ElementKeys.MenuKey]: ElMenu,
-  [ElementKeys.MenuSubKey]: ElSubMenu,
-  [ElementKeys.MenuItemKey]: ElMenuItem,
+  [ElementKeys.MenusKey]: ProMenus,
   [ElementKeys.ModalKey]: ProModal,
   [ElementKeys.PaginationKey]: ProPagination,
   [ElementKeys.PopoverKey]: ProPopover,
@@ -76,13 +68,15 @@ export const elementMap = {
   [ElementKeys.ProSearchFormKey]: ProSearchForm,
   [ElementKeys.ProTableKey]: ProTable,
 
-  text: TextShow,
-  digit: TextNumberShow,
-  date: TextShow,
-  time: TextShow,
-  select: SelectShow,
-  radio: SelectShow,
-  checkbox: SelectShow,
+  text: ProShowText,
+  digit: ProShowDigit,
+  date: ProShowDate,
+  time: ProShowText,
+  select: ProShowOptions,
+  radio: ProShowOptions,
+  checkbox: ProShowOptions,
+  treeSelect: ProShowTree,
+  cascader: ProShowTree,
 };
 
 export const formElementMap = {
@@ -120,6 +114,7 @@ export const initComp = (app: App) => {
   app.component("pro-radio", ProRadio);
   app.component("pro-select", ProSelect);
   app.component("pro-tabs", ProTabs);
+  app.component("pro-menus", ProMenus);
   //兼容演示
   app.component("pro-input-number", ElInputNumber);
   app.component("pro-button", ElButton);

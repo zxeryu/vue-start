@@ -23,6 +23,7 @@ export const menus = [
           { title: "Loading", name: "ElLoadingIndex" },
           { title: "Pagination", name: "ElPaginationIndex" },
           { title: "Tabs", name: "ElTabsIndex" },
+          { title: "Menus", name: "ElMenusIndex" },
         ],
       },
       {

@@ -7,6 +7,6 @@ export * from "./List";
 export * from "./Desc";
 export * from "./Typography";
 export * from "./show";
-export * from "./layout";
+export * from "./Layout";
 
 export * from "./comp";

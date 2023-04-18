@@ -33,8 +33,8 @@ import {
   Pagination,
   Tabs,
   Form,
+  Menus,
 } from "@vue-start/antd-pro";
-import { SelectShow, TextNumberShow, TextShow } from "@/component/show";
 import {
   ElementKeys,
   ProCurd,
@@ -46,6 +46,11 @@ import {
   ProGrid,
   ProList,
   ProOperate,
+  ProShowText,
+  ProShowDigit,
+  ProShowDate,
+  ProShowOptions,
+  ProShowTree,
 } from "@vue-start/pro";
 import { TableOperateItem, TableOperateItemKey, ProTable } from "@/component/Table";
 import { ProPage } from "@/component/Page";
@@ -57,9 +62,7 @@ export const elementMap = {
   [ElementKeys.ButtonKey]: Button,
   [ElementKeys.DescriptionsKey]: Descriptions,
   [ElementKeys.DescriptionsItemKey]: DescriptionsItem,
-  [ElementKeys.MenuKey]: Menu,
-  [ElementKeys.MenuSubKey]: SubMenu,
-  [ElementKeys.MenuItemKey]: MenuItem,
+  [ElementKeys.MenusKey]: Menus,
   [ElementKeys.ModalKey]: Modal,
   [ElementKeys.PaginationKey]: Pagination,
   [ElementKeys.PopoverKey]: Popover,
@@ -73,13 +76,15 @@ export const elementMap = {
   [ElementKeys.ProSearchFormKey]: ProSearchForm,
   [ElementKeys.ProTableKey]: ProTable,
 
-  text: TextShow,
-  digit: TextNumberShow,
-  date: TextShow,
-  time: TextShow,
-  select: SelectShow,
-  radio: SelectShow,
-  checkbox: SelectShow,
+  text: ProShowText,
+  digit: ProShowDigit,
+  date: ProShowDate,
+  time: ProShowText,
+  select: ProShowOptions,
+  radio: ProShowOptions,
+  checkbox: ProShowOptions,
+  treeSelect: ProShowTree,
+  cascader: ProShowTree,
 };
 
 export const formElementMap = {
@@ -117,6 +122,7 @@ export const initComp = (app: App) => {
   app.component("pro-radio", RadioGroup);
   app.component("pro-select", Select);
   app.component("pro-tabs", Tabs);
+  app.component("pro-menus", Menus);
   //兼容演示
   app.component("pro-input-number", InputNumber);
   app.component("pro-button", Button);
