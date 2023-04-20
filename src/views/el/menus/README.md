@@ -10,7 +10,7 @@
 
 | 名称                   | 说明                        | 类型                                                 | 默认值                                                   |
 | ---------------------- | --------------------------- | ---------------------------------------------------- | -------------------------------------------------------- |
-| `activeKey`            | 当前选中对象                | `string`                                             | --                                                       |
+| `activeKey(v-model)`   | 当前选中对象                | `string`                                             | --                                                       |
 | `options`              | tree 数据对象               | `TreeOptions`                                        | --                                                       |
 | `fieldNames`           | tree 数据映射关系           | `{ children: string; value: string; label: string }` | { children: "children", value: "value", label: "label" } |
 | `convertSubMenuProps`  | 根据数据生成 SubMenu props  | `Function`                                           | --                                                       |

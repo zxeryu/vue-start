@@ -7,11 +7,13 @@ import {
   ProCurdModal,
   ProCurdForm,
   ProCurdDesc,
+  ProUploaderText,
 } from "@vue-start/pro";
 import { ElForm, ElFormItem, ElDescriptions } from "element-plus";
 import { FormMethods } from "./form";
 import { ProTable as Table } from "./table";
 import { ProModal as Modal } from "./comp/Modal";
+import { ProUploader } from "./comp/Uploader";
 
 export * from "./form";
 export * from "./table";
@@ -58,4 +60,10 @@ ProCurdForm.props = {
 ProCurdModal.props = {
   ...Modal.props,
   ...ProCurdModal.props,
+};
+
+ProUploaderText.props = {
+  ...ProUploader.props,
+  ...ProUploaderText.props,
+  modelValue: String,
 };

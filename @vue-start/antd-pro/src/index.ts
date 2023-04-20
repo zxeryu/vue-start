@@ -7,9 +7,11 @@ import {
   ProCurdModal,
   ProCurdForm,
   ProCurdDesc,
+  ProUploaderText,
 } from "@vue-start/pro";
 import { Form, FormItem, Descriptions, Table, Modal } from "ant-design-vue";
 import { FormMethods } from "./form";
+import { Uploader } from "./comp/Uploader";
 
 export * from "./comp";
 export * from "./form";
@@ -55,4 +57,10 @@ ProCurdForm.props = {
 ProCurdModal.props = {
   ...Modal.props,
   ...ProCurdModal.props,
+};
+
+ProUploaderText.props = {
+  ...Uploader.props,
+  ...ProUploaderText.props,
+  value: String,
 };

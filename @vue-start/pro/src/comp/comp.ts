@@ -19,6 +19,7 @@ export const ElementKeys = {
   FormKey: "Form$", //Form
   FormItemKey: "FormItem$", //FormItem
   TableKey: "Table$", //Table
+  UploaderKey: "Uploader$", //Uploader
   //pro
   ProFormKey: "ProForm$", //ProForm
   ProSearchFormKey: "ProSearchForm$", //ProSearchForm

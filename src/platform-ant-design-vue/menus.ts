@@ -24,6 +24,7 @@ export const menus = [
           { title: "Pagination", name: "ElPaginationIndex" },
           { title: "Tabs", name: "ElTabsIndex" },
           { title: "Menus", name: "ElMenusIndex" },
+          { title: "Uploader", name: "ElUploaderIndex" },
         ],
       },
       {

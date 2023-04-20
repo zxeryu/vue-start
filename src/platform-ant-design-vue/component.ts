@@ -14,9 +14,6 @@ import {
   CheckboxGroup,
   RadioGroup,
   Select,
-  Menu,
-  SubMenu,
-  MenuItem,
 } from "ant-design-vue";
 import {
   ProFormCascader,
@@ -34,6 +31,7 @@ import {
   Tabs,
   Form,
   Menus,
+  Uploader,
 } from "@vue-start/antd-pro";
 import {
   ElementKeys,
@@ -51,6 +49,7 @@ import {
   ProShowDate,
   ProShowOptions,
   ProShowTree,
+  ProUploaderText,
 } from "@vue-start/pro";
 import { TableOperateItem, TableOperateItemKey, ProTable } from "@/component/Table";
 import { ProPage } from "@/component/Page";
@@ -71,6 +70,7 @@ export const elementMap = {
   [ElementKeys.FormItemKey]: FormItem,
   [ElementKeys.TableKey]: Table,
   [TableOperateItemKey]: TableOperateItem,
+  [ElementKeys.UploaderKey]: Uploader,
 
   [ElementKeys.ProFormKey]: ProForm,
   [ElementKeys.ProSearchFormKey]: ProSearchForm,
@@ -123,6 +123,8 @@ export const initComp = (app: App) => {
   app.component("pro-select", Select);
   app.component("pro-tabs", Tabs);
   app.component("pro-menus", Menus);
+  app.component("pro-uploader", Uploader);
+  app.component("pro-uploader-text", ProUploaderText);
   //兼容演示
   app.component("pro-input-number", InputNumber);
   app.component("pro-button", Button);

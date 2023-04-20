@@ -23,6 +23,7 @@ import {
   ProSelect,
   ProTabs,
   ProMenus,
+  ProUploader,
 } from "@vue-start/element-pro";
 import {
   ElementKeys,
@@ -40,6 +41,7 @@ import {
   ProShowDate,
   ProShowOptions,
   ProShowTree,
+  ProUploaderText,
 } from "@vue-start/pro";
 import { TableOperateItem, TableOperateItemKey, ProTable } from "@/component/Table";
 import { App } from "@vue/runtime-core";
@@ -61,6 +63,7 @@ export const elementMap = {
   [ElementKeys.FormKey]: Form,
   [ElementKeys.FormItemKey]: ProFormItem,
   [ElementKeys.TableKey]: Table,
+  [ElementKeys.UploaderKey]: ProUploader,
 
   [TableOperateItemKey]: TableOperateItem,
 
@@ -115,6 +118,8 @@ export const initComp = (app: App) => {
   app.component("pro-select", ProSelect);
   app.component("pro-tabs", ProTabs);
   app.component("pro-menus", ProMenus);
+  app.component("pro-uploader", ProUploader);
+  app.component("pro-uploader-text", ProUploaderText);
   //兼容演示
   app.component("pro-input-number", ElInputNumber);
   app.component("pro-button", ElButton);

@@ -6,6 +6,28 @@ export const generateId = (): string => {
   return Number(Math.random().toString().substr(3, 3) + Date.now()).toString(36);
 };
 
+/****************************** json转换 *************************/
+
+export const strToJson = (v: string): any => {
+  if (!v) return undefined;
+  let obj: any;
+  try {
+    obj = JSON.parse(v);
+  } catch (e) {
+    console.error(e);
+  }
+  return obj;
+};
+
+export const jsonToStr = (obj: Object): string => {
+  if (!obj) return "";
+  try {
+    return JSON.stringify(obj);
+  } catch (e) {
+    return "";
+  }
+};
+
 /****************************** rules逻辑 *************************/
 
 export type TRule = (target: Record<string, any>) => boolean;

@@ -196,6 +196,17 @@ export const routes = [
           },
         ],
       },
+      {
+        name: "ElUploader",
+        path: "uploader",
+        children: [
+          {
+            name: "ElUploaderIndex",
+            path: "index",
+            component: () => import("@/views/el/uploader/index"),
+          },
+        ],
+      },
     ],
   },
   {

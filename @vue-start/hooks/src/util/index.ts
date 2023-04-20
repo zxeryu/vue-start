@@ -6,3 +6,4 @@ export * from "./number";
 export * from "./pattern";
 export * from "./menu";
 export * from "./list";
+export * from "./file";
