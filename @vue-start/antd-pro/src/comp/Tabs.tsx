@@ -4,7 +4,7 @@ import { TOption } from "@vue-start/pro";
 import { map, omit } from "lodash";
 import { useWatch } from "@vue-start/hooks";
 
-export const Tabs = defineComponent({
+export const ProTabs = defineComponent({
   props: {
     ...TabsOrigin.props,
     options: { type: Array as PropType<Array<TOption & TabPaneProps>> },

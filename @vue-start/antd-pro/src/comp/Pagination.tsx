@@ -3,7 +3,7 @@ import { Pagination as PaginationOrigin } from "ant-design-vue";
 import { useWatch } from "@vue-start/hooks";
 import { debounce, omit } from "lodash";
 
-export const Pagination = defineComponent({
+export const ProPagination = defineComponent({
   props: {
     ...PaginationOrigin.props,
     page: { type: Number, default: 1 },

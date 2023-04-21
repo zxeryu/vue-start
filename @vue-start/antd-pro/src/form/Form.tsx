@@ -14,7 +14,7 @@ export const FormMethods = [
   "submit",
 ];
 
-export const Form = defineComponent({
+export const ProForm = defineComponent({
   props: {
     ...FormOrigin.props,
   },

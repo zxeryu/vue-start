@@ -4,7 +4,7 @@ import { omit } from "lodash";
 
 export type ProLoadingProps = Omit<SpinProps, "spinning"> & { loading?: boolean };
 
-export const Loading = defineComponent<ProLoadingProps>({
+export const ProLoading = defineComponent<ProLoadingProps>({
   props: {
     loading: Boolean,
     ...Spin.props,

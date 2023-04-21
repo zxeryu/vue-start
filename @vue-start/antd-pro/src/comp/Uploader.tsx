@@ -27,7 +27,7 @@ const uploadProps = () => ({
 
 export type ProUploadProps = Partial<ExtractPropTypes<ReturnType<typeof uploadProps>>> & Omit<UploadProps, "fileList">;
 
-export const Uploader = defineComponent<ProUploadProps>({
+export const ProUploader = defineComponent<ProUploadProps>({
   props: {
     ...omit(Upload.props, "fileList"),
     ...uploadProps(),

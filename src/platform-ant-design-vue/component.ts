@@ -26,12 +26,12 @@ import {
   ProFormTextNumber,
   ProFormTimePicker,
   ProFormTreeSelect,
-  Loading,
-  Pagination,
-  Tabs,
-  Form,
-  Menus,
-  Uploader,
+  ProLoading,
+  ProPagination,
+  ProTabs,
+  ProForm as Form,
+  ProMenus,
+  ProUploader,
 } from "@vue-start/antd-pro";
 import {
   ElementKeys,
@@ -55,22 +55,22 @@ import { TableOperateItem, TableOperateItemKey, ProTable } from "@/component/Tab
 import { ProPage } from "@/component/Page";
 
 export const elementMap = {
-  [ElementKeys.LoadingKey]: Loading,
+  [ElementKeys.LoadingKey]: ProLoading,
   [ElementKeys.RowKey]: Row,
   [ElementKeys.ColKey]: Col,
   [ElementKeys.ButtonKey]: Button,
   [ElementKeys.DescriptionsKey]: Descriptions,
   [ElementKeys.DescriptionsItemKey]: DescriptionsItem,
-  [ElementKeys.MenusKey]: Menus,
+  [ElementKeys.MenusKey]: ProMenus,
   [ElementKeys.ModalKey]: Modal,
-  [ElementKeys.PaginationKey]: Pagination,
+  [ElementKeys.PaginationKey]: ProPagination,
   [ElementKeys.PopoverKey]: Popover,
   [ElementKeys.CheckboxKey]: Checkbox,
   [ElementKeys.FormKey]: Form,
   [ElementKeys.FormItemKey]: FormItem,
   [ElementKeys.TableKey]: Table,
   [TableOperateItemKey]: TableOperateItem,
-  [ElementKeys.UploaderKey]: Uploader,
+  [ElementKeys.UploaderKey]: ProUploader,
 
   [ElementKeys.ProFormKey]: ProForm,
   [ElementKeys.ProSearchFormKey]: ProSearchForm,
@@ -114,16 +114,16 @@ export const initComp = (app: App) => {
   app.component("pro-modal-curd", ProModalCurd);
   app.component("pro-curd-list", ProCurdList);
   //
-  app.component("pro-loading", Loading);
+  app.component("pro-loading", ProLoading);
   app.component("pro-modal", Modal);
-  app.component("pro-pagination", Pagination);
+  app.component("pro-pagination", ProPagination);
   app.component("pro-popover", Popover);
   app.component("pro-checkbox", CheckboxGroup);
   app.component("pro-radio", RadioGroup);
   app.component("pro-select", Select);
-  app.component("pro-tabs", Tabs);
-  app.component("pro-menus", Menus);
-  app.component("pro-uploader", Uploader);
+  app.component("pro-tabs", ProTabs);
+  app.component("pro-menus", ProMenus);
+  app.component("pro-uploader", ProUploader);
   app.component("pro-uploader-text", ProUploaderText);
   //兼容演示
   app.component("pro-input-number", InputNumber);

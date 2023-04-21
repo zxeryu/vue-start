@@ -86,7 +86,7 @@ const menuProps = () => ({
 export type ProMenusProps = Partial<ExtractPropTypes<ReturnType<typeof menuProps>>> &
   Omit<MenuProps, "selectedKeys" | "openKeys">;
 
-export const Menus = defineComponent<ProMenusProps>({
+export const ProMenus = defineComponent<ProMenusProps>({
   props: {
     ...omit(Menu.props, "selectedKeys", "openKeys"),
     ...menuProps(),
