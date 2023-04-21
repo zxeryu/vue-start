@@ -5,10 +5,6 @@ import { get, omit } from "lodash";
 import { ProBaseProps } from "../../core";
 
 const proCurdDescProps = () => ({
-  /**
-   * class名称
-   */
-  clsName: { type: String, default: "pro-curd-desc" },
   //标记名称 对应columns中的配置名称
   signName: { type: String },
 });
@@ -47,6 +43,12 @@ export const ProCurdDesc = defineComponent<ProCurdDescProps>({
 export const ProCurdDescConnect = defineComponent(() => {
   const { descProps } = useProCurd();
   return () => {
-    return <ProCurdDesc {...omit(descProps?.value, "slots")} v-slots={get(descProps?.value, "slots")} />;
+    return (
+      <ProCurdDesc
+        class={"pro-curd-desc"}
+        {...omit(descProps?.value, "slots")}
+        v-slots={get(descProps?.value, "slots")}
+      />
+    );
   };
 });

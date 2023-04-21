@@ -7,10 +7,6 @@ import { ProCurdForm } from "./CurdForm";
 import { filterSlotsByPrefix } from "../../util";
 
 const proCurdModalProps = () => ({
-  /**
-   * class名称
-   */
-  clsName: { type: String, default: "pro-curd-modal" },
   //只有指定mode才显示
   validMode: { type: Array, default: [CurdAction.ADD, CurdAction.DETAIL, CurdAction.EDIT] },
 });
@@ -47,6 +43,7 @@ export const ProCurdModal = defineComponent<ProCurdModalProps>({
       }
       return (
         <Modal
+          class={"pro-curd-modal"}
           {...omit(props, invalidKeys)}
           visible={some(props.validMode, (item) => item === mode)}
           title={props.title || getOperate(curdState.mode!)?.label}
@@ -56,7 +53,7 @@ export const ProCurdModal = defineComponent<ProCurdModalProps>({
           v-slots={omit(slots, "default")}>
           {curdState.detailLoading && Loading ? (
             <Loading loading>
-              <div class={`${props.clsName}-loading-dom`} />
+              <div class={`pro-curd-modal-loading-dom`} />
             </Loading>
           ) : (
             slots.default?.()

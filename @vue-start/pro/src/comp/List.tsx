@@ -96,7 +96,7 @@ export const ProList = defineComponent<ProListProps>({
             <>
               {SearchForm && (
                 <SearchForm
-                  clsName={`${props.clsName}-search`}
+                  class={`${props.clsName}-search`}
                   {...omit(props.searchProps, "onFinish")}
                   onFinish={(values: Record<string, any>) => executeSearchWithResetPage(values)}
                   v-slots={searchSlots}
@@ -113,7 +113,7 @@ export const ProList = defineComponent<ProListProps>({
             <>
               {Table && (
                 <Table
-                  clsName={`${props.clsName}-table`}
+                  class={`${props.clsName}-table`}
                   paginationState={{ page: pageState.page, pageSize: pageState.pageSize }}
                   pagination={false}
                   {...props.tableProps}

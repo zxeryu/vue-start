@@ -249,7 +249,7 @@ export const ProForm = defineComponent<ProFormProps>({
 
           {props.operate && (
             <ProOperate
-              clsName={`${props.clsName}-operate`}
+              class={`${props.clsName}-operate`}
               items={operateItems.value}
               {...omit(props.operate, "items", "onReset", "onSubmit", "onContinue")}
             />

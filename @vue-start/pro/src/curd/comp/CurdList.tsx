@@ -10,10 +10,6 @@ import { ICurdOperateOpts } from "../Curd";
 export const ProCurdList = defineComponent<ProListProps>({
   props: {
     ...ProList.props,
-    /**
-     * class名称
-     */
-    clsName: { type: String, default: "pro-curd-list" },
   },
   setup: (props, { slots }) => {
     const { elementMap, formElementMap, curdState, searchColumns, tableColumns, sendCurdEvent, operates } =
@@ -79,6 +75,7 @@ export const ProCurdList = defineComponent<ProListProps>({
 
       return (
         <ProList
+          class={"pro-curd-list"}
           {...omit(props, "searchProps", "tableProps", "paginationProps")}
           searchProps={reSearchProps}
           tableProps={reTableProps}

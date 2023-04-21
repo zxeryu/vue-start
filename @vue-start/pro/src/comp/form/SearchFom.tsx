@@ -1,4 +1,4 @@
-import { defineComponent, ExtractPropTypes, PropType, reactive, ref } from "vue";
+import { computed, defineComponent, ExtractPropTypes, PropType, reactive, ref } from "vue";
 import { clone, debounce, filter, get, keys, map, omit, size, some } from "lodash";
 import { useEffect, useWatch } from "@vue-start/hooks";
 import { getColumnFormItemName, getColumnValueType } from "../../core";
@@ -16,10 +16,6 @@ export enum SearchMode {
 export type ISearchMode = keyof typeof SearchMode;
 
 const proSearchFormProps = () => ({
-  /**
-   * class
-   */
-  clsName: { type: String, default: "pro-search-form" },
   /**
    * 初始化触发 onFinish
    */
@@ -62,6 +58,14 @@ export const ProSearchForm = defineComponent<ProSearchFormProps>({
         return getColumnFormItemName(column);
       },
     );
+
+    //columns转换
+    const columns = computed(() => {
+      return map(props.columns, (item) => {
+        //去除required
+        return { ...item, formItemProps: omit(item.formItemProps, "required") };
+      });
+    });
 
     const formRef = ref();
     const formMethods = props.formMethods || [];
@@ -107,13 +111,22 @@ export const ProSearchForm = defineComponent<ProSearchFormProps>({
       () => clone(formState),
     );
 
-    const invalidKeys = keys(omit(proSearchFormProps(), "clsName", "columns"));
+    const invalidKeys = keys(proSearchFormProps());
 
     return () => {
       if (!Form) {
         return null;
       }
-      return <Form ref={formRef} {...omit(props, invalidKeys)} model={formState} v-slots={slots} />;
+      return (
+        <Form
+          ref={formRef}
+          class={"pro-search-form"}
+          {...omit(props, invalidKeys, "columns")}
+          columns={columns.value}
+          model={formState}
+          v-slots={slots}
+        />
+      );
     };
   },
 });

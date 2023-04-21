@@ -119,7 +119,7 @@ export const toUrl = (actor: IRequestActor, baseUrl = "") => {
  */
 export const completeUrl = (url: string, prefix: string) => {
   if (!prefix) return url;
-  let rePrefix = startsWith("http") ? prefix : `${window.location.protocol}${prefix}`;
+  let rePrefix = startsWith(prefix, "http") ? prefix : `${window.location.protocol}//${prefix}`;
   if (endsWith(rePrefix, "/") && startsWith(url, "/")) {
     rePrefix = rePrefix.substring(0, rePrefix.length - 1);
   }

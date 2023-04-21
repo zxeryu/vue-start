@@ -65,7 +65,6 @@ export interface ITableOperate {
   //对item的补充 key为item的value
   itemState?: { [key: string]: Omit<IOperateItem, "value"> };
   //
-  clsName?: ProOperateProps["clsName"];
   elementKey?: ProOperateProps["elementKey"];
 }
 
@@ -179,7 +178,7 @@ export const ProTable = defineComponent<ProTableProps>({
 
           return (
             <ProOperate
-              clsName={operate.clsName || `${props.clsName}-operate`}
+              class={`${props.clsName}-operate`}
               items={opeItems}
               elementKey={operate.elementKey}
               v-slots={reduce(

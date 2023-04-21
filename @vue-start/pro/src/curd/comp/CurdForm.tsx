@@ -5,10 +5,6 @@ import { createExpose } from "../../util";
 import { get, omit } from "lodash";
 
 const proCurdFormProps = () => ({
-  /**
-   * class名称
-   */
-  clsName: { type: String, default: "pro-curd-form" },
   //标记名称 对应columns中的配置名称
   signName: { type: String },
 });
@@ -64,6 +60,7 @@ export const ProCurdForm = defineComponent<ProCurdFormProps>({
       return (
         <ProForm
           ref={formRef}
+          class={"pro-curd-form"}
           {...omit(props, "operate")}
           elementMap={props.elementMap || elementMap}
           formElementMap={props.formElementMap || formElementMap}
