@@ -1,7 +1,7 @@
 import { computed, defineComponent } from "vue";
 import { ElementKeys, useGetCompByKey } from "./comp";
 import { jsonToStr, strToJson } from "@vue-start/hooks";
-import { get, isArray, map, omit, size } from "lodash";
+import { filter, get, isArray, isObject, isString, map, omit, size } from "lodash";
 
 export type TFile = { id: string; name: string; size?: number };
 
@@ -49,6 +49,7 @@ export const ProUploaderText = defineComponent<Record<string, any>>({
       if (!Uploader) return null;
       return (
         <Uploader
+          class={"pro-uploader-text"}
           value={v.value}
           onUpdate:value={(v: TFile[]) => handleChange(v, "update:value")}
           modelValue={mv.value}
@@ -61,11 +62,64 @@ export const ProUploaderText = defineComponent<Record<string, any>>({
   },
 });
 
+/**
+ * 文件列表
+ */
 export const UploadList = defineComponent({
-  props: {},
-  setup: () => {
+  props: {
+    value: [String, Array],
+    fieldNames: { type: Object, default: { id: "id", name: "name", size: "size" } },
+  },
+  setup: (props, { slots, emit }) => {
+    const isValidItem = (item: Record<string, any>): boolean => {
+      return !!get(item, props.fieldNames?.id || "id");
+    };
+
+    const fileList = computed(() => {
+      let value = props.value;
+      //字符串转换
+      if (value && isString(value)) {
+        value = strToJson(value);
+      }
+      //单个对象转换
+      if (value && !isArray(value) && isObject(value) && isValidItem(value)) {
+        value = [value];
+      }
+      if (isArray(value)) {
+        return map(
+          filter(value, (item) => isValidItem(item)),
+          (item) => {
+            const id = get(item, props.fieldNames?.id || "id");
+            const name = get(item, props.fieldNames?.name || "name");
+            const size = get(item, props.fieldNames?.name || "size");
+            return { ...item, id, size, name: name || id };
+          },
+        );
+      }
+      return [];
+    });
+
+    const handleTitleClick = (item: TFile) => {
+      emit("titleClick", item);
+    };
+
     return () => {
-      return <div></div>;
+      return (
+        <div class={"pro-upload-list"}>
+          {slots.start?.()}
+          {map(fileList.value, (item) => {
+            return (
+              <div class={"pro-upload-list-item"}>
+                <span class={"pro-upload-list-item-title"} onClick={() => handleTitleClick(item)}>
+                  {item.name}
+                </span>
+                {slots.extra?.(item)}
+              </div>
+            );
+          })}
+          {slots.default?.()}
+        </div>
+      );
     };
   },
 });

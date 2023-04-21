@@ -1,4 +1,4 @@
-import { isUndefined, forEach, isArray, isObject, omit, isNull, get, size, pick } from "lodash";
+import { isUndefined, forEach, isArray, isObject, omit, isNull, get, size, pick, startsWith, endsWith } from "lodash";
 import { IRequestActor } from "./createRequest";
 
 const getContentType = (headers: any = {}) => headers["Content-Type"] || headers["content-type"] || "";
@@ -101,8 +101,27 @@ export const getRequestConfig = (actor: IRequestActor) => {
   return axiosRequestConfig;
 };
 
+/**
+ * get请求 可转换为url
+ * @param actor
+ * @param baseUrl
+ */
 export const toUrl = (actor: IRequestActor, baseUrl = "") => {
   const axiosConfig = getRequestConfig(actor);
 
   return `${baseUrl || axiosConfig?.baseURL || ""}${axiosConfig?.url || ""}?${paramsSerializer(axiosConfig?.params)}`;
+};
+
+/**
+ * 补全url
+ * @param url
+ * @param prefix
+ */
+export const completeUrl = (url: string, prefix: string) => {
+  if (!prefix) return url;
+  let rePrefix = startsWith("http") ? prefix : `${window.location.protocol}${prefix}`;
+  if (endsWith(rePrefix, "/") && startsWith(url, "/")) {
+    rePrefix = rePrefix.substring(0, rePrefix.length - 1);
+  }
+  return `${rePrefix}${url}`;
 };

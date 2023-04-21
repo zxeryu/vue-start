@@ -111,7 +111,7 @@ export const Uploader = defineComponent<ProUploadProps>({
 
     return () => {
       return (
-        <div>
+        <div class={"pro-uploader"}>
           {slots.start?.()}
           <Upload
             v-model:fileList={fileList.value}
