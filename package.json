@@ -21,6 +21,7 @@
     "@emotion/css": "^11.10.5",
     "ant-design-vue": "^3.2.5",
     "axios": "^0.21.0",
+    "echarts": "^5.4.2",
     "element-plus": "^2.2.13",
     "highlight.js": "^11.7.0",
     "js-base64": "^3.7.4",
