@@ -1,5 +1,6 @@
 import { isUndefined, forEach, isArray, isObject, omit, isNull, get, size, pick, startsWith, endsWith } from "lodash";
 import { IRequestActor } from "./createRequest";
+import { AxiosRequestConfig } from "axios";
 
 const getContentType = (headers: any = {}) => headers["Content-Type"] || headers["content-type"] || "";
 
@@ -80,7 +81,7 @@ export const transformResponse = (data: unknown, headers: { [k: string]: any }) 
   return data;
 };
 
-export const getRequestConfig = (actor: IRequestActor) => {
+export const getRequestConfig = (actor: IRequestActor): AxiosRequestConfig => {
   let axiosRequestConfig = actor.requestConfig!;
   if (actor.requestFromReq) {
     axiosRequestConfig = actor.requestFromReq(actor.req || {});
