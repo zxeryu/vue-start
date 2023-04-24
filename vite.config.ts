@@ -48,6 +48,7 @@ export default defineConfig(({ mode }) => {
     ],
     build: buildData
       ? {
+          copyPublicDir: false,
           outDir: buildData.outDir,
           lib: {
             entry: buildData.entry,
@@ -82,6 +83,12 @@ export default defineConfig(({ mode }) => {
               "@vue-start/hooks",
               "@vue-start/request",
               "@vue-start/pro",
+              //chart
+              "echarts",
+              //media preview
+              "docx-preview",
+              "x-data-spreadsheet",
+              "xlsx",
             ],
           },
         }
