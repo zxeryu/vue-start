@@ -52,4 +52,5 @@ export const menus = [
       },
     ],
   },
+  { title: "@vue-start/media", name: "PreviewIndex" },
 ];

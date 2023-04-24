@@ -6,6 +6,8 @@ import { createStore } from "@/store";
 import { createConfig } from "@vue-start/config";
 import { createRequest, ContentTypeInterceptor } from "@vue-start/request";
 
+import "@vue-start/media/index.css";
+
 import "@/style/normalize.css";
 import "@/style/index.css";
 //

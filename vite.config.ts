@@ -25,6 +25,9 @@ export default defineConfig(({ mode }) => {
         "@vue-start/pro": path.resolve(__dirname, "@vue-start/pro/index"),
         "@vue-start/request": path.resolve(__dirname, "@vue-start/request/index"),
         "@vue-start/store": path.resolve(__dirname, "@vue-start/store/index"),
+        "@vue-start/media/index.css": path.resolve(__dirname, "@vue-start/media/index.css"),
+        "@vue-start/media": path.resolve(__dirname, "@vue-start/media/index"),
+        "@vue-start/chart": path.resolve(__dirname, "@vue-start/chart/index"),
         //
         "@": path.resolve(__dirname, "src"),
       },

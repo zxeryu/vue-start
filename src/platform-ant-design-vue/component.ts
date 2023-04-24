@@ -54,6 +54,8 @@ import {
 import { TableOperateItem, TableOperateItemKey, ProTable } from "@/component/Table";
 import { ProPage } from "@/component/Page";
 
+import { ProPreview } from "@vue-start/media";
+
 export const elementMap = {
   [ElementKeys.LoadingKey]: ProLoading,
   [ElementKeys.RowKey]: Row,
@@ -75,6 +77,8 @@ export const elementMap = {
   [ElementKeys.ProFormKey]: ProForm,
   [ElementKeys.ProSearchFormKey]: ProSearchForm,
   [ElementKeys.ProTableKey]: ProTable,
+
+  loading: ProLoading,
 
   text: ProShowText,
   digit: ProShowDigit,
@@ -128,4 +132,6 @@ export const initComp = (app: App) => {
   //兼容演示
   app.component("pro-input-number", InputNumber);
   app.component("pro-button", Button);
+  //
+  app.component("pro-preview", ProPreview);
 };

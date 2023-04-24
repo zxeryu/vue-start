@@ -44,6 +44,9 @@ import {
   ProUploaderText,
 } from "@vue-start/pro";
 import { TableOperateItem, TableOperateItemKey, ProTable } from "@/component/Table";
+
+import { ProPreview } from "@vue-start/media";
+
 import { App } from "@vue/runtime-core";
 
 import { ProPage } from "@/component/Page";
@@ -71,6 +74,9 @@ export const elementMap = {
   [ElementKeys.ProSearchFormKey]: ProSearchForm,
   [ElementKeys.ProTableKey]: ProTable,
 
+  loading: ProLoading,
+
+  //form show
   text: ProShowText,
   digit: ProShowDigit,
   date: ProShowDate,
@@ -123,4 +129,6 @@ export const initComp = (app: App) => {
   //兼容演示
   app.component("pro-input-number", ElInputNumber);
   app.component("pro-button", ElButton);
+  //
+  app.component("pro-preview", ProPreview);
 };

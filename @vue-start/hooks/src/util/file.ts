@@ -1,4 +1,4 @@
-import { indexOf, isNumber, lowerCase, map, split } from "lodash";
+import { indexOf, isNumber, toLower, map, split } from "lodash";
 
 /**
  * 根据accept和文件名称判断文件是否有效，即：根据文件名称后缀判断
@@ -7,9 +7,9 @@ import { indexOf, isNumber, lowerCase, map, split } from "lodash";
  */
 export const isValidFileType = (accept: string, fileName: string): boolean => {
   if (!accept || !fileName) return false;
-  const fileSuffix = lowerCase(fileName.split(".").pop());
+  const fileSuffix = toLower(fileName.split(".").pop());
   const acceptTypes = map(split(accept, ","), (item) => {
-    return lowerCase(item.replace(".", ""));
+    return toLower(item.replace(".", ""));
   });
   return indexOf(acceptTypes, fileSuffix) > -1;
 };
@@ -30,3 +30,4 @@ export const convertFileSize = (sizeInBytes: number): string => {
   }
   return `${sizeInBytes.toFixed(2)} ${units[index]}`;
 };
+

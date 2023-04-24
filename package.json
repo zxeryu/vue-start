@@ -21,6 +21,7 @@
     "@emotion/css": "^11.10.5",
     "ant-design-vue": "^3.2.5",
     "axios": "^0.21.0",
+    "docx-preview": "^0.1.15",
     "echarts": "^5.4.2",
     "element-plus": "^2.2.13",
     "highlight.js": "^11.7.0",
@@ -28,7 +29,9 @@
     "lodash": "^4.17.20",
     "rxjs": "^7.3.0",
     "vue": "^3.2.37",
-    "vue-router": "^4.0.14"
+    "vue-router": "^4.0.14",
+    "x-data-spreadsheet": "^1.1.9",
+    "xlsx": "^0.18.5"
   },
   "devDependencies": {
     "@babel/runtime-corejs3": "^7.18.9",
@@ -44,6 +47,7 @@
     "gray-matter": "^4.0.3",
     "husky": "^4.3.0",
     "lerna": "^3.22.1",
+    "less": "3.8.1",
     "lint-staged": "^10.5.2",
     "markdown-it": "^13.0.1",
     "prettier": "^2.2.0",

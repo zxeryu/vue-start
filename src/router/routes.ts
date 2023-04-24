@@ -349,6 +349,17 @@ export const routes = [
     ],
   },
   {
+    name: "Preview",
+    path: "preview",
+    children: [
+      {
+        name: "PreviewIndex",
+        path: "index",
+        component: () => import("@/views/preview/index"),
+      },
+    ],
+  },
+  {
     name: "Request",
     path: "request",
     children: [
