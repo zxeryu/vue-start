@@ -87,7 +87,7 @@ export const ProList = defineComponent<ProListProps>({
 
     return () => {
       return (
-        <>
+        <div class={props.clsName}>
           {slots.start?.()}
 
           {slots.search ? (
@@ -144,7 +144,7 @@ export const ProList = defineComponent<ProListProps>({
           )}
 
           {slots.end?.()}
-        </>
+        </div>
       );
     };
   },
