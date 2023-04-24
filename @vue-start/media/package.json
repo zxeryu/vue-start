@@ -20,6 +20,7 @@
   "types": "dist/index.d.ts",
   "main": "dist/index.js",
   "module": "dist/index.es.js",
+  "css": "dist/index.css",
   "publishConfig": {
     "access": "public"
   },
