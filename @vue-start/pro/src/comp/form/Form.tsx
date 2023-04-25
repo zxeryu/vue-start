@@ -163,10 +163,11 @@ export const ProForm = defineComponent<ProFormProps>({
       const operate = props.operate;
       const items: IOpeItem[] = operate?.items || defaultOpeItems;
       return map(items, (item) => {
+        const nextItem = { ...item };
         //没有onClick
         if (!item.onClick && !get(operate?.itemState, [item.value, "onClick"])) {
           if (item.value === FormAction.RESET) {
-            item.onClick = () => {
+            nextItem.onClick = () => {
               //如果注册了onReset方法，优先执行onReset
               if (operate?.onReset) {
                 operate.onReset();
@@ -175,7 +176,7 @@ export const ProForm = defineComponent<ProFormProps>({
               formRef.value?.resetFields();
             };
           } else if (item.value === FormAction.SUBMIT) {
-            item.onClick = () => {
+            nextItem.onClick = () => {
               if (operate?.onSubmit) {
                 operate.onSubmit();
                 return;
@@ -183,15 +184,15 @@ export const ProForm = defineComponent<ProFormProps>({
               formRef.value?.submit();
             };
           } else if (item.value === FormAction.CONTINUE && operate?.onContinue) {
-            item.onClick = () => {
+            nextItem.onClick = () => {
               operate.onContinue!();
             };
           }
         }
         if (item.value === FormAction.SUBMIT && !has(item, "loading")) {
-          item.loading = props.submitLoading;
+          nextItem.loading = props.submitLoading;
         }
-        return item;
+        return nextItem;
       });
     });
 
