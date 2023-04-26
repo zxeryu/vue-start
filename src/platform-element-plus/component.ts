@@ -42,6 +42,7 @@ import {
   ProShowOptions,
   ProShowTree,
   ProUploaderText,
+  ProTypography
 } from "@vue-start/pro";
 import { TableOperateItem, TableOperateItemKey, ProTable } from "@/component/Table";
 
@@ -115,6 +116,7 @@ export const initComp = (app: App) => {
   app.component("pro-curd", ProCurd);
   app.component("pro-modal-curd", ProModalCurd);
   app.component("pro-curd-list", ProCurdList);
+  app.component("pro-typography", ProTypography);
   //element-plus
   app.component("pro-loading", ProLoading);
   app.component("pro-modal", ProModal);

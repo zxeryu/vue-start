@@ -49,7 +49,7 @@ import {
   ProShowDate,
   ProShowOptions,
   ProShowTree,
-  ProUploaderText,
+  ProUploaderText, ProTypography,
 } from "@vue-start/pro";
 import { TableOperateItem, TableOperateItemKey, ProTable } from "@/component/Table";
 import { ProPage } from "@/component/Page";
@@ -118,6 +118,7 @@ export const initComp = (app: App) => {
   app.component("pro-curd", ProCurd);
   app.component("pro-modal-curd", ProModalCurd);
   app.component("pro-curd-list", ProCurdList);
+  app.component("pro-typography", ProTypography);
   //
   app.component("pro-loading", ProLoading);
   app.component("pro-modal", Modal);

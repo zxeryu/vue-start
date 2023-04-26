@@ -291,6 +291,17 @@ export const routes = [
         ],
       },
       {
+        name: "ElementShow",
+        path: "show",
+        children: [
+          {
+            name: "ElementShowIndex",
+            path: "index",
+            component: () => import("@/views/element/show/index"),
+          },
+        ],
+      },
+      {
         name: "ElementTable",
         path: "table",
         children: [
@@ -298,6 +309,17 @@ export const routes = [
             name: "ElementTableIndex",
             path: "index",
             component: () => import("@/views/element/table/index"),
+          },
+        ],
+      },
+      {
+        name: "ElementTypography",
+        path: "typography",
+        children: [
+          {
+            name: "ElementTypographyIndex",
+            path: "index",
+            component: () => import("@/views/element/typography/index"),
           },
         ],
       },

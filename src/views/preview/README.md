@@ -1,3 +1,7 @@
+# @vue-start/media
+
+媒体文件处理,暂时只支持预览功能
+
 ## Preview
 
 > 文件预览组件，支持格式： .docx,.xls,.xlsx,.pdf,.png,.jpg,.jpeg 等

@@ -38,6 +38,8 @@ export const menus = [
           { title: "Form", name: "ElementFormIndex" },
           { title: "SearchForm", name: "ElementFormSearchIndex" },
           { title: "Table", name: "ElementTableIndex" },
+          { title: "Typography", name: "ElementTypographyIndex" },
+          { title: "Show", name: "ElementShowIndex" },
           { title: "Operate", name: "ElementOperateIndex" },
           { title: "List", name: "ElementListIndex" },
           { title: "Desc", name: "ElementDescIndex" },
