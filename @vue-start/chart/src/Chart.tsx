@@ -35,7 +35,8 @@ const chartProps = () => ({
   /**************** chart.resize ***************/
   resize: { type: [Boolean, Object], default: true },
   /**************** chart.loading 参数 ***************/
-  loading: { type: [Boolean, Object], default: false },
+  loading: { type: Boolean, default: false },
+  loadingOpts: { type: Object },
   /**************** events 事件 ***************/
   events: {
     type: Array as PropType<{ eventName: string; handler: (...params: any[]) => void; query?: string | object }[]>,
@@ -81,17 +82,11 @@ export const ProChart = defineComponent<ProChartProps>({
 
     //************************* loading **************************
 
-    //默认loading样式
-    const defaultLoadingOpts = { lineWidth: 2, spinnerRadius: 14, text: "" };
-
     useEffect(
       () => {
         if (!chartRef.value) return;
         if (props.loading) {
-          chartRef.value.showLoading({
-            ...defaultLoadingOpts,
-            ...(isBoolean(props.loading) ? undefined : props.loading),
-          });
+          chartRef.value.showLoading({ ...props.loadingOpts });
         } else {
           chartRef.value.hideLoading();
         }

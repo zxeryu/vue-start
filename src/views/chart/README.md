@@ -21,7 +21,8 @@
 | `optionOpts`      | chart.setOption 方法参数                                                          | `object`            | --              |
 | `mergeOptionData` | basicOption 与 option 合并方法                                                    | `object`            | --              |
 | `resize`          | 开启 resize 监听，为 object 类型时， 作为 chart.resize()参数                      | ` boolean``object ` | true            |
-| `loading`         | 展示 loading 动画，为 object 类型时， 作为 chart.showLoading()参数                | ` boolean``object ` | false           |
+| `loading`         | 展示 loading 动画                                                                 | ` boolean`          | false           |
+| `loadingOpts`     | 作为 chart.showLoading()参数                                                      | `object `           | --              |
 | `events`          | 事件对象                                                                          | `TEvent[]`          | false           |
 
 ```ts

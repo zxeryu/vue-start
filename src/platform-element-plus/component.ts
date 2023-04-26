@@ -42,7 +42,7 @@ import {
   ProShowOptions,
   ProShowTree,
   ProUploaderText,
-  ProTypography
+  ProTypography,
 } from "@vue-start/pro";
 import { TableOperateItem, TableOperateItemKey, ProTable } from "@/component/Table";
 
@@ -52,6 +52,11 @@ import { ProChart } from "@vue-start/chart";
 import { App } from "@vue/runtime-core";
 
 import { ProPage } from "@/component/Page";
+
+ProChart.props = {
+  ...ProChart.props,
+  loadingOpts: { type: Object, default: { lineWidth: 2, spinnerRadius: 14, text: "", color: "#409eff" } },
+};
 
 export const elementMap = {
   [ElementKeys.LoadingKey]: ProLoading,
