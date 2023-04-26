@@ -1,8 +1,9 @@
 import { defineComponent, ExtractPropTypes, inject, PropType, provide, ref, shallowRef, ShallowRef } from "vue";
 import { useEffect, useResizeObserver } from "@vue-start/hooks";
 import { init, ECharts } from "echarts";
-import { debounce, isObject, map } from "lodash";
+import { debounce, isBoolean, isObject, map } from "lodash";
 import { ChartEvent } from "./ChartEvent";
+import { mergeOptionData } from "./util";
 
 const ChartProviderKey = Symbol("chart-key");
 
@@ -21,19 +22,21 @@ declare type EChartsInitOpts = {
 };
 
 const chartProps = () => ({
-  //init 参数
+  /**************** init 参数 ***************/
   theme: { type: [String, Object], default: undefined },
   //init 参数
   opts: { type: Object as PropType<EChartsInitOpts> },
-  //chart.setOption 参数
+  /****************** chart.setOption 参数 **********************/
+  //默认的 option， 在执行 setOption 的时候会与option合并
+  basicOption: Object,
+  mergeOptionData: { type: Function, default: mergeOptionData },
   option: Object,
-  //chart.setOption 参数
   optionOpts: Object,
-  //chart.resize参数
+  /**************** chart.resize ***************/
   resize: { type: [Boolean, Object], default: true },
-  //chart.loading参数
-  loading: Boolean,
-  //events 事件
+  /**************** chart.loading 参数 ***************/
+  loading: { type: [Boolean, Object], default: false },
+  /**************** events 事件 ***************/
   events: {
     type: Array as PropType<{ eventName: string; handler: (...params: any[]) => void; query?: string | object }[]>,
   },
@@ -41,13 +44,15 @@ const chartProps = () => ({
 
 export type ProChartProps = Partial<ExtractPropTypes<ReturnType<typeof chartProps>>>;
 
-export const Chart = defineComponent<ProChartProps>({
+export const ProChart = defineComponent<ProChartProps>({
   props: {
     ...chartProps(),
   } as any,
-  setup: (props, { slots, emit }) => {
+  setup: (props, { slots, expose }) => {
     const chartRef = shallowRef<ECharts>();
     const domRef = ref();
+
+    expose({ chartRef, domRef });
 
     useEffect(() => {
       if (!domRef.value) return;
@@ -55,16 +60,46 @@ export const Chart = defineComponent<ProChartProps>({
       return () => {
         chartRef.value && chartRef.value.dispose();
       };
-    }, [domRef, () => props.theme, () => props.opts]);
+    }, []);
+
+    const mergeOption = (): any => {
+      const basicOption = props.basicOption;
+      const option = props.option;
+      if (!basicOption || !option) return props.option;
+      //拼接思路：basicOption为主 option为辅
+      return props.mergeOptionData!(basicOption, option);
+    };
 
     useEffect(
       () => {
         if (!chartRef.value) return;
         chartRef.value.clear();
-        chartRef.value.setOption(props.option as any, props.optionOpts);
+        chartRef.value.setOption(mergeOption(), props.optionOpts);
       },
       () => props.option,
     );
+
+    //************************* loading **************************
+
+    //默认loading样式
+    const defaultLoadingOpts = { lineWidth: 2, spinnerRadius: 14, text: "" };
+
+    useEffect(
+      () => {
+        if (!chartRef.value) return;
+        if (props.loading) {
+          chartRef.value.showLoading({
+            ...defaultLoadingOpts,
+            ...(isBoolean(props.loading) ? undefined : props.loading),
+          });
+        } else {
+          chartRef.value.hideLoading();
+        }
+      },
+      () => props.loading,
+    );
+
+    //************************* resize **************************
 
     const resizeChart = debounce(() => {
       if (!chartRef.value) return;
@@ -79,7 +114,14 @@ export const Chart = defineComponent<ProChartProps>({
       }
     });
 
+    //是否是初始化执行
+    let isInit = true;
+
     useResizeObserver(domRef, () => {
+      if (isInit) {
+        isInit = false;
+        return;
+      }
       resizeChart();
     });
 
@@ -88,10 +130,14 @@ export const Chart = defineComponent<ProChartProps>({
     return () => {
       return (
         <div ref={domRef}>
-          {map(props.events, (item) => {
-            return <ChartEvent {...item} />;
-          })}
-          {slots.default}
+          {chartRef.value && (
+            <>
+              {map(props.events, (item) => {
+                return <ChartEvent {...item} />;
+              })}
+              {slots.default?.()}
+            </>
+          )}
         </div>
       );
     };

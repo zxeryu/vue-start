@@ -4,6 +4,17 @@ export const routes = [
     path: "about",
     component: () => import("@/views/About.vue"),
   },
+  {
+    name: "Chart",
+    path: "chart",
+    children: [
+      {
+        name: "ChartIndex",
+        path: "index",
+        component: () => import("@/views/chart/index"),
+      },
+    ],
+  },
   { name: "Comp", path: "comp", component: () => import("@/views/Comp") },
   {
     name: "Compelement",

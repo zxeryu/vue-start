@@ -46,6 +46,7 @@ import {
 import { TableOperateItem, TableOperateItemKey, ProTable } from "@/component/Table";
 
 import { ProPreview } from "@vue-start/media";
+import { ProChart } from "@vue-start/chart";
 
 import { App } from "@vue/runtime-core";
 
@@ -129,6 +130,8 @@ export const initComp = (app: App) => {
   //兼容演示
   app.component("pro-input-number", ElInputNumber);
   app.component("pro-button", ElButton);
-  //
+  //预览
   app.component("pro-preview", ProPreview);
+  //echarts
+  app.component("pro-chart", ProChart);
 };

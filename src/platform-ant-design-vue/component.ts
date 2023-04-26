@@ -55,6 +55,7 @@ import { TableOperateItem, TableOperateItemKey, ProTable } from "@/component/Tab
 import { ProPage } from "@/component/Page";
 
 import { ProPreview } from "@vue-start/media";
+import { ProChart } from "@vue-start/chart";
 
 export const elementMap = {
   [ElementKeys.LoadingKey]: ProLoading,
@@ -134,4 +135,5 @@ export const initComp = (app: App) => {
   app.component("pro-button", Button);
   //
   app.component("pro-preview", ProPreview);
+  app.component("pro-chart", ProChart);
 };

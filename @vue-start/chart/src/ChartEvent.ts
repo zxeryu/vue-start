@@ -1,7 +1,6 @@
-import { defineComponent, PropType } from "vue";
+import { defineComponent } from "vue";
 import { useEffect } from "@vue-start/hooks";
 import { useChart } from "./Chart";
-import { map } from "lodash";
 
 export const ChartEvent = defineComponent({
   props: {
@@ -33,4 +32,3 @@ export const ChartEvent = defineComponent({
     };
   },
 });
-

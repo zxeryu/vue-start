@@ -6,6 +6,8 @@ import { isValidInRules, TConvert, TRules } from "./base";
 type TData = Record<string, any>;
 
 /**
+ * @deprecated 使用 findTreeItem 代替
+ *
  * 根据value从treeData中找到对象
  * @param data
  * @param value
@@ -39,6 +41,8 @@ export const findTargetInTree = (
 };
 
 /**
+ * @deprecated 使用 findTreeItem 代替
+ *
  * 根据value从treeData中找出对象及父列表
  * @param data
  * @param value
@@ -93,17 +97,20 @@ const findTreeItemRecursion = (
   targetObj: TFindTarget,
   parent?: TData[],
 ) => {
-  const index = findIndex(data, (item) => isValidInRules(item, rules));
-  if (index > -1) {
-    const target = data[index];
-    const parentList = parent ? [...parent, target] : undefined;
-    targetObj.index = index;
-    targetObj.target = target;
-    targetObj.list = data;
-    targetObj.parentList = parentList;
-    return;
-  }
-  forEach(data, (item) => {
+  if (targetObj.target) return;
+
+  forEach(data, (item, index) => {
+    //forEach的弊端，用for更合适
+    if (targetObj.target) return;
+    //匹配到对应的数据
+    if (isValidInRules(item, rules)) {
+      targetObj.index = index;
+      targetObj.target = item;
+      targetObj.list = data;
+      targetObj.parentList = parent ? [...parent, item] : undefined;
+      return;
+    }
+
     const children = get(item, fieldNames?.children);
     if (children && size(children) > 0) {
       const parentList = parent ? [...parent, item] : undefined;

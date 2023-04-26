@@ -1,10 +1,10 @@
 export const menus = [
   { title: "综述", name: "OverviewIndexMd" },
-  { title: "@vue-start/request", name: "RequestIndex" },
-  { title: "@vue-start/store", name: "StoreIndexMd" },
-  { title: "@vue-start/config", name: "ConfigIndex" },
+  { title: "request", name: "RequestIndex" },
+  { title: "store", name: "StoreIndexMd" },
+  { title: "config", name: "ConfigIndex" },
   {
-    title: "@vue-start/hooks",
+    title: "hooks",
     name: "Hooks",
     children: [
       { title: "useEffect", name: "HooksEffectIndexMd" },
@@ -17,7 +17,7 @@ export const menus = [
     name: "Pro",
     children: [
       {
-        title: "@vue-start/element-pro",
+        title: "element-pro",
         name: "El",
         children: [
           { title: "Loading", name: "ElLoadingIndex" },
@@ -32,7 +32,7 @@ export const menus = [
         ],
       },
       {
-        title: "@vue-start/pro",
+        title: "pro",
         name: "Element",
         children: [
           { title: "Form", name: "ElementFormIndex" },
@@ -56,5 +56,6 @@ export const menus = [
       },
     ],
   },
-  { title: "@vue-start/media", name: "PreviewIndex" },
+  { title: "media", name: "PreviewIndex" },
+  { title: "chart", name: "ChartIndex" },
 ];
