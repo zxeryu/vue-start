@@ -1,0 +1,32 @@
+{
+  "name": "@vue-start/map",
+  "version": "0.0.0",
+  "description": "amap wrapper",
+  "keywords": [
+    "amap"
+  ],
+  "author": "zx <zxpstudy@163.com>",
+  "homepage": "https://github.com/zxeryu/vue-start#readme",
+  "license": "MIT",
+  "main": "lib/map.js",
+  "directories": {
+    "lib": "lib",
+    "test": "__tests__"
+  },
+  "files": [
+    "lib"
+  ],
+  "publishConfig": {
+    "registry": "https://registry.yarnpkg.com/"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/zxeryu/vue-start.git"
+  },
+  "scripts": {
+    "test": "echo \"Error: run tests from root\" && exit 1"
+  },
+  "bugs": {
+    "url": "https://github.com/zxeryu/vue-start/issues"
+  }
+}
