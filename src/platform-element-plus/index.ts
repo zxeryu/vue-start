@@ -25,11 +25,14 @@ import "element-plus/dist/index.css";
 import locale from "element-plus/lib/locale/lang/zh-cn";
 
 import { initComp } from "@/platform-element-plus/component";
+import { startsWith } from "lodash";
 
 //request
 const urlInterceptor = (request: AxiosInterceptorManager<AxiosRequestConfig>) => {
   request.use((requestConfig) => {
-    requestConfig.url = `http://localhost:7070${requestConfig.url}`;
+    if (startsWith(requestConfig.url, "/user")) {
+      requestConfig.url = `http://localhost:7070${requestConfig.url}`;
+    }
     return requestConfig;
   });
 };

@@ -1,7 +1,7 @@
 import { provideMap, useMap } from "../Map";
 import { isArray, isNumber } from "lodash";
 import { useEffect, useWatch } from "@vue-start/hooks";
-import { defineComponent, PropType } from "vue";
+import { defineComponent, PropType, toRef } from "vue";
 import { TEvents } from "../event";
 import { useFeatureOptMethods, useShowConnect } from "../Feature";
 
@@ -106,10 +106,12 @@ export const LayerGroup = defineComponent({
     );
 
     //props.show
-    useShowConnect(layerGroup, props.show);
+    const showRef = toRef(props, "show");
+    useShowConnect(layerGroup, showRef);
 
     //动态opts
-    useFeatureOptMethods(layerGroup, props.opts$!);
+    const optsRef = toRef(props, "opts$");
+    useFeatureOptMethods(layerGroup, optsRef);
 
     expose({ getFeature, addToMap, removeFormMap });
 

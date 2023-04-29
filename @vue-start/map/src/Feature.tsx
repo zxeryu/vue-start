@@ -1,6 +1,6 @@
 import { useEffect, useWatch } from "@vue-start/hooks";
 import { forEach, isFunction, upperFirst } from "lodash";
-import { DefineComponent, defineComponent, PropType, ref, Teleport } from "vue";
+import { DefineComponent, defineComponent, PropType, ref, Teleport, ToRef, toRef } from "vue";
 import { TEvents, useEvents } from "./event";
 import { useMap } from "./Map";
 
@@ -14,7 +14,11 @@ export const useMapConnect = (features: any) => {
   useEffect(() => {
     mapRef.value.add(features);
     return () => {
-      mapRef.value.remove(features);
+      try {
+        mapRef.value.remove(features);
+      } catch (e) {
+        console.error(e);
+      }
     };
   }, []);
 };
@@ -22,9 +26,9 @@ export const useMapConnect = (features: any) => {
 /**
  * show 处理
  * @param feature
- * @param propShow
+ * @param showRef
  */
-export const useShowConnect = (feature: any, propShow: any) => {
+export const useShowConnect = (feature: any, showRef: ToRef<boolean>) => {
   const show = () => {
     if (feature && isFunction(feature.show)) {
       feature.show();
@@ -37,40 +41,37 @@ export const useShowConnect = (feature: any, propShow: any) => {
   };
 
   useEffect(() => {
-    if (!propShow) {
+    if (!showRef.value) {
       hide();
     }
   }, []);
 
   useWatch(
     () => {
-      if (propShow) {
+      if (showRef.value) {
         show();
       } else {
         hide();
       }
     },
-    () => propShow,
+    () => showRef,
   );
 };
 
 /**
  * 根据 key 调用 `set${Key}`方法
  * @param feature
- * @param opts
+ * @param optsRef
  */
-export const useFeatureOptMethods = (feature: any, opts: Record<string, any>) => {
-  useEffect(
-    () => {
-      forEach(opts, (v, k) => {
-        const methodName = "set" + upperFirst(k);
-        if (feature[methodName] && isFunction(feature[methodName])) {
-          feature[methodName](v);
-        }
-      });
-    },
-    () => opts,
-  );
+export const useFeatureOptMethods = (feature: any, optsRef: ToRef<any>) => {
+  useEffect(() => {
+    forEach(optsRef.value, (v, k) => {
+      const methodName = "set" + upperFirst(k);
+      if (feature[methodName] && isFunction(feature[methodName])) {
+        feature[methodName](v);
+      }
+    });
+  }, optsRef);
 };
 
 type TFeature = {
@@ -104,7 +105,6 @@ type TFeature = {
   // VideoLayer: { type: AMap.VideoLayer; opts: AMap.VideoLayerOptions };
   CanvasLayer: { type: AMap.CanvasLayer; opts: AMap.CanvasLayerOptions };
   CustomLayer: { type: AMap.CustomLayer; opts: AMap.CustomLayerOption };
-
 };
 
 export const createFeature = <T extends keyof TFeature>(
@@ -143,11 +143,13 @@ export const createFeature = <T extends keyof TFeature>(
       //map connect
       useMapConnect(feature);
 
-      //showzx.
-      useShowConnect(feature, props.show);
+      //show
+      const showRef = toRef(props, "show");
+      useShowConnect(feature, showRef);
 
       //动态opts
-      useFeatureOptMethods(feature, props.opts$!);
+      const optsRef = toRef(props, "opts$");
+      useFeatureOptMethods(feature, optsRef);
 
       //event
       useEvents(feature, props.events!);

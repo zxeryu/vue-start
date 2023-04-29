@@ -11,7 +11,7 @@ export const BasicLayout = defineComponent(() => {
   const router = useRouter();
   const { per } = useLogonUser();
 
-  const layoutRef = ref("compose");
+  const layoutRef = ref("vertical");
   const layoutOptions = [
     { label: "compose", value: "compose" },
     { label: "vertical", value: "vertical" },

@@ -35,7 +35,7 @@ const mapProps = () => ({
   //加载地图opts
   loadOpts: { type: Object as PropType<TLoadOpts> },
   //地图opts
-  opts: { type: Object },
+  opts: { type: Object as PropType<AMap.MapOptions> },
 });
 
 export type MapProps = Partial<ExtractPropTypes<ReturnType<typeof mapProps>>>;
@@ -72,7 +72,8 @@ export const Map = defineComponent<MapProps>({
     expose({ mapRef, domRef });
 
     useEffect(() => {
-      AMapLoader.load({ ...props.loadOpts!, version: "2.0" })
+      // @ts-ignore
+      AMapLoader.load({ version: "2.0", ...props.loadOpts! })
         .then((m) => {
           const map = new m.Map(domRef.value, { ...props.opts });
           //地图加载成功事件

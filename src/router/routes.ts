@@ -4,6 +4,23 @@ export const routes = [
     path: "about",
     component: () => import("@/views/About.vue"),
   },
+  { name: "Comp", path: "comp", component: () => import("@/views/Comp") },
+  {
+    name: "Compelement",
+    path: "compelement",
+    component: () => import("@/views/CompElement"),
+  },
+  {
+    name: "Counter",
+    path: "counter",
+    component: () => import("@/views/Counter.vue"),
+  },
+  { name: "Home", path: "home", component: () => import("@/views/Home.vue") },
+  {
+    name: "Network",
+    path: "network",
+    component: () => import("@/views/Network.vue"),
+  },
   {
     name: "Chart",
     path: "chart",
@@ -15,12 +32,6 @@ export const routes = [
       },
     ],
   },
-  { name: "Comp", path: "comp", component: () => import("@/views/Comp") },
-  {
-    name: "Compelement",
-    path: "compelement",
-    component: () => import("@/views/CompElement"),
-  },
   {
     name: "Config",
     path: "config",
@@ -31,11 +42,6 @@ export const routes = [
         component: () => import("@/views/config/index"),
       },
     ],
-  },
-  {
-    name: "Counter",
-    path: "counter",
-    component: () => import("@/views/Counter.vue"),
   },
   {
     name: "Curd",
@@ -325,7 +331,6 @@ export const routes = [
       },
     ],
   },
-  { name: "Home", path: "home", component: () => import("@/views/Home.vue") },
   {
     name: "Hooks",
     path: "hooks",
@@ -366,9 +371,54 @@ export const routes = [
     ],
   },
   {
-    name: "Network",
-    path: "network",
-    component: () => import("@/views/Network.vue"),
+    name: "Map",
+    path: "map",
+    children: [
+      {
+        name: "MapApi",
+        path: "api",
+        children: [
+          {
+            name: "MapApiIndex",
+            path: "index",
+            component: () => import("@/views/map/api/index"),
+          },
+        ],
+      },
+      {
+        name: "MapLayer",
+        path: "layer",
+        children: [
+          {
+            name: "MapLayerIndex",
+            path: "index",
+            component: () => import("@/views/map/layer/index"),
+          },
+        ],
+      },
+      {
+        name: "MapOverlay",
+        path: "overlay",
+        children: [
+          {
+            name: "MapOverlayIndex",
+            path: "index",
+            component: () => import("@/views/map/overlay/index"),
+          },
+        ],
+      },
+      {
+        name: "MapOverview",
+        path: "overview",
+        children: [
+          {
+            name: "MapOverviewIndexMd",
+            path: "index-md",
+            component: () => import("@/views/map/overview/index-md"),
+          },
+        ],
+      },
+    ],
   },
   {
     name: "Overview",

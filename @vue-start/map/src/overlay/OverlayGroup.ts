@@ -1,4 +1,4 @@
-import { defineComponent, PropType } from "vue";
+import { defineComponent, PropType, toRef } from "vue";
 import { provideMap, useMap } from "../Map";
 import { useEffect, useWatch } from "@vue-start/hooks";
 import { isArray, isNumber } from "lodash";
@@ -120,10 +120,12 @@ export const OverlayGroup = defineComponent({
     );
 
     //props.show
-    useShowConnect(overlayGroup, props.show);
+    const showRef = toRef(props, "show");
+    useShowConnect(overlayGroup, showRef);
 
     //动态opts
-    useFeatureOptMethods(overlayGroup, props.opts$!);
+    const optsRef = toRef(props, "opts$");
+    useFeatureOptMethods(overlayGroup, optsRef);
 
     expose({ getFeature, addToMap, removeFormMap });
 

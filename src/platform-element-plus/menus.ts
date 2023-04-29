@@ -60,4 +60,14 @@ export const menus = [
   },
   { title: "media", name: "PreviewIndex" },
   { title: "chart", name: "ChartIndex" },
+  {
+    title: "map",
+    name: "Map",
+    children: [
+      { title: "overview", name: "MapOverviewIndexMd" },
+      { title: "overlay", name: "MapOverlayIndex" },
+      { title: "layer", name: "MapLayerIndex" },
+      { title: "api", name: "MapApiIndex" },
+    ],
+  },
 ];

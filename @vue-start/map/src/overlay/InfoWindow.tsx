@@ -1,4 +1,4 @@
-import { defineComponent, PropType, ref, Teleport } from "vue";
+import { defineComponent, PropType, ref, Teleport, toRef } from "vue";
 import { useEffect } from "@vue-start/hooks";
 import { isFunction } from "lodash";
 import { useFeatureOptMethods } from "../Feature";
@@ -20,7 +20,8 @@ export const InfoWindow = defineComponent({
     });
 
     //动态opts
-    useFeatureOptMethods(feature, props.opts$!);
+    const optsRef = toRef(props, "opts$");
+    useFeatureOptMethods(feature, optsRef);
 
     const handleClose = () => {
       emit("close");

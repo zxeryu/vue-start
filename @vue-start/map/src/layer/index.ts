@@ -3,6 +3,7 @@ import { useMapLayerConnect } from "./LayerGroup";
 import { omit } from "lodash";
 
 export * from "./LayerGroup";
+export * from "./LabelsLayer";
 
 export const TileLayer = createFeature("TileLayer", { useMapConnect: useMapLayerConnect });
 export const TileLayerSatellite = createFeature("TileLayer.Satellite", { useMapConnect: useMapLayerConnect });

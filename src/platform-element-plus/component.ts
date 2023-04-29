@@ -48,6 +48,7 @@ import { TableOperateItem, TableOperateItemKey, ProTable } from "@/component/Tab
 
 import { ProPreview } from "@vue-start/media";
 import { ProChart } from "@vue-start/chart";
+import { Map } from "@vue-start/map";
 
 import { App } from "@vue/runtime-core";
 
@@ -56,6 +57,18 @@ import { ProPage } from "@/component/Page";
 ProChart.props = {
   ...ProChart.props,
   loadingOpts: { type: Object, default: { lineWidth: 2, spinnerRadius: 14, text: "", color: "#409eff" } },
+};
+
+Map.props = {
+  ...Map.props,
+  loadOpts: {
+    type: Object,
+    default: { key: "e576dc4fdf66a1f0334d9ae4615a62ea" },
+  },
+  opts: {
+    type: Object,
+    default: { resizeEnable: true, center: [116.397428, 39.90923], zoom: 13 },
+  },
 };
 
 export const elementMap = {
