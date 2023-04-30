@@ -6,7 +6,7 @@ import { Map, CircleMarker } from "@vue-start/map";
 import { css } from "@emotion/css";
 import { useFetch } from "@vue-start/request";
 import { getCapitals } from "@/clients/map-data";
-import { get, map } from "lodash";
+import { map } from "lodash";
 
 export default defineComponent(() => {
   const { data } = useFetch(getCapitals, { initEmit: true });
@@ -14,7 +14,7 @@ export default defineComponent(() => {
   return () => {
     return (
       <Map class={css({ height: 400 })} opts={{ zoom: 4, center: [108, 34] }}>
-        {map(get(data, "list"), (item) => {
+        {map(data.list, (item) => {
           return (
             <CircleMarker
               opts={{

@@ -4,6 +4,7 @@ import { isReactive, ref, Ref, toRaw, UnwrapNestedRefs, UnwrapRef, WatchSource }
 import { isBoolean, isFunction } from "lodash";
 import { useRequestProvide } from "./provide";
 import { filter as rxFilter, merge as rxMerge, tap as rxTap } from "rxjs";
+import { AxiosResponse } from "axios";
 
 export interface IUseFetchOptions<TRequestActor extends IRequestActor> {
   initEmit?: boolean;
@@ -16,7 +17,7 @@ export interface IUseFetchOptions<TRequestActor extends IRequestActor> {
 }
 
 export interface IUseFetchResult<TRequestActor extends IRequestActor> {
-  data: UnwrapNestedRefs<TRequestActor["res"]>;
+  data: UnwrapNestedRefs<AxiosResponse["data"]>;
   requesting: Ref<UnwrapRef<boolean>>;
   request: (params: TRequestActor["req"]) => void;
 }

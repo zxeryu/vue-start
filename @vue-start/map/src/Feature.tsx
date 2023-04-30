@@ -24,6 +24,21 @@ export const useMapConnect = (features: any) => {
 };
 
 /**
+ * 与地图绑定关系2
+ * @param feature
+ */
+export const useMapConnect2 = (feature: any) => {
+  const { mapRef } = useMap();
+
+  useEffect(() => {
+    feature.setMap(mapRef.value);
+    return () => {
+      feature.setMap(null);
+    };
+  }, []);
+};
+
+/**
  * show 处理
  * @param feature
  * @param showRef

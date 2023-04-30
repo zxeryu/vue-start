@@ -1,4 +1,4 @@
-import { createFeature } from "../Feature";
+import { createFeature, useMapConnect2 } from "../Feature";
 import { useMapLayerConnect } from "./LayerGroup";
 import { omit } from "lodash";
 
@@ -10,9 +10,12 @@ export const TileLayerSatellite = createFeature("TileLayer.Satellite", { useMapC
 export const TileLayerRoadNet = createFeature("TileLayer.RoadNet", { useMapConnect: useMapLayerConnect });
 export const TileLayerTraffic = createFeature("TileLayer.Traffic", { useMapConnect: useMapLayerConnect });
 export const Buildings = createFeature("Buildings", { useMapConnect: useMapLayerConnect });
+
 export const MassMarks = createFeature("MassMarks", {
-  useMapConnect: useMapLayerConnect,
-  createFeatureObj: (opts) => new window.AMap.MassMarks(opts?.data || [], omit(opts, "data")),
+  useMapConnect: useMapConnect2,
+  createFeatureObj: (opts) => {
+    return new window.AMap.MassMarks(opts?.data || [], omit(opts, "data"));
+  },
 });
 
 //自定义

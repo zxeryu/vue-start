@@ -13,3 +13,18 @@ export const getTianTan = createRequestActor("getTianTan", () => {
     url: `/map-data/tiantan.json`,
   };
 });
+
+export const getMockPosition = createRequestActor("getMockPosition", () => {
+  return {
+    method: "GET",
+    url: `/map-data/mock-position.json`,
+  };
+});
+
+export const getCities = createRequestActor("getCities", () => {
+  return {
+    method: "GET",
+    url: `/map-data/cities.json`,
+  };
+});
+

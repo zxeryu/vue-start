@@ -6,7 +6,7 @@ import { Map, MapPlugin, ElasticMarker, MapPluginType } from "@vue-start/map";
 import { css } from "@emotion/css";
 import { useFetch } from "@vue-start/request";
 import { getTianTan } from "@/clients/map-data";
-import { get, map } from "lodash";
+import { map } from "lodash";
 
 export default defineComponent(() => {
   const { data } = useFetch(getTianTan, { initEmit: true });
@@ -50,7 +50,7 @@ export default defineComponent(() => {
           // forceVector: true,
         }}>
         <MapPlugin plugins={[MapPluginType.ElasticMarker]}>
-          {map(get(data, "sheshi"), (item) => {
+          {map(data.sheshi, (item) => {
             return (
               <ElasticMarker
                 opts={{
@@ -74,7 +74,7 @@ export default defineComponent(() => {
               />
             );
           })}
-          {map(get(data, "touristSpots"), (item) => {
+          {map(data.touristSpots, (item) => {
             return (
               <ElasticMarker
                 opts={{

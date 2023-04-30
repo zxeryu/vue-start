@@ -1,5 +1,5 @@
 import { defineComponent, PropType, toRef } from "vue";
-import { debounce, forEach, map } from "lodash";
+import { forEach, map, size } from "lodash";
 import { TEvents } from "../event";
 import { useEffect, useWatch } from "@vue-start/hooks";
 import { useMap } from "../Map";
@@ -23,7 +23,7 @@ export const LabelsLayer = defineComponent({
 
     const convertMarkers = () => {
       return map(props.data, (item) => {
-        const labelMarker = new AMap.LabelMarker({
+        const labelMarker = new window.AMap.LabelMarker({
           ...props.itemOpts,
           ...item,
         });
@@ -33,20 +33,22 @@ export const LabelsLayer = defineComponent({
             labelMarker.on(e.type, e.handler, undefined, e.once);
           });
         }
-        return;
+        return labelMarker;
       });
     };
 
-    const setData = debounce(() => {
+    const setData = () => {
       //@ts-ignore
       feature.clear();
       const markers = convertMarkers();
       //@ts-ignore
       feature.add(markers);
-    }, 100);
+    };
 
     useEffect(() => {
-      setData();
+      if (size(props.data) > 0) {
+        setData();
+      }
       mapRef.value.add(feature);
       return () => {
         //@ts-ignore
@@ -56,7 +58,10 @@ export const LabelsLayer = defineComponent({
     }, []);
 
     useWatch(
-      () => setData(),
+      () => {
+        setData();
+        console.log("################", "render");
+      },
       () => props.data,
     );
 
