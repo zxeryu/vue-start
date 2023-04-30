@@ -8,7 +8,7 @@ import { css } from "@emotion/css";
 export default defineComponent(() => {
   return () => {
     return (
-      <Map class={css({ height: 300 })}>
+      <Map class={css({ height: 300 })} opts={{ center: [116.397428, 39.90923], zoom: 13}}>
         <Text
           opts={{
             text: "纯文本标记",

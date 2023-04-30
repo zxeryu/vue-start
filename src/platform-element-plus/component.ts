@@ -65,10 +65,6 @@ Map.props = {
     type: Object,
     default: { key: "e576dc4fdf66a1f0334d9ae4615a62ea" },
   },
-  opts: {
-    type: Object,
-    default: { resizeEnable: true, center: [116.397428, 39.90923], zoom: 13 },
-  },
 };
 
 export const elementMap = {

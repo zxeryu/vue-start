@@ -61,16 +61,13 @@ export const useShowConnect = (feature: any, showRef: ToRef<boolean>) => {
     }
   }, []);
 
-  useWatch(
-    () => {
-      if (showRef.value) {
-        show();
-      } else {
-        hide();
-      }
-    },
-    () => showRef,
-  );
+  useWatch(() => {
+    if (showRef.value) {
+      show();
+    } else {
+      hide();
+    }
+  }, showRef);
 };
 
 /**

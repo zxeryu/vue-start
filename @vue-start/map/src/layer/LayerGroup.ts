@@ -68,13 +68,13 @@ export const LayerGroup = defineComponent({
     //添加到地图
     const addToMap = () => {
       if (isAdd) return;
-      mapRef.value.add(layerGroup as any);
+      layerGroup.setMap(mapRef.value);
       isAdd = true;
     };
 
     //从地图中删除
     const removeFormMap = () => {
-      mapRef.value.remove(layerGroup as any);
+      layerGroup.setMap(null as any);
       isAdd = false;
     };
 

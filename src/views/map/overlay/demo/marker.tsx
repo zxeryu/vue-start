@@ -7,6 +7,7 @@ import { Map, Marker } from "@vue-start/map";
 import { css } from "@emotion/css";
 
 export default defineComponent(() => {
+  const visibleRef = ref(true);
   const changeRef = ref("default");
 
   const position = computed(() => {
@@ -27,8 +28,14 @@ export default defineComponent(() => {
 
   return () => {
     return (
-      <Map class={css({ height: 300 })}>
+      <Map class={css({ height: 300 })} opts={{ center: [116.397428, 39.90923], zoom: 13 }}>
         <div class={css({ position: "absolute", top: 0, left: 0 })}>
+          <button
+            onClick={() => {
+              visibleRef.value = !visibleRef.value;
+            }}>
+            {visibleRef.value ? "hide" : "show"}
+          </button>
           <button
             onClick={() => {
               changeRef.value = changeRef.value === "change" ? "default" : "change";
@@ -37,7 +44,7 @@ export default defineComponent(() => {
           </button>
         </div>
         {/*静态*/}
-        <Marker opts={{ position: [116.406315, 39.908775] }} events={events} />
+        <Marker opts={{ position: [116.406315, 39.908775] }} show={visibleRef.value} events={events} />
         {/*动态*/}
         <Marker
           opts={{ angle: 45 }}
