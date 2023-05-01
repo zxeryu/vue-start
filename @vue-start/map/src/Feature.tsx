@@ -121,6 +121,10 @@ type TFeature = {
   // VideoLayer: { type: AMap.VideoLayer; opts: AMap.VideoLayerOptions };
   CanvasLayer: { type: AMap.CanvasLayer; opts: AMap.CanvasLayerOptions };
   CustomLayer: { type: AMap.CustomLayer; opts: AMap.CustomLayerOption };
+  /********************************* DistrictLayer ***********************************/
+  "DistrictLayer.World": { type: AMap.DistrictLayer; opts: AMap.DistrictLayerOptions };
+  "DistrictLayer.Country": { type: AMap.DistrictLayer; opts: AMap.DistrictLayerOptions };
+  "DistrictLayer.Province": { type: AMap.DistrictLayer; opts: AMap.DistrictLayerOptions };
 };
 
 export const createFeature = <T extends keyof TFeature>(

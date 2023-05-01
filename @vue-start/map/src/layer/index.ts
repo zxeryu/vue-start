@@ -45,6 +45,26 @@ export const VideoLayer = createFeature("VideoLayer" as any, { useMapConnect: us
 export const CanvasLayer = createFeature("CanvasLayer", { useMapConnect: useMapLayerConnect });
 export const CustomLayer = createFeature("CustomLayer", { useMapConnect: useMapLayerConnect });
 
+// DistrictLayer
+export const DistrictLayerWorld = createFeature("DistrictLayer.World", {
+  useMapConnect: useMapLayerConnect,
+  createFeatureObj: (opts) => {
+    return new window.AMap.DistrictLayer.World(opts);
+  },
+});
+export const DistrictLayerCountry = createFeature("DistrictLayer.Country", {
+  useMapConnect: useMapLayerConnect,
+  createFeatureObj: (opts) => {
+    return new window.AMap.DistrictLayer.Country(opts);
+  },
+});
+export const DistrictLayerProvince = createFeature("DistrictLayer.Province", {
+  useMapConnect: useMapLayerConnect,
+  createFeatureObj: (opts) => {
+    return new window.AMap.DistrictLayer.Province(opts);
+  },
+});
+
 //plugin
 
 export const HeatMap = createFeature("HeatMap" as any, {

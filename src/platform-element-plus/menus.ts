@@ -67,6 +67,7 @@ export const menus = [
       { title: "overview", name: "MapOverviewIndexMd" },
       { title: "overlay", name: "MapOverlayIndex" },
       { title: "layer", name: "MapLayerIndex" },
+      { title: "district-layer", name: "MapLayerDistrictIndex" },
       { title: "api", name: "MapApiIndex" },
     ],
   },

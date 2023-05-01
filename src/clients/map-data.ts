@@ -28,7 +28,6 @@ export const getCities = createRequestActor("getCities", () => {
   };
 });
 
-
 export const getHeatmap = createRequestActor("getHeatmap", () => {
   return {
     method: "GET",
@@ -36,3 +35,16 @@ export const getHeatmap = createRequestActor("getHeatmap", () => {
   };
 });
 
+export const getWorld = createRequestActor("getWorld", () => {
+  return {
+    method: "GET",
+    url: `/map-data/world.json`,
+  };
+});
+
+export const getProvince = createRequestActor("getProvince", () => {
+  return {
+    method: "GET",
+    url: `/map-data/province.json`,
+  };
+});

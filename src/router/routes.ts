@@ -397,6 +397,17 @@ export const routes = [
         ],
       },
       {
+        name: "MapLayerDistrict",
+        path: "layer-district",
+        children: [
+          {
+            name: "MapLayerDistrictIndex",
+            path: "index",
+            component: () => import("@/views/map/layer-district/index"),
+          },
+        ],
+      },
+      {
         name: "MapOverlay",
         path: "overlay",
         children: [
