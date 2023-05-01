@@ -1,3 +1,6 @@
+/*---
+title: LayerGroup
+---*/
 import { defineComponent, ref } from "vue";
 import { css } from "@emotion/css";
 import { Map, LayerGroup, TileLayerRoadNet, TileLayerTraffic } from "@vue-start/map";
@@ -11,7 +14,7 @@ export default defineComponent(() => {
 
   return () => {
     return (
-      <Map class={css({ height: 400 })} opts={{ zoom: 13 }}>
+      <Map class={css({ height: 400 })} opts={{ zoom: 11 }}>
         <div class={css({ position: "absolute" })}>
           <button
             onClick={() => {

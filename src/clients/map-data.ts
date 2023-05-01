@@ -28,3 +28,11 @@ export const getCities = createRequestActor("getCities", () => {
   };
 });
 
+
+export const getHeatmap = createRequestActor("getHeatmap", () => {
+  return {
+    method: "GET",
+    url: `/map-data/heatmap.json`,
+  };
+});
+

@@ -33,7 +33,11 @@ export const useMapConnect2 = (feature: any) => {
   useEffect(() => {
     feature.setMap(mapRef.value);
     return () => {
-      feature.setMap(null);
+      try {
+        feature.setMap(null);
+      } catch (e) {
+        console.error(e);
+      }
     };
   }, []);
 };

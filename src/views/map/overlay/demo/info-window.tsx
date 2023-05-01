@@ -1,3 +1,6 @@
+/*---
+title: InfoWindow
+---*/
 import { defineComponent, ref } from "vue";
 import { Map, InfoWindow, Marker, useMap } from "@vue-start/map";
 import { css } from "@emotion/css";

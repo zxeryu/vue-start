@@ -44,3 +44,13 @@ export const ImageLayer = createFeature("ImageLayer", { useMapConnect: useMapLay
 export const VideoLayer = createFeature("VideoLayer" as any, { useMapConnect: useMapLayerConnect });
 export const CanvasLayer = createFeature("CanvasLayer", { useMapConnect: useMapLayerConnect });
 export const CustomLayer = createFeature("CustomLayer", { useMapConnect: useMapLayerConnect });
+
+//plugin
+
+export const HeatMap = createFeature("HeatMap" as any, {
+  useMapConnect: useMapConnect2,
+  createFeatureObj: (opts) => {
+    //@ts-ignore
+    return new window.AMap.HeatMap(null, opts);
+  },
+});

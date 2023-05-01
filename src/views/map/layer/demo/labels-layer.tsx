@@ -1,3 +1,6 @@
+/*---
+title: LabelsLayer
+---*/
 import { computed, defineComponent, ref } from "vue";
 import { Map, LabelsLayer, Marker } from "@vue-start/map";
 import { useFetch } from "@vue-start/request";

@@ -1,3 +1,6 @@
+/*---
+title: MassMarks
+---*/
 import { defineComponent, ref } from "vue";
 import { Map, MassMarks, Marker } from "@vue-start/map";
 import { useFetch } from "@vue-start/request";
