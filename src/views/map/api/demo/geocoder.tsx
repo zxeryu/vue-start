@@ -1,29 +1,56 @@
-import { computed, defineComponent } from "vue";
-import { Geocoder_getLocation, Map, useMapApi } from "@vue-start/map";
+import { defineComponent } from "vue";
+import { ApiNames, Map, useMapApi, Marker, useMap } from "@vue-start/map";
 import { css } from "@emotion/css";
-import { useEffect } from "@vue-start/hooks";
 
 const Content = defineComponent(() => {
-  const { data, request, requesting } = useMapApi(Geocoder_getLocation, {});
+  const { mapRef } = useMap();
 
-  useEffect(() => {
-    request(
-      {
-        city: "010", //城市设为北京，默认：“全国”
-      },
-      ["北京市朝阳区阜荣街10号"],
-    );
-  }, []);
-
-  const position = computed(() => {
-    const lnglat = data.geocodes[0].location;
+  const { data, requesting } = useMapApi(ApiNames.Geocoder_getLocation, {
+    initEmit: true,
+    opts: { city: "010" }, //城市设为北京
+    params: ["北京市朝阳区阜荣街10号"],
+    onSuccess: (result) => {
+      mapRef.value.panTo(result.geocodes[0].location);
+    },
   });
 
+  const { data: manualData, request, requesting: manualRequesting } = useMapApi(ApiNames.Geocoder_getLocation, {});
+
+  const handleClick = () => {
+    request({ city: "010" }, ["北京市朝阳区三里屯"]);
+  };
+
   return () => {
-    console.log('########',data.geocodes?.[0]?.location)
     return (
       <div class={css({ position: "absolute" })}>
-        {!requesting.value && data.geocodes && <div>{data.geocodes[0].location.toString()}</div>}
+        <div>
+          初始化请求：（"北京市朝阳区阜荣街10号"），结果：
+          {requesting.value ? (
+            <pro-loading loading>
+              <div>请求中...</div>
+            </pro-loading>
+          ) : (
+            <>
+              {data.geocodes?.[0]?.location?.toString()}
+              <Marker opts={{ position: data.geocodes?.[0]?.location }} />
+            </>
+          )}
+        </div>
+        <br />
+        <div>
+          <button onClick={handleClick}>手动请求：（"北京市朝阳区三里屯"）</button>，结果：
+          {manualRequesting.value ? (
+            <pro-loading loading>
+              <div>请求中...</div>
+            </pro-loading>
+          ) : (
+            <>
+              {" "}
+              {manualData.geocodes?.[0]?.location?.toString()}
+              <Marker opts={{ position: manualData.geocodes?.[0]?.location }} />
+            </>
+          )}
+        </div>
       </div>
     );
   };

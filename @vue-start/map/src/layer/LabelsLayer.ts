@@ -60,7 +60,6 @@ export const LabelsLayer = defineComponent({
     useWatch(
       () => {
         setData();
-        console.log("################", "render");
       },
       () => props.data,
     );

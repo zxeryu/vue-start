@@ -43,6 +43,7 @@ export const MapPluginType = {
   // "AMap.CloudDataLayer", //
   // "AMap.PlaceSearchLayer", //
   ElasticMarker: "AMap.ElasticMarker", //灵活点标记，可以随着地图级别改变样式和大小的 Marker
+  ControlBar: "AMap.ControlBar", //
   ToolBar: "AMap.ToolBar", //工具条，控制地图的缩放、平移等
   Scale: "AMap.Scale", //比例尺，显示当前地图中心的比例尺
   HawkEye: "AMap.HawkEye", //鹰眼，显示缩略图

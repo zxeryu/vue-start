@@ -3,7 +3,7 @@ title: HeatMap
 ---*/
 import { computed, defineComponent, ref } from "vue";
 import { css } from "@emotion/css";
-import { Map, HeatMap, MapPlugin, MapPluginType } from "@vue-start/map";
+import { Map, HeatMap } from "@vue-start/map";
 import { useFetch } from "@vue-start/request";
 import { getHeatmap } from "@/clients/map-data";
 import { size } from "lodash";
@@ -55,11 +55,9 @@ export default defineComponent(() => {
           </button>
         </div>
 
-        <MapPlugin plugins={[MapPluginType.HeatMap]}>
-          {size(data.list) > 0 && (
-            <HeatMap opts={modeData.value.heatOpts} opts$={{ dataSet: { data: data.list, max: 100 } }} />
-          )}
-        </MapPlugin>
+        {size(data.list) > 0 && (
+          <HeatMap opts={modeData.value.heatOpts} opts$={{ dataSet: { data: data.list, max: 100 } }} />
+        )}
       </Map>
     );
   };

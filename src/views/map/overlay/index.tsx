@@ -5,6 +5,7 @@ import Text from "./demo/text";
 import CircleMarker from "./demo/circle-marker";
 import ElasticMarker from "./demo/elastic-marker";
 import InfoWindow from "./demo/info-window";
+import Control from "./demo/control";
 
 export default defineComponent(() => {
   return () => {
@@ -15,6 +16,7 @@ export default defineComponent(() => {
         <CircleMarker />
         <ElasticMarker />
         <InfoWindow />
+        <Control />
       </>
     );
   };

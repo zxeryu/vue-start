@@ -1,8 +1,9 @@
-import { useEffect, useWatch } from "@vue-start/hooks";
+import { useEffect, useWatch, createExposeObj } from "@vue-start/hooks";
 import { forEach, isFunction, upperFirst } from "lodash";
 import { DefineComponent, defineComponent, PropType, ref, Teleport, ToRef, toRef } from "vue";
 import { TEvents, useEvents } from "./event";
 import { useMap } from "./Map";
+import { MapPlugin } from "./Plugin";
 
 /**
  * 与地图绑定关系
@@ -35,6 +36,21 @@ export const useMapConnect2 = (feature: any) => {
     return () => {
       try {
         feature.setMap(null);
+      } catch (e) {
+        console.error(e);
+      }
+    };
+  }, []);
+};
+
+export const useMapControlConnect = (feature: any) => {
+  const { mapRef } = useMap();
+
+  useEffect(() => {
+    mapRef.value.addControl(feature);
+    return () => {
+      try {
+        mapRef.value.removeControl(feature)
       } catch (e) {
         console.error(e);
       }
@@ -195,6 +211,27 @@ export const createFeature = <T extends keyof TFeature>(
           );
         }
         return null;
+      };
+    },
+  });
+};
+
+export const createPluginFeature = (plugins: string[], Feature: any) => {
+  return defineComponent({
+    props: {
+      ...Feature.props,
+    },
+    setup: (props, { slots, expose }) => {
+      const originRef = ref();
+
+      expose(createExposeObj(originRef, ["getFeature"]));
+
+      return () => {
+        return (
+          <MapPlugin plugins={plugins}>
+            <Feature ref={originRef} {...props} v-slots={slots} />
+          </MapPlugin>
+        );
       };
     },
   });

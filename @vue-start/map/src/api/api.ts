@@ -1,12 +1,13 @@
 import { useMapPlugin } from "../Plugin";
 import { get, isBoolean, isFunction, split } from "lodash";
-import { ref, Ref, UnwrapNestedRefs, UnwrapRef } from "vue";
-import { useState } from "@vue-start/hooks";
+import { ref, Ref, UnwrapNestedRefs, UnwrapRef, WatchSource } from "vue";
+import { useEffect, useState, useWatch } from "@vue-start/hooks";
 
 export interface IUseMapApiOptions {
   initEmit?: boolean;
   opts?: Record<string, any>;
   params?: any[] | (() => any[]);
+  deps?: WatchSource[];
   onComplete?: (status: string, result: any) => void;
   onSuccess?: (result: Record<string, any>) => void;
   onNoData?: (result: any) => void;
@@ -49,6 +50,11 @@ export const useMapApi = (api: string, options: IUseMapApiOptions): IUseMapApiRe
     return null;
   };
 
+  const getParams = (params?: any[]) => {
+    if (params) return params;
+    return isFunction(options.params) ? options.params() : options.params || [];
+  };
+
   const executeTask = () => {
     if (!task) return;
 
@@ -58,7 +64,7 @@ export const useMapApi = (api: string, options: IUseMapApiOptions): IUseMapApiRe
     //当前方法
     if (!isFunction(apiTarget[methodName])) return;
     //参数
-    const params = task.params ? task.params : isFunction(options.params) ? options.params() : options.params || [];
+    const params = getParams(task.params);
     requesting.value = true;
 
     //执行方法
@@ -84,10 +90,19 @@ export const useMapApi = (api: string, options: IUseMapApiOptions): IUseMapApiRe
   });
 
   const request = (opts?: Record<string, any>, params?: any[]) => {
-    task = { opts, params };
+    task = { opts: opts || options.opts, params: getParams(params) };
     if (!pluginLoaded) return;
     executeTask();
   };
+
+  //初始化请求
+  useEffect(() => {
+    if (options.initEmit) {
+      request();
+    }
+  }, []);
+
+  useWatch(() => request(), options.deps || []);
 
   return { data, request, requesting };
 };

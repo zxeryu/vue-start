@@ -1,6 +1,7 @@
-import { createFeature, useMapConnect2 } from "../Feature";
+import { createFeature, createPluginFeature, useMapConnect2 } from "../Feature";
 import { useMapLayerConnect } from "./LayerGroup";
 import { omit } from "lodash";
+import { MapPluginType } from "../Plugin";
 
 export * from "./LayerGroup";
 export * from "./LabelsLayer";
@@ -67,10 +68,12 @@ export const DistrictLayerProvince = createFeature("DistrictLayer.Province", {
 
 //plugin
 
-export const HeatMap = createFeature("HeatMap" as any, {
+const HeatMapComp = createFeature("HeatMap" as any, {
   useMapConnect: useMapConnect2,
   createFeatureObj: (opts) => {
     //@ts-ignore
     return new window.AMap.HeatMap(null, opts);
   },
 });
+
+export const HeatMap = createPluginFeature([MapPluginType.HeatMap], HeatMapComp);
