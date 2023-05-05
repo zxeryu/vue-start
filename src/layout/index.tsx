@@ -1,22 +1,28 @@
-import { defineComponent, ref } from "vue";
+import { defineComponent } from "vue";
 import { RouterView, useRouter } from "vue-router";
 import { findFirstValidMenu, findTreeItem, useEffect } from "@vue-start/hooks";
-import { ProLayout, useLogonUser } from "@vue-start/pro";
+import { ProLayout } from "@vue-start/pro";
 import { find, size } from "lodash";
 import { HeaderLeft, HeaderRight } from "@/layout/Header";
 import { css } from "@emotion/css";
 import { routes } from "@/router/routes";
+import { menus } from "@/common/menus";
+import { useConfigStore } from "@/store/StoreCurrent";
 
 export const BasicLayout = defineComponent(() => {
   const router = useRouter();
-  const { per } = useLogonUser();
 
-  const layoutRef = ref("vertical");
+  const [config, setConfig] = useConfigStore();
+
   const layoutOptions = [
     { label: "compose", value: "compose" },
     { label: "vertical", value: "vertical" },
     { label: "horizontal", value: "horizontal" },
   ];
+
+  const handleLayoutChange = (v: string) => {
+    setConfig({ layout: v });
+  };
 
   useEffect(() => {
     if (location.pathname === "/") {
@@ -65,8 +71,8 @@ export const BasicLayout = defineComponent(() => {
             borderBottom: "unset",
           },
         })}
-        layout={layoutRef.value as any}
-        menus={per.menus}
+        layout={config.layout as any}
+        menus={menus}
         fieldNames={{ value: "name", label: "title", children: "children" }}
         findCurrentTopName={findCurrentTopName}
         findActiveKey={findActiveKey}
@@ -79,9 +85,10 @@ export const BasicLayout = defineComponent(() => {
               <HeaderRight />
               <pro-select
                 class={css({ width: 120, marginLeft: 16 })}
-                v-model={layoutRef.value}
-                v-model:value={layoutRef.value}
+                value={config.layout}
+                modelValue={config.layout}
                 options={layoutOptions}
+                onChange={handleLayoutChange}
               />
             </>
           ),

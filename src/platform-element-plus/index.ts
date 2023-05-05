@@ -11,14 +11,13 @@ import "@vue-start/media/index.css";
 
 import "@/style/normalize.css";
 import "@/style/index.css";
+import '@/style/pro.css'
 //
 import "highlight.js/styles/github.css";
 
 import { DemoBox } from "@/layout/DemoBox";
 
 import { App } from "./App";
-
-import "./pro.css";
 
 import ElementPlus from "element-plus";
 import "element-plus/dist/index.css";

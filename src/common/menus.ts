@@ -1,3 +1,5 @@
+import { isElementPlus } from "@/common/platform";
+
 export const menus = [
   { title: "综述", name: "OverviewIndexMd" },
   { title: "request", name: "RequestIndex" },
@@ -17,7 +19,7 @@ export const menus = [
     name: "Pro",
     children: [
       {
-        title: "antd-pro",
+        title: isElementPlus() ? "element-pro" : "antd-pro",
         name: "El",
         children: [
           { title: "Loading", name: "ElLoadingIndex" },
@@ -25,6 +27,14 @@ export const menus = [
           { title: "Tabs", name: "ElTabsIndex" },
           { title: "Menus", name: "ElMenusIndex" },
           { title: "Uploader", name: "ElUploaderIndex" },
+          ...(isElementPlus()
+            ? [
+                { title: "Checkbox", name: "ElCheckboxIndex" },
+                { title: "Modal", name: "ElModalIndex" },
+                { title: "Radio", name: "ElRadioIndex" },
+                { title: "Select", name: "ElSelectIndex" },
+              ]
+            : []),
         ],
       },
       {
@@ -56,4 +66,15 @@ export const menus = [
   },
   { title: "media", name: "PreviewIndex" },
   { title: "chart", name: "ChartIndex" },
+  {
+    title: "map",
+    name: "Map",
+    children: [
+      { title: "overview", name: "MapOverviewIndexMd" },
+      { title: "overlay", name: "MapOverlayIndex" },
+      { title: "layer", name: "MapLayerIndex" },
+      { title: "district-layer", name: "MapLayerDistrictIndex" },
+      { title: "api", name: "MapApiIndex" },
+    ],
+  },
 ];

@@ -11,12 +11,11 @@ import "@vue-start/media/index.css";
 
 import "@/style/normalize.css";
 import "@/style/index.css";
+import '@/style/pro.css'
 //
 import "highlight.js/styles/github.css";
 
 import { DemoBox } from "@/layout/DemoBox";
-
-import "./pro.css";
 
 import { App } from "./App";
 
@@ -25,11 +24,14 @@ import "ant-design-vue/dist/antd.variable.css";
 import "dayjs/locale/zh-cn";
 
 import { initComp } from "./component";
+import { startsWith } from "lodash";
 
 //request
 const urlInterceptor = (request: AxiosInterceptorManager<AxiosRequestConfig>) => {
   request.use((requestConfig) => {
-    requestConfig.url = `http://localhost:7070${requestConfig.url}`;
+    if (startsWith(requestConfig.url, "/user")) {
+      requestConfig.url = `http://localhost:7070${requestConfig.url}`;
+    }
     return requestConfig;
   });
 };
