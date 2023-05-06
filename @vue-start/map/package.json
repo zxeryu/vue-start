@@ -1,6 +1,6 @@
 {
   "name": "@vue-start/map",
-  "version": "0.0.0",
+  "version": "0.0.1",
   "description": "amap wrapper",
   "keywords": [
     "amap"
