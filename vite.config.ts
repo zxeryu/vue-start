@@ -89,6 +89,8 @@ export default defineConfig(({ mode }) => {
               "docx-preview",
               "x-data-spreadsheet",
               "xlsx",
+              //map
+              "@amap/amap-jsapi-loader",
             ],
           },
         }
