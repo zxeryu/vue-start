@@ -1,5 +1,5 @@
 import { provideMap, useMap } from "../Map";
-import { isArray, isNumber } from "lodash";
+import { debounce, isArray, isNumber } from "lodash";
 import { useEffect, useWatch } from "@vue-start/hooks";
 import { defineComponent, PropType, toRef } from "vue";
 import { TEvents } from "../event";
@@ -29,7 +29,11 @@ const useMapLayerOpe = () => {
       }
       return;
     }
-    mapRef.value.remove(layer);
+    try {
+      mapRef.value.remove(layer);
+    } catch (e) {
+      console.error(e);
+    }
   };
 
   return { addToMap, removeFromMap };
@@ -74,7 +78,11 @@ export const LayerGroup = defineComponent({
 
     //从地图中删除
     const removeFormMap = () => {
-      layerGroup.setMap(null as any);
+      try {
+        layerGroup.setMap(null as any);
+      } catch (e) {
+        console.error(e);
+      }
       isAdd = false;
     };
 
@@ -98,9 +106,13 @@ export const LayerGroup = defineComponent({
       };
     }, []);
 
+    const debounceAddToMap = debounce(() => {
+      addToMap();
+    }, 300);
+
     useWatch(
       () => {
-        if (props.bind) addToMap();
+        if (props.bind) debounceAddToMap();
       },
       () => props.bind,
     );

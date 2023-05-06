@@ -1,7 +1,7 @@
 import { defineComponent, PropType, toRef } from "vue";
 import { provideMap, useMap } from "../Map";
 import { useEffect, useWatch } from "@vue-start/hooks";
-import { isArray, isNumber } from "lodash";
+import { debounce, isArray, isNumber } from "lodash";
 import { useFeatureOptMethods, useShowConnect } from "../Feature";
 import { TEvents } from "../event";
 
@@ -32,7 +32,11 @@ const useMapOverlayOpe = () => {
       }
       return;
     }
-    mapRef.value.remove(overlay);
+    try {
+      mapRef.value.remove(overlay);
+    } catch (e) {
+      console.error(e);
+    }
   };
 
   return { addToMap, removeFromMap };
@@ -88,7 +92,11 @@ export const OverlayGroup = defineComponent({
 
     //从地图中删除
     const removeFormMap = () => {
-      mapRef.value.remove(overlayGroup as any);
+      try {
+        mapRef.value.remove(overlayGroup as any);
+      } catch (e) {
+        console.error(e);
+      }
       isAdd = false;
     };
 
@@ -112,9 +120,13 @@ export const OverlayGroup = defineComponent({
       };
     }, []);
 
+    const debounceAddToMap = debounce(() => {
+      addToMap();
+    }, 300);
+
     useWatch(
       () => {
-        if (props.bind) addToMap();
+        if (props.bind) debounceAddToMap();
       },
       () => props.bind,
     );

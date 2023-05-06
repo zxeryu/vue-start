@@ -4,23 +4,6 @@ export const routes = [
     path: "about",
     component: () => import("@/views/About.vue"),
   },
-  { name: "Comp", path: "comp", component: () => import("@/views/Comp") },
-  {
-    name: "Compelement",
-    path: "compelement",
-    component: () => import("@/views/CompElement"),
-  },
-  {
-    name: "Counter",
-    path: "counter",
-    component: () => import("@/views/Counter.vue"),
-  },
-  { name: "Home", path: "home", component: () => import("@/views/Home.vue") },
-  {
-    name: "Network",
-    path: "network",
-    component: () => import("@/views/Network.vue"),
-  },
   {
     name: "Chart",
     path: "chart",
@@ -32,6 +15,12 @@ export const routes = [
       },
     ],
   },
+  { name: "Comp", path: "comp", component: () => import("@/views/Comp") },
+  {
+    name: "Compelement",
+    path: "compelement",
+    component: () => import("@/views/CompElement"),
+  },
   {
     name: "Config",
     path: "config",
@@ -42,6 +31,11 @@ export const routes = [
         component: () => import("@/views/config/index"),
       },
     ],
+  },
+  {
+    name: "Counter",
+    path: "counter",
+    component: () => import("@/views/Counter.vue"),
   },
   {
     name: "Curd",
@@ -331,6 +325,7 @@ export const routes = [
       },
     ],
   },
+  { name: "Home", path: "home", component: () => import("@/views/Home.vue") },
   {
     name: "Hooks",
     path: "hooks",
@@ -386,6 +381,17 @@ export const routes = [
         ],
       },
       {
+        name: "MapInfoWindow",
+        path: "info-window",
+        children: [
+          {
+            name: "MapInfoWindowIndex",
+            path: "index",
+            component: () => import("@/views/map/info-window/index"),
+          },
+        ],
+      },
+      {
         name: "MapLayer",
         path: "layer",
         children: [
@@ -397,13 +403,24 @@ export const routes = [
         ],
       },
       {
-        name: "MapLayerDistrict",
-        path: "layer-district",
+        name: "MapLayerGroup",
+        path: "layer-group",
         children: [
           {
-            name: "MapLayerDistrictIndex",
+            name: "MapLayerGroupIndex",
             path: "index",
-            component: () => import("@/views/map/layer-district/index"),
+            component: () => import("@/views/map/layer-group/index"),
+          },
+        ],
+      },
+      {
+        name: "MapLayerLabels",
+        path: "layer-labels",
+        children: [
+          {
+            name: "MapLayerLabelsIndex",
+            path: "index",
+            component: () => import("@/views/map/layer-labels/index"),
           },
         ],
       },
@@ -419,17 +436,33 @@ export const routes = [
         ],
       },
       {
+        name: "MapOverlayGroup",
+        path: "overlay-group",
+        children: [
+          {
+            name: "MapOverlayGroupIndex",
+            path: "index",
+            component: () => import("@/views/map/overlay-group/index"),
+          },
+        ],
+      },
+      {
         name: "MapOverview",
         path: "overview",
         children: [
           {
-            name: "MapOverviewIndexMd",
-            path: "index-md",
-            component: () => import("@/views/map/overview/index-md"),
+            name: "MapOverviewIndex",
+            path: "index",
+            component: () => import("@/views/map/overview/index"),
           },
         ],
       },
     ],
+  },
+  {
+    name: "Network",
+    path: "network",
+    component: () => import("@/views/Network.vue"),
   },
   {
     name: "Overview",
@@ -480,9 +513,9 @@ export const routes = [
     path: "store",
     children: [
       {
-        name: "StoreIndexMd",
-        path: "index-md",
-        component: () => import("@/views/store/index-md"),
+        name: "StoreIndex",
+        path: "index",
+        component: () => import("@/views/store/index"),
       },
     ],
   },

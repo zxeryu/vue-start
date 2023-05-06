@@ -6,20 +6,19 @@
 
 ```ts
 import { Persist } from "@bridge-start/persist";
-import { createStore } from "@vue-start/store";
+import { createStore as createStoreOrigin } from "@vue-start/store";
 
-//存储对象
-const persist = new Persist({ name: "vue-start" });
-//从localStorage中读取值
-persist.loadPersistData((values) => {
-  //初始化store 并将values作为初始值
-  const store$ = createStore(values);
-  //store$中标记了存储的值变化后同步到 localStorage 中
+export const createStore = async () => {
+  const persist = new Persist({ name: "pro" });
+  const values = await persist.loadPersistData();
+  const store$ = createStoreOrigin(values!);
   persist.persistRx(store$);
+  return store$;
+};
 
-  //init
-  app.use(store$);
-});
+const store$ = await createStore();
+
+app.use(store$);
 ```
 
 ## 使用
@@ -52,3 +51,6 @@ export const useLocalConfig = createStateUse(
   true,
 );
 ```
+
+## API
+

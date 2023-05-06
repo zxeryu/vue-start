@@ -1,4 +1,4 @@
-import { watch, onMounted, onBeforeUnmount, isRef, isReactive, toRaw } from "vue";
+import { watch, onMounted, onUnmounted, isRef, isReactive, toRaw } from "vue";
 import { isArray, map, isFunction, isUndefined, filter } from "lodash";
 import { WatchOptions } from "@vue/runtime-core";
 
@@ -57,7 +57,7 @@ export default function useEffect(cb: cbType, deps: any | any[], options?: Watch
     stopFn = cb(isArray(deps) ? initValues : initValues[0]) as any;
   });
 
-  onBeforeUnmount(() => {
+  onUnmounted(() => {
     stopHandler && stopHandler();
     stop();
   });

@@ -1,6 +1,7 @@
 import { defineComponent, ExtractPropTypes, inject, PropType, provide, ref, shallowRef, ShallowRef } from "vue";
 import AMapLoader from "@amap/amap-jsapi-loader";
 import { useEffect } from "@vue-start/hooks";
+import { TEvents, useEvents } from "./event";
 
 const MapProvideKey = Symbol("amap-key");
 
@@ -36,6 +37,8 @@ const mapProps = () => ({
   loadOpts: { type: Object as PropType<TLoadOpts> },
   //地图opts
   opts: { type: Object as PropType<AMap.MapOptions> },
+  //事件
+  events: { type: Array as PropType<TEvents> },
 });
 
 export type MapProps = Partial<ExtractPropTypes<ReturnType<typeof mapProps>>>;
@@ -58,6 +61,21 @@ const setSecurityCode = (code?: string) => {
     console.warn("当前window对象已经注入过securityJsCode值，可能造成问题");
   }
 };
+
+const MapEvents = defineComponent({
+  props: {
+    events: { type: Array as PropType<TEvents> },
+  },
+  setup: (props) => {
+    const { mapRef } = useMap();
+
+    useEvents(mapRef.value, props.events!);
+
+    return () => {
+      return null;
+    };
+  },
+});
 
 export const Map = defineComponent<MapProps>({
   props: {
@@ -94,7 +112,12 @@ export const Map = defineComponent<MapProps>({
     provideMap({ mapRef } as any);
 
     return () => {
-      return <div ref={domRef}>{mapRef.value && slots.default?.()}</div>;
+      return (
+        <div ref={domRef}>
+          {mapRef.value && <MapEvents events={props.events} />}
+          {mapRef.value && slots.default?.()}
+        </div>
+      );
     };
   },
 });

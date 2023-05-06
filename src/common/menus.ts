@@ -3,7 +3,7 @@ import { isElementPlus } from "@/common/platform";
 export const menus = [
   { title: "综述", name: "OverviewIndexMd" },
   { title: "request", name: "RequestIndex" },
-  { title: "store", name: "StoreIndexMd" },
+  { title: "store", name: "StoreIndex" },
   { title: "config", name: "ConfigIndex" },
   {
     title: "hooks",
@@ -70,10 +70,13 @@ export const menus = [
     title: "map",
     name: "Map",
     children: [
-      { title: "overview", name: "MapOverviewIndexMd" },
+      { title: "overview", name: "MapOverviewIndex" },
       { title: "overlay", name: "MapOverlayIndex" },
+      { title: "overlay-group", name: "MapOverlayGroupIndex" },
+      { title: "info-window", name: "MapInfoWindowIndex" },
       { title: "layer", name: "MapLayerIndex" },
-      { title: "district-layer", name: "MapLayerDistrictIndex" },
+      { title: "labels-layer", name: "MapLayerLabelsIndex" },
+      { title: "layer-group", name: "MapLayerGroupIndex" },
       { title: "api", name: "MapApiIndex" },
     ],
   },
