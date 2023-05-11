@@ -33,5 +33,10 @@
   },
   "bugs": {
     "url": "https://github.com/zxeryu/vue-start/issues"
+  },
+  "dependencies": {
+    "docx-preview": "^0.1.15",
+    "x-data-spreadsheet": "^1.1.9",
+    "xlsx": "^0.18.5"
   }
 }

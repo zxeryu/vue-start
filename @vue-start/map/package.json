@@ -26,5 +26,8 @@
   },
   "bugs": {
     "url": "https://github.com/zxeryu/vue-start/issues"
+  },
+  "dependencies": {
+    "@amap/amap-jsapi-loader": "^1.0.1"
   }
 }
