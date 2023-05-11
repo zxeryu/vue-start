@@ -1,21 +1,10 @@
-import { ElButton, ElRow, ElCol, ElDescriptions, ElDescriptionsItem, ElCheckbox, ElInputNumber } from "element-plus";
+import { App } from "@vue/runtime-core";
+import { ElButton, ElInputNumber, ElMessageBox } from "element-plus";
 
 import {
-  ProFormCascader,
-  ProFormCheckbox,
-  ProFormDatePicker,
-  ProFormRadio,
-  ProFormSelect,
-  ProFormSwitch,
-  ProFormText,
-  ProFormTextNumber,
-  ProFormTimePicker,
-  ProFormTreeSelect,
   ProLoading,
-  ProForm as Form,
   ProFormItem,
   ProModal,
-  ProTable as Table,
   ProPagination,
   ProPopover,
   ProCheckbox,
@@ -24,9 +13,10 @@ import {
   ProTabs,
   ProMenus,
   ProUploader,
+  elementMap as elementMapOrigin,
+  formElementMap as formElementMapOrigin,
 } from "@vue-start/element-pro";
 import {
-  ElementKeys,
   ProCurd,
   ProCurdList,
   ProForm,
@@ -36,21 +26,16 @@ import {
   ProGrid,
   ProList,
   ProOperate,
-  ProShowText,
-  ProShowDigit,
-  ProShowDate,
-  ProShowOptions,
-  ProShowTree,
   ProUploaderText,
   ProTypography,
+  ProTable,
+  ColumnSetting,
+  IOperateItem,
 } from "@vue-start/pro";
-import { TableOperateItem, TableOperateItemKey, ProTable } from "@/component/Table";
 
 import { ProPreview } from "@vue-start/media";
 import { ProChart } from "@vue-start/chart";
 import { Map } from "@vue-start/map";
-
-import { App } from "@vue/runtime-core";
 
 import { ProPage } from "@/component/Page";
 
@@ -61,60 +46,39 @@ ProChart.props = {
 
 Map.props = {
   ...Map.props,
-  loadOpts: {
+  loadOpts: { type: Object, default: { key: "e576dc4fdf66a1f0334d9ae4615a62ea" } },
+};
+
+ColumnSetting.props = {
+  ...ColumnSetting.props,
+  renderDom: { type: Function, default: () => <ElButton icon={"Setting"} circle /> },
+};
+ProTable.props = {
+  ...ProTable.props,
+  //全局定义Table删除按钮（value为DELETE） 的颜色
+  operateItemState: {
     type: Object,
-    default: { key: "e576dc4fdf66a1f0334d9ae4615a62ea" },
+    default: { DELETE: { extraProps: { type: "danger" } } },
+  },
+  //全局拦截删除按钮事件
+  operateItemClickMap: {
+    type: Object,
+    default: {
+      DELETE: (record: Record<string, any>, item: IOperateItem) => {
+        ElMessageBox.confirm("确定删除当前数据吗？", "删除").then(() => {
+          item.onClick?.(record);
+        });
+      },
+    },
   },
 };
 
 export const elementMap = {
-  [ElementKeys.LoadingKey]: ProLoading,
-  [ElementKeys.RowKey]: ElRow,
-  [ElementKeys.ColKey]: ElCol,
-  [ElementKeys.ButtonKey]: ElButton,
-  [ElementKeys.DescriptionsKey]: ElDescriptions,
-  [ElementKeys.DescriptionsItemKey]: ElDescriptionsItem,
-  [ElementKeys.MenusKey]: ProMenus,
-  [ElementKeys.ModalKey]: ProModal,
-  [ElementKeys.PaginationKey]: ProPagination,
-  [ElementKeys.PopoverKey]: ProPopover,
-  [ElementKeys.CheckboxKey]: ElCheckbox,
-  [ElementKeys.FormKey]: Form,
-  [ElementKeys.FormItemKey]: ProFormItem,
-  [ElementKeys.TableKey]: Table,
-  [ElementKeys.UploaderKey]: ProUploader,
-
-  [TableOperateItemKey]: TableOperateItem,
-
-  [ElementKeys.ProFormKey]: ProForm,
-  [ElementKeys.ProSearchFormKey]: ProSearchForm,
-  [ElementKeys.ProTableKey]: ProTable,
-
-  loading: ProLoading,
-
-  //form show
-  text: ProShowText,
-  digit: ProShowDigit,
-  date: ProShowDate,
-  time: ProShowText,
-  select: ProShowOptions,
-  radio: ProShowOptions,
-  checkbox: ProShowOptions,
-  treeSelect: ProShowTree,
-  cascader: ProShowTree,
+  ...elementMapOrigin,
 };
 
 export const formElementMap = {
-  text: ProFormText,
-  digit: ProFormTextNumber,
-  date: ProFormDatePicker,
-  time: ProFormTimePicker,
-  select: ProFormSelect,
-  treeSelect: ProFormTreeSelect,
-  checkbox: ProFormCheckbox,
-  radio: ProFormRadio,
-  switch: ProFormSwitch,
-  cascader: ProFormCascader,
+  ...formElementMapOrigin,
 };
 
 export const initComp = (app: App) => {

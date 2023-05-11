@@ -9,6 +9,10 @@ import { filterSlotsByPrefix } from "../../util";
 const proCurdModalProps = () => ({
   //只有指定mode才显示
   validMode: { type: Array, default: [CurdAction.ADD, CurdAction.DETAIL, CurdAction.EDIT] },
+  //loading属性
+  loadingOpts: { type: Object },
+  //modal 属性
+  overrideProps: { type: Object },
 });
 
 export type ProCurdModalProps = Partial<ExtractPropTypes<ReturnType<typeof proCurdModalProps>>> & Record<string, any>;
@@ -49,10 +53,12 @@ export const ProCurdModal = defineComponent<ProCurdModalProps>({
           title={props.title || getOperate(curdState.mode!)?.label}
           confirmLoading={curdState.operateLoading}
           maskClosable={curdState.mode === CurdAction.DETAIL}
+          footer={curdState.mode === CurdAction.DETAIL ? false : undefined}
+          {...props.overrideProps}
           onCancel={handleCancel}
           v-slots={omit(slots, "default")}>
           {curdState.detailLoading && Loading ? (
-            <Loading loading>
+            <Loading loading {...props.loadingOpts}>
               <div class={`pro-curd-modal-loading-dom`} />
             </Loading>
           ) : (

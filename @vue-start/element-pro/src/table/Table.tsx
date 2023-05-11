@@ -1,5 +1,5 @@
-import { defineComponent, isVNode, ref } from "vue";
-import { ElTable, ElTableColumn } from "element-plus";
+import { defineComponent, ref } from "vue";
+import { ElTable, ElTableColumn, ElButton } from "element-plus";
 import { TableColumnCtx } from "../../types";
 import { get, map, omit, pick, size } from "lodash";
 import { createExpose } from "@vue-start/pro";
@@ -122,6 +122,19 @@ export const ProTable = defineComponent({
           {props.loading && <ProLoading target={id} loading />}
         </ElTable>
       );
+    };
+  },
+});
+
+export const ProTableOperateItem = defineComponent({
+  props: {
+    ...ElButton.props,
+    type: { type: String, default: "primary" },
+    link: { type: Boolean, default: true },
+  },
+  setup: (props, { slots }) => {
+    return () => {
+      return <ElButton {...props} v-slots={slots} />;
     };
   },
 });

@@ -1,8 +1,8 @@
 import { Ref, UnwrapNestedRefs } from "@vue/reactivity";
 import { computed, defineComponent, ExtractPropTypes, inject, PropType, provide, reactive, ref } from "vue";
 import { BooleanObjType, BooleanRulesObjType, TColumn, TColumns, TElementMap } from "../../types";
-import { useEffect, useRuleState } from "@vue-start/hooks";
-import { forEach, get, has, keys, map, omit, size } from "lodash";
+import { useRuleState } from "@vue-start/hooks";
+import { get, keys, map, omit, size } from "lodash";
 import { getColumnFormItemName, getFormItemEl, proBaseProps, ProBaseProps, useProConfig } from "../../core";
 import { createExpose, getValidValues, mergeStateToList } from "../../util";
 import { ProGridProps, ProOperate, ProGrid, ProOperateProps, IOpeItem, ElementKeys } from "../index";
@@ -85,7 +85,6 @@ const proFormProps = () => ({
    */
   operate: { type: Object as PropType<TProFormOperate> },
   submitLoading: { type: Boolean },
-
   /**
    * ref 默认中转方法
    */
@@ -153,50 +152,63 @@ export const ProForm = defineComponent<ProFormProps>({
       ...props.provideExtra,
     });
 
+    //为了不warning ...
+    provideProFormList({} as any);
+
+    /************************************** operate 按钮 ******************************************/
+
     const defaultOpeItems = [
       { value: FormAction.RESET, label: "重置" },
       { value: FormAction.SUBMIT, label: "提交", extraProps: { type: "primary" } },
     ];
 
-    //默认处理 reset submit方法，submit dom 赋值loading
+    const handleReset = () => {
+      //如果注册了onReset方法，优先执行onReset
+      if (props.operate?.onReset) {
+        props.operate.onReset();
+        return;
+      }
+      formRef.value?.resetFields();
+    };
+
+    const handleSubmit = () => {
+      if (props.operate?.onSubmit) {
+        props.operate.onSubmit();
+        return;
+      }
+      formRef.value?.submit();
+    };
+
+    const handleContinue = () => {
+      props.operate?.onContinue?.();
+    };
+
+    const actionClickMap = {
+      [FormAction.RESET]: handleReset,
+      [FormAction.SUBMIT]: handleSubmit,
+      [FormAction.CONTINUE]: handleContinue,
+    };
+
+    //默认处理 reset submit方法
     const operateItems = computed(() => {
       const operate = props.operate;
       const items: IOpeItem[] = operate?.items || defaultOpeItems;
       return map(items, (item) => {
-        const nextItem = { ...item };
         //没有onClick
         if (!item.onClick && !get(operate?.itemState, [item.value, "onClick"])) {
-          if (item.value === FormAction.RESET) {
-            nextItem.onClick = () => {
-              //如果注册了onReset方法，优先执行onReset
-              if (operate?.onReset) {
-                operate.onReset();
-                return;
-              }
-              formRef.value?.resetFields();
-            };
-          } else if (item.value === FormAction.SUBMIT) {
-            nextItem.onClick = () => {
-              if (operate?.onSubmit) {
-                operate.onSubmit();
-                return;
-              }
-              formRef.value?.submit();
-            };
-          } else if (item.value === FormAction.CONTINUE && operate?.onContinue) {
-            nextItem.onClick = () => {
-              operate.onContinue!();
-            };
-          }
+          return { ...item, onClick: get(actionClickMap, item.value) };
         }
-        if (item.value === FormAction.SUBMIT && !has(item, "loading")) {
-          nextItem.loading = props.submitLoading;
-        }
-        return nextItem;
+        return item;
       });
     });
+    // submit dom 赋值loading
+    const operateItemState = computed(() => ({
+      [FormAction.SUBMIT]: { value: FormAction.SUBMIT, loading: props.submitLoading },
+      ...props.operate?.itemState,
+    }));
 
-    //item render
+    /************************************** render ******************************************/
+
     const renderItem = (item: TColumn) => {
       const rowKey = getColumnFormItemName(item);
       //插槽优先
@@ -206,8 +218,16 @@ export const ProForm = defineComponent<ProFormProps>({
       return getFormItemEl(formElementMap, item, props.needRules)!;
     };
 
-    //为了不warning ...
-    provideProFormList({} as any);
+    const items = computed(() => {
+      if (!props.row) {
+        return map(columns.value, (item) => renderItem(item));
+      }
+      return map(columns.value, (item) => ({
+        rowKey: getColumnFormItemName(item),
+        vNode: renderItem(item) as any,
+        col: get(item, ["extra", "col"]),
+      }));
+    });
 
     const invalidKeys = keys(proFormProps());
     const gridKeys = keys(omit(ProGrid.props, "items"));
@@ -229,21 +249,7 @@ export const ProForm = defineComponent<ProFormProps>({
           {slots.start?.()}
 
           {formElementMap && size(columns.value) > 0 && (
-            <>
-              {props.row ? (
-                <ProGrid
-                  row={props.row}
-                  col={props.col}
-                  items={map(columns.value, (item) => ({
-                    rowKey: getColumnFormItemName(item),
-                    vNode: renderItem(item) as any,
-                    col: get(item, ["extra", "col"]),
-                  }))}
-                />
-              ) : (
-                map(columns.value, (item) => renderItem(item))
-              )}
-            </>
+            <>{props.row ? <ProGrid row={props.row} col={props.col} items={items.value as any} /> : items.value}</>
           )}
 
           {slots.default?.()}
@@ -251,8 +257,9 @@ export const ProForm = defineComponent<ProFormProps>({
           {props.operate && (
             <ProOperate
               class={`${props.clsName}-operate`}
+              {...omit(props.operate, "items", "itemState", "onReset", "onSubmit", "onContinue")}
               items={operateItems.value}
-              {...omit(props.operate, "items", "onReset", "onSubmit", "onContinue")}
+              itemState={operateItemState.value}
             />
           )}
 

@@ -12,6 +12,7 @@ import {
   useProCurd,
 } from "./ctx";
 import { createExpose } from "../util";
+import { ElementKeys, useGetCompByKey } from "../comp";
 
 const modalCurdProps = () => ({
   defaultAddRecord: { type: Object as PropType<Record<string, any>> },
@@ -138,12 +139,17 @@ export const ProModalCurd = defineComponent<ProModalCurdProps>({
     expose(createExpose(CurdMethods, curdRef));
 
     const invalidKeys = keys(ModalCurd.props);
+
+    const getComp = useGetCompByKey();
+    const Curd = getComp(ElementKeys.ProCurdKey);
+
     return () => {
+      if (!Curd) return null;
       return (
-        <ProCurd ref={curdRef} {...(omit(props, invalidKeys) as any)}>
+        <Curd ref={curdRef} {...(omit(props, invalidKeys) as any)}>
           <ModalCurd {...pick(props, invalidKeys)} />
           {slots.default?.()}
-        </ProCurd>
+        </Curd>
       );
     };
   },

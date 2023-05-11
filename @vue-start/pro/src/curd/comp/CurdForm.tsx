@@ -1,5 +1,5 @@
 import { computed, defineComponent, ExtractPropTypes, ref } from "vue";
-import { FormAction, ProForm, ProFormProps } from "../../comp";
+import { ElementKeys, FormAction, ProFormProps, useGetCompByKey } from "../../comp";
 import { CurdAction, CurdAddAction, CurdSubAction, useProCurd } from "../ctx";
 import { createExpose } from "../../util";
 import { get, omit } from "lodash";
@@ -56,9 +56,13 @@ export const ProCurdForm = defineComponent<ProCurdFormProps>({
       }
     };
 
+    const getComp = useGetCompByKey();
+    const Form = getComp(ElementKeys.ProFormKey);
+
     return () => {
+      if (!Form) return null;
       return (
-        <ProForm
+        <Form
           ref={formRef}
           class={"pro-curd-form"}
           {...omit(props, "operate")}

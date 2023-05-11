@@ -9,15 +9,12 @@ export default defineComponent(() => {
   return () => {
     return (
       <pro-table
-        serialNumber
-        columnEmptyText={"--"}
-        column={{ align: "center" }}
+        serialNumber //序号
+        columnEmptyText={"--"} //空字符占位
+        column={{ align: "center" }} //居中
         columns={columns}
         dataSource={dataSource}
-        toolbar={{ columnSetting: {} }}
-        v-slots={{
-          "columnSetting-default": () => <span style={"color:red"}>自定义图标</span>,
-        }}
+        toolbar={{ columnSetting: {} }} //列设置
       />
     );
   };

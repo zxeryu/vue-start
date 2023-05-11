@@ -8,7 +8,7 @@ import { css } from "@emotion/css";
 
 export default defineComponent(() => {
   const operate = {
-    column: { minWidth: 140 },
+    column: { minWidth: 150 },
     items: [
       {
         show: true,
@@ -29,23 +29,24 @@ export default defineComponent(() => {
       },
       {
         show: true,
-        value: "delete",
+        value: "DELETE",
         label: "删除",
+        disabled: (record: any) => record.id === "2", //第二条数据禁用删除
+        onClick: (record: Record<string, any>) => {
+          console.log("DELETE", record);
+        },
+      },
+      {
+        show: true,
+        value: "custom",
+        label: "自定义",
         //重写按钮
         //id为1 禁用删除按钮
         element: (record: Record<string, any>, item: Record<string, any>) => {
-          const isDisabled = record.id === "1";
           return (
             <span
-              class={css({
-                color: "red",
-                cursor: isDisabled ? "no-drop" : "pointer",
-                marginLeft: 12,
-              })}
+              class={css({ color: "green", cursor: "pointer", marginLeft: 12 })}
               onClick={() => {
-                if (isDisabled) {
-                  return;
-                }
                 console.log(item.value, record);
               }}>
               {item.label}

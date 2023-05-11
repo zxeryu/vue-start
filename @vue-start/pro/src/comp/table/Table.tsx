@@ -6,6 +6,7 @@ import { createExpose, filterSlotsByPrefix, mergeStateToList } from "../../util"
 import { IOpeItem, ProOperate, ProOperateProps } from "../Operate";
 import { ElementKeys } from "../comp";
 import { ColumnSetting, ProColumnSettingProps } from "./ColumnSetting";
+import { useResizeObserver } from "@vue-start/hooks";
 
 const ProTableKey = Symbol("pro-table");
 
@@ -63,7 +64,7 @@ export interface ITableOperate {
   column?: TColumn; //table 的column属性
   items?: IOperateItem[];
   //对item的补充 key为item的value
-  itemState?: { [key: string]: Omit<IOperateItem, "value"> };
+  itemState?: Record<string, IOperateItem>;
   //
   elementKey?: ProOperateProps["elementKey"];
 }
@@ -73,11 +74,17 @@ const proTableProps = () => ({
    * class名称
    */
   clsName: { type: String, default: "pro-table" },
-  //操作栏
-  operate: {
-    type: Object as PropType<ITableOperate>,
+  /**
+   * 操作栏
+   */
+  operate: { type: Object as PropType<ITableOperate> },
+  operateItemState: { type: Object as PropType<ITableOperate["itemState"]> }, //默认operate.itemState对象拓展
+  operateItemClickMap: {
+    type: Object as PropType<Record<string, (record: Record<string, any>, item: IOperateItem) => void>>,
   },
-  //默认空字符串
+  /**
+   * 默认空字符串
+   */
   columnEmptyText: { type: String },
   /**
    * 公共column，会merge到columns item中
@@ -121,12 +128,14 @@ export const ProTable = defineComponent<ProTableProps>({
     ...proBaseProps,
     ...proTableProps(),
   } as any,
-  setup: (props, { slots, expose, attrs, emit }) => {
+  setup: (props, { slots, expose, attrs }) => {
     const { elementMap: elementMapP } = useProConfig();
 
     const elementMap = props.elementMap || elementMapP;
 
     const Table = get(elementMapP, ElementKeys.TableKey);
+
+    /*********************************** 序号 **************************************/
 
     const createNumberColumn = (): TTableColumn => ({
       title: "序号",
@@ -142,11 +151,25 @@ export const ProTable = defineComponent<ProTableProps>({
       },
     });
 
+    /*********************************** operate **************************************/
+    //操作项点击事件
+    const handleOperateClick = (record: Record<string, any>, item: IOperateItem) => {
+      //拦截某个操作点击事件
+      if (props.operateItemClickMap && props.operateItemClickMap[item.value]) {
+        props.operateItemClickMap[item.value](record, item);
+        return;
+      }
+      item.onClick?.(record);
+    };
+
+    // operate 插槽
     const operateSlots = filterSlotsByPrefix(slots, "operate");
     const createOperateColumn = (): TTableColumn => {
       const operate = props.operate!;
-      //将itemState补充的信息拼到item中
-      const items = map(operate.items, (i) => ({ ...i, ...get(operate.itemState, i.value) }));
+      //将 默认拓展属性 和 itemState拓展属性 补充的信息拼到item中
+      const items = map(operate.items, (i) => {
+        return { ...get(props.operateItemState, i.value), ...i, ...get(operate.itemState, i.value) };
+      });
       //排序
       const sortedItems = sortBy(items, (item) => item.sort);
       return {
@@ -159,40 +182,27 @@ export const ProTable = defineComponent<ProTableProps>({
           const opeItems = map(sortedItems, (item) => {
             return {
               ...item,
-              value: item.value,
-              label: item.label,
               show: isFunction(item.show) ? item.show(record) : item.show,
               disabled: isFunction(item.disabled) ? item.disabled(record) : item.disabled,
               loading: isFunction(item.loading) ? item.loading(record) : item.loading,
               extraProps: isFunction(item.extraProps) ? item.extraProps(record) : item.extraProps,
-              onClick: () => {
-                item.onClick?.(record);
-              },
-              element: isFunction(item.element)
-                ? () => {
-                    return item.element!(record, item);
-                  }
-                : item.element,
+              element: isFunction(item.element) ? () => item.element!(record, item) : item.element,
+              onClick: () => handleOperateClick(record, item),
             } as IOpeItem;
           });
+
+          const opeSlots = reduce(
+            keys(operateSlots),
+            (pair, key) => ({ ...pair, [key]: (item: string) => operateSlots[key]?.(record, item) }),
+            {},
+          );
 
           return (
             <ProOperate
               class={`${props.clsName}-operate`}
               items={opeItems}
-              elementKey={operate.elementKey}
-              v-slots={reduce(
-                keys(operateSlots),
-                (pair, key) => {
-                  return {
-                    ...pair,
-                    [key]: (item: string) => {
-                      return operateSlots[key]?.(record, item);
-                    },
-                  };
-                },
-                {},
-              )}
+              elementKey={operate.elementKey || ElementKeys.TableOperateKey}
+              v-slots={opeSlots}
             />
           );
         },
@@ -260,34 +270,56 @@ export const ProTable = defineComponent<ProTableProps>({
     const tableRef = ref();
 
     provideProTable({
-      columns: columns as any,
-      originColumns: originColumns as any,
-      selectIdsRef: selectIdsRef as any,
+      columns,
+      originColumns,
+      selectIdsRef,
       tableRef,
       toolbar: props.toolbar,
       ...props.provideExtra,
-    });
+    } as any);
 
     expose(createExpose(props.tableMethods || [], tableRef));
+
+    /******************************** toolbar class *******************************/
+
+    const toolbarStartDomRef = ref(); //dom
+    const toolbarStartValidRef = ref(false); //dom是否为空
+    const toolbarExtraDomRef = ref();
+    const toolbarExtraValidRef = ref(false);
+
+    useResizeObserver(toolbarStartDomRef, () => {
+      toolbarStartValidRef.value = !!toolbarStartDomRef.value.innerText;
+    });
+
+    useResizeObserver(toolbarExtraDomRef, () => {
+      toolbarExtraValidRef.value = !!toolbarExtraDomRef.value.innerText;
+    });
+
+    const toolbarValidClass = computed(() => {
+      if (toolbarExtraValidRef.value || toolbarStartValidRef.value) return `${props.clsName}-toolbar-valid`;
+      return "";
+    });
 
     const invalidKeys = keys(proTableProps());
 
     const columnSettingSlots = filterSlotsByPrefix(slots, "columnSetting");
     return () => {
-      if (!Table) {
-        return null;
-      }
-      const toolbarDom = slots.toolbar ? slots.toolbar() : undefined;
+      if (!Table) return null;
+
+      const columnSettingNode = isColumnSetting.value ? (
+        <ColumnSetting {...props.toolbar?.columnSetting} v-slots={columnSettingSlots} />
+      ) : null;
+
       return (
         <div class={props.clsName} {...(pick(attrs, "class") as any)}>
-          {(toolbarDom || isColumnSetting.value) && (
-            <div class={`${props.clsName}-toolbar`}>
-              {toolbarDom}
-              {isColumnSetting.value && (
-                <ColumnSetting {...props.toolbar?.columnSetting} v-slots={columnSettingSlots} />
-              )}
+          <div class={`${props.clsName}-toolbar ${toolbarValidClass.value}`}>
+            <div ref={toolbarStartDomRef} class={`${props.clsName}-toolbar-start`}>
+              {slots.toolbar?.()}
             </div>
-          )}
+            <div ref={toolbarExtraDomRef} class={`${props.clsName}-toolbar-extra`}>
+              {slots.toolbarExtra ? slots.toolbarExtra([columnSettingNode]) : <>{columnSettingNode}</>}
+            </div>
+          </div>
           <Table
             ref={tableRef}
             {...omit(attrs, "class")}

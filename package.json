@@ -65,7 +65,8 @@
     "trailingComma": "all",
     "arrowParens": "always",
     "printWidth": 120,
-    "jsxBracketSameLine": true
+    "jsxBracketSameLine": true,
+    "endOfLine": "auto"
   },
   "husky": {
     "hooks": {

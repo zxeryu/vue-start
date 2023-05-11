@@ -1,15 +1,34 @@
-import { defineComponent } from "vue";
-import { PaginationSlotProps, ProList, ProListProps, SearchSlotProps, TPageState } from "../../comp";
+import { computed, defineComponent, ExtractPropTypes, PropType } from "vue";
+import {
+  ElementKeys,
+  PaginationSlotProps,
+  ProList as ProListOrigin,
+  ProListProps,
+  SearchSlotProps,
+  TPageState,
+  useGetCompByKey,
+} from "../../comp";
 import { CurdAction, CurdSubAction, useProCurd } from "../ctx";
-import { filter, get, isBoolean, map, omit, pick } from "lodash";
+import { filter, get, keys, map, omit, pick } from "lodash";
 import { ICurdOperateOpts } from "../Curd";
+import { AddButton } from "./button";
+
+const curdListProps = () => ({
+  addConfig: {
+    type: Object as PropType<{ inSearch: boolean; inTable: boolean; buttonProps: Record<string, any> }>,
+    default: { inSearch: true },
+  },
+});
+
+export type ProCurdListProps = Partial<ExtractPropTypes<ReturnType<typeof curdListProps>>> & ProListProps;
 
 /**
  *
  */
-export const ProCurdList = defineComponent<ProListProps>({
+export const ProCurdList = defineComponent<ProCurdListProps>({
   props: {
-    ...ProList.props,
+    ...ProListOrigin.props,
+    ...curdListProps(),
   },
   setup: (props, { slots }) => {
     const { elementMap, formElementMap, curdState, searchColumns, tableColumns, sendCurdEvent, operates } =
@@ -45,59 +64,58 @@ export const ProCurdList = defineComponent<ProListProps>({
       sendCurdEvent({ action: CurdAction.LIST, type: CurdSubAction.EMIT, values });
     };
 
-    return () => {
-      //search-form
-      const searchProps = props.searchProps;
-      const reSearchProps = {
-        formElementMap,
-        columns: searchColumns.value,
-        ...searchProps,
-      };
-      //table
-      const tableProps = props.tableProps;
-      const reTableProps = {
+    const searchProps = computed(() => {
+      return { formElementMap, columns: searchColumns.value, ...props.searchProps };
+    });
+
+    const tableProps = computed(() => {
+      return {
         elementMap,
         columns: tableColumns.value,
         loading: curdState.listLoading,
         dataSource: curdState.listData?.dataSource,
-        ...omit(tableProps, "operate"),
-        operate: {
-          items: tableOperateItems,
-          ...tableProps?.operate,
-        },
+        ...omit(props.tableProps, "operate"),
+        operate: { items: tableOperateItems, ...props.tableProps?.operate },
       };
-      //pagination
-      const paginationProps = props.paginationProps;
-      const rePaginationProps = {
-        total: curdState.listData?.total,
-        ...(isBoolean(paginationProps) ? {} : paginationProps),
-      };
+    });
+
+    const paginationProps = computed(() => {
+      if (props.paginationProps === false) return false;
+      return { total: curdState.listData?.total, ...(props.paginationProps as any) };
+    });
+
+    const invalidKeys = keys(curdListProps());
+
+    const getComp = useGetCompByKey();
+    const ProList = getComp(ElementKeys.ProListKey);
+
+    return () => {
+      if (!ProList) return null;
 
       return (
         <ProList
           class={"pro-curd-list"}
-          {...omit(props, "searchProps", "tableProps", "paginationProps")}
-          searchProps={reSearchProps}
-          tableProps={reTableProps}
-          paginationProps={paginationProps === false ? false : rePaginationProps}
+          {...omit(props, ...invalidKeys, "searchProps", "tableProps", "paginationProps")}
+          searchProps={searchProps.value}
+          tableProps={tableProps.value}
+          paginationProps={paginationProps.value}
           // @ts-ignore
           onSearch={handleSearch}
           v-slots={{
+            "search-end": props.addConfig?.inSearch ? () => <AddButton {...props.addConfig?.buttonProps} /> : undefined,
+            "table-toolbarExtra": props.addConfig?.inTable
+              ? (nodes: any[]) => (
+                  <>
+                    <AddButton {...props.addConfig?.buttonProps} />
+                    {nodes}
+                  </>
+                )
+              : undefined,
             ...slots,
-            search: slots.search
-              ? (opts: SearchSlotProps) => {
-                  return slots.search!(opts, reSearchProps);
-                }
-              : undefined,
-            table: slots.table
-              ? (opts: { pageState: TPageState }) => {
-                  return slots.table!(opts, reTableProps);
-                }
-              : undefined,
+            search: slots.search ? (opts: SearchSlotProps) => slots.search!(opts, searchProps.value) : undefined,
+            table: slots.table ? (opts: { pageState: TPageState }) => slots.table!(opts, tableProps.value) : undefined,
             pagination: slots.pagination
-              ? (opts: PaginationSlotProps) => {
-                  return slots.pagination!(opts, rePaginationProps);
-                }
+              ? (opts: PaginationSlotProps) => slots.pagination!(opts, paginationProps.value)
               : undefined,
           }}
         />

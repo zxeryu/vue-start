@@ -7,13 +7,43 @@ import {
   ProCurdModal,
   ProCurdForm,
   ProCurdDesc,
+  ProList,
   ProUploaderText,
+  ElementKeys,
+  ProCurd,
+  ProShowText,
+  ProShowDigit,
+  ProShowDate,
+  ProShowOptions,
+  ProShowTree,
 } from "@vue-start/pro";
-import { ElForm, ElFormItem, ElDescriptions } from "element-plus";
-import { FormMethods } from "./form";
-import { ProTable as Table } from "./table";
-import { ProModal as Modal } from "./comp/Modal";
-import { ProUploader } from "./comp/Uploader";
+import {
+  ElForm,
+  ElFormItem,
+  ElDescriptions,
+  ElRow,
+  ElCol,
+  ElButton,
+  ElDescriptionsItem,
+  ElCheckbox,
+} from "element-plus";
+import {
+  FormMethods,
+  ProFormItem,
+  ProForm as Form,
+  ProFormText,
+  ProFormTextNumber,
+  ProFormDatePicker,
+  ProFormTimePicker,
+  ProFormSelect,
+  ProFormTreeSelect,
+  ProFormCheckbox,
+  ProFormRadio,
+  ProFormSwitch,
+  ProFormCascader,
+} from "./form";
+import { ProTable as Table, ProTableOperateItem } from "./table";
+import { ProUploader, ProModal as Modal, ProLoading, ProMenus, ProModal, ProPagination, ProPopover } from "./comp";
 
 export * from "./form";
 export * from "./table";
@@ -66,4 +96,53 @@ ProUploaderText.props = {
   ...ProUploader.props,
   ...ProUploaderText.props,
   modelValue: String,
+};
+
+export const elementMap = {
+  //element-plus
+  [ElementKeys.LoadingKey]: ProLoading,
+  [ElementKeys.RowKey]: ElRow,
+  [ElementKeys.ColKey]: ElCol,
+  [ElementKeys.ButtonKey]: ElButton,
+  [ElementKeys.DescriptionsKey]: ElDescriptions,
+  [ElementKeys.DescriptionsItemKey]: ElDescriptionsItem,
+  [ElementKeys.MenusKey]: ProMenus,
+  [ElementKeys.ModalKey]: ProModal,
+  [ElementKeys.PaginationKey]: ProPagination,
+  [ElementKeys.PopoverKey]: ProPopover,
+  [ElementKeys.CheckboxKey]: ElCheckbox,
+  [ElementKeys.FormKey]: Form,
+  [ElementKeys.FormItemKey]: ProFormItem,
+  [ElementKeys.TableKey]: Table,
+  [ElementKeys.TableOperateKey]: ProTableOperateItem,
+  [ElementKeys.UploaderKey]: ProUploader,
+  //pro
+  [ElementKeys.ProFormKey]: ProForm,
+  [ElementKeys.ProSearchFormKey]: ProSearchForm,
+  [ElementKeys.ProTableKey]: ProTable,
+  [ElementKeys.ProCurdKey]: ProCurd,
+  [ElementKeys.ProListKey]: ProList,
+  //show
+  text: ProShowText,
+  digit: ProShowDigit,
+  date: ProShowDate,
+  time: ProShowText,
+  select: ProShowOptions,
+  radio: ProShowOptions,
+  checkbox: ProShowOptions,
+  treeSelect: ProShowTree,
+  cascader: ProShowTree,
+};
+
+export const formElementMap = {
+  text: ProFormText,
+  digit: ProFormTextNumber,
+  date: ProFormDatePicker,
+  time: ProFormTimePicker,
+  select: ProFormSelect,
+  treeSelect: ProFormTreeSelect,
+  checkbox: ProFormCheckbox,
+  radio: ProFormRadio,
+  switch: ProFormSwitch,
+  cascader: ProFormCascader,
 };

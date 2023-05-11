@@ -1,5 +1,5 @@
 import { defineComponent } from "vue";
-import { CurdAction, ProCurdModalFormConnect } from "@vue-start/pro";
+import { AddButton, CurdAction, ProCurdModalFormConnect } from "@vue-start/pro";
 import { columns } from "@/common/columns";
 import { userAdd, userDel, userDetail, userEdit, userList } from "@/clients/client";
 import { IRequestActor } from "@vue-start/request";
@@ -46,7 +46,16 @@ export default defineComponent(() => {
   return () => {
     return (
       <pro-modal-curd columns={columns} operates={operates}>
-        <pro-curd-list />
+        <pro-curd-list
+          // searchInTable
+          // addConfig={{ inTable: true, inSearch: true }}
+          tableProps={{
+            // toolbar: { columnSetting: {} },
+            operate: {
+              column: { minWidth: 120 },
+            },
+          }}
+        />
         <ProCurdModalFormConnect />
       </pro-modal-curd>
     );

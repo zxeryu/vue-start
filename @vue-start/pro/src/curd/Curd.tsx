@@ -76,6 +76,8 @@ const proCurdProps = () => ({
    * operates
    */
   operates: { type: Array as PropType<ICurdOperateOpts[]> },
+  //非包装拓展
+  convertOperate: { type: Function as PropType<(operate: ICurdOperateOpts) => ICurdOperateOpts> },
   /************************* 子组件props *******************************/
   listProps: { type: Object as PropType<Record<string, any>> },
   formProps: { type: Object as PropType<Record<string, any>> },
@@ -306,7 +308,9 @@ export const ProCurd = defineComponent<ProCurdProps>({
 
     const operates = map(props.operates, (item) => {
       const curdOpts = get(curdOperateOpts, item.action!);
-      return { ...curdOpts, ...item };
+      const nextItem = { ...curdOpts, ...item };
+      const convertItem = props.convertOperate?.(nextItem);
+      return convertItem || nextItem;
     });
     //只取配置actor的项
     const requests = filter(operates, (item) => item.actor);
@@ -338,7 +342,7 @@ export const ProCurd = defineComponent<ProCurdProps>({
           requests={requests as any}>
           <Curd
             ref={curdRef}
-            {...omit(props, ...moduleKeys, "curdState", "operates")}
+            {...omit(props, ...moduleKeys, "curdState", "operates", "convertOperate")}
             formElementMap={props.formElementMap || formElementMap}
             operates={operates}
             v-slots={slots}

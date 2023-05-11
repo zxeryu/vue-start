@@ -1,4 +1,4 @@
-import { computed, defineComponent, ExtractPropTypes, PropType } from "vue";
+import { computed, defineComponent, ExtractPropTypes, PropType, VNode } from "vue";
 import { ElementKeys, useGetCompByKey } from "../comp";
 import { filter, get, isObject, map, omit, reduce, some, every, forEach, has } from "lodash";
 import { TTableColumn, useProTable } from "./Table";
@@ -12,10 +12,12 @@ const proColumnSetting = () => ({
   clsName: { type: String, default: "pro-table-toolbar-column" },
   signName: { type: String, default: "columnSetting" },
   popoverProps: Object,
-  //使用保留状态
+  //使用保留状态。columns在操作过程中改变的话可能会出现该情况
   useSelectedStatus: { type: Boolean, default: true },
   //select改变监听
   onColumnSelectChange: { type: Function as PropType<(selectIds: Array<string | number>) => void> },
+  //render dom
+  renderDom: { type: Function as PropType<() => VNode>, default: () => "列设置" },
 });
 
 export type ProColumnSettingProps = Partial<ExtractPropTypes<ReturnType<typeof proColumnSetting>>>;
@@ -144,6 +146,7 @@ export const ColumnSetting = defineComponent<ProColumnSettingProps>({
               <div class={`${props.clsName}`}>
                 <div class={`${props.clsName}-header`}>
                   <Checkbox
+                    key={listKey.value}
                     checked={allValue.value.checked}
                     indeterminate={allValue.value.indeterminate}
                     onChange={handleAllChecked}>
@@ -171,7 +174,7 @@ export const ColumnSetting = defineComponent<ProColumnSettingProps>({
             ),
             ...omit(slots, "default"),
           }}>
-          {slots.default?.() || "列设置"}
+          {slots.default?.() || props.renderDom?.()}
         </Popover>
       );
     };

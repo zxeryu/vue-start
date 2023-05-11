@@ -20,6 +20,8 @@ const proListProps = () => ({
   clsName: { type: String, default: "pro-list" },
   //search
   searchProps: { type: Object as PropType<Record<string, any>> },
+  //search组件位置
+  searchInTable: { type: Boolean, default: false },
   //table
   tableProps: { type: Object as PropType<Record<string, any>> },
   //为false 不展示
@@ -86,24 +88,26 @@ export const ProList = defineComponent<ProListProps>({
     const paginationSlots = filterSlotsByPrefix(slots, "pagination");
 
     return () => {
+      const searchNode = slots.search ? (
+        slots.search({ executeSearchWithResetPage, pageState })
+      ) : (
+        <>
+          {SearchForm && (
+            <SearchForm
+              class={`${props.clsName}-search`}
+              {...omit(props.searchProps, "onFinish")}
+              onFinish={(values: Record<string, any>) => executeSearchWithResetPage(values)}
+              v-slots={searchSlots}
+            />
+          )}
+        </>
+      );
+
       return (
         <div class={props.clsName}>
           {slots.start?.()}
 
-          {slots.search ? (
-            slots.search({ executeSearchWithResetPage, pageState })
-          ) : (
-            <>
-              {SearchForm && (
-                <SearchForm
-                  class={`${props.clsName}-search`}
-                  {...omit(props.searchProps, "onFinish")}
-                  onFinish={(values: Record<string, any>) => executeSearchWithResetPage(values)}
-                  v-slots={searchSlots}
-                />
-              )}
-            </>
-          )}
+          {!props.searchInTable && searchNode}
 
           {slots.divide?.()}
 
@@ -117,7 +121,17 @@ export const ProList = defineComponent<ProListProps>({
                   paginationState={{ page: pageState.page, pageSize: pageState.pageSize }}
                   pagination={false}
                   {...props.tableProps}
-                  v-slots={tableSlots}
+                  v-slots={{
+                    ...tableSlots,
+                    toolbar: props.searchInTable
+                      ? () => {
+                          if (tableSlots.toolbar) {
+                            return tableSlots.toolbar(searchNode);
+                          }
+                          return searchNode;
+                        }
+                      : tableSlots.toolbar,
+                  }}
                 />
               )}
             </>

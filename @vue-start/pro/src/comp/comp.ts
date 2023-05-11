@@ -19,11 +19,14 @@ export const ElementKeys = {
   FormKey: "Form$", //Form
   FormItemKey: "FormItem$", //FormItem
   TableKey: "Table$", //Table
+  TableOperateKey: "TableOperate$", //Table operate item
   UploaderKey: "Uploader$", //Uploader
   //pro
   ProFormKey: "ProForm$", //ProForm
   ProSearchFormKey: "ProSearchForm$", //ProSearchForm
   ProTableKey: "ProTable$", //ProTable
+  ProCurdKey: "ProCurd$", //ProCurd
+  ProListKey: "ProList$", //ProCurd
 };
 
 /**

@@ -5,6 +5,7 @@ import Operate from "./demo/operate";
 import Extra from "./demo/extra";
 import Slots from "./demo/slots";
 import Group from "./demo/group";
+import Header from "./demo/header";
 
 export default defineComponent(() => {
   return () => {
@@ -15,6 +16,7 @@ export default defineComponent(() => {
         <Extra />
         <Slots />
         <Group />
+        <Header />
       </>
     );
   };
