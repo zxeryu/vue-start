@@ -77,7 +77,9 @@ const proCurdProps = () => ({
    */
   operates: { type: Array as PropType<ICurdOperateOpts[]> },
   //非包装拓展
-  convertOperate: { type: Function as PropType<(operate: ICurdOperateOpts) => ICurdOperateOpts> },
+  convertOperate: {
+    type: Function as PropType<(operate: ICurdOperateOpts, origin: ICurdOperateOpts) => ICurdOperateOpts>,
+  },
   /************************* 子组件props *******************************/
   listProps: { type: Object as PropType<Record<string, any>> },
   formProps: { type: Object as PropType<Record<string, any>> },
@@ -308,9 +310,9 @@ export const ProCurd = defineComponent<ProCurdProps>({
 
     const operates = map(props.operates, (item) => {
       const curdOpts = get(curdOperateOpts, item.action!);
-      const nextItem = { ...curdOpts, ...item };
-      const convertItem = props.convertOperate?.(nextItem);
-      return convertItem || nextItem;
+      // @ts-ignore
+      const convertItem = props.convertOperate?.(item, curdOpts) || item;
+      return { ...curdOpts, ...convertItem };
     });
     //只取配置actor的项
     const requests = filter(operates, (item) => item.actor);

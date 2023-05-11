@@ -1,6 +1,7 @@
 import { defineComponent } from "vue";
 import { ElementKeys, useGetCompByKey } from "../../comp";
 import { CurdAction, CurdSubAction, useProCurd } from "../ctx";
+import { isFunction } from "lodash";
 
 export const AddButton = defineComponent({
   props: {
@@ -32,7 +33,12 @@ export const AddButton = defineComponent({
       if (!Button) return null;
 
       return (
-        <Button class={"pro-curd-add-button"} {...props.buttonProps} onClick={handleClick}>
+        <Button
+          class={"pro-curd-add-button"}
+          //@ts-ignore
+          disabled={isFunction(addOperate.disabled) ? addOperate.disabled() : addOperate.disabled}
+          {...props.buttonProps}
+          onClick={handleClick}>
           {addOperate.label}
         </Button>
       );

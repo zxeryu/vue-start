@@ -102,7 +102,13 @@ export const ProCurdList = defineComponent<ProCurdListProps>({
           // @ts-ignore
           onSearch={handleSearch}
           v-slots={{
-            "search-end": props.addConfig?.inSearch ? () => <AddButton {...props.addConfig?.buttonProps} /> : undefined,
+            "search-end": props.addConfig?.inSearch
+              ? () => (
+                  <div class={"pro-curd-list-search-end"}>
+                    <AddButton {...props.addConfig?.buttonProps} />
+                  </div>
+                )
+              : undefined,
             "table-toolbarExtra": props.addConfig?.inTable
               ? (nodes: any[]) => (
                   <>
