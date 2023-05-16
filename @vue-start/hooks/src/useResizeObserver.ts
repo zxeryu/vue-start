@@ -1,24 +1,34 @@
 import useEffect from "./useEffect";
-import { Ref } from "vue";
+import { computed, Ref } from "vue";
+import { forEach, isArray, map } from "lodash";
+import { MaybeElement, unrefElement } from "./util";
 
 export const useResizeObserver = (
-  domRef: Ref<Element | undefined>,
+  target: Ref<MaybeElement> | Ref<MaybeElement>[],
   callback: ResizeObserverCallback,
   opts?: ResizeObserverOptions,
 ) => {
-  let observer: ResizeObserver | undefined;
+  const targets = computed(() => {
+    return isArray(target) ? map(target, (item) => unrefElement(item)) : [unrefElement(target)];
+  });
 
-  useEffect(() => {
-    if (domRef.value) {
-      observer = new ResizeObserver(callback);
-      observer.observe(domRef.value, opts);
-    }
+  useEffect(
+    () => {
+      let observer: ResizeObserver | undefined = new ResizeObserver(callback);
 
-    return () => {
-      if (observer) {
-        observer.disconnect();
-        observer = undefined;
-      }
-    };
-  }, domRef);
+      forEach(targets.value, (item) => {
+        if (!item) return;
+        observer!.observe(item, opts);
+      });
+
+      return () => {
+        if (observer) {
+          observer.disconnect();
+          observer = undefined;
+        }
+      };
+    },
+    targets,
+    { immediate: true, flush: "post", deep: true },
+  );
 };

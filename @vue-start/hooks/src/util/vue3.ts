@@ -1,5 +1,5 @@
-import { Ref } from "vue";
-import { forEach, size } from "lodash";
+import { Ref, unref, ComponentPublicInstance } from "vue";
+import { forEach, isFunction, size } from "lodash";
 
 export const createExposeObj = (targetRef: Ref, methods?: string[], opts?: Record<string, any>) => {
   const exposeObj: Record<string, any> = { originRef: targetRef, ...opts };
@@ -11,4 +11,15 @@ export const createExposeObj = (targetRef: Ref, methods?: string[], opts?: Recor
     });
   }
   return exposeObj;
+};
+
+export const toValue = <T>(r: T | Ref<T> | (() => T)) => {
+  return isFunction(r) ? r() : unref(r);
+};
+
+export type MaybeElement = HTMLElement | SVGElement | ComponentPublicInstance | undefined | null;
+
+export const unrefElement = <T extends MaybeElement>(elRef: T | Ref<T> | (() => T)) => {
+  const plain = toValue(elRef);
+  return (plain as ComponentPublicInstance)?.$el ?? plain;
 };

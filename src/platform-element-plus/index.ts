@@ -11,7 +11,6 @@ import "@vue-start/media/index.css";
 
 import "@/style/normalize.css";
 import "@/style/index.css";
-import '@/style/pro.css'
 //
 import "highlight.js/styles/github.css";
 
@@ -22,6 +21,7 @@ import { App } from "./App";
 import ElementPlus from "element-plus";
 import * as ElementPlusIconsVue from '@element-plus/icons-vue'
 import "element-plus/dist/index.css";
+import 'element-plus/theme-chalk/dark/css-vars.css'
 import locale from "element-plus/lib/locale/lang/zh-cn";
 
 import { initComp } from "@/platform-element-plus/component";

@@ -1,6 +1,8 @@
 import { App } from "@vue/runtime-core";
 import { Button, InputNumber, Modal, Popover, FormItem, CheckboxGroup, RadioGroup, Select } from "ant-design-vue";
-import SettingOutlined from '@ant-design/icons-vue/lib/icons/SettingOutlined'
+import SettingOutlined from "@ant-design/icons-vue/lib/icons/SettingOutlined";
+import ArrowLeftOutlined from "@ant-design/icons-vue/lib/icons/ArrowLeftOutlined";
+
 import {
   ProLoading,
   ProPagination,
@@ -16,6 +18,7 @@ import {
   ProForm,
   ProModalCurd,
   ProSearchForm,
+  ProPage,
   ProDesc,
   ProGrid,
   ProList,
@@ -31,8 +34,6 @@ import { ProPreview } from "@vue-start/media";
 import { ProChart } from "@vue-start/chart";
 import { Map } from "@vue-start/map";
 
-import { ProPage } from "@/component/Page";
-
 ProChart.props = {
   ...ProChart.props,
   loadingOpts: { type: Object, default: { lineWidth: 2, spinnerRadius: 14, text: "", color: "#1890ff" } },
@@ -45,7 +46,10 @@ Map.props = {
 
 ColumnSetting.props = {
   ...ColumnSetting.props,
-  renderDom: { type: Function, default: () => <Button v-slots={{ icon: () => <SettingOutlined /> }} /> },
+  renderDom: {
+    type: Function,
+    default: () => <Button shape={"circle"} v-slots={{ icon: () => <SettingOutlined /> }} />,
+  },
 };
 
 ProTable.props = {
@@ -69,6 +73,14 @@ ProTable.props = {
         });
       },
     },
+  },
+};
+
+ProPage.props = {
+  ...ProPage.props,
+  renderBackIcon: {
+    type: Function,
+    default: () => <ArrowLeftOutlined />,
   },
 };
 

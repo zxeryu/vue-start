@@ -61,7 +61,7 @@ export const HeaderLeft = defineComponent(() => {
   return () => {
     return (
       <>
-        <div class={css({ fontWeight: "bold", fontSize: 20 })}>{VITE_APP_TITLE}</div>
+        <div class={css({ fontWeight: "bold", fontSize: 20, marginLeft: 10 })}>{VITE_APP_TITLE}</div>
         <div class={css({ width: 60 })} />
       </>
     );

@@ -1,9 +1,6 @@
 :root {
   --header-hei: 60px;
   --divide-vertical-hei: 10px;
-  --pro-page-header-hei: 48px;
-  /*color*/
-  --pro-color-primary: #1890ff;
 }
 
 html body {
@@ -12,6 +9,19 @@ html body {
 
 blockquote {
   margin: 0 0 1em;
+}
+
+/* pro */
+
+.pro-page {
+  padding: 0px 80px;
+}
+
+.pro-page .pro-page-header{
+  /*background-color: white;*/
+}
+.pro-page .pro-page-footer{
+  /*background-color: white;*/
 }
 
 /********************************** html ***********************************/

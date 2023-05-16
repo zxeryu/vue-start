@@ -1,5 +1,5 @@
-import { computed, defineComponent, PropType } from "vue";
-import { findTreeItem, getMenuTopNameMap, convertTreeData } from "@vue-start/hooks";
+import { computed, defineComponent, PropType, ref } from "vue";
+import { findTreeItem, getMenuTopNameMap, convertTreeData, useResizeObserver } from "@vue-start/hooks";
 import { useRoute } from "vue-router";
 import { findLast, get, map, omit, pick, size } from "lodash";
 import { filterSlotsByPrefix } from "../util";
@@ -7,12 +7,24 @@ import { ElementKeys, useGetCompByKey } from "./comp";
 import { TreeOption } from "../types";
 
 const Header = defineComponent((_, { slots }) => {
+  const menuWrapperRef = ref();
+  const menuWrapperWidth = ref(0);
+
+  useResizeObserver(menuWrapperRef, (entries) => {
+    const rect = entries[0]?.contentRect;
+    menuWrapperWidth.value = rect?.width;
+  });
+
   return () => {
     return (
       <header>
         {slots.start?.()}
 
-        {slots.menus?.()}
+        {slots.menus && (
+          <div ref={menuWrapperRef} class={"pro-header-menus-wrapper"}>
+            {slots.menus(menuWrapperWidth.value)}
+          </div>
+        )}
         {slots.default?.()}
 
         {slots.end?.()}
@@ -128,7 +140,17 @@ export const ProLayout = defineComponent({
             <Header
               class={`${props.clsName}-header`}
               v-slots={{
-                menus: () => <Menus mode={"horizontal"} {...menuProps} v-slots={menuSlots} />,
+                menus: (width: number) => {
+                  if (!width) return null;
+                  return (
+                    <Menus
+                      style={`width:${width}px`}
+                      mode={"horizontal"}
+                      {...menuProps}
+                      v-slots={menuSlots}
+                    />
+                  );
+                },
                 ...headerSlots,
               }}
             />
@@ -152,17 +174,21 @@ export const ProLayout = defineComponent({
           <Header
             class={`${props.clsName}-header`}
             v-slots={{
-              menus: () => (
-                <Menus
-                  class={"pro-layout-menus"}
-                  mode={"horizontal"}
-                  options={map(reMenus.value, (item) => omit(item, "children"))}
-                  activeKey={currentTopName.value}
-                  {...pick(props, "convertSubMenuProps", "convertMenuItemProps")}
-                  onMenuItemClick={handleComposeTopMenuClick}
-                  v-slots={menuSlots}
-                />
-              ),
+              menus: (width: number) => {
+                if (!width) return null;
+                return (
+                  <Menus
+                    style={`width:${width}px`}
+                    class={"pro-layout-menus"}
+                    mode={"horizontal"}
+                    options={map(reMenus.value, (item) => omit(item, "children"))}
+                    activeKey={currentTopName.value}
+                    {...pick(props, "convertSubMenuProps", "convertMenuItemProps")}
+                    onMenuItemClick={handleComposeTopMenuClick}
+                    v-slots={menuSlots}
+                  />
+                );
+              },
               ...headerSlots,
             }}
           />

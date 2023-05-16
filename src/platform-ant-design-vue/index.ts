@@ -11,7 +11,6 @@ import "@vue-start/media/index.css";
 
 import "@/style/normalize.css";
 import "@/style/index.css";
-import '@/style/pro.css'
 //
 import "highlight.js/styles/github.css";
 

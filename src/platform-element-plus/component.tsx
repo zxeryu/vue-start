@@ -1,6 +1,6 @@
 import { App } from "@vue/runtime-core";
-import { ElButton, ElInputNumber, ElMessageBox } from "element-plus";
-
+import { ElButton, ElInputNumber, ElMessageBox, ElIcon } from "element-plus";
+import { ArrowLeftBold } from "@element-plus/icons-vue";
 import {
   ProLoading,
   ProFormItem,
@@ -22,6 +22,7 @@ import {
   ProForm,
   ProModalCurd,
   ProSearchForm,
+  ProPage,
   ProDesc,
   ProGrid,
   ProList,
@@ -36,8 +37,7 @@ import {
 import { ProPreview } from "@vue-start/media";
 import { ProChart } from "@vue-start/chart";
 import { Map } from "@vue-start/map";
-
-import { ProPage } from "@/component/Page";
+import { css } from "@emotion/css";
 
 ProChart.props = {
   ...ProChart.props,
@@ -70,6 +70,21 @@ ProTable.props = {
         });
       },
     },
+  },
+};
+
+ProPage.props = {
+  ...ProPage.props,
+  renderBackIcon: {
+    type: Function,
+    default: () => (
+      <span class={css({ display: "flex", alignItems: "center" })}>
+        <ElIcon>
+          <ArrowLeftBold />
+        </ElIcon>
+        <span class={css({ fontSize: 14 })}>返回</span>
+      </span>
+    ),
   },
 };
 
