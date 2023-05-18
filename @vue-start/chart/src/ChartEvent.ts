@@ -18,9 +18,9 @@ export const ChartEvent = defineComponent({
       }
       if (!props.eventName || !props.handler) return;
       if (props.query) {
-        chartRef.value.on(props.eventName, props.handler as any);
-      } else {
         chartRef.value.on(props.eventName, props.query as any, props.handler);
+      } else {
+        chartRef.value.on(props.eventName, props.handler as any);
       }
       return () => {
         chartRef.value && props.eventName && chartRef.value.off(props.eventName, props.handler);
