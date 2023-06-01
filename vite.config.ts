@@ -91,6 +91,8 @@ export default defineConfig(({ mode }) => {
               "xlsx",
               //map
               "@amap/amap-jsapi-loader",
+              //persist
+              "localforage",
             ],
           },
         }

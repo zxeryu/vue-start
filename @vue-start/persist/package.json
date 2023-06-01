@@ -23,7 +23,7 @@
     "url": "git+https://github.com/zxeryu/vue-start.git"
   },
   "scripts": {
-    "test": "echo \"Error: run tests from root\" && exit 1"
+    "build": "node ../../tool/build.js"
   },
   "bugs": {
     "url": "https://github.com/zxeryu/vue-start/issues"
