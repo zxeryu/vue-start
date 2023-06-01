@@ -105,11 +105,19 @@ export const ProMenus = defineComponent<ProMenusProps>({
     const customKeys = keys(menuProps());
     return () => {
       return (
-        <ElMenu defaultActive={activeKey.value} {...omit(props, customKeys)}>
-          {map(options.value, (item) => {
-            return <MenuItem menu={item} {...pick(props, commonKeys)} v-slots={slots} />;
-          })}
-        </ElMenu>
+        <ElMenu
+          defaultActive={activeKey.value}
+          {...omit(props, customKeys)}
+          v-slots={{
+            default: () => (
+              <>
+                {map(options.value, (item) => {
+                  return <MenuItem menu={item} {...pick(props, commonKeys)} v-slots={slots} />;
+                })}
+              </>
+            ),
+          }}
+        />
       );
     };
   },
