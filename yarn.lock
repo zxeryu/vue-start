@@ -421,13 +421,6 @@
     "@babel/helper-validator-identifier" "^7.19.1"
     to-fast-properties "^2.0.0"
 
-"@bridge-start/persist@^0.1.1":
-  version "0.1.1"
-  resolved "https://registry.yarnpkg.com/@bridge-start/persist/-/persist-0.1.1.tgz#5d42c53d8361fd11b83eae15825cb17a7d9a66c9"
-  integrity sha512-oAKXT6UDVVbW5yPUgc5ox3J8B/HXr5mv081Ab0CBvA/KDkABB6LXlT20w4oUFGVvyJSFjby5LXaAE+L7FH+V9w==
-  dependencies:
-    localforage "^1.9.0"
-
 "@commitlint/cli@^11.0.0":
   version "11.0.0"
   resolved "https://registry.yarnpkg.com/@commitlint/cli/-/cli-11.0.0.tgz#698199bc52afed50aa28169237758fa14a67b5d3"

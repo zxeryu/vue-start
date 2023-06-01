@@ -1,4 +1,4 @@
-import { Persist } from "@bridge-start/persist";
+import { Persist } from "@vue-start/persist";
 import { createStore as createStoreOrigin } from "@vue-start/store";
 
 export const createStore = async () => {

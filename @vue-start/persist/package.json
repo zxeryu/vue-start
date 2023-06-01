@@ -1,0 +1,34 @@
+{
+  "name": "@vue-start/persist",
+  "version": "0.0.0",
+  "description": "rx persist",
+  "keywords": [
+    "persist",
+    "rxjs"
+  ],
+  "author": "zx <zxpstudy@163.com>",
+  "homepage": "https://github.com/zxeryu/vue-start#readme",
+  "license": "MIT",
+  "files": [
+    "dist/"
+  ],
+  "types": "dist/index.d.ts",
+  "main": "dist/index.js",
+  "module": "dist/index.es.js",
+  "publishConfig": {
+    "access": "public"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/zxeryu/vue-start.git"
+  },
+  "scripts": {
+    "test": "echo \"Error: run tests from root\" && exit 1"
+  },
+  "bugs": {
+    "url": "https://github.com/zxeryu/vue-start/issues"
+  },
+  "dependencies": {
+    "localforage": "^1.9.0"
+  }
+}
