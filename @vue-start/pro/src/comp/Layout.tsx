@@ -107,9 +107,8 @@ export const ProLayout = defineComponent({
 
     //当前路由对应的menu
     const activeKey = computed(() => {
-      const target = findLast(route.matched, (item) => !!get(menuTopMap.value, item.name!));
-      if (target) {
-        return target.name;
+      if (route.name && get(menuTopMap.value, route.name!)) {
+        return route.name;
       }
       return props.findActiveKey?.(route, menuTopMap.value);
     });
@@ -142,14 +141,7 @@ export const ProLayout = defineComponent({
               v-slots={{
                 menus: (width: number) => {
                   if (!width) return null;
-                  return (
-                    <Menus
-                      style={`width:${width}px`}
-                      mode={"horizontal"}
-                      {...menuProps}
-                      v-slots={menuSlots}
-                    />
-                  );
+                  return <Menus style={`width:${width}px`} mode={"horizontal"} {...menuProps} v-slots={menuSlots} />;
                 },
                 ...headerSlots,
               }}
