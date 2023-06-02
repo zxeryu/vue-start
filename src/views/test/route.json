@@ -1,0 +1,8 @@
+{
+  "index.tsx": {
+    "meta": { "aaa": 111, "bbb": "222" }
+  },
+  "Detail.tsx": {
+    "props": { "id": "123" }
+  }
+}

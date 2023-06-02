@@ -526,11 +526,13 @@ export const routes = [
       {
         name: "TestDetail",
         path: "detail",
+        props: { id: "123" },
         component: () => import("@/views/test/Detail"),
       },
       {
         name: "TestIndex",
         path: "index",
+        meta: { aaa: 111, bbb: "222" },
         component: () => import("@/views/test/index"),
       },
     ],

@@ -2,10 +2,11 @@
  * 根据目录生成routes json
  *
  */
-import { Dirent, existsSync, readdirSync } from "fs";
-import { endsWith, filter, indexOf, map, size, some, camelCase, join, toLower, upperFirst, forEach } from "lodash";
+import { Dirent, existsSync, readdirSync, readFileSync } from "fs";
+import { endsWith, filter, indexOf, map, size, some, camelCase, join, toLower, upperFirst, forEach, get } from "lodash";
 import { resolve } from "path";
 
+// 获取文件夹或文件的名字；小写处理；
 const dirOrFileName = (name: string) => {
   if (!name) {
     return name;
@@ -27,7 +28,9 @@ type TRouteOptions = {
 type NodeType = {
   parent: string[];
   name: string;
-  //文件夹从属于某个组件
+  //route.json 文件中配置
+  extra?: Record<string, any>;
+  //文件夹从属于某个组件（文件夹对应的路由对象的component）
   comp?: string;
   //文件夹
   children?: NodeType[];
@@ -39,43 +42,56 @@ const readFileData = (path: string, parent: string[] = [], options: TRouteOption
     return [];
   }
   const files: Dirent[] = readdirSync(path, { withFileTypes: true });
-  return map(
-    filter(files, (file: Dirent) => {
-      const name = file.name;
-      //屏蔽配置的目录
-      if (options.ignoreDirs && file.isDirectory()) {
-        if (indexOf(options.ignoreDirs, name) !== -1) {
-          return false;
-        }
+
+  const validFiles = filter(files, (file: Dirent) => {
+    const name = file.name;
+    //屏蔽配置的目录
+    if (options.ignoreDirs && file.isDirectory()) {
+      if (indexOf(options.ignoreDirs, name) !== -1) {
+        return false;
       }
-      //屏蔽配置的文件
-      if (options.ignoreFiles && file.isFile()) {
-        const fileName = dirOrFileName(name);
-        if (indexOf(options.ignoreFiles, fileName) !== -1) {
-          return false;
-        }
+    }
+    //屏蔽配置的文件
+    if (options.ignoreFiles && file.isFile()) {
+      const fileName = dirOrFileName(name);
+      if (indexOf(options.ignoreFiles, fileName) !== -1) {
+        return false;
       }
-      //只处理配置了文件类型的数据
-      if (options.fileTypes && file.isFile()) {
-        return some(options.fileTypes, (type) => {
-          return endsWith(name, type);
-        });
-      }
-      return true;
-    }),
-    (file: Dirent) => {
-      const name = file.name;
-      if (file.isDirectory()) {
-        const nextParent = [...parent, name];
-        return {
-          parent: nextParent,
-          name,
-          children: readFileData(resolve(path, name), nextParent, options),
-        };
-      }
-      return { parent, name };
-    },
-  );
+    }
+    //只处理配置了文件类型的数据
+    if (options.fileTypes && file.isFile()) {
+      return some(options.fileTypes, (type) => {
+        return endsWith(name, type);
+      });
+    }
+    return true;
+  });
+
+  //读取route.json
+  let extraData: Record<string, any> | undefined;
+  const extraPath = resolve(path, "route.json");
+  if (existsSync(extraPath)) {
+    try {
+      extraData = JSON.parse(String(readFileSync(extraPath)));
+    } catch (e) {
+      console.error(e);
+    }
+  }
+
+  return map(validFiles, (file: Dirent) => {
+    const name = file.name;
+    const extra = get(extraData, name);
+    if (file.isDirectory()) {
+      const nextParent = [...parent, name];
+      return {
+        parent: nextParent,
+        name,
+        children: readFileData(resolve(path, name), nextParent, options),
+        extra,
+      };
+    }
+    return { parent, name, extra };
+  });
 };
 
 type RouteType = {
@@ -108,17 +124,17 @@ const fileToRoute = (data: NodeType[], parent: NodeType[] = [], options: TRouteO
     }
   });
 
-  //2.屏蔽包含文件夹的文件
+  //处理文件夹与文件同名情况，即：父路由存在component的情况
   const realData: NodeType[] = [];
   forEach(validData, (item) => {
     const name = dirOrFileName(item.name);
+    //屏蔽包含文件夹的文件
     if (!item.children && dirMap[name]) {
       return;
     }
-    //文件夹
-    if (item.children) {
-      const fileName = fileNameMap[name];
-      realData.push({ ...item, comp: fileName });
+    //文件夹 对象赋值 comp
+    if (item.children && fileNameMap[name]) {
+      realData.push({ ...item, comp: fileNameMap[name] });
       return;
     }
     realData.push(item);
@@ -128,24 +144,21 @@ const fileToRoute = (data: NodeType[], parent: NodeType[] = [], options: TRouteO
     const path = dirOrFileName(item.name);
     //name根据层级拼接而成
     const name = camelCase(join([...map(parent, ({ name }) => name), path]));
-    const nextItem = { name: upperFirst(name), path };
+    const nextItem = { name: upperFirst(name), path, ...item.extra };
+    //父级路由
     if (size(item.children) > 0) {
-      const arr = [...map(parent, (item) => item.name), item.comp];
       let obj = null;
       if (item.comp) {
+        const arr = [...map(parent, (item) => item.name), item.comp];
         obj = { component: `$rm$() => import('${options.importPrefix + "/" + join(arr, "/")}')$rm$` };
       }
-      return {
-        ...nextItem,
-        ...obj,
-        children: fileToRoute(item.children as NodeType[], [...parent, item], options),
-      };
+      const children = fileToRoute(item.children as NodeType[], [...parent, item], options);
+      return { ...nextItem, ...obj, children };
     }
+    //叶子路由
     const arr = [...map(parent, (item) => item.name), item.name];
-    return {
-      ...nextItem,
-      component: `$rm$() => import('${options.importPrefix + "/" + join(arr, "/")}')$rm$`,
-    };
+    const component = `$rm$() => import('${options.importPrefix + "/" + join(arr, "/")}')$rm$`;
+    return { ...nextItem, component };
   }) as RouteType[];
 };
 

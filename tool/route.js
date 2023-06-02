@@ -12,9 +12,10 @@ const defaultOptions = {
 
 const generateRoutes = ({ name, path, importPrefix }) => {
   const opts = { ...defaultOptions, importPrefix };
-  const { routeStr } = createRouteData(path, opts);
+  const { routeStr, routeNameStr } = createRouteData(path, opts);
   const str = routeStr.replace(/.tsx/g, "");
   generate(join(baseDir, name, "router", `routes.ts`), prettier.format(str));
+  generate(join(baseDir, name, "router", `RouteNames.ts`), prettier.format(routeNameStr));
 };
 
 const RoutesMap = {

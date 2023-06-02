@@ -1,10 +1,48 @@
-import { find, findIndex, forEach, get, isFunction, size, map, omit } from "lodash";
+import { isValidInRules, TConvert, TRules } from "./base";
+import {
+  assign,
+  find,
+  findIndex,
+  forEach,
+  get,
+  isArray,
+  isEmpty,
+  isFunction,
+  isObject,
+  map,
+  mergeWith,
+  omit,
+  reduce,
+  size,
+} from "lodash";
 import { FieldNames, TOption } from "@vue-start/pro";
 import { getFieldNames } from "./options";
-import { isValidInRules, TConvert, TRules } from "./base";
 
 type TData = Record<string, any>;
 
+/************************************** list *******************************************/
+
+/**
+ * list数据转化为Map对象
+ * @param data
+ * @param convert
+ * @param fieldNames
+ */
+export const listToMap = (
+  data: TData[],
+  convert: TConvert,
+  fieldNames: { value: string } | undefined = { value: "value" },
+) => {
+  return reduce(
+    data,
+    (pair, item) => {
+      return { ...pair, [get(item, fieldNames?.value)]: convert(item) };
+    },
+    {},
+  );
+};
+
+/************************************** tree *******************************************/
 /**
  * @deprecated 使用 findTreeItem 代替
  *
@@ -207,5 +245,80 @@ export const convertTreeData = (
       ...convert(omit(item, childrenKey)),
       [fieldNames.childrenName]: convertTreeData(get(item, childrenKey), convert, fieldNames),
     };
+  });
+};
+
+/************************************** common *******************************************/
+
+/**
+ * 将state（补充Map）数据 merge 到 data 中
+ * @param data list 或者 tree
+ * @param state
+ * @param value
+ * @param fieldNames
+ */
+export const mergeStateToData = (
+  data: TData,
+  state: Record<string, any>,
+  value: string | ((item: TData) => string),
+  fieldNames?: { children: "children" },
+) => {
+  if (!data || !value) return data;
+
+  return map(data, (item) => {
+    const id = isFunction(value) ? value(item) : item[value];
+    const stateData = get(state, id);
+
+    if (!stateData || isEmpty(stateData) || isFunction(stateData) || !isObject(stateData)) {
+      return item;
+    }
+    const reItem = fieldNames?.children ? omit(item, fieldNames.children) : { ...item };
+    const reStateData = fieldNames?.children ? omit(stateData, fieldNames.children) : stateData;
+
+    const nextItem = mergeWith(reItem, reStateData, (objValue, srcValue) => {
+      if (isArray(objValue) || isArray(srcValue)) {
+        return srcValue;
+      }
+    });
+    if (fieldNames?.children && item[fieldNames.children]) {
+      nextItem[fieldNames.children] = mergeStateToData(item[fieldNames.children], state, value, fieldNames);
+    }
+
+    return nextItem;
+  });
+};
+
+/**
+ * 将state（补充Map）数据 assign 到 data 中
+ * @param data
+ * @param state
+ * @param value
+ * @param fieldNames
+ */
+export const assignStateToData = (
+  data: TData,
+  state: Record<string, any>,
+  value: string | ((item: TData) => string),
+  fieldNames?: { children: "children" },
+) => {
+  if (!data || !value) return data;
+
+  return map(data, (item) => {
+    const id = isFunction(value) ? value(item) : item[value];
+    const stateData = get(state, id);
+
+    if (!stateData || isEmpty(stateData) || isFunction(stateData) || !isObject(stateData)) {
+      return item;
+    }
+
+    const reItem = fieldNames?.children ? omit(item, fieldNames.children) : { ...item };
+    const reStateData = fieldNames?.children ? omit(stateData, fieldNames.children) : stateData;
+
+    const nextItem = assign(reItem, reStateData);
+    if (fieldNames?.children && item[fieldNames.children]) {
+      nextItem[fieldNames.children] = assignStateToData(item[fieldNames.children], state, value, fieldNames);
+    }
+
+    return nextItem;
   });
 };
