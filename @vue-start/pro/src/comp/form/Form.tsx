@@ -1,10 +1,10 @@
 import { Ref, UnwrapNestedRefs } from "@vue/reactivity";
 import { computed, defineComponent, ExtractPropTypes, inject, PropType, provide, reactive, ref } from "vue";
 import { BooleanObjType, BooleanRulesObjType, TColumn, TColumns, TElementMap } from "../../types";
-import { useRuleState } from "@vue-start/hooks";
+import { mergeStateToData, useRuleState } from "@vue-start/hooks";
 import { get, keys, map, omit, size } from "lodash";
 import { getColumnFormItemName, getFormItemEl, proBaseProps, ProBaseProps, useProConfig } from "../../core";
-import { createExpose, getValidValues, mergeStateToList } from "../../util";
+import { createExpose, getValidValues } from "../../util";
 import { ProGridProps, ProOperate, ProGrid, ProOperateProps, IOpeItem, ElementKeys } from "../index";
 import { provideProFormList } from "./FormList";
 
@@ -122,7 +122,7 @@ export const ProForm = defineComponent<ProFormProps>({
 
     //columns合并
     const columns = computed(() =>
-      mergeStateToList(props.columns!, props.columnState!, (item) => getColumnFormItemName(item)!),
+      mergeStateToData(props.columns!, props.columnState!, (item) => getColumnFormItemName(item) as string),
     );
 
     const handleFinish = (values: Record<string, any>) => {

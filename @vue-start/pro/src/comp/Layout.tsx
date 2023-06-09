@@ -1,5 +1,5 @@
 import { computed, defineComponent, PropType, ref } from "vue";
-import { findTreeItem, getMenuTopNameMap, convertTreeData, useResizeObserver } from "@vue-start/hooks";
+import { findTreeItem, getMenuTopNameMap, useResizeObserver, convertCollection } from "@vue-start/hooks";
 import { useRoute } from "vue-router";
 import { findLast, get, map, omit, pick, size } from "lodash";
 import { filterSlotsByPrefix } from "../util";
@@ -74,7 +74,7 @@ export const ProLayout = defineComponent({
     const route = useRoute();
 
     const reMenus = computed(() =>
-      convertTreeData(
+      convertCollection(
         props.menus!,
         (item) => {
           const valueKey = props.fieldNames?.value || "value";

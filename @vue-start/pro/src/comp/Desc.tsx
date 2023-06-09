@@ -3,7 +3,7 @@ import { ElementKeys, useGetCompByKey } from "./comp";
 import { get, keys, map, omit } from "lodash";
 import { getItemEl, ProBaseProps, proBaseProps, useProConfig } from "../core";
 import { UnwrapNestedRefs } from "@vue/reactivity";
-import { mergeStateToList } from "../util";
+import { mergeStateToData } from "@vue-start/hooks";
 
 const proDescProps = () => ({
   /**
@@ -30,7 +30,7 @@ export const ProDesc = defineComponent<ProDescProps>({
     const DescriptionsItem = getComp(ElementKeys.DescriptionsItemKey);
 
     const columns = computed(() => {
-      return mergeStateToList(props.columns!, props.columnState!, "dataIndex");
+      return mergeStateToData(props.columns!, props.columnState!, "dataIndex");
     });
 
     const proBaseKeys = keys(proBaseProps);

@@ -224,13 +224,15 @@ export const treeToMap = (
   return mapObj;
 };
 
+/************************************** common *******************************************/
+
 /**
- * tree数据转换
+ * list 或 tree 数据转换
  * @param data
  * @param convert
  * @param fieldNames
  */
-export const convertTreeData = (
+export const convertCollection = (
   data: TData[],
   convert: TConvert,
   //children：data数据中子集属性名；childrenName：转换后数据的子集属性名
@@ -240,15 +242,15 @@ export const convertTreeData = (
   },
 ): TData[] => {
   return map(data, (item) => {
-    const childrenKey = fieldNames.children;
-    return {
-      ...convert(omit(item, childrenKey)),
-      [fieldNames.childrenName]: convertTreeData(get(item, childrenKey), convert, fieldNames),
-    };
+    if (fieldNames.children && item[fieldNames.children]) {
+      return {
+        ...convert(omit(item, fieldNames.children)),
+        [fieldNames.childrenName]: convertCollection(item[fieldNames.children], convert, fieldNames),
+      };
+    }
+    return convert(item);
   });
 };
-
-/************************************** common *******************************************/
 
 /**
  * 将state（补充Map）数据 merge 到 data 中
@@ -258,10 +260,10 @@ export const convertTreeData = (
  * @param fieldNames
  */
 export const mergeStateToData = (
-  data: TData,
+  data: TData[],
   state: Record<string, any>,
   value: string | ((item: TData) => string),
-  fieldNames?: { children: "children" },
+  fieldNames?: { children: "children" | string },
 ) => {
   if (!data || !value) return data;
 
@@ -275,7 +277,7 @@ export const mergeStateToData = (
     const reItem = fieldNames?.children ? omit(item, fieldNames.children) : { ...item };
     const reStateData = fieldNames?.children ? omit(stateData, fieldNames.children) : stateData;
 
-    const nextItem = mergeWith(reItem, reStateData, (objValue, srcValue) => {
+    const nextItem: TData = mergeWith(reItem, reStateData, (objValue, srcValue) => {
       if (isArray(objValue) || isArray(srcValue)) {
         return srcValue;
       }
@@ -296,7 +298,7 @@ export const mergeStateToData = (
  * @param fieldNames
  */
 export const assignStateToData = (
-  data: TData,
+  data: TData[],
   state: Record<string, any>,
   value: string | ((item: TData) => string),
   fieldNames?: { children: "children" },

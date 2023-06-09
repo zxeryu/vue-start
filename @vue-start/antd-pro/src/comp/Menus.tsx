@@ -1,7 +1,7 @@
 import { computed, defineComponent, ExtractPropTypes, PropType, ref } from "vue";
 import { Menu, MenuProps } from "ant-design-vue";
 import { get, keys, map, omit, pick, size, dropRight, filter, reduce, last } from "lodash";
-import { convertTreeData, findTreeItem, useEffect, useWatch } from "@vue-start/hooks";
+import { convertCollection, findTreeItem, useEffect, useWatch } from "@vue-start/hooks";
 import { TreeOption, TreeOptions } from "@vue-start/pro";
 
 /******************************* MenuItem ************************************/
@@ -107,7 +107,7 @@ export const ProMenus = defineComponent<ProMenusProps>({
 
     const options = computed(
       () =>
-        convertTreeData(
+        convertCollection(
           props.options!,
           (item) => {
             const valueKey = props.fieldNames?.value || "value";

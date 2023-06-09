@@ -2,7 +2,7 @@ import { computed, defineComponent, ExtractPropTypes, PropType, ref } from "vue"
 import { ElMenu, MenuProps } from "element-plus";
 import { TreeOption, TreeOptions } from "@vue-start/pro";
 import { get, keys, map, omit, pick, size } from "lodash";
-import { convertTreeData, useWatch } from "@vue-start/hooks";
+import { convertCollection, useWatch } from "@vue-start/hooks";
 
 /******************************* MenuItem ************************************/
 
@@ -91,7 +91,7 @@ export const ProMenus = defineComponent<ProMenusProps>({
 
     const options = computed(
       () =>
-        convertTreeData(
+        convertCollection(
           props.options!,
           (item) => {
             const valueKey = props.fieldNames?.value || "value";

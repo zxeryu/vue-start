@@ -25,8 +25,8 @@ import {
 } from "./ctx";
 import { IOperateItem } from "../comp";
 import { IRequestActor } from "@vue-start/request";
-import { mergeStateToList } from "../util";
 import { getColumnFormItemName, getFormItemEl, getItemEl } from "../core";
+import { mergeStateToData } from "@vue-start/hooks";
 
 export interface IListData extends Record<string, any> {
   total: number;
@@ -105,7 +105,7 @@ const Curd = defineComponent<CurdProps>({
      * columns columnState 合并
      */
     const columns = computed(() => {
-      return mergeStateToList(props.columns!, props.columnState!, (item) => getColumnFormItemName(item)!);
+      return mergeStateToData(props.columns!, props.columnState!, (item) => getColumnFormItemName(item) as string);
     });
 
     /*********************************** 渲染组件 ***************************************/

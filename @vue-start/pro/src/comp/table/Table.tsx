@@ -2,11 +2,11 @@ import { computed, defineComponent, ExtractPropTypes, inject, PropType, provide,
 import { TColumn } from "../../types";
 import { filter, get, isBoolean, isFunction, keys, map, omit, pick, reduce, size, some, sortBy } from "lodash";
 import { getItemEl, proBaseProps, ProBaseProps, useProConfig } from "../../core";
-import { createExpose, filterSlotsByPrefix, mergeStateToList } from "../../util";
+import { createExpose, filterSlotsByPrefix } from "../../util";
 import { IOpeItem, ProOperate, ProOperateProps } from "../Operate";
 import { ElementKeys } from "../comp";
 import { ColumnSetting, ProColumnSettingProps } from "./ColumnSetting";
-import { useResizeObserver } from "@vue-start/hooks";
+import { mergeStateToData, useResizeObserver } from "@vue-start/hooks";
 
 const ProTableKey = Symbol("pro-table");
 
@@ -251,7 +251,9 @@ export const ProTable = defineComponent<ProTableProps>({
     };
 
     const columns = computed(() => {
-      const mergeColumns = mergeStateToList(showColumns.value as any, props.columnState!, (item) => item.dataIndex);
+      const mergeColumns = mergeStateToData(showColumns.value as any, props.columnState!, (item) => item.dataIndex, {
+        children: "children",
+      });
       //根据valueType选择对应的展示组件
       const columns = convertColumns(mergeColumns);
       //处理序号
