@@ -228,7 +228,9 @@ export const ProTable = defineComponent<ProTableProps>({
     const convertColumns = (list: TTableColumns) => {
       return map(list, (item) => {
         //merge公共column
-        const nextItem = { ...props.column, ...item };
+        const mergeColumn = { ...props.column, ...item };
+        //convertColumn 转换（如果需要）
+        const nextItem: TTableColumn = props.convertColumn ? props.convertColumn(mergeColumn) : mergeColumn;
         //如果有子column，转换子节点 再返回
         if (item.children && size(item.children) > 0) {
           nextItem.children = convertColumns(item.children);

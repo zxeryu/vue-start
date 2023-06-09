@@ -32,12 +32,14 @@ import {
   ProTable,
   ColumnSetting,
   IOperateItem,
+  TColumn,
 } from "@vue-start/pro";
 
 import { ProPreview } from "@vue-start/media";
 import { ProChart } from "@vue-start/chart";
 import { Map } from "@vue-start/map";
 import { css } from "@emotion/css";
+import { get, omit } from "lodash";
 
 ProChart.props = {
   ...ProChart.props,
@@ -69,6 +71,21 @@ ProTable.props = {
           item.onClick?.(record);
         });
       },
+    },
+  },
+};
+
+ProSearchForm.props = {
+  ...ProSearchForm.props,
+  convertColumn: {
+    type: Function,
+    default: (item: TColumn) => {
+      const nextItem = { ...item, formItemProps: omit(item.formItemProps, "required") };
+      //屏蔽掉ElInput中的 showWordLimit 属性
+      if (get(nextItem, ["formFieldProps", "showWordLimit"])) {
+        return { ...nextItem, formFieldProps: omit(nextItem.formFieldProps, "showWordLimit") };
+      }
+      return nextItem;
     },
   },
 };

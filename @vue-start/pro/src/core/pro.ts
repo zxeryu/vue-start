@@ -1,5 +1,5 @@
 import { App, defineComponent, ExtractPropTypes, inject, PropType, provide } from "vue";
-import { TColumns, TElementMap } from "../types";
+import { TColumn, TColumns, TElementMap } from "../types";
 import { TRegisterStore, TRegisterStoreMap } from "./store";
 import { get, reduce } from "lodash";
 import { IRequestActor, useRequestProvide } from "@vue-start/request";
@@ -19,6 +19,7 @@ const proBasePropsFn = () => ({
    * 基础项配置
    */
   columns: { type: Array as PropType<TColumns> },
+  convertColumn: { type: Function as PropType<(t: TColumn) => TColumn> },//拓展使用
   /**
    * 对 column 进行补充
    * 通常对columns为静态值时候使用

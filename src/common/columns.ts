@@ -23,8 +23,8 @@ export const treeOptions = [
     ],
   },
   {
-    value:"v-2",
-    label:"v-2-label",
+    value: "v-2",
+    label: "v-2-label",
     children: [
       {
         value: "v-2-1",
@@ -34,8 +34,8 @@ export const treeOptions = [
         value: "v-2-2",
         label: "v-2-2-label",
       },
-    ]
-  }
+    ],
+  },
 ];
 
 export const columns = [
@@ -45,7 +45,11 @@ export const columns = [
     formItemProps: {
       required: true,
     },
-    formFieldProps: {},
+    formFieldProps: {
+      showWordLimit: true,
+      showCount: true,
+      maxlength: 10,
+    },
     search: true,
     formExtra: true,
   },

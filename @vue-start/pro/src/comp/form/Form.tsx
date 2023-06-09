@@ -1,7 +1,7 @@
 import { Ref, UnwrapNestedRefs } from "@vue/reactivity";
 import { computed, defineComponent, ExtractPropTypes, inject, PropType, provide, reactive, ref } from "vue";
 import { BooleanObjType, BooleanRulesObjType, TColumn, TColumns, TElementMap } from "../../types";
-import { mergeStateToData, useRuleState } from "@vue-start/hooks";
+import { convertCollection, mergeStateToData, useRuleState } from "@vue-start/hooks";
 import { get, keys, map, omit, size } from "lodash";
 import { getColumnFormItemName, getFormItemEl, proBaseProps, ProBaseProps, useProConfig } from "../../core";
 import { createExpose, getValidValues } from "../../util";
@@ -121,9 +121,17 @@ export const ProForm = defineComponent<ProFormProps>({
     const readonly = computed(() => props.readonly);
 
     //columns合并
-    const columns = computed(() =>
-      mergeStateToData(props.columns!, props.columnState!, (item) => getColumnFormItemName(item) as string),
-    );
+    const columns = computed(() => {
+      const list = mergeStateToData(
+        props.columns!,
+        props.columnState!,
+        (item) => getColumnFormItemName(item) as string,
+      );
+      if (props.convertColumn) {
+        return convertCollection(list, props.convertColumn);
+      }
+      return list;
+    });
 
     const handleFinish = (values: Record<string, any>) => {
       //删除不显示的值再触发事件
