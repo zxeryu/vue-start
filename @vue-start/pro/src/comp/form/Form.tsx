@@ -73,10 +73,6 @@ const proFormProps = () => ({
   disableState: { type: Object as PropType<UnwrapNestedRefs<BooleanObjType>> },
   disableStateRules: { type: Object as PropType<BooleanRulesObjType> },
   /**
-   * 是否启用rules验证
-   */
-  needRules: { type: Boolean, default: true },
-  /**
    * provide传递
    */
   provideExtra: { type: Object as PropType<IProFormProvideExtra> },
@@ -223,7 +219,7 @@ export const ProForm = defineComponent<ProFormProps>({
       if (rowKey && slots[rowKey]) {
         return slots[rowKey]!(item, formState);
       }
-      return getFormItemEl(formElementMap, item, props.needRules)!;
+      return getFormItemEl(formElementMap, item)!;
     };
 
     const items = computed(() => {

@@ -111,8 +111,8 @@ const Curd = defineComponent<CurdProps>({
     /*********************************** 渲染组件 ***************************************/
 
     // 获取FormItem VNode
-    const getFormItemVNode = (column: TColumn, needRules: boolean | undefined = true): VNode | null => {
-      return getFormItemEl(props.formElementMap, column, needRules);
+    const getFormItemVNode = (column: TColumn): VNode | null => {
+      return getFormItemEl(props.formElementMap, column);
     };
 
     // 获取Item VNode

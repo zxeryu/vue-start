@@ -44,11 +44,7 @@ export const getColumnFormItemName = (column: TColumn): string | number | undefi
  * @param column
  * @param needRules
  */
-export const getFormItemEl = (
-  formElementMap: any,
-  column: TColumn,
-  needRules: boolean | undefined = true,
-): VNode | null => {
+export const getFormItemEl = (formElementMap: any, column: TColumn): VNode | null => {
   const valueType = getColumnValueType(column);
   const Comp: any = get(formElementMap, valueType);
   if (!Comp) {
@@ -56,7 +52,6 @@ export const getFormItemEl = (
   }
 
   const name = getColumnFormItemName(column);
-  const itemProps = needRules ? column.formItemProps : omit(column.formItemProps, "rules");
 
   return h(
     Comp,
@@ -64,7 +59,7 @@ export const getFormItemEl = (
       key: name,
       name,
       label: column.title,
-      ...itemProps,
+      ...column.formItemProps,
       fieldProps: omit(column.formFieldProps, "slots"),
       showProps: column.showProps,
     },

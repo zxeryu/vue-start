@@ -124,6 +124,25 @@
   margin-left: 12px;
 }
 
+/********************************** pro-form-list ***********************************/
+
+.pro-form-list {
+}
+
+/* element-plus */
+.pro-form-list .el-form-item__content {
+  display: unset !important;
+}
+
+.pro-form-list .el-form-item {
+  margin-bottom: 18px !important;
+}
+
+.pro-form-list-inline .pro-form-list-item {
+  display: flex;
+  flex-wrap: wrap;
+}
+
 /********************************** pro-table ***********************************/
 .pro-table {
 }
