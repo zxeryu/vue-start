@@ -22,13 +22,14 @@ const proModalProps = () => ({
 export type ProModalProps = Partial<ExtractPropTypes<ReturnType<typeof proModalProps>>> & DialogProps;
 
 export const ProModal = defineComponent<ProModalProps>({
+  inheritAttrs: false,
   props: {
     ...ElDialog.props,
     //覆盖原始值，默认true
     appendToBody: { type: Boolean, default: true },
     ...proModalProps(),
   },
-  setup: (props, { slots, emit }) => {
+  setup: (props, { slots, emit, attrs }) => {
     const visibleRef = ref(props.visible);
 
     useWatch(
@@ -62,6 +63,7 @@ export const ProModal = defineComponent<ProModalProps>({
       return (
         <ElDialog
           class={props.clsName}
+          {...omit(attrs, "onCancel")}
           {...omit(props, ...invalidKeys, "modelValue")}
           closeOnClickModal={isBoolean(props.maskClosable) ? props.maskClosable : props.closeOnClickModal}
           v-model:modelValue={visibleRef.value}
