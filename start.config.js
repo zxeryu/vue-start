@@ -26,5 +26,17 @@ module.exports = {
       },
     ],
   },
-  client: {},
+  client: {
+    fileType: ".ts",
+    list: [
+      {
+        name: "iam",
+        // url: "",
+        basePath: "",
+        // ignorePaths: [],
+        // selectPaths: [],
+        generatePath: ["src", "clients"],
+      },
+    ],
+  },
 };

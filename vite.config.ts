@@ -79,6 +79,7 @@ export default defineConfig(({ mode }) => {
               "path",
               "querystring",
               "dayjs",
+              "prettier",
               //
               "@vue-start/hooks",
               "@vue-start/request",

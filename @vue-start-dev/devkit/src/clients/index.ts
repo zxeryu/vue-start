@@ -118,19 +118,26 @@ ${join(apiGroupStr, "")}
   `;
 };
 
+export type TClientResult = {
+  apiList: Record<string, any>[];
+  apiStr: string;
+  apiJson: string;
+};
+
 export const createApiData = (
   data: Record<string, any>,
   customApiName: TApiNameFun,
-  {
-    basePath,
-    ignorePaths,
-  }: {
-    basePath: string;
-    ignorePaths?: string[];
-  },
-) => {
+  { basePath, ignorePaths, selectPaths }: { basePath: string; ignorePaths?: string[]; selectPaths?: string[] },
+): TClientResult => {
   const ignorePathMap = reduce(ignorePaths, (pair, item) => ({ ...pair, [item]: true }), {});
-  const apiList = createApiList(data, customApiName, basePath, ignorePathMap);
+  const selectPathMap = reduce(selectPaths, (pair, item) => ({ ...pair, [item]: true }), {});
+
+  const allList = createApiList(data, customApiName, basePath, ignorePathMap);
+  const apiList = selectPaths
+    ? filter(allList, (item) => {
+        return get(selectPathMap, item.path);
+      })
+    : allList;
 
   const apiJson = map(apiList, (item) => {
     const queryInPath = map(
