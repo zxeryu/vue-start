@@ -18,7 +18,7 @@ const dirOrFileName = (name: string) => {
   return toLower(path);
 };
 
-type TRouteOptions = {
+export type TRouteOptions = {
   ignoreDirs?: string[];
   ignoreFiles?: string[];
   fileTypes?: string[];
@@ -190,9 +190,17 @@ const routeDataNameList = (routeData: RouteType[], nameList: string[]) => {
 const nameListToStr = (list: string[]) => {
   let str = "";
   forEach(list, (item) => {
-    str += `export const ${item} = "${item}";`;
+    str += `${item} : "${item}",`;
   });
-  return str;
+  return `export const RouteNames = {
+    ${str}
+  }`;
+};
+
+export type TRouteResult = {
+  routeData: RouteType[];
+  routeStr: string;
+  routeNameStr: string;
 };
 
 export const createRouteData = (
@@ -203,7 +211,7 @@ export const createRouteData = (
     fileTypes: [".js", ".jsx", ".ts", ".tsx", ".vue"],
     importPrefix: "@/views",
   },
-) => {
+): TRouteResult => {
   const fileData = readFileData(path, [], options);
   const routeData = fileToRoute(fileData, [], options);
   //路由内容
