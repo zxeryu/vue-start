@@ -1,5 +1,5 @@
 import { IState } from "./state";
-import { exec, syncExec } from "./exec";
+import { exec, syncExec } from "../exec";
 
 export const fromCommitRefName = (commitTag = ""): { name: string; feature: string; env: string } => {
   const rule = commitTag.replace(/^feat(ure)?\//, "");

@@ -3,7 +3,7 @@ import { existsSync, readFileSync } from "fs";
 import { get, isObject, has, keys, mapKeys, mapValues, startsWith, isFunction } from "lodash";
 import { IState } from "./state";
 import { writeConfig, writehelmxProject } from "./action-build";
-import { exec } from "./exec";
+import { exec } from "../exec";
 import { fromCommitRefName, release } from "./action-release";
 
 type TValueBuilder = (env: string) => string;

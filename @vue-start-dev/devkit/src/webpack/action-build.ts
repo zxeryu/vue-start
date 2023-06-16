@@ -1,6 +1,6 @@
 import { omitBy, isUndefined } from "lodash";
 import { IState } from "./state";
-import { generate } from "./file";
+import { generate } from "../file";
 import { join } from "path";
 import { dump } from "js-yaml";
 import { stringify } from "querystring";

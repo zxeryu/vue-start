@@ -1,5 +1,5 @@
 import spawn from "cross-spawn";
-import { envValueFromState, IState } from "./state";
+import { envValueFromState, IState } from "./webpack/state";
 
 export const exec = (sh: string, state: IState): void => {
   const cmd = spawn(sh, {

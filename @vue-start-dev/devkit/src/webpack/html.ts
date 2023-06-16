@@ -2,7 +2,7 @@ import { ParsedUrlQueryInput, stringify } from "querystring";
 import { get } from "lodash";
 import { existsSync } from "fs";
 import { join } from "path";
-import { IState } from "../state";
+import { IState } from "./state";
 
 const stringifyMetaContent = (o: ParsedUrlQueryInput) =>
   stringify(o, ",", "=", {
