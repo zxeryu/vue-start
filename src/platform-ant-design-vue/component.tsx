@@ -86,6 +86,8 @@ ProPage.props = {
 
 export const elementMap = {
   ...elementMapOrigin,
+  ProPage,
+  ProTypography
 };
 
 export const formElementMap = {

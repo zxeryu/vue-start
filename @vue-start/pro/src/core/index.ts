@@ -1,5 +1,6 @@
-export * from "./Module";
 export * from "./core";
+export * from "./Module";
+export * from "./create-module";
 
 export * from "./pro";
 

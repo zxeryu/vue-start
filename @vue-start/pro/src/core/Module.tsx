@@ -7,6 +7,7 @@ import { setReactiveValue, useEffect } from "@vue-start/hooks";
 import { IRequestActor, useRequestProvide } from "@vue-start/request";
 import { useComposeRequestActor } from "./request";
 import { IElementConfig, renderElement, renderElements } from "./core";
+import { useProConfig } from "./pro";
 
 const ProModuleKey = Symbol("pro-module");
 
@@ -91,13 +92,17 @@ export const ProModule = defineComponent<ProModuleProps>({
     ...(proModuleProps() as any),
   },
   setup: (props, { slots, expose }) => {
+    const { elementMap: elementMapP } = useProConfig();
+
+    const elementMap = props.elementMap! || elementMapP;
+
     /*********************************** render ***************************************/
 
     const render = (elementConfig: IElementConfig | IElementConfig[]) => {
       if (isArray(elementConfig)) {
-        return renderElements(props.elementMap!, elementConfig);
+        return renderElements(elementMap, elementConfig);
       }
-      return renderElement(props.elementMap!, elementConfig);
+      return renderElement(elementMap, elementConfig);
     };
 
     /*********************************** 事件处理 ***************************************/
@@ -182,7 +187,7 @@ export const ProModule = defineComponent<ProModuleProps>({
     );
 
     provideProModule({
-      elementMap: props.elementMap!,
+      elementMap,
       //
       subject$,
       sendEvent,
