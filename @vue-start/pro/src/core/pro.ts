@@ -4,6 +4,8 @@ import { TRegisterStore, TRegisterStoreMap } from "./store";
 import { get, reduce } from "lodash";
 import { IRequestActor, useRequestProvide } from "@vue-start/request";
 import { TMeta, useMetaRegister } from "./request";
+import { TRouter } from "./router";
+import { Router } from "vue-router";
 
 const proBasePropsFn = () => ({
   /**
@@ -19,7 +21,7 @@ const proBasePropsFn = () => ({
    * 基础项配置
    */
   columns: { type: Array as PropType<TColumns> },
-  convertColumn: { type: Function as PropType<(t: TColumn) => TColumn> },//拓展使用
+  convertColumn: { type: Function as PropType<(t: TColumn) => TColumn> }, //拓展使用
   /**
    * 对 column 进行补充
    * 通常对columns为静态值时候使用
@@ -71,6 +73,8 @@ export interface IProConfigProvide {
    * @param extra
    */
   dispatchRequest: ProDispatchRequestType;
+  //重写router对象
+  convertRouter?: (router: Router) => TRouter;
 }
 
 const proConfigProps = () => ({
@@ -83,6 +87,8 @@ const proConfigProps = () => ({
   registerActors: { type: Array as PropType<{ actor: IRequestActor }[]> },
   //全局Meta (状态+接口的组合，即：接口请求回来的值放到状态中，理论上只请求一次)
   registerMetas: { type: Array as PropType<TMeta[]> },
+  //路由方法
+  convertRouter: { type: Function as PropType<(router: Router) => TRouter> },
 });
 
 const ProConfigKey = Symbol("pro-config");
@@ -133,6 +139,8 @@ export const ProConfig = defineComponent<ProConfigProps>({
       registerMetaMap,
       //
       dispatchRequest,
+      //
+      convertRouter: props.convertRouter,
     });
 
     return () => {

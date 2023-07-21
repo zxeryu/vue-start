@@ -6,6 +6,7 @@ import {
   head,
   isArray,
   isFunction,
+  isNumber,
   isString,
   keys,
   map,
@@ -129,6 +130,8 @@ export interface IElementConfig {
   elementProps?: Record<string, any>;
   slots?: {
     [name: string]:
+      | string
+      | number
       | ((...params$: any[]) => any)
       | (IElementConfig & {
           //是否需要slot 方法中的参数
@@ -139,6 +142,10 @@ export interface IElementConfig {
   childrenSlotName?: string; //children绑定的插槽，默认default
   highConfig$?: IHighConfig;
 }
+
+export const isValidConfig = (elementConfig: any): boolean => {
+  return elementConfig && !isFunction(elementConfig) && elementConfig.elementType;
+};
 
 export const renderElements = (elementMap: TElementMap, elementConfigs: IElementConfig[]): (VNode | null)[] => {
   return map(elementConfigs, (elementConfig) => {
@@ -191,14 +198,16 @@ const convertSlots = (elementMap: TElementMap, elementConfig: IElementConfig): S
   const validSlots = omit(elementConfig.slots, children ? childrenSlotName : "");
   //如果slots注册的是 IElementConfig ，进行转换
   forEach(keys(validSlots), (k) => {
-    const v = validSlots[k as any];
+    const v = validSlots[k as any] as any;
     //IElementConfig
-    if (v && !isFunction(v) && v.elementType) {
+    if (isValidConfig(v)) {
       validSlots[k as any] = (...params$) => {
         //如果需要params，在props中注入 params$
         const elementProps = v.needParams ? { ...v.elementProps, params$ } : v.elementProps;
         return renderElement(elementMap, { ...v, elementProps });
       };
+    } else if (isString(v) || isNumber(v)) {
+      validSlots[k as any] = () => v;
     }
   });
   return {

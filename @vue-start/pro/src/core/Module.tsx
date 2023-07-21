@@ -78,7 +78,7 @@ const proModuleProps = () => ({
   /**
    * 组件描述（树）
    */
-  elementConfigs: { type: Array as PropType<IElementConfig[]> },
+  elementConfigs: { type: Array as PropType<IElementConfig | IElementConfig[]> },
   /**
    * requests
    */
