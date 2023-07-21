@@ -4,7 +4,7 @@ import { TApiNameFun, TClientResult } from "../clients";
 type TRouteItem = {
   name: string;
   path: string[]; //例如：["src","views"]
-  importPrefix?: TRouteOptions["importPrefix"]; //路由文件路径前缀
+  options?: TRouteOptions;
   //生成文件相关
   generateName?: string; //生成文件名字，缺省取 name
   generatePath?: string[]; //生成文件路径，缺省 ["src","router"]

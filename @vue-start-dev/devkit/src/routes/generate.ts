@@ -23,10 +23,7 @@ export const generateRouteFile = (cwd: string, config: TRuntimeConfig) => {
     if (!existsSync(viewPath)) {
       return;
     }
-    const routeResult = createRouteData(viewPath, {
-      ...routeConfig.options,
-      importPrefix: item.importPrefix || routeConfig.options?.importPrefix,
-    });
+    const routeResult = createRouteData(viewPath, { ...routeConfig.options, ...item.options });
 
     const { routeStr, routeNameStr } = item.convertData ? item.convertData(routeResult) : routeResult;
 

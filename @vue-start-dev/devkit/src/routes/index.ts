@@ -3,7 +3,21 @@
  *
  */
 import { Dirent, existsSync, readdirSync, readFileSync } from "fs";
-import { endsWith, filter, indexOf, map, size, some, camelCase, join, toLower, upperFirst, forEach, get } from "lodash";
+import {
+  endsWith,
+  filter,
+  indexOf,
+  map,
+  size,
+  some,
+  camelCase,
+  join,
+  toLower,
+  upperFirst,
+  forEach,
+  get,
+  omit,
+} from "lodash";
 import { resolve } from "path";
 
 // 获取文件夹或文件的名字；小写处理；
@@ -23,6 +37,8 @@ export type TRouteOptions = {
   ignoreFiles?: string[];
   fileTypes?: string[];
   importPrefix?: string;
+  //如果子节点只有一个值（children中只有一个值），去除当前层级，将component追加到上一层
+  simpleLeaf?: boolean;
 };
 
 type NodeType = {
@@ -163,6 +179,26 @@ const fileToRoute = (data: NodeType[], parent: NodeType[] = [], options: TRouteO
 };
 
 /**
+ * 去除只有一个叶子节点的数据，将component追加到父一级
+ * @param data
+ */
+const simpleLeafData = (data: RouteType[]): RouteType[] => {
+  return map(data, (item) => {
+    const len = size(item.children);
+    const childrenFirstItem = get(item, ["children", 0]);
+    //一个叶子节点
+    if (len === 1 && size(childrenFirstItem.children) <= 0 && childrenFirstItem.component) {
+      return { ...omit(item, "children"), component: childrenFirstItem.component };
+    }
+    //存在子节点
+    if (len > 0) {
+      return { ...item, children: simpleLeafData(item.children!) };
+    }
+    return item;
+  });
+};
+
+/**
  * 生成路由js内容
  * @param routeData
  */
@@ -213,7 +249,10 @@ export const createRouteData = (
   },
 ): TRouteResult => {
   const fileData = readFileData(path, [], options);
-  const routeData = fileToRoute(fileData, [], options);
+  let routeData = fileToRoute(fileData, [], options);
+  if (options.simpleLeaf) {
+    routeData = simpleLeafData(routeData);
+  }
   //路由内容
   const routeStr = routeDataToStr(routeData);
   const routeNameList: string[] = [];
