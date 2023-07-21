@@ -2,9 +2,11 @@
   "elementType": "ProPage",
   "elementId": "ProPage",
   "elementProps": {
-    "showBack": true,
-    "title": "Detail",
+    "title": "List",
     "subTitle": "sub title"
+  },
+  "slots": {
+    "extra": "extra"
   },
   "children": [
     {
@@ -12,6 +14,44 @@
       "elementId": "ProTypography",
       "elementProps": {
         "content": "这是一串ProTypography内容"
+      }
+    },
+    {
+      "elementType": "ProForm$",
+      "elementId": "ProForm$",
+      "elementProps": {
+        "operate": {},
+        "columns": [
+          {
+            "title": "name",
+            "dataIndex": "name",
+            "valueType": "text"
+          },
+          {
+            "title": "age",
+            "dataIndex": "age",
+            "valueType": "digit"
+          }
+        ]
+      }
+    },
+    {
+      "elementType": "ProTable$",
+      "elementId": "ProTable$",
+      "elementProps": {
+        "columns": [
+          {
+            "title": "name",
+            "dataIndex": "name",
+            "valueType": "text"
+          },
+          {
+            "title": "age",
+            "dataIndex": "age",
+            "valueType": "digit"
+          }
+        ],
+        "dataSource": [{ "name": "zx", "age": 18 }]
       }
     },
     {

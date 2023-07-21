@@ -1,0 +1,31 @@
+{
+  "elementType": "ProPage",
+  "elementId": "ProPage",
+  "elementProps": {
+    "showBack": true,
+    "title": "Detail",
+    "subTitle": "sub title"
+  },
+  "children": [
+    {
+      "elementType": "ProTypography",
+      "elementId": "ProTypography",
+      "elementProps": {
+        "content": "这是一串ProTypography内容"
+      }
+    },
+    {
+      "elementType": "Button$",
+      "elementId": "Button$",
+      "children": [
+        {
+          "elementType": "ProTypography",
+          "elementId": "Button-ProTypography",
+          "elementProps": {
+            "content": "Button"
+          }
+        }
+      ]
+    }
+  ]
+}

@@ -80,4 +80,11 @@ export const menus = [
       { title: "api", name: "MapApiIndex" },
     ],
   },
+  {
+    title:"module",
+    name:"Module",
+    children: [
+      { title: "list", name: "QuotaList" },
+    ]
+  }
 ];
