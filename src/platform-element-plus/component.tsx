@@ -80,7 +80,7 @@ ProSearchForm.props = {
   convertColumn: {
     type: Function,
     default: (item: TColumn) => {
-      const nextItem = { ...item, formItemProps: omit(item.formItemProps, "required") };
+      const nextItem = { ...item, formItemProps: omit(item.formItemProps, "required", "rules") };
       //屏蔽掉ElInput中的 showWordLimit 属性
       if (get(nextItem, ["formFieldProps", "showWordLimit"])) {
         return { ...nextItem, formFieldProps: omit(nextItem.formFieldProps, "showWordLimit") };
@@ -107,6 +107,8 @@ ProPage.props = {
 
 export const elementMap = {
   ...elementMapOrigin,
+  ProPage,
+  ProTypography,
 };
 
 export const formElementMap = {

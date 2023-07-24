@@ -5,6 +5,7 @@ import { RouterView } from "vue-router";
 
 import { ConfigProvider } from "ant-design-vue";
 import zhCN from "ant-design-vue/es/locale/zh_CN";
+import { convertRouter } from "@/router";
 
 export const App = defineComponent(() => {
   return () => {
@@ -12,7 +13,8 @@ export const App = defineComponent(() => {
       <ProConfig
         elementMap={elementMap}
         formElementMap={formElementMap}
-        formExtraMap={{ rulePrefixMap: FormRulePrefixMap }}>
+        formExtraMap={{ rulePrefixMap: FormRulePrefixMap }}
+        convertRouter={convertRouter}>
         <ConfigProvider locale={zhCN}>
           <RouterView />
         </ConfigProvider>

@@ -1,8 +1,8 @@
 import { defineComponent } from "vue";
-import { RouterView, useRouter } from "vue-router";
-import { findFirstValidMenu, findTreeItem, useEffect } from "@vue-start/hooks";
-import { ProLayout } from "@vue-start/pro";
-import { find, size } from "lodash";
+import { RouterView } from "vue-router";
+import { findTreeItem, useEffect } from "@vue-start/hooks";
+import { ProLayout, useProRouter } from "@vue-start/pro";
+import { find } from "lodash";
 import { HeaderLeft, HeaderRight } from "@/layout/Header";
 import { css } from "@emotion/css";
 import { routes } from "@/router/routes";
@@ -10,7 +10,7 @@ import { menus } from "@/common/menus";
 import { useConfigStore } from "@/store/StoreCurrent";
 
 export const BasicLayout = defineComponent(() => {
-  const router = useRouter();
+  const { router } = useProRouter();
 
   const [config, setConfig] = useConfigStore();
 
@@ -53,14 +53,7 @@ export const BasicLayout = defineComponent(() => {
   };
 
   const onMenuItemClick = (item: any) => {
-    if (size(item.children) > 0) {
-      const first = findFirstValidMenu(item.children, (item) => !item.children || size(item.children) <= 0);
-      if (first) {
-        router.push({ name: first.value });
-      }
-      return;
-    }
-    router.push({ name: item.value });
+    router.openMenu(item);
   };
 
   return () => {
