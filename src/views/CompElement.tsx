@@ -335,7 +335,7 @@ const ModuleTest = defineComponent(() => {
                 },
                 highConfig$: {
                   registerStateList: [{ name: "label" }, { name: "secShow", mapName: "show$" }],
-                  registerEventList: [{ name: "onClick", sendEventName: "eeeee" }],
+                  registerEventList: [{ name: "onClick" }],
                 },
               },
               {

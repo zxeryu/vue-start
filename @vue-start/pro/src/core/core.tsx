@@ -1,4 +1,4 @@
-import { TActionEvent, TColumn, TElementMap, TValueType } from "../types";
+import { TColumn, TElementMap, TValueType } from "../types";
 import { computed, defineComponent, h, VNode, isVNode } from "vue";
 import {
   forEach,
@@ -12,13 +12,15 @@ import {
   map,
   omit,
   pick,
-  reduce,
   set,
   size,
   some,
 } from "lodash";
 import { useProModule } from "./Module";
 import { Slots } from "@vue/runtime-core";
+import { useProRouter } from "./router";
+import { executeEx, TFunItem, TObjItem, TParamItem } from "./expression";
+import { useProConfig } from "./pro";
 
 /***************************************** curd模式 *****************************************/
 
@@ -96,6 +98,10 @@ export const getItemEl = <T extends TColumn>(elementMap: any, column: T, value: 
 export declare type InternalNamePath = (string | number)[];
 export declare type NamePath = string | number | InternalNamePath;
 
+export type TExecuteName = "store" | "router" | "request"; //模块名称
+export type TExecuteFunName = string; //调用模块的方法名称
+export type TExecuteItem = (TExecuteName | TExecuteFunName | TParamItem | TObjItem | TFunItem)[];
+
 export interface IHighConfig {
   //注册接受Module的状态
   registerStateList?: {
@@ -108,8 +114,7 @@ export interface IHighConfig {
   registerEventList?: {
     //事件名称
     name: string;
-    //sendEvent type 名称
-    sendEventName?: TActionEvent["type"];
+    executeList?: TExecuteItem[];
   }[];
   //注册转换的props
   registerPropsTrans?: {
@@ -154,7 +159,7 @@ export const renderElements = (elementMap: TElementMap, elementConfigs: IElement
 };
 
 /**
- * props转换
+ * 转换 props 中注册的组件
  */
 const convertPropsEl = (elementMap: TElementMap, elementConfig: IElementConfig): IElementConfig["elementProps"] => {
   const elementProps = elementConfig.elementProps;
@@ -189,7 +194,7 @@ const convertPropsEl = (elementMap: TElementMap, elementConfig: IElementConfig):
 };
 
 /**
- * slots转换
+ * 转换 slots 中注册的组件 或者 字符串/数字
  */
 const convertSlots = (elementMap: TElementMap, elementConfig: IElementConfig): Slots => {
   const children = size(elementConfig.children) > 0 ? renderElements(elementMap, elementConfig.children!) : undefined;
@@ -260,24 +265,24 @@ export const Wrapper = defineComponent<{
     elementConfig: { type: Object },
   } as any,
   setup: (props) => {
+    const { router } = useProRouter();
+    const { expressionMethods } = useProConfig();
     const { state, sendEvent } = useProModule();
     const { elementMap, elementConfig } = props;
 
+    /************************************** highConfig ********************************************/
     const highConfig$ = elementConfig.highConfig$!;
     //转换props
     const elementProps = convertPropsEl(elementMap, elementConfig);
-
-    //事件订阅
-    const events = reduce(
-      highConfig$.registerEventList,
-      (pair, item) => ({
-        ...pair,
-        [item.name]: (...params: any[]) => {
-          sendEvent({ type: item.sendEventName || elementConfig.elementId, payload: params });
-        },
-      }),
-      {},
-    );
+    //将注册的事件注入到props中
+    forEach(elementConfig.highConfig$?.registerEventList, (item) => {
+      const eventFun = (...params: any[]) => {
+        const type = `${elementConfig.elementId}-${item.name.replace(/\./g, "_")}`;
+        sendEvent({ type, payload: params });
+        execute(item.executeList!, params);
+      };
+      elementProps && set(elementProps, item.name, eventFun);
+    });
 
     //receiveStateList 订阅
     const receiveStates = computed(() => {
@@ -298,8 +303,45 @@ export const Wrapper = defineComponent<{
       return pick(changeProps, firstPropNameList as string[]);
     });
 
+    // slots
     const El = get(elementMap, elementConfig.elementType) || elementConfig.elementType;
     const slots = convertSlots(elementMap, elementConfig);
+
+    //********************** executeList， 执行json描述的方法 *********************
+
+    const execute = (executeList: TExecuteItem[], params: any[]) => {
+      if (!executeList) return;
+
+      const p: any = { state, data: {}, arguments: params, methodObj: expressionMethods };
+
+      forEach(executeList, (item) => {
+        if (!isArray(item) || size(item) < 2) {
+          console.log("execute invalid", item);
+          return;
+        }
+        const [name, funName, ...params] = item;
+        let fun;
+        switch (name) {
+          case "router":
+            fun = get(router, funName);
+            break;
+          case "store":
+            break;
+        }
+        if (fun) {
+          try {
+            const paramValues = map(params, (param) => {
+              const value = executeEx(param, p);
+              return value;
+            });
+            fun(...paramValues);
+          } catch (e) {
+            console.log("execute err", e);
+          }
+        }
+      });
+    };
+
     return () => {
       //如果标记show$值为false，不渲染组件
       const show$ = get(receiveStates.value, "show$");
@@ -307,11 +349,7 @@ export const Wrapper = defineComponent<{
         return null;
       }
 
-      return h(
-        El,
-        { key: elementConfig.elementId, ...elementProps, ...omit(receiveStates.value, "show$"), ...events },
-        slots,
-      );
+      return h(El, { key: elementConfig.elementId, ...elementProps, ...omit(receiveStates.value, "show$") }, slots);
     };
   },
 });

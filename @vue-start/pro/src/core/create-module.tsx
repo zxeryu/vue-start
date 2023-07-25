@@ -1,4 +1,4 @@
-import { defineComponent, isVNode, ref } from "vue";
+import { defineComponent, isVNode, ref, DefineComponent } from "vue";
 import { ProModule } from "./Module";
 import { IElementConfig } from "./core";
 import { ElementKeys, useGetCompByKey } from "../comp";
@@ -7,7 +7,7 @@ import { cloneDeep, forEach, get, isArray, isEmpty, isNumber, set, size } from "
 
 /******************************* 合并extra方法 ********************************************/
 
-const convertPath = (path: string, obj: IElementConfig): string => {
+const convertPath = (path: string, obj: Record<string, any>): string => {
   const arr = path.match(/\[(.*?)\]/g);
   if (!arr || size(arr) <= 0) return path;
 
@@ -55,12 +55,12 @@ const setExtraItem = (elementConfig: IElementConfig, extra: Record<string, any>)
     //补充的值添加到elementConfig中
     const path = convertPath(k, elementConfig);
     if (!isValidPath(path)) {
-      console.log("补充对象key转换失败", elementConfig.elementId, k);
+      console.log("ConfigExtra：补充对象key转换失败", elementConfig.elementId, k);
       return;
     }
 
     if (!isHasParent(path, elementConfig)) {
-      console.log("补充对象key未找到父级", elementConfig.elementId, k, "->", path);
+      console.log("ConfigExtra：补充对象key未找到父级", elementConfig.elementId, k, "->", path);
       return;
     }
 
@@ -96,9 +96,11 @@ const mergeExtraData = (elementConfig: IElementConfig, configExtra: Record<strin
 export const createModule = ({
   elementConfigs,
   elementConfigExtra,
+  Logic,
 }: {
   elementConfigs?: IElementConfig | IElementConfig[];
   elementConfigExtra?: Record<string, any>;
+  Logic?: DefineComponent;
 }) => {
   return defineComponent({
     props: {},
@@ -139,7 +141,7 @@ export const createModule = ({
           );
         }
 
-        return <ProModule elementConfigs={configRef.value} />;
+        return <ProModule elementConfigs={configRef.value}>{Logic && <Logic />}</ProModule>;
       };
     },
   });

@@ -75,6 +75,8 @@ export interface IProConfigProvide {
   dispatchRequest: ProDispatchRequestType;
   //重写router对象
   convertRouter?: (router: Router) => TRouter;
+  //表达式工具集
+  expressionMethods: { [key: string]: (...params: any[]) => any };
 }
 
 const proConfigProps = () => ({
@@ -89,6 +91,8 @@ const proConfigProps = () => ({
   registerMetas: { type: Array as PropType<TMeta[]> },
   //路由方法
   convertRouter: { type: Function as PropType<(router: Router) => TRouter> },
+  //表达式工具集
+  expressionMethods: { type: Object as PropType<{ [key: string]: (...params: any[]) => any }> },
 });
 
 const ProConfigKey = Symbol("pro-config");

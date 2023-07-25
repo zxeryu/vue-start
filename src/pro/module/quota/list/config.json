@@ -17,8 +17,8 @@
       }
     },
     {
-      "elementType": "ProForm$",
-      "elementId": "ProForm$",
+      "elementType": "ProSearchForm$",
+      "elementId": "ProSearchForm$",
       "elementProps": {
         "operate": {},
         "columns": [
@@ -31,6 +31,13 @@
             "title": "age",
             "dataIndex": "age",
             "valueType": "digit"
+          }
+        ]
+      },
+      "highConfig$": {
+        "registerEventList": [
+          {
+            "name": "onFinish"
           }
         ]
       }
@@ -51,21 +58,61 @@
             "valueType": "digit"
           }
         ],
-        "dataSource": [{ "name": "zx", "age": 18 }]
+        "operate": {
+          "items": [
+            {
+              "value": "detail",
+              "label": "查看",
+              "show": true
+            }
+          ]
+        },
+        "dataSource": [{ "id": "111", "name": "zx", "age": 18 }]
+      },
+      "highConfig$": {
+        "registerEventList": [
+          {
+            "name": "operate.items.0.onClick",
+            "executeList": [
+              [
+                "router",
+                "push",
+                {
+                  "name$": "obj",
+                  "query.id$": {
+                    "name$": "arguments",
+                    "namePath$": "0.id"
+                  },
+                  "name": "QuotaDetail"
+                }
+              ]
+            ]
+          }
+        ]
       }
     },
     {
       "elementType": "Button$",
       "elementId": "Button$",
-      "children": [
-        {
-          "elementType": "ProTypography",
-          "elementId": "Button-ProTypography",
-          "elementProps": {
-            "content": "Button"
+      "slots": {
+        "default": "Button"
+      },
+      "highConfig$": {
+        "registerEventList": [
+          {
+            "name": "onClick",
+            "executeList": [
+              [
+                "router",
+                "push",
+                {
+                  "name": "QuotaDetail"
+                }
+              ]
+            ]
           }
-        }
-      ]
+        ]
+      }
     }
   ]
 }
