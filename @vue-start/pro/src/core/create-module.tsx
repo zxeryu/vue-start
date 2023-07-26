@@ -2,48 +2,10 @@ import { defineComponent, isVNode, ref, DefineComponent } from "vue";
 import { ProModule } from "./Module";
 import { IElementConfig } from "./core";
 import { ElementKeys, useGetCompByKey } from "../comp";
-import { useEffect, findTreeItem } from "@vue-start/hooks";
-import { cloneDeep, forEach, get, isArray, isEmpty, isNumber, set, size } from "lodash";
+import { useEffect, restorePath, isValidPath, isPathHasParent } from "@vue-start/hooks";
+import { cloneDeep, forEach, get, isArray, isEmpty, set, size } from "lodash";
 
 /******************************* 合并extra方法 ********************************************/
-
-const convertPath = (path: string, obj: Record<string, any>): string => {
-  const arr = path.match(/\[(.*?)\]/g);
-  if (!arr || size(arr) <= 0) return path;
-
-  const firstItem = arr[0];
-  if (!firstItem || firstItem.indexOf(",") < 0) return path;
-
-  const [idName, idValue] = firstItem.replace("[", "").replace("]", "").split(",");
-  const leftPath = path.substring(0, path.indexOf(firstItem) - 1);
-
-  const arrObj = get(obj, leftPath);
-  if (!isArray(arrObj)) return path;
-
-  const { index } = findTreeItem(arrObj, (item) => item[idName] === idValue);
-  if (!isNumber(index)) return path;
-
-  const cp = path.replace(firstItem, String(index));
-
-  return convertPath(cp, obj);
-};
-
-//是否是合法的path
-const isValidPath = (path: string): boolean => {
-  if (!path) return false;
-  if (path.indexOf("[") > -1) return false;
-  if (path.indexOf("]") > -1) return false;
-  return true;
-};
-
-//父级对象是否存在
-const isHasParent = (path: string, obj: IElementConfig): boolean => {
-  if (path.indexOf(".") > 0) {
-    const leftPath = path.substring(0, path.lastIndexOf("."));
-    return !!get(obj, leftPath);
-  }
-  return true;
-};
 
 //extra中的值添加到 IElementConfig 中
 const setExtraItem = (elementConfig: IElementConfig, extra: Record<string, any>) => {
@@ -53,13 +15,13 @@ const setExtraItem = (elementConfig: IElementConfig, extra: Record<string, any>)
 
   forEach(extra, (v, k) => {
     //补充的值添加到elementConfig中
-    const path = convertPath(k, elementConfig);
+    const path = restorePath(k, elementConfig);
     if (!isValidPath(path)) {
       console.log("ConfigExtra：补充对象key转换失败", elementConfig.elementId, k);
       return;
     }
 
-    if (!isHasParent(path, elementConfig)) {
+    if (!isPathHasParent(path, elementConfig)) {
       console.log("ConfigExtra：补充对象key未找到父级", elementConfig.elementId, k, "->", path);
       return;
     }

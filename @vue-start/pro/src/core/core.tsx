@@ -21,6 +21,7 @@ import { Slots } from "@vue/runtime-core";
 import { useProRouter } from "./router";
 import { executeEx, TFunItem, TObjItem, TParamItem } from "./expression";
 import { useProConfig } from "./pro";
+import { isPathHasParent, isValidPath, restorePath } from "@vue-start/hooks";
 
 /***************************************** curd模式 *****************************************/
 
@@ -277,11 +278,14 @@ export const Wrapper = defineComponent<{
     //将注册的事件注入到props中
     forEach(elementConfig.highConfig$?.registerEventList, (item) => {
       const eventFun = (...params: any[]) => {
-        const type = `${elementConfig.elementId}-${item.name.replace(/\./g, "_")}`;
+        const type = `${elementConfig.elementId}-${item.name}`;
         sendEvent({ type, payload: params });
         execute(item.executeList!, params);
       };
-      elementProps && set(elementProps, item.name, eventFun);
+      const path = restorePath(item.name, elementProps!);
+      if (elementProps && isValidPath(path) && isPathHasParent(path, elementProps!)) {
+        set(elementProps, path, eventFun);
+      }
     });
 
     //receiveStateList 订阅

@@ -4,7 +4,9 @@ import { get, isArray, isString, map, size, some, endsWith, forEach, pick, set }
  * eg:
  * arguments:[{id:'111',name:'zx',age:18}]
  * {name$:"arguments",namePath$:"0.id"}
+ *
  * 转换后
+ *
  * '111'
  */
 export type TDataType = {
@@ -46,6 +48,7 @@ export type TParamItem = any | TDataType;
   }
  *
  * eg1 和 eg2 转换后的结果都为：
+ *
  * {
  *   name:"QuotaDetail",
  *   query:{
@@ -65,7 +68,9 @@ export type TObjItem = {
  * 第一个项：调用模块的方法名称，以"$"结尾
  * eg:
  * ["pick$", {"id":"111", "name":"name"}, "id"]
+ *
  * 转换后的结果
+ *
  * {id:"111"}
  */
 export type TFunItem = (string | TParamItem | TObjItem)[];

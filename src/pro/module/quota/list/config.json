@@ -72,7 +72,7 @@
       "highConfig$": {
         "registerEventList": [
           {
-            "name": "operate.items.0.onClick",
+            "name": "operate.items.[value,detail].onClick",
             "executeList": [
               [
                 "router",
