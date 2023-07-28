@@ -20,6 +20,8 @@ export interface IProModuleProvide {
   state: UnwrapNestedRefs<Record<string, any>>;
   dispatch: (action: TActionState) => void;
   //
+  data: Record<string, any>;
+  //
   requests: IRequestOpts[];
   sendRequest: (requestNameOrAction: string, ...params: any[]) => void;
 }
@@ -71,6 +73,8 @@ const proModuleProps = () => ({
    * module状态
    */
   state: { type: Object as PropType<UnwrapNestedRefs<Record<string, any>>> },
+  //初始化状态数据
+  initState: { type: Object as PropType<object> },
   /**
    * 组件集
    */
@@ -114,7 +118,9 @@ export const ProModule = defineComponent<ProModuleProps>({
 
     /*********************************** 页面状态 ***************************************/
 
-    const state = props.state || reactive({});
+    const state = props.state || reactive({ ...props.initState });
+
+    const data = {};
 
     const dispatch = (action: TActionState) => {
       const prev = state[action.type];
@@ -194,6 +200,8 @@ export const ProModule = defineComponent<ProModuleProps>({
       //
       state,
       dispatch,
+      //
+      data,
       //
       requests: props.requests!,
       sendRequest,

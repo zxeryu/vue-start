@@ -18,9 +18,7 @@ import {
 } from "lodash";
 import { useProModule } from "./Module";
 import { Slots } from "@vue/runtime-core";
-import { useProRouter } from "./router";
-import { executeEx, TFunItem, TObjItem, TParamItem } from "./expression";
-import { useProConfig } from "./pro";
+import { TFunItem, TObjItem, TParamItem } from "./expression";
 import { isPathHasParent, isValidPath, restorePath } from "@vue-start/hooks";
 
 /***************************************** curd模式 *****************************************/
@@ -266,8 +264,6 @@ export const Wrapper = defineComponent<{
     elementConfig: { type: Object },
   } as any,
   setup: (props) => {
-    const { router } = useProRouter();
-    const { expressionMethods } = useProConfig();
     const { state, sendEvent } = useProModule();
     const { elementMap, elementConfig } = props;
 
@@ -279,8 +275,7 @@ export const Wrapper = defineComponent<{
     forEach(elementConfig.highConfig$?.registerEventList, (item) => {
       const eventFun = (...params: any[]) => {
         const type = `${elementConfig.elementId}-${item.name}`;
-        sendEvent({ type, payload: params });
-        execute(item.executeList!, params);
+        sendEvent({ type, payload: params, executeList: item.executeList });
       };
       const path = restorePath(item.name, elementProps!);
       if (elementProps && isValidPath(path) && isPathHasParent(path, elementProps!)) {
@@ -310,42 +305,6 @@ export const Wrapper = defineComponent<{
     // slots
     const El = get(elementMap, elementConfig.elementType) || elementConfig.elementType;
     const slots = convertSlots(elementMap, elementConfig);
-
-    //********************** executeList， 执行json描述的方法 *********************
-
-    const execute = (executeList: TExecuteItem[], params: any[]) => {
-      if (!executeList) return;
-
-      const p: any = { state, data: {}, arguments: params, methodObj: expressionMethods };
-
-      forEach(executeList, (item) => {
-        if (!isArray(item) || size(item) < 2) {
-          console.log("execute invalid", item);
-          return;
-        }
-        const [name, funName, ...params] = item;
-        let fun;
-        switch (name) {
-          case "router":
-            fun = get(router, funName);
-            break;
-          case "store":
-            break;
-        }
-        if (fun) {
-          try {
-            const paramValues = map(params, (param) => {
-              const value = executeEx(param, p);
-              return value;
-            });
-            fun(...paramValues);
-          } catch (e) {
-            console.log("execute err", e);
-          }
-        }
-      });
-    };
-
     return () => {
       //如果标记show$值为false，不渲染组件
       const show$ = get(receiveStates.value, "show$");

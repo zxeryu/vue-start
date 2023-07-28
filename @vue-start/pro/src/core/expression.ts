@@ -2,8 +2,8 @@ import { get, isArray, isString, map, size, some, endsWith, forEach, pick, set }
 
 /**
  * eg:
- * arguments:[{id:'111',name:'zx',age:18}]
- * {name$:"arguments",namePath$:"0.id"}
+ * args:[{id:'111',name:'zx',age:18}]
+ * {type$: "dataSource", name$:"args", namePath$:"0.id"}
  *
  * 转换后
  *
@@ -12,24 +12,27 @@ import { get, isArray, isString, map, size, some, endsWith, forEach, pick, set }
 export type TDataType = {
   /**
    * 取值源对象
+   * name$
    * state:      当前module的state对象；
    * data：      当前module的data（普通obj，仅存储数据使用）对象；
-   * arguments： 当前方法中的参数；缺省取该值
+   * args：      当前方法中的参数；缺省取该值
    */
-  name$: "state" | "data" | "arguments";
+  type$: "dataSource";
+  name$: string;
   namePath$?: string; //data中属性path
 };
 export type TParamItem = any | TDataType;
 
 /**
- * arguments:[{id:'111',name:'zx',age:18}]
+ * args:[{id:'111',name:'zx',age:18}]
  * eg1:
  {
-   "name$": "obj",
+   "type$": "obj",
    "query$": [
      "pick$",
      {
-       "name$": "arguments",
+       "type$": "dataSource",
+       "name$": "args",
        "namePath$": "0"
      },
      "id"
@@ -39,9 +42,10 @@ export type TParamItem = any | TDataType;
  *
  * eg2:
  {
-    "name$": "obj",
+    "type$": "obj",
     "query.id$": {
-      "name$": "arguments",
+      "type$": "dataSource",
+      "name$": "args",
       "namePath$": "0.id"
     },
     "name": "QuotaDetail"
@@ -57,7 +61,7 @@ export type TParamItem = any | TDataType;
  * }
  */
 export type TObjItem = {
-  name$: "obj";
+  type$: "obj";
   /**
    * 以"$"符结尾的属性可以设置为 TFunItem | TDataType | TObjItem，最终将为去除$的属性赋值
    */
@@ -75,11 +79,13 @@ export type TObjItem = {
  */
 export type TFunItem = (string | TParamItem | TObjItem)[];
 
+export type TExpression = TFunItem | TDataType | TObjItem;
+
 /**
  * 是否是合法的 Fun 描述
  * @param funEx
  */
-const isValidFunEx = (funEx: TFunItem) => {
+const isFunEx = (funEx: TFunItem) => {
   //不是数组
   if (!isArray(funEx) || size(funEx) <= 0) return false;
   //不是合法方法名称
@@ -88,64 +94,55 @@ const isValidFunEx = (funEx: TFunItem) => {
   return endsWith(funName, "$");
 };
 
-const DataTypeArr: TDataType["name$"][] = ["state", "data", "arguments"];
 /**
  * 是否是标记 数据类型 的描述
  * @param ex
  */
-const isValidDataTypeEx = (ex: TParamItem) => {
+const isDataTypeEx = (ex: TDataType) => {
   if (typeof ex !== "object") return false;
-  if (!ex.name$) return false;
-  return some(DataTypeArr, (type) => type === ex.name$);
+  if (!ex.type$) return false;
+  return ex.type$ === "dataSource" && ex.type$;
 };
 
 /**
  * 是否是 TObjItem 描述
  * @param ex
  */
-const isValidObjEx = (ex: TObjItem) => {
+const isObjEx = (ex: TObjItem) => {
   if (typeof ex !== "object") return false;
-  if (!ex.name$) return false;
-  return ex.name$ === "obj";
+  if (!ex.type$) return false;
+  return ex.type$ === "obj";
 };
 
 const defaultMethodObj = { get, pick };
 
 //执行表达式
-export const executeEx = (
-  ex: TParamItem | TFunItem | TObjItem,
-  p: {
-    methodObj: any;
-    state: any;
-    data: any;
-    arguments: any[];
-  },
-): any => {
-  if (isValidDataTypeEx(ex)) {
-    const data = get(p, ex.name$);
+export const executeEx = (ex: TParamItem | TFunItem | TObjItem, options: { methodObj: any; [k: string]: any }): any => {
+  if (isDataTypeEx(ex)) {
+    const data = get(options, ex.name$);
     return ex.namePath$ ? get(data, ex.namePath$) : data;
-  } else if (isValidObjEx(ex)) {
+  } else if (isObjEx(ex)) {
     const obj: any = {};
     forEach(ex, (v, k) => {
-      if (k === "name$") return;
+      if (k === "type$") return;
       if (endsWith(k, "$")) {
-        const value = executeEx(v, p);
+        const value = executeEx(v, options);
         set(obj, k.replace("$", ""), value);
       } else {
         obj[k] = v;
       }
     });
     return obj;
-  } else if (isValidFunEx(ex)) {
+  } else if (isFunEx(ex)) {
     const [funName, ...params] = ex;
-    const methodObj = p.methodObj || defaultMethodObj;
+    const methodObj = options.methodObj || defaultMethodObj;
     const fun = get(methodObj, funName.replace("$", ""));
     //方法不存在
     if (!fun) {
       console.log("ex", "未找到对应的方法", ex);
       return;
     }
-    const paramValues = map(params, (param) => executeEx(param, p));
+    const paramValues = map(params, (param) => executeEx(param, options));
     return fun(...paramValues);
   }
   return ex;

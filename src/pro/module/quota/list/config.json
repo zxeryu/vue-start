@@ -1,118 +1,121 @@
 {
-  "elementType": "ProPage",
-  "elementId": "ProPage",
-  "elementProps": {
-    "title": "List",
-    "subTitle": "sub title"
-  },
-  "slots": {
-    "extra": "extra"
-  },
-  "children": [
-    {
-      "elementType": "ProTypography",
-      "elementId": "ProTypography",
-      "elementProps": {
-        "content": "这是一串ProTypography内容"
-      }
+  "elementConfigs": {
+    "elementType": "ProPage",
+    "elementId": "ProPage",
+    "elementProps": {
+      "title": "List",
+      "subTitle": "sub title"
     },
-    {
-      "elementType": "ProSearchForm$",
-      "elementId": "ProSearchForm$",
-      "elementProps": {
-        "operate": {},
-        "columns": [
-          {
-            "title": "name",
-            "dataIndex": "name",
-            "valueType": "text"
-          },
-          {
-            "title": "age",
-            "dataIndex": "age",
-            "valueType": "digit"
-          }
-        ]
+    "slots": {
+      "extra": "extra"
+    },
+    "children": [
+      {
+        "elementType": "ProTypography",
+        "elementId": "ProTypography",
+        "elementProps": {
+          "content": "这是一串ProTypography内容"
+        }
       },
-      "highConfig$": {
-        "registerEventList": [
-          {
-            "name": "onFinish"
-          }
-        ]
-      }
-    },
-    {
-      "elementType": "ProTable$",
-      "elementId": "ProTable$",
-      "elementProps": {
-        "columns": [
-          {
-            "title": "name",
-            "dataIndex": "name",
-            "valueType": "text"
-          },
-          {
-            "title": "age",
-            "dataIndex": "age",
-            "valueType": "digit"
-          }
-        ],
-        "operate": {
-          "items": [
+      {
+        "elementType": "ProSearchForm$",
+        "elementId": "ProSearchForm$",
+        "elementProps": {
+          "operate": {},
+          "columns": [
             {
-              "value": "detail",
-              "label": "查看",
-              "show": true
+              "title": "name",
+              "dataIndex": "name",
+              "valueType": "text"
+            },
+            {
+              "title": "age",
+              "dataIndex": "age",
+              "valueType": "digit"
             }
           ]
         },
-        "dataSource": [{ "id": "111", "name": "zx", "age": 18 }]
+        "highConfig$": {
+          "registerEventList": [
+            {
+              "name": "onFinish"
+            }
+          ]
+        }
       },
-      "highConfig$": {
-        "registerEventList": [
-          {
-            "name": "operate.items.[value,detail].onClick",
-            "executeList": [
-              [
-                "router",
-                "push",
-                {
-                  "name$": "obj",
-                  "query.id$": {
-                    "name$": "arguments",
-                    "namePath$": "0.id"
-                  },
-                  "name": "QuotaDetail"
-                }
-              ]
+      {
+        "elementType": "ProTable$",
+        "elementId": "ProTable$",
+        "elementProps": {
+          "columns": [
+            {
+              "title": "name",
+              "dataIndex": "name",
+              "valueType": "text"
+            },
+            {
+              "title": "age",
+              "dataIndex": "age",
+              "valueType": "digit"
+            }
+          ],
+          "operate": {
+            "items": [
+              {
+                "value": "detail",
+                "label": "查看",
+                "show": true
+              }
             ]
-          }
-        ]
-      }
-    },
-    {
-      "elementType": "Button$",
-      "elementId": "Button$",
-      "slots": {
-        "default": "Button"
+          },
+          "dataSource": [{ "id": "111", "name": "zx", "age": 18 }]
+        },
+        "highConfig$": {
+          "registerEventList": [
+            {
+              "name": "operate.items.[value,detail].onClick",
+              "executeList": [
+                [
+                  "router",
+                  "push",
+                  {
+                    "type$": "obj",
+                    "query.id$": {
+                      "type$": "dataSource",
+                      "name$": "args",
+                      "namePath$": "0.id"
+                    },
+                    "name": "QuotaDetail"
+                  }
+                ]
+              ]
+            }
+          ]
+        }
       },
-      "highConfig$": {
-        "registerEventList": [
-          {
-            "name": "onClick",
-            "executeList": [
-              [
-                "router",
-                "push",
-                {
-                  "name": "QuotaDetail"
-                }
+      {
+        "elementType": "Button$",
+        "elementId": "Button$",
+        "slots": {
+          "default": "Button"
+        },
+        "highConfig$": {
+          "registerEventList": [
+            {
+              "name": "onClick",
+              "executeList": [
+                [
+                  "router",
+                  "push",
+                  {
+                    "name": "QuotaDetail"
+                  }
+                ]
               ]
-            ]
-          }
-        ]
+            }
+          ]
+        }
       }
-    }
-  ]
+    ]
+  }
 }

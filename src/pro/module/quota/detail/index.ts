@@ -1,4 +1,4 @@
 import { createModule } from "@vue-start/pro";
-import elementConfigs from "./config.json";
+import configData from "./config.json";
 
-export default createModule({ elementConfigs });
+export default createModule({ configData });
