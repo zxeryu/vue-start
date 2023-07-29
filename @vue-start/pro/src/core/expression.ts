@@ -1,4 +1,4 @@
-import { get, isArray, isString, map, size, some, endsWith, forEach, pick, set } from "lodash";
+import { get, isArray, isString, map, size, endsWith, forEach, pick, set } from "lodash";
 
 /**
  * eg:
@@ -117,7 +117,10 @@ const isObjEx = (ex: TObjItem) => {
 const defaultMethodObj = { get, pick };
 
 //执行表达式
-export const executeEx = (ex: TParamItem | TFunItem | TObjItem, options: { methodObj: any; [k: string]: any }): any => {
+export const executeEx = (
+  ex: TParamItem | TFunItem | TObjItem,
+  options: { expressionMethods: any; [k: string]: any },
+): any => {
   if (isDataTypeEx(ex)) {
     const data = get(options, ex.name$);
     return ex.namePath$ ? get(data, ex.namePath$) : data;
@@ -135,8 +138,8 @@ export const executeEx = (ex: TParamItem | TFunItem | TObjItem, options: { metho
     return obj;
   } else if (isFunEx(ex)) {
     const [funName, ...params] = ex;
-    const methodObj = options.methodObj || defaultMethodObj;
-    const fun = get(methodObj, funName.replace("$", ""));
+    const expressionMethods = options.expressionMethods || defaultMethodObj;
+    const fun = get(expressionMethods, funName.replace("$", ""));
     //方法不存在
     if (!fun) {
       console.log("ex", "未找到对应的方法", ex);

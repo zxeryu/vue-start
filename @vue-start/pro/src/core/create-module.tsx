@@ -1,12 +1,10 @@
 import { defineComponent, isVNode, ref, DefineComponent, PropType } from "vue";
-import { IRequestOpts, ProModule, useModuleEvent, useProModule } from "./Module";
+import { IRequestOpts, ProModule, useProModule } from "./Module";
 import { IElementConfig, TExecuteItem } from "./core";
 import { ElementKeys, useGetCompByKey } from "../comp";
 import { useEffect, restorePath, isValidPath, isPathHasParent } from "@vue-start/hooks";
-import { cloneDeep, forEach, get, isArray, isEmpty, map, set, size } from "lodash";
-import { executeEx, TExpression } from "./expression";
-import { useProRouter } from "./router";
-import { useProConfig } from "./pro";
+import { cloneDeep, forEach, get, isArray, isEmpty, set, size } from "lodash";
+import { TExpression } from "./expression";
 
 export type TConfigData = {
   //初始状态
@@ -78,50 +76,7 @@ const ModuleContent = defineComponent({
     initExecuteList: { type: Array as PropType<TConfigData["initExecuteList"]> },
   },
   setup: (props) => {
-    const { router } = useProRouter();
-    const { expressionMethods } = useProConfig();
-    const { state, data } = useProModule();
-
-    //********************** executeList， 执行json描述的方法 *********************
-
-    const execute = (executeList: TExecuteItem[], args: any[]) => {
-      if (!executeList) return;
-
-      const options: any = { state, data, args, methodObj: expressionMethods };
-
-      forEach(executeList, (item) => {
-        if (!isArray(item) || size(item) < 2) {
-          console.log("execute invalid", item);
-          return;
-        }
-        const [name, funName, ...params] = item;
-        let fun;
-        switch (name) {
-          case "router":
-            fun = get(router, funName);
-            break;
-          case "store":
-            break;
-        }
-        if (fun) {
-          try {
-            const paramValues = map(params, (param) => {
-              return executeEx(param, options);
-            });
-            fun(...paramValues);
-          } catch (e) {
-            console.log("execute err", e);
-          }
-        }
-      });
-    };
-
-    useModuleEvent((action) => {
-      //sendEvent方法发送的事件，执行executeList
-      if (action.executeList) {
-        execute(action.executeList, action.payload);
-      }
-    });
+    const { execute } = useProModule();
 
     //初始化
     useEffect(() => {

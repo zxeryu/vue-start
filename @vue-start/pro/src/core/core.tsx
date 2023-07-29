@@ -264,7 +264,7 @@ export const Wrapper = defineComponent<{
     elementConfig: { type: Object },
   } as any,
   setup: (props) => {
-    const { state, sendEvent } = useProModule();
+    const { state, sendEvent, execute } = useProModule();
     const { elementMap, elementConfig } = props;
 
     /************************************** highConfig ********************************************/
@@ -275,7 +275,8 @@ export const Wrapper = defineComponent<{
     forEach(elementConfig.highConfig$?.registerEventList, (item) => {
       const eventFun = (...params: any[]) => {
         const type = `${elementConfig.elementId}-${item.name}`;
-        sendEvent({ type, payload: params, executeList: item.executeList });
+        sendEvent({ type, payload: params });
+        execute(item.executeList!, params);
       };
       const path = restorePath(item.name, elementProps!);
       if (elementProps && isValidPath(path) && isPathHasParent(path, elementProps!)) {

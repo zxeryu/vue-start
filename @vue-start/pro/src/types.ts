@@ -1,5 +1,4 @@
 import { VNode } from "vue";
-import { TExecuteItem } from "./core";
 
 export type TDefaultValueType =
   | "text"
@@ -74,8 +73,6 @@ export type TActionEvent = {
   type: string;
   //数据or对象
   payload?: any;
-  //事件需要执行的方法
-  executeList?: TExecuteItem[];
   /**
    * 发送事件源
    * 公共组件（如：Curd）只处理source为undefined的事件

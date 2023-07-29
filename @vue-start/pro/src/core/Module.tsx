@@ -1,13 +1,15 @@
 import { defineComponent, ExtractPropTypes, inject, PropType, provide, reactive } from "vue";
 import { TActionEvent, TActionState, TElementMap } from "../types";
-import { get, isArray, isFunction, isObject, keys, reduce, size } from "lodash";
+import { forEach, get, isArray, isFunction, isObject, keys, map, reduce, size } from "lodash";
 import { UnwrapNestedRefs } from "@vue/reactivity";
 import { Subject } from "rxjs";
 import { setReactiveValue, useEffect } from "@vue-start/hooks";
 import { IRequestActor, useRequestProvide } from "@vue-start/request";
 import { useComposeRequestActor } from "./request";
-import { IElementConfig, renderElement, renderElements } from "./core";
+import { IElementConfig, renderElement, renderElements, TExecuteItem } from "./core";
 import { useProConfig } from "./pro";
+import { useProRouter } from "./router";
+import { executeEx, TExpression } from "./expression";
 
 const ProModuleKey = Symbol("pro-module");
 
@@ -24,6 +26,9 @@ export interface IProModuleProvide {
   //
   requests: IRequestOpts[];
   sendRequest: (requestNameOrAction: string, ...params: any[]) => void;
+  //
+  executeExp: (param: TExpression, args: any) => any;
+  execute: (executeList: TExecuteItem[], args: any[]) => void;
 }
 
 export const useProModule = (): IProModuleProvide => inject(ProModuleKey) as IProModuleProvide;
@@ -87,6 +92,7 @@ const proModuleProps = () => ({
    * requests
    */
   requests: { type: Array as PropType<IRequestOpts[]> },
+  requestActors: { type: Array as PropType<IRequestActor[]> },
 });
 
 export type ProModuleProps = Partial<ExtractPropTypes<ReturnType<typeof proModuleProps>>>;
@@ -96,7 +102,9 @@ export const ProModule = defineComponent<ProModuleProps>({
     ...(proModuleProps() as any),
   },
   setup: (props, { slots, expose }) => {
-    const { elementMap: elementMapP } = useProConfig();
+    const { router } = useProRouter();
+
+    const { elementMap: elementMapP, expressionMethods } = useProConfig();
 
     const elementMap = props.elementMap! || elementMapP;
 
@@ -192,6 +200,42 @@ export const ProModule = defineComponent<ProModuleProps>({
       true,
     );
 
+    /*********************************** expression ***************************************/
+
+    const executeExp = (param: TExpression, args: any) => {
+      return executeEx(param, { state, data, args, expressionMethods });
+    };
+
+    const execute = (executeList: TExecuteItem[], args: any[]) => {
+      if (!executeList) return;
+
+      const options: any = { state, data, args, expressionMethods };
+
+      forEach(executeList, (item) => {
+        if (!isArray(item) || size(item) < 2) {
+          console.log("execute invalid", item);
+          return;
+        }
+        const [name, funName, ...params] = item;
+        let fun;
+        switch (name) {
+          case "router":
+            fun = get(router, funName);
+            break;
+          case "store":
+            break;
+        }
+        if (fun) {
+          try {
+            const paramValues = map(params, (param) => executeEx(param, options));
+            fun(...paramValues);
+          } catch (e) {
+            console.log("execute err", e);
+          }
+        }
+      });
+    };
+
     provideProModule({
       elementMap,
       //
@@ -205,12 +249,12 @@ export const ProModule = defineComponent<ProModuleProps>({
       //
       requests: props.requests!,
       sendRequest,
+      //
+      executeExp,
+      execute,
     });
 
-    expose({
-      sendEvent,
-      sendRequest,
-    });
+    expose({ sendEvent, sendRequest });
 
     return () => {
       return (
