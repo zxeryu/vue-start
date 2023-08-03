@@ -115,7 +115,7 @@ export interface IHighConfig {
     name: string;
     executeList?: TExecuteItem[];
   }[];
-  //注册转换的props
+  //注册转换的props中需要转换的组件
   registerPropsTrans?: {
     name: NamePath;
     //是否转换成 ()=>VNode，如果name是arr，则无用

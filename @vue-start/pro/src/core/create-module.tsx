@@ -4,7 +4,7 @@ import { IElementConfig, TExecuteItem } from "./core";
 import { ElementKeys, useGetCompByKey } from "../comp";
 import { useEffect, restorePath, isValidPath, isPathHasParent } from "@vue-start/hooks";
 import { cloneDeep, forEach, get, isArray, isEmpty, set, size } from "lodash";
-import { TExpression } from "./expression";
+import { IRequestActor } from "@vue-start/request";
 
 export type TConfigData = {
   //初始状态
@@ -12,13 +12,11 @@ export type TConfigData = {
   //初始化执行的方法
   initExecuteList?: TExecuteItem[];
   //
-  registerRequest?: Pick<IRequestOpts, "stateName" | "loadingName"> &
+  storeKeys?: string[];
+  //
+  requests?: Omit<IRequestOpts, "actor"> &
     {
       actor: string; //actor name
-      convertParamsEx?: TExpression;
-      convertDataEx?: TExpression;
-      onSuccessEx?: TExecuteItem[];
-      onFailedEx?: TExecuteItem[];
     }[];
   //组件树
   elementConfigs?: IElementConfig | IElementConfig[];
@@ -90,12 +88,14 @@ const ModuleContent = defineComponent({
 });
 
 export const createModule = ({
+  actors,
   configData,
-  elementConfigExtra,
+  configDataExtra,
   Logic,
 }: {
+  actors?: IRequestActor[];
   configData?: TConfigData;
-  elementConfigExtra?: Record<string, any>;
+  configDataExtra?: Record<string, any>;
   Logic?: DefineComponent;
 }) => {
   return defineComponent(() => {
@@ -103,11 +103,11 @@ export const createModule = ({
 
     const createData = (elementConfigs: IElementConfig | IElementConfig[]) => {
       const data = cloneDeep(elementConfigs);
-      if (!elementConfigExtra) return data;
+      if (!configDataExtra) return data;
       if (isArray(data)) {
-        forEach(data, (ec) => mergeExtraData(ec, elementConfigExtra));
+        forEach(data, (ec) => mergeExtraData(ec, configDataExtra));
       } else {
-        mergeExtraData(data, elementConfigExtra);
+        mergeExtraData(data, configDataExtra);
       }
       return data;
     };
@@ -136,7 +136,12 @@ export const createModule = ({
       }
 
       return (
-        <ProModule elementConfigs={configRef.value}>
+        <ProModule
+          initState={configData?.initState}
+          storeKeys={configData?.storeKeys}
+          actors={actors}
+          requests={configData?.requests as any}
+          elementConfigs={configRef.value}>
           <ModuleContent />
           {Logic && <Logic />}
         </ProModule>

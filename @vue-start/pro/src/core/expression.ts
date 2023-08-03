@@ -1,9 +1,9 @@
-import { get, isArray, isString, map, size, endsWith, forEach, pick, set } from "lodash";
+import { get, isArray, isString, map, size, endsWith, forEach, pick, set, add, subtract } from "lodash";
 
 /**
  * eg:
  * args:[{id:'111',name:'zx',age:18}]
- * {type$: "dataSource", name$:"args", namePath$:"0.id"}
+ * {type$: "data$", name$:"args", namePath$:"0.id"}
  *
  * 转换后
  *
@@ -17,7 +17,7 @@ export type TDataType = {
    * data：      当前module的data（普通obj，仅存储数据使用）对象；
    * args：      当前方法中的参数；缺省取该值
    */
-  type$: "dataSource";
+  type$: "data$";
   name$: string;
   namePath$?: string; //data中属性path
 };
@@ -31,7 +31,7 @@ export type TParamItem = any | TDataType;
    "query$": [
      "pick$",
      {
-       "type$": "dataSource",
+       "type$": "data$",
        "name$": "args",
        "namePath$": "0"
      },
@@ -44,7 +44,7 @@ export type TParamItem = any | TDataType;
  {
     "type$": "obj",
     "query.id$": {
-      "type$": "dataSource",
+      "type$": "data$",
       "name$": "args",
       "namePath$": "0.id"
     },
@@ -101,7 +101,7 @@ const isFunEx = (funEx: TFunItem) => {
 const isDataTypeEx = (ex: TDataType) => {
   if (typeof ex !== "object") return false;
   if (!ex.type$) return false;
-  return ex.type$ === "dataSource" && ex.type$;
+  return ex.type$ === "data$" && ex.type$;
 };
 
 /**
@@ -114,7 +114,7 @@ const isObjEx = (ex: TObjItem) => {
   return ex.type$ === "obj";
 };
 
-const defaultMethodObj = { get, pick };
+const defaultMethodObj = { get, pick, add, subtract };
 
 //执行表达式
 export const executeEx = (

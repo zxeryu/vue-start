@@ -1,8 +1,9 @@
 import { defineComponent, ExtractPropTypes, inject, PropType, provide, reactive } from "vue";
 import { TActionEvent, TActionState, TElementMap } from "../types";
-import { forEach, get, isArray, isFunction, isObject, keys, map, reduce, size } from "lodash";
+import { filter, forEach, get, isArray, isFunction, isObject, isString, keys, map, reduce, size, has } from "lodash";
 import { UnwrapNestedRefs } from "@vue/reactivity";
 import { Subject } from "rxjs";
+import { map as rxMap, tap as rxTap } from "rxjs/operators";
 import { setReactiveValue, useEffect } from "@vue-start/hooks";
 import { IRequestActor, useRequestProvide } from "@vue-start/request";
 import { useComposeRequestActor } from "./request";
@@ -10,6 +11,8 @@ import { IElementConfig, renderElement, renderElements, TExecuteItem } from "./c
 import { useProConfig } from "./pro";
 import { useProRouter } from "./router";
 import { executeEx, TExpression } from "./expression";
+import { shallowEqual, useStore } from "@vue-start/store";
+import { useDispatchStore } from "./store";
 
 const ProModuleKey = Symbol("pro-module");
 
@@ -63,9 +66,13 @@ export interface IRequestOpts {
   stateName?: string; //如果设置，将在state中维护[stateName]数据 请求返回数据
   loadingName?: string; //如果设置，将在state中维护[loadingName]数据 请求状态 boolean类型
   convertParams?: (...params: any[]) => Record<string, any>; //请求参数转换
+  convertParamsEx?: TExpression;
   convertData?: (actor: IRequestActor) => Record<string, any>; //请求结果转换
+  convertDataEx?: TExpression;
   onSuccess?: (actor?: IRequestActor) => void; //请求成功回调
+  onSuccessEx?: TExecuteItem[];
   onFailed?: (actor?: IRequestActor) => void; //请求失败回调
+  onFailedEx?: TExecuteItem[];
 }
 
 export const RequestAction = {
@@ -81,6 +88,14 @@ const proModuleProps = () => ({
   //初始化状态数据
   initState: { type: Object as PropType<object> },
   /**
+   * store names
+   */
+  storeKeys: { type: Array as PropType<string[]> },
+  /**
+   * meta names
+   */
+  metasKeys: { type: Array as PropType<string[]> },
+  /**
    * 组件集
    */
   elementMap: { type: Object as PropType<TElementMap> },
@@ -91,8 +106,8 @@ const proModuleProps = () => ({
   /**
    * requests
    */
+  actors: { type: Array as PropType<IRequestActor[]> },
   requests: { type: Array as PropType<IRequestOpts[]> },
-  requestActors: { type: Array as PropType<IRequestActor[]> },
 });
 
 export type ProModuleProps = Partial<ExtractPropTypes<ReturnType<typeof proModuleProps>>>;
@@ -102,9 +117,9 @@ export const ProModule = defineComponent<ProModuleProps>({
     ...(proModuleProps() as any),
   },
   setup: (props, { slots, expose }) => {
+    const store$ = useStore();
     const { router } = useProRouter();
-
-    const { elementMap: elementMapP, expressionMethods } = useProConfig();
+    const { elementMap: elementMapP, registerStoreMap, expressionMethods } = useProConfig();
 
     const elementMap = props.elementMap! || elementMapP;
 
@@ -124,12 +139,31 @@ export const ProModule = defineComponent<ProModuleProps>({
       subject$.next(action);
     };
 
-    /*********************************** 页面状态 ***************************************/
+    /*********************************** state、store ***************************************/
+    //初始化获取store中的值赋值到state中
+    const storeKeys = filter(props.storeKeys, (item) => has(registerStoreMap, item));
+    const createStoreValue = () => {
+      return reduce(
+        storeKeys,
+        (pair, item) => {
+          const storeItem = get(registerStoreMap, item);
+          return {
+            ...pair,
+            [item]:
+              get(store$.value, `${storeItem.persist ? "$" : ""}${item}`) ||
+              get(registerStoreMap, [item, "initialState"]),
+          };
+        },
+        {},
+      );
+    };
+    const initStoreValue = createStoreValue();
 
-    const state = props.state || reactive({ ...props.initState });
+    const state = props.state || reactive({ ...initStoreValue, ...props.initState });
 
     const data = {};
 
+    //更新state值
     const dispatch = (action: TActionState) => {
       const prev = state[action.type];
       const data = isFunction(action.payload) ? action.payload(prev) : action.payload;
@@ -141,30 +175,87 @@ export const ProModule = defineComponent<ProModuleProps>({
       state[action.type] = data;
     };
 
+    //更新全局状态
+    const dispatchStore = useDispatchStore();
+
+    const stateExObj = { dispatch, dispatchStore };
+
+    //订阅的store 赋值到state中
+    useEffect(() => {
+      const sub = store$
+        .pipe(
+          rxMap(() => createStoreValue()),
+          rxTap((sv) => {
+            forEach(sv, (v, k) => {
+              const currentV = get(state, k);
+              //当前值和响应值不一样的话，更新state
+              if (!shallowEqual(currentV, v)) {
+                dispatch({ type: k, payload: v });
+              }
+            });
+          }),
+        )
+        .subscribe();
+      return () => {
+        sub.unsubscribe();
+      };
+    }, []);
+
     /*********************************** request ***************************************/
     const { dispatchRequest } = useRequestProvide();
 
-    const requestMap = reduce(props.requests, (pair, item) => ({ ...pair, [item.actor?.name]: item }), {});
-    const actionMap = reduce(props.requests, (pair, item) => ({ ...pair, [item.action!]: item }), {});
+    //request actors 兼容
+    const initRequestMap = () => {
+      const obj: Record<string, IRequestOpts> = {};
+      //注册的actors
+      const actorMap = reduce(props.actors || [], (pair, actor) => ({ ...pair, [actor.name]: actor }), {});
+      //注册的requests
+      forEach(props.requests, (item) => {
+        if (isString(item.actor)) {
+          const actor = get(actorMap, item.actor);
+          if (!actor) return;
+          item.actor = actor;
+        }
+        if (!item.actor) return;
+        obj[item.actor.name] = item;
+        if (item.action) {
+          obj[item.action] = item;
+        }
+      });
+      return obj;
+    };
+    const requestMap = initRequestMap();
+
+    const convertParams = (requestOpts: IRequestOpts, ...params: any[]): any => {
+      if (requestOpts.convertParams) {
+        return requestOpts.convertParams(...params);
+      } else if (requestOpts.convertParamsEx) {
+        return executeExp(requestOpts.convertParamsEx, params);
+      }
+      return get(params, 0);
+    };
+
+    const convertData = (requestOpts: IRequestOpts, actor: IRequestActor) => {
+      if (requestOpts.convertData) {
+        return requestOpts.convertData(actor);
+      } else if (requestOpts.convertDataEx) {
+        return executeExp(requestOpts.convertDataEx, actor);
+      }
+      return actor.res?.data;
+    };
 
     //发送请求
     const sendRequest = (requestNameOrAction: string, ...params: any[]) => {
-      const requestOpts = get(requestMap, requestNameOrAction) || get(actionMap, requestNameOrAction);
+      const requestOpts = get(requestMap, requestNameOrAction);
       if (!requestOpts) {
         return;
       }
-      let nextParams;
-      if (requestOpts.convertParams) {
-        nextParams = requestOpts.convertParams(...params);
-      } else {
-        nextParams = get(params, 0);
-      }
+      const nextParams = convertParams(requestOpts, ...params);
 
       //如果设置了loading，将请求状态维护到state中
       if (requestOpts.loadingName) {
         dispatch({ type: requestOpts.loadingName, payload: true });
       }
-
       dispatchRequest(requestOpts.actor, nextParams);
     };
 
@@ -173,15 +264,16 @@ export const ProModule = defineComponent<ProModuleProps>({
       {
         onSuccess: (actor) => {
           const requestOpts = get(requestMap, actor.name);
+          const data = convertData(requestOpts, actor);
           //如果设置了stateName，将结果维护到state中
           if (requestOpts?.stateName) {
-            const data = requestOpts.convertData ? requestOpts.convertData(actor) : actor.res?.data;
             dispatch({ type: requestOpts.stateName, payload: data });
           }
           //发送成功事件
           sendEvent({ type: RequestAction.Success, payload: { actor, requestOpts } });
           //回调事件
           requestOpts.onSuccess?.(actor);
+          requestOpts.onSuccessEx && execute(requestOpts.onSuccessEx, [data]);
         },
         onFailed: (actor) => {
           const requestOpts = get(requestMap, actor.name);
@@ -189,6 +281,7 @@ export const ProModule = defineComponent<ProModuleProps>({
           sendEvent({ type: RequestAction.Fail, payload: { actor, requestOpts } });
           //回调事件
           requestOpts.onFailed?.(actor);
+          requestOpts.onFailedEx && execute(requestOpts.onFailedEx, [actor.err]);
         },
         onFinish: (actor) => {
           const loadingName = get(requestMap, [actor.name, "loadingName"]);
@@ -222,7 +315,8 @@ export const ProModule = defineComponent<ProModuleProps>({
           case "router":
             fun = get(router, funName);
             break;
-          case "store":
+          case "state":
+            fun = get(stateExObj, funName);
             break;
         }
         if (fun) {

@@ -1,4 +1,8 @@
 {
+  "initState": {
+    "num": 0
+  },
+  "storeKeys": ["pro"],
   "elementConfigs": {
     "elementType": "ProPage",
     "elementId": "ProPage",
@@ -80,11 +84,7 @@
                   "push",
                   {
                     "type$": "obj",
-                    "query.id$": {
-                      "type$": "dataSource",
-                      "name$": "args",
-                      "namePath$": "0.id"
-                    },
+                    "query.id$": { "type$": "data$", "name$": "args", "namePath$": "0.id" },
                     "name": "QuotaDetail"
                   }
                 ]
@@ -94,10 +94,29 @@
         }
       },
       {
+        "elementType": "div",
+        "elementId": "div-state",
+        "slots": {
+          "default": "state测试"
+        }
+      },
+      {
+        "elementType": "ProTypography",
+        "elementId": "ProTypography-state-v1",
+        "highConfig$": {
+          "registerStateList": [
+            {
+              "name": "num",
+              "mapName": "content"
+            }
+          ]
+        }
+      },
+      {
         "elementType": "Button$",
         "elementId": "Button$",
         "slots": {
-          "default": "Button"
+          "default": "Add"
         },
         "highConfig$": {
           "registerEventList": [
@@ -105,13 +124,74 @@
               "name": "onClick",
               "executeList": [
                 [
-                  "router",
-                  "push",
+                  "state",
+                  "dispatch",
                   {
-                    "name": "QuotaDetail"
+                    "type$": "obj",
+                    "type": "num",
+                    "payload$": ["add$", { "type$": "data$", "name$": "state", "namePath$": "num" }, 1]
                   }
                 ]
               ]
+            }
+          ]
+        }
+      },
+      {
+        "elementType": "Button$",
+        "elementId": "Button$-subtract",
+        "slots": {
+          "default": "Subtract"
+        },
+        "highConfig$": {
+          "registerEventList": [
+            {
+              "name": "onClick",
+              "executeList": [
+                [
+                  "state",
+                  "dispatch",
+                  {
+                    "type$": "obj",
+                    "type": "num",
+                    "payload$": ["subtract$", { "type$": "data$", "name$": "state", "namePath$": "num" }, 1]
+                  }
+                ]
+              ]
+            }
+          ]
+        }
+      },
+      {
+        "elementType": "div",
+        "elementId": "div-store",
+        "slots": {
+          "default": "store测试"
+        }
+      },
+      {
+        "elementType": "ProTypography",
+        "elementId": "ProTypography-store-aaa",
+        "highConfig$": {
+          "registerStateList": [
+            {
+              "name": "pro.aaa",
+              "mapName": "content"
+            }
+          ]
+        }
+      },
+      {
+        "elementType": "Button$",
+        "elementId": "Button$-store",
+        "slots": {
+          "default": "change pro store"
+        },
+        "highConfig$": {
+          "registerEventList": [
+            {
+              "name": "onClick",
+              "executeList": [["state", "dispatchStore", "pro", { "aaa": "bbb" }]]
             }
           ]
         }
