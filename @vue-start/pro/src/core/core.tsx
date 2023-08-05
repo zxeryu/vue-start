@@ -20,6 +20,7 @@ import { useProModule } from "./Module";
 import { Slots } from "@vue/runtime-core";
 import { TFunItem, TObjItem, TParamItem } from "./expression";
 import { isPathHasParent, isValidPath, restorePath } from "@vue-start/hooks";
+import { css } from "@emotion/css";
 
 /***************************************** curd模式 *****************************************/
 
@@ -158,11 +159,24 @@ export const renderElements = (elementMap: TElementMap, elementConfigs: IElement
 };
 
 /**
- * 转换 props 中注册的组件
+ * 1、转换 class
+ * 2、转换 props 中注册的组件
  */
 const convertPropsEl = (elementMap: TElementMap, elementConfig: IElementConfig): IElementConfig["elementProps"] => {
   const elementProps = elementConfig.elementProps;
   const nextProps = { ...elementConfig.elementProps };
+  //转换class
+  const cls = elementProps?.class;
+  if (cls) {
+    if (typeof cls === "object") {
+      nextProps.class = css(cls);
+    } else if (isString(cls) && cls.indexOf(":") > 0) {
+      nextProps.class = css`
+        ${cls}
+      `;
+    }
+  }
+  //转换组件
   forEach(elementConfig.highConfig$?.registerPropsTrans, (item) => {
     const target = get(elementProps, item.name);
     if (!target || isVNode(target)) {

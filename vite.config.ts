@@ -68,6 +68,7 @@ export default defineConfig(({ mode }) => {
               //
               "ant-design-vue",
               "element-plus",
+              "@emotion/css",
               //
               "axios",
               "rxjs",
@@ -81,9 +82,17 @@ export default defineConfig(({ mode }) => {
               "dayjs",
               "prettier",
               //
+              "@vue-start/antd-pro",
+              "@vue-start/chart",
+              "@vue-start/config",
+              "@vue-start/element-pro",
               "@vue-start/hooks",
-              "@vue-start/request",
+              "@vue-start/map",
+              "@vue-start/media",
+              "@vue-start/persist",
               "@vue-start/pro",
+              "@vue-start/request",
+              "@vue-start/store",
               //chart
               "echarts",
               //media preview

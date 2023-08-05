@@ -96,6 +96,9 @@
       {
         "elementType": "div",
         "elementId": "div-state",
+        "elementProps": {
+          "class": "background: pink;\ncolor: red;"
+        },
         "slots": {
           "default": "state测试"
         }
