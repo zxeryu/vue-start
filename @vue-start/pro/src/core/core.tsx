@@ -1,6 +1,7 @@
 import { TColumn, TElementMap, TValueType } from "../types";
 import { computed, defineComponent, h, VNode, isVNode } from "vue";
 import {
+  filter,
   forEach,
   get,
   head,
@@ -12,6 +13,7 @@ import {
   map,
   omit,
   pick,
+  reduce,
   set,
   size,
   some,
@@ -109,6 +111,9 @@ export interface IHighConfig {
     name: NamePath;
     //组件需要的属性名称；如不存在，用name的值作为属性名称传递给组件
     mapName?: NamePath;
+    //默认绑定到props中，缺省为props
+    //当值为 slot 时，mapName必须存在，且为非path字符串
+    target?: "prop" | "slot";
   }[];
   //注册事件
   registerEventList?: {
@@ -305,7 +310,9 @@ export const Wrapper = defineComponent<{
       }
       const changeProps = { ...elementProps };
       //赋值 && 返回一级属性名称
-      const firstPropNameList = map(highConfig$.registerStateList, (item) => {
+      //标记为props的项（包括缺省）
+      const propStateList = filter(highConfig$.registerStateList, (item) => !item.target || item.target === "prop");
+      const firstPropNameList = map(propStateList, (item) => {
         const targetName = item.mapName || item.name;
         //从state中取值
         const value = get(state, item.name);
@@ -320,6 +327,14 @@ export const Wrapper = defineComponent<{
     // slots
     const El = get(elementMap, elementConfig.elementType) || elementConfig.elementType;
     const slots = convertSlots(elementMap, elementConfig);
+    //state中注册的slot
+    const stateSlots = reduce(
+      filter(highConfig$.registerStateList, (item) => item.target === "slot"),
+      (pair, item) => ({ ...pair, [item.mapName as string]: () => get(state, item.name) }),
+      {},
+    );
+    const reSlots = { ...slots, ...stateSlots };
+
     return () => {
       //如果标记show$值为false，不渲染组件
       const show$ = get(receiveStates.value, "show$");
@@ -327,7 +342,7 @@ export const Wrapper = defineComponent<{
         return null;
       }
 
-      return h(El, { key: elementConfig.elementId, ...elementProps, ...omit(receiveStates.value, "show$") }, slots);
+      return h(El, { key: elementConfig.elementId, ...elementProps, ...omit(receiveStates.value, "show$") }, reSlots);
     };
   },
 });

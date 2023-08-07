@@ -185,6 +185,19 @@
         }
       },
       {
+        "elementType": "span",
+        "elementId": "span-111",
+        "highConfig$": {
+          "registerStateList": [
+            {
+              "name": "pro.aaa",
+              "mapName": "default",
+              "target": "slot"
+            }
+          ]
+        }
+      },
+      {
         "elementType": "Button$",
         "elementId": "Button$-store",
         "slots": {
