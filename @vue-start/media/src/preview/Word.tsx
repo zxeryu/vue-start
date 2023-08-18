@@ -6,7 +6,7 @@ export const Word = defineComponent({
   props: {
     data: Object,
   },
-  setup: (props) => {
+  setup: (props, { expose }) => {
     const domRef = ref();
 
     useEffect(
@@ -16,6 +16,8 @@ export const Word = defineComponent({
       },
       () => props.data,
     );
+
+    expose({ domRef });
 
     return () => {
       return <div ref={domRef} />;

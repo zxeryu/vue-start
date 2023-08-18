@@ -1,6 +1,6 @@
 import { defineComponent, ref } from "vue";
-import { useEffect, useResizeObserver, useUpdateKey } from "@vue-start/hooks";
-import { get, isNumber, isString } from "lodash";
+import { useEffect, useUpdateKey } from "@vue-start/hooks";
+import { isString } from "lodash";
 
 export const Pdf = defineComponent({
   props: {
@@ -9,11 +9,11 @@ export const Pdf = defineComponent({
     showNameCover: { type: Boolean, default: true },
     showDownloadCover: { type: Boolean, default: true },
   },
-  setup: (props) => {
+  setup: (props, { expose }) => {
     const urlRef = ref("");
 
     const domRef = ref();
-    const domWidth = ref(0);
+    const frameRef = ref();
 
     const [keyRef, updateKey] = useUpdateKey();
 
@@ -32,18 +32,17 @@ export const Pdf = defineComponent({
       () => props.data,
     );
 
-    useResizeObserver(domRef, (entry) => {
-      const rect = get(entry, [0, "contentRect"]);
-      if (isNumber(rect.width)) {
-        domWidth.value = rect.width;
-      }
-    });
+    const print = () => {
+      frameRef.value?.contentWindow?.print?.();
+    };
+
+    expose({ domRef, frameRef, print });
 
     return () => {
       if (!urlRef.value) return null;
       return (
         <div ref={domRef}>
-          <iframe key={keyRef.value} src={urlRef.value} frameborder={0} allowtransparency={true} />
+          <iframe ref={frameRef} key={keyRef.value} src={urlRef.value} frameborder={0} allowtransparency={true} />
           {props.showNameCover && <div class={"pro-preview-pdf-hide-name"} />}
           {props.showDownloadCover && <div class={"pro-preview-pdf-hide-download"} />}
         </div>

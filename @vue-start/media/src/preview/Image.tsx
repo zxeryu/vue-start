@@ -6,7 +6,9 @@ export const Image = defineComponent({
   props: {
     data: [String, Object],
   },
-  setup: (props) => {
+  setup: (props, { expose }) => {
+    const domRef = ref();
+
     const srcRef = ref<string>("");
 
     useEffect(
@@ -25,12 +27,14 @@ export const Image = defineComponent({
       () => props.data,
     );
 
+    expose({ domRef });
+
     return () => {
       if (!srcRef.value) {
         return null;
       }
       return (
-        <div>
+        <div ref={domRef}>
           <img src={srcRef.value} />
         </div>
       );

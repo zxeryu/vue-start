@@ -134,7 +134,7 @@ export const Excel = defineComponent({
     data: Object,
     spreadsheetOptions: Object,
   },
-  setup: (props) => {
+  setup: (props, { expose }) => {
     const domRef = ref();
     const domRectRef = ref<{ width: number; height: number } | undefined>();
 
@@ -142,9 +142,12 @@ export const Excel = defineComponent({
       domRectRef.value = get(entry, [0, "contentRect"]);
     });
 
+    let excelData;
+
     const renderContent = (data) => {
       try {
         const wb = read(data);
+        excelData = stox(wb);
         new Spreadsheet(domRef.value, {
           mode: "read",
           showContextmenu: false,
@@ -153,7 +156,7 @@ export const Excel = defineComponent({
             height: () => domRectRef.value?.height,
           },
           ...props.spreadsheetOptions,
-        }).loadData(stox(wb));
+        }).loadData(excelData);
       } catch (e) {}
     };
 
@@ -173,6 +176,8 @@ export const Excel = defineComponent({
         console.error("please input right data type (Blob | ArrayBuffer)");
       }
     }, [() => props.data, domRectRef]);
+
+    expose({ domRef });
 
     return () => {
       return <div ref={domRef} />;
