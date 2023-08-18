@@ -136,7 +136,7 @@ type TFeature = {
   ImageLayer: { type: AMap.ImageLayer; opts: AMap.ImageLayerOptions };
   // VideoLayer: { type: AMap.VideoLayer; opts: AMap.VideoLayerOptions };
   CanvasLayer: { type: AMap.CanvasLayer; opts: AMap.CanvasLayerOptions };
-  CustomLayer: { type: AMap.CustomLayer; opts: AMap.CustomLayerOption };
+  CustomLayer: { type: AMap.CustomLayer; opts: AMap.CustomLayerOption & { canvas: HTMLCanvasElement } };
   /********************************* DistrictLayer ***********************************/
   "DistrictLayer.World": { type: AMap.DistrictLayer; opts: AMap.DistrictLayerOptions };
   "DistrictLayer.Country": { type: AMap.DistrictLayer; opts: AMap.DistrictLayerOptions };
