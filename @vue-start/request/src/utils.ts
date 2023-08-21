@@ -120,7 +120,18 @@ export const toUrl = (actor: IRequestActor, baseUrl = "") => {
  */
 export const completeUrl = (url: string, prefix: string) => {
   if (!prefix) return url;
-  let rePrefix = startsWith(prefix, "http") ? prefix : `${window.location.protocol}//${prefix}`;
+  let rePrefix = "";
+  if (startsWith(prefix, "http")) {
+    //http 开头
+    rePrefix = prefix;
+  } else if (prefix.indexOf(".") > 0 || prefix.indexOf(":") > 0 || startsWith(prefix, "localhost")) {
+    //域名打头，拼上当前协议
+    rePrefix = `${window.location.protocol}//${prefix}`;
+  } else {
+    //非http 非域名，拼上当前origin
+    rePrefix = `${window.location.origin}${prefix}`;
+  }
+
   if (endsWith(rePrefix, "/") && startsWith(url, "/")) {
     rePrefix = rePrefix.substring(0, rePrefix.length - 1);
   }
