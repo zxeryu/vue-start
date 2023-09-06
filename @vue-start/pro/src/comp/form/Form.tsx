@@ -233,7 +233,7 @@ export const ProForm = defineComponent<ProFormProps>({
       }));
     });
 
-    const invalidKeys = keys(proFormProps());
+    const invalidKeys = [...keys(proFormProps()), ...keys(proBaseProps)];
     const gridKeys = keys(omit(ProGrid.props, "items"));
 
     const Form = get(elementMapP, ElementKeys.FormKey);
