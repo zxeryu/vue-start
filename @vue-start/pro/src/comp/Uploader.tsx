@@ -8,6 +8,7 @@ export type TFile = { id: string; name: string; size?: number };
 export const ProUploaderText = defineComponent<Record<string, any>>({
   props: {
     fieldNames: { type: Object, default: { id: "id", name: "name", size: "size" } },
+    convertItem: { type: Function },
   } as any,
   setup: (props, { slots, emit }) => {
     const getComp = useGetCompByKey();
@@ -38,7 +39,12 @@ export const ProUploaderText = defineComponent<Record<string, any>>({
         str = jsonToStr(
           map(v, (item) => {
             const fieldNames = props.fieldNames;
-            return { [fieldNames.id]: item.id, [fieldNames.name]: item.name, [fieldNames.size || "size"]: item.size };
+            const nextItem = {
+              [fieldNames.id]: item.id,
+              [fieldNames.name]: item.name,
+              [fieldNames.size || "size"]: item.size,
+            };
+            return props.convertItem?.(item) || nextItem;
           }),
         );
       }
@@ -65,7 +71,7 @@ export const ProUploaderText = defineComponent<Record<string, any>>({
 /**
  * 文件列表
  */
-export const UploadList = defineComponent({
+export const ProUploadList = defineComponent({
   props: {
     value: [String, Array],
     fieldNames: { type: Object, default: { id: "id", name: "name", size: "size" } },
