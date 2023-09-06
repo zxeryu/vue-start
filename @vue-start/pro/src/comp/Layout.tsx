@@ -153,7 +153,11 @@ export const ProLayout = defineComponent({
       if (props.layout === "horizontal") {
         return (
           <main {...pickAttrs} class={`${props.clsName} ${props.clsName}-${props.layout}`}>
-            <Menus {...menuProps} v-slots={menuSlots} />
+            <div class={"pro-layout-menus-wrapper"}>
+              {menuSlots.start?.()}
+              <Menus {...menuProps} v-slots={menuSlots} />
+              {menuSlots.end?.()}
+            </div>
             <div class={`${props.clsName}-structure`}>
               <Header class={`${props.clsName}-header`} v-slots={headerSlots} />
               <div class={`${props.clsName}-section`}>{slots.default?.()}</div>

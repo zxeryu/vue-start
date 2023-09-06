@@ -1,8 +1,10 @@
 :root {
-  /*layout*/
+  /***************layout****************/
   --pro-header-hei: 60px;
   --pro-divide-ver-hei: 2px;
   --pro-left-menu-wid: 220px;
+  /*horizontal模式下，菜单的高度，如果添加了"menu-start"/"menu-end"插槽，需要重写此变量*/
+  --pro-left-menu-hei: 100vh;
   /*page*/
   --pro-page-header-hei: 40px;
   --pro-page-footer-hei: 46px;
@@ -59,7 +61,7 @@
   width: var(--pro-left-menu-wid);
   min-width: var(--pro-left-menu-wid);
   max-width: var(--pro-left-menu-wid);
-  max-height: 100vh;
+  height: var(--pro-left-menu-hei);
   overflow-y: auto;
   overflow-x: hidden;
 }

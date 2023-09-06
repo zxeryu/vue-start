@@ -85,6 +85,8 @@ export const BasicLayout = defineComponent(() => {
               />
             </>
           ),
+          "menu-start": () => <div>start</div>,
+          "menu-end": () => <div>end</div>,
         }}>
         <RouterView />
       </ProLayout>
