@@ -28,6 +28,8 @@ export const useFetch = <TRequestActor extends IRequestActor>(
 ): IUseFetchResult<TRequestActor> => {
   const { requestSubject$, dispatchRequest } = useRequestProvide();
 
+  const id = generateId();
+
   const [data, setData] = useState<TRequestActor["res"]>();
   const requesting = ref<boolean>(isBoolean(options.initEmit) ? options.initEmit : false);
 
@@ -48,7 +50,7 @@ export const useFetch = <TRequestActor extends IRequestActor>(
 
     cancelIfExists();
     requesting.value = true;
-    lastRequestActor = dispatchRequest({ ...requestActor, id: generateId() }, nextParams) as TRequestActor;
+    lastRequestActor = dispatchRequest({ ...requestActor, id: requestActor.id || id }, nextParams) as TRequestActor;
   };
 
   useEffect(() => {
