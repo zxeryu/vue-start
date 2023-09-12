@@ -131,6 +131,17 @@ export const routes = [
         ],
       },
       {
+        name: "ElDigitRange",
+        path: "digit-range",
+        children: [
+          {
+            name: "ElDigitRangeIndex",
+            path: "index",
+            component: () => import("@/views/el/digit-range/index"),
+          },
+        ],
+      },
+      {
         name: "ElLoading",
         path: "loading",
         children: [

@@ -13,6 +13,7 @@ import {
   ProTabs,
   ProMenus,
   ProUploader,
+  InputNumberRange,
   elementMap as elementMapOrigin,
   formElementMap as formElementMapOrigin,
 } from "@vue-start/element-pro";
@@ -141,6 +142,7 @@ export const initComp = (app: App) => {
   app.component("pro-menus", ProMenus);
   app.component("pro-uploader", ProUploader);
   app.component("pro-uploader-text", ProUploaderText);
+  app.component("pro-digit-range", InputNumberRange);
   //兼容演示
   app.component("pro-input-number", ElInputNumber);
   app.component("pro-button", ElButton);

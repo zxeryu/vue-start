@@ -27,6 +27,7 @@ export const menus = [
           { title: "Tabs", name: "ElTabsIndex" },
           { title: "Menus", name: "ElMenusIndex" },
           { title: "Uploader", name: "ElUploaderIndex" },
+          { title: "InputNumberRange", name: "ElDigitRangeIndex" },
           ...(isElementPlus()
             ? [
                 { title: "Checkbox", name: "ElCheckboxIndex" },
