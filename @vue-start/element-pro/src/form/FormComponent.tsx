@@ -1,7 +1,7 @@
 import { ElInput, ElInputNumber, ElDatePicker, ElTimePicker, ElTreeSelect, ElSwitch, ElCascader } from "element-plus";
 
 import { createFormItemComponent } from "./createFormItemComponent";
-import { ProCheckbox, ProRadio, ProSelect } from "../comp";
+import { InputNumberRange, ProCheckbox, ProRadio, ProSelect } from "../comp";
 
 export const ProFormText = createFormItemComponent({
   InputComp: ElInput,
@@ -12,6 +12,11 @@ export const ProFormTextNumber = createFormItemComponent({
   InputComp: ElInputNumber,
   valueType: "digit",
   name: "PFormNumber",
+});
+export const ProFormInputNumberRange = createFormItemComponent({
+  InputComp: InputNumberRange,
+  valueType: "digitRange",
+  name: "PFormNumberRange",
 });
 export const ProFormDatePicker = createFormItemComponent({
   InputComp: ElDatePicker,

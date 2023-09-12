@@ -33,6 +33,7 @@ import {
   ProForm as Form,
   ProFormText,
   ProFormTextNumber,
+  ProFormInputNumberRange,
   ProFormDatePicker,
   ProFormTimePicker,
   ProFormSelect,
@@ -137,6 +138,7 @@ export const elementMap = {
 export const formElementMap = {
   text: ProFormText,
   digit: ProFormTextNumber,
+  digitRange: ProFormInputNumberRange,
   date: ProFormDatePicker,
   time: ProFormTimePicker,
   select: ProFormSelect,
