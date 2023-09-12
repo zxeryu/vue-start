@@ -25,8 +25,6 @@ export const useRequest = <TReq, TRes, TErr>(
 ] => {
   const { requestSubject$, dispatchRequest } = useRequestProvide();
 
-  const id = generateId();
-
   const requesting$ = new BehaviorSubject<boolean>(!!get(options, "defaultLoading"));
 
   let lastRequestActor: IRequestActor<TReq, TRes, TErr> | undefined = undefined;
@@ -85,7 +83,7 @@ export const useRequest = <TReq, TRes, TErr>(
 
     requesting$.next(true);
 
-    lastRequestActor = dispatchRequest({ ...requestActor, id: requestActor.id || id }, params);
+    lastRequestActor = dispatchRequest({ ...requestActor, id: generateId() }, params);
   };
 
   return [request, requesting$];
