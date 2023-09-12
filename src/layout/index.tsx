@@ -85,8 +85,8 @@ export const BasicLayout = defineComponent(() => {
               />
             </>
           ),
-          "menu-start": () => <div>start</div>,
-          "menu-end": () => <div>end</div>,
+          "menu-start": () => <div class={css({ lineHeight: "30px" })}>start</div>,
+          "menu-end": () => <div class={css({ lineHeight: "30px" })}>end</div>,
         }}>
         <RouterView />
       </ProLayout>
