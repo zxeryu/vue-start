@@ -57,11 +57,6 @@ const createClient = (options: AxiosRequestConfig, interceptors: TRequestInterce
   //发送request方法
   const dispatchRequest: DispatchRequestType = (actor, params, extra) => {
     const operatorActor = clone(actor);
-    //重置Actor （actor 对象多次发起请求时，需要将stage、res、err重置，以防影响）
-    operatorActor.stage = undefined;
-    operatorActor.res = undefined;
-    operatorActor.err = undefined;
-
     operatorActor.req = params;
     operatorActor.extra = extra || operatorActor.extra;
     requestSubject$.next(operatorActor);
