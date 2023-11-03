@@ -39,6 +39,7 @@ export const ContentTypeInterceptor: TRequestInterceptor = (request) => {
 export type ResponseOpts = {
   convertResponse?: (actor: IRequestActor, response: AxiosResponse) => IRequestActor;
   convertError?: (actor: IRequestActor, error: AxiosError) => IRequestActor;
+  sync?: boolean;
 };
 
 const createClient = (options: AxiosRequestConfig, interceptors: TRequestInterceptor[], opts?: ResponseOpts) => {
