@@ -70,6 +70,19 @@
   flex-grow: 1;
 }
 
+/*horizontal-v*/
+.pro-layout-horizontal-v {
+  display: unset !important;
+}
+
+.pro-layout-horizontal-v .pro-layout-structure {
+  display: flex;
+}
+
+.pro-layout-horizontal-v .pro-layout-structure .pro-layout-section {
+  flex-grow: 1;
+}
+
 /*compose*/
 
 .pro-layout-compose {
