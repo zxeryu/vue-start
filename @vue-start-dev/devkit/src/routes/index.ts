@@ -39,6 +39,8 @@ export type TRouteOptions = {
   importPrefix?: string;
   //如果子节点只有一个值（children中只有一个值），去除当前层级，将component追加到上一层
   simpleLeaf?: boolean;
+  //是否需要component 默认true
+  component?: boolean;
 };
 
 type NodeType = {
@@ -164,12 +166,16 @@ const fileToRoute = (data: NodeType[], parent: NodeType[] = [], options: TRouteO
     //父级路由
     if (size(item.children) > 0) {
       let obj = null;
-      if (item.comp) {
+      if (item.comp && options.component !== false) {
         const arr = [...map(parent, (item) => item.name), item.comp];
         obj = { component: `$rm$() => import('${options.importPrefix + "/" + join(arr, "/")}')$rm$` };
       }
       const children = fileToRoute(item.children as NodeType[], [...parent, item], options);
       return { ...nextItem, ...obj, children };
+    }
+    //不需要component字段
+    if (options.component === false) {
+      return { ...nextItem };
     }
     //叶子路由
     const arr = [...map(parent, (item) => item.name), item.name];
@@ -246,6 +252,7 @@ export const createRouteData = (
     ignoreFiles: ["component", "components"],
     fileTypes: [".js", ".jsx", ".ts", ".tsx", ".vue"],
     importPrefix: "@/views",
+    component: true,
   },
 ): TRouteResult => {
   const fileData = readFileData(path, [], options);
