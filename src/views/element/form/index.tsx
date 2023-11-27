@@ -5,6 +5,7 @@ import Readonly from "./demo/readonly";
 import HighState from "./demo/high-state";
 import Layout from "./demo/layout";
 import Slots from "./demo/slots";
+import Debounce from "./demo/debounce";
 
 
 export default defineComponent(() => {
@@ -17,6 +18,7 @@ export default defineComponent(() => {
         <HighState />
         <Layout />
         <Slots />
+        <Debounce />
       </>
     );
   };
