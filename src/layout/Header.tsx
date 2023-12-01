@@ -4,6 +4,7 @@ import { css } from "@emotion/css";
 import { getPlatform, PlatformOptions, setPlatform } from "@/common/platform";
 import { columnStr } from "@/common/columns";
 import { useEffect } from "@vue-start/hooks";
+import { Test } from "@/layout/test";
 
 const DemoDataModal = defineComponent(() => {
   const visibleRef = ref(false);
@@ -75,6 +76,7 @@ export const HeaderRight = defineComponent(() => {
         <DemoDataModal />
         <div class={css({ width: 16 })} />
         <Platform />
+        <Test/>
       </>
     );
   };
