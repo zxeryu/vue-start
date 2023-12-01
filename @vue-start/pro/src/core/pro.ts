@@ -77,6 +77,12 @@ export interface IProConfigProvide {
   convertRouter?: (router: Router) => TRouter;
   //表达式工具集
   expressionMethods: { [key: string]: (...params: any[]) => any };
+  //message
+  showMsg: (opts: Record<string, any>) => any;
+  //modal
+  showModal: (opts: Record<string, any>) => any;
+  //notify
+  showNotify: (opts: Record<string, any>) => any;
 }
 
 const proConfigProps = () => ({
@@ -93,11 +99,32 @@ const proConfigProps = () => ({
   convertRouter: { type: Function as PropType<(router: Router) => TRouter> },
   //表达式工具集
   expressionMethods: { type: Object as PropType<{ [key: string]: (...params: any[]) => any }> },
+  //message toast
+  showMsg: { type: Object },
+  //modal message-box
+  showModal: { type: Object },
+  //notify
+  showNotify: { type: Object },
 });
 
 const ProConfigKey = Symbol("pro-config");
 
 export const useProConfig = (): IProConfigProvide => (inject(ProConfigKey) || {}) as IProConfigProvide;
+
+export const useProMsg = () => {
+  const { showMsg } = useProConfig();
+  return (opts: Record<string, any>) => showMsg(opts);
+};
+
+export const useProModal = () => {
+  const { showModal } = useProConfig();
+  return (opts: Record<string, any>) => showModal(opts);
+};
+
+export const useProNotify = () => {
+  const { showNotify } = useProConfig();
+  return (opts: Record<string, any>) => showNotify(opts);
+};
 
 export type ProConfigProps = Partial<ExtractPropTypes<ReturnType<typeof proConfigProps>>>;
 
@@ -145,6 +172,10 @@ export const ProConfig = defineComponent<ProConfigProps>({
       dispatchRequest,
       //
       convertRouter: props.convertRouter,
+      //
+      showMsg: props.showMsg,
+      showModal: props.showModal,
+      showNotify: props.showNotify,
     });
 
     return () => {
