@@ -1,3 +1,8 @@
+/**
+ * @deprecated 使用 decimalFixed 代替
+ * @param value
+ * @param len
+ */
 export const numberFixed = (value: number | string | undefined, len: number = 2) => {
   if (!value) {
     return value;
@@ -13,6 +18,10 @@ export const numberFixed = (value: number | string | undefined, len: number = 2)
   return str;
 };
 
+/**
+ * @deprecated 使用thousandDivision代替
+ * @param value
+ */
 export const numberThousands = (value: number | string) => {
   if (!value || isNaN(value as any)) {
     return value;
