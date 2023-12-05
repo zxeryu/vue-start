@@ -4,8 +4,10 @@ import { groupBy, map } from "lodash";
 import { IElement } from "../types";
 import { ElementKeys, useGetCompByKey } from "@vue-start/pro";
 
-export const Elements = defineComponent({
-  props: {},
+export const Elements = defineComponent<{
+  onSelect?: (el: IElement) => void;
+}>({
+  props: {} as any,
   setup: (_, { emit }) => {
     const { elements } = useCheng();
 

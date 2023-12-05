@@ -12,7 +12,7 @@ const ProOperatorKey = Symbol("cheng-operator");
 export const useOperator = () => inject(ProOperatorKey) as IOperatorProvide;
 
 export const ProOperator = defineComponent({
-  props: {},
+  props: {} as any,
   setup: (props, { slots }) => {
     /************************* 添加Element ***********************/
     const addElVisibleRef = ref(false);

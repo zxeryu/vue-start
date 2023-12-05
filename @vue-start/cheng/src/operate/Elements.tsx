@@ -30,7 +30,6 @@ export const ElementsModal = defineComponent(() => {
           addElVisibleRef.value = false;
         }}>
         <Elements
-          // @ts-ignore
           onSelect={handleSelect}
         />
       </Modal>

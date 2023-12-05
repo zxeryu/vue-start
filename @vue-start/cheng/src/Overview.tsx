@@ -7,7 +7,7 @@ import { Modules } from "./module/Modules";
 import { TTab } from "./types";
 
 export const Overview = defineComponent({
-  props: {},
+  props: {} as any,
   setup: () => {
     const { tabRef } = useCheng();
 
