@@ -8,3 +8,4 @@ export * from "./collection";
 export * from "./file";
 export * from "./vue3";
 export * from "./path";
+export * from "./timer";

@@ -1,4 +1,4 @@
-import { computed, defineComponent, ExtractPropTypes, PropType, reactive } from "vue";
+import { computed, defineComponent, ExtractPropTypes, PropType, reactive, ref } from "vue";
 import { endsWith, some, toLower } from "lodash";
 import { IRequestActor, download as downloadOrigin, TDownloadOptions } from "@vue-start/request";
 import { useEffect } from "@vue-start/hooks";
@@ -47,6 +47,8 @@ export const ProPreview = defineComponent<ProPreviewProps>({
     ...previewProps(),
   } as any,
   setup: (props, { slots, expose }) => {
+    /*********************** download **************************/
+
     const state = reactive({
       loading: false,
       isSuccess: false,
@@ -95,7 +97,49 @@ export const ProPreview = defineComponent<ProPreviewProps>({
       download();
     }, isSupport);
 
-    expose({ download });
+    /*********************** print **************************/
+
+    const imageRef = ref();
+    const wordRef = ref();
+    const excelRef = ref();
+    const pdfRef = ref();
+
+    //print
+    const printOrigin = (innerHTML?: string) => {
+      if (!innerHTML) return;
+      const frame = document.createElement("iframe");
+      frame.src = `${window.location.origin}/print$`;
+
+      frame.style.position = "fixed";
+      frame.style.bottom = "0px";
+      frame.style.right = "0px";
+      frame.style.display = "none";
+
+      document.body.appendChild(frame);
+      const win = frame.contentWindow;
+
+      frame.onload = () => {
+        win!.document.head.innerHTML = document.head.innerHTML;
+        win!.document.title = props.name || "";
+        win!.document.body.innerHTML = innerHTML;
+        win!.print();
+        setTimeout(() => {
+          document.body.removeChild(frame);
+        }, 0);
+      };
+    };
+
+    const print = () => {
+      if (isPdfType(props.name!)) {
+        pdfRef.value?.print?.();
+      } else if (isWordType(props.name!)) {
+        printOrigin(wordRef.value?.domRef?.innerHTML);
+      } else if (isImageType(props.name!)) {
+        printOrigin(imageRef.value?.domRef?.innerHTML);
+      }
+    };
+
+    expose({ download, print });
 
     const Loading: any = props.Loading;
 
@@ -125,16 +169,16 @@ export const ProPreview = defineComponent<ProPreviewProps>({
               {state.isSuccess ? (
                 <>
                   {isImageType(props.name!) && (
-                    <Image class={"pro-preview-image"} data={originRes!.data} {...props.subProps} />
+                    <Image ref={imageRef} class={"pro-preview-image"} data={originRes!.data} {...props.subProps} />
                   )}
                   {isWordType(props.name!) && (
-                    <Word class={"pro-preview-word"} data={originRes!.data} {...props.subProps} />
+                    <Word ref={wordRef} class={"pro-preview-word"} data={originRes!.data} {...props.subProps} />
                   )}
                   {isExcelType(props.name!) && (
-                    <Excel class={"pro-preview-excel"} data={originRes!.data} {...props.subProps} />
+                    <Excel ref={excelRef} class={"pro-preview-excel"} data={originRes!.data} {...props.subProps} />
                   )}
                   {isPdfType(props.name!) && (
-                    <Pdf class={"pro-preview-pdf"} data={originRes!.data} {...props.subProps} />
+                    <Pdf ref={pdfRef} class={"pro-preview-pdf"} data={originRes!.data} {...props.subProps} />
                   )}
                 </>
               ) : null}

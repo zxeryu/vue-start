@@ -48,12 +48,103 @@
 }
 
 .pro-preview .pro-preview-pdf .pro-preview-pdf-hide-name {
-  max-width: 270px;
   height: 36px;
   background: #323639;
   position: absolute;
   top: 10px;
   left: 66px;
+  width: 270px;
+}
+
+.pro-preview .pro-preview-pdf .pro-preview-pdf-hide-download {
+  width: 80px;
+  height: 36px;
+  /*background-color: rgba(0, 0, 0, 0.5);*/
+  background: #323639;
+  position: absolute;
+  top: 10px;
+  right: 98px;
+}
+
+@media (min-device-pixel-ratio: 0.75), (-webkit-min-device-pixel-ratio: 0.75) {
+  .pro-preview .pro-preview-pdf .pro-preview-pdf-hide-name {
+    height: 52px;
+    left: 90px;
+    width: 350px;
+  }
+  .pro-preview .pro-preview-pdf .pro-preview-pdf-hide-download {
+    height: 52px;
+    right: 122px;
+  }
+}
+
+@media (min-device-pixel-ratio: 0.8), (-webkit-min-device-pixel-ratio: 0.8) {
+  .pro-preview .pro-preview-pdf .pro-preview-pdf-hide-name {
+    height: 52px;
+    left: 80px;
+    width: 338px;
+  }
+  .pro-preview .pro-preview-pdf .pro-preview-pdf-hide-download {
+    height: 52px;
+    right: 118px;
+  }
+}
+
+@media (min-device-pixel-ratio: 0.89), (-webkit-min-device-pixel-ratio: 0.89) {
+  .pro-preview .pro-preview-pdf .pro-preview-pdf-hide-name {
+    height: 40px;
+    left: 74px;
+    width: 300px;
+  }
+  .pro-preview .pro-preview-pdf .pro-preview-pdf-hide-download {
+    height: 40px;
+    right: 104px;
+  }
+}
+
+@media (min-device-pixel-ratio: 1), (-webkit-min-device-pixel-ratio: 1) {
+  .pro-preview .pro-preview-pdf .pro-preview-pdf-hide-name {
+    left: 66px;
+    width: 270px;
+  }
+  .pro-preview .pro-preview-pdf .pro-preview-pdf-hide-download {
+    right: 94px;
+  }
+}
+
+@media (min-device-pixel-ratio: 1.1), (-webkit-min-device-pixel-ratio: 1.1) {
+  .pro-preview .pro-preview-pdf .pro-preview-pdf-hide-name {
+    top: 8px;
+    left: 60px;
+  }
+  .pro-preview .pro-preview-pdf .pro-preview-pdf-hide-download {
+    top: 8px;
+    right: 86px;
+  }
+}
+
+@media (min-device-pixel-ratio: 1.25), (-webkit-min-device-pixel-ratio: 1.25) {
+  .pro-preview .pro-preview-pdf .pro-preview-pdf-hide-name {
+    height: 34px;
+    width: 220px;
+    left: 52px;
+  }
+  .pro-preview .pro-preview-pdf .pro-preview-pdf-hide-download {
+    height: 34px;
+    right: 78px;
+  }
+}
+
+@media (min-device-pixel-ratio: 1.5), (-webkit-min-device-pixel-ratio: 1.5) {
+  .pro-preview .pro-preview-pdf .pro-preview-pdf-hide-name {
+    height: 28px;
+    width: 180px;
+    left: 44px;
+  }
+  .pro-preview .pro-preview-pdf .pro-preview-pdf-hide-download {
+    height: 28px;
+    right: 64px;
+  }
 }
 
 /*excel*/

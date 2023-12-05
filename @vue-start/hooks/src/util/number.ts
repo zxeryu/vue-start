@@ -60,3 +60,29 @@ export const thousandDivision = (value: string | number): string | number => {
       : b.slice(r, len).match(/\d{3}/g)!.join(",");
   return prefix + intVal + suffix;
 };
+
+/**
+ * 转换成number
+ * @param num
+ * @param def 若非number，返回def值，默认是null
+ */
+export const toNum = (num: string | number, def?: number | null): number | null => {
+  const d = isNumber(def) ? def : null;
+  if (num === undefined || num === null || num === "") {
+    return d;
+  }
+  if (isNaN(num as any)) {
+    return d;
+  }
+  return Number(num);
+};
+
+/**
+ * 展示数字
+ * @param num
+ * @param def 默认值
+ */
+export const showNum = (num: string | number, def?: string): number | string => {
+  const d = def || "--";
+  return isNumber(num) ? num : num || d;
+};

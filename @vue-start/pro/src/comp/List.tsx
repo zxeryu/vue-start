@@ -31,6 +31,11 @@ const proListProps = () => ({
   },
   //pageState
   pageState: { type: Object as PropType<TPageState> },
+  //************* slots兼容 *************
+  start: { type: Function },
+  divide: { type: Function },
+  divide2: { type: Function },
+  end: { type: Function },
 });
 
 export type ProListProps = Partial<ExtractPropTypes<ReturnType<typeof proListProps>>>;
@@ -105,11 +110,11 @@ export const ProList = defineComponent<ProListProps>({
 
       return (
         <div class={props.clsName}>
-          {slots.start?.()}
+          {slots.start?.() || props.start?.()}
 
           {!props.searchInTable && searchNode}
 
-          {slots.divide?.()}
+          {slots.divide?.() || props.divide?.()}
 
           {slots.table ? (
             slots.table({ pageState })
@@ -137,7 +142,7 @@ export const ProList = defineComponent<ProListProps>({
             </>
           )}
 
-          {slots.divide2?.()}
+          {slots.divide2?.() || props.divide2?.()}
 
           {slots.pagination ? (
             slots.pagination({ executePageChange: handlePageChange, pageState })
@@ -157,7 +162,7 @@ export const ProList = defineComponent<ProListProps>({
             </>
           )}
 
-          {slots.end?.()}
+          {slots.end?.() || props.end?.()}
         </div>
       );
     };

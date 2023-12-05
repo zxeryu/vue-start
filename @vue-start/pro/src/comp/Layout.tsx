@@ -43,7 +43,7 @@ const layoutProps = () => ({
    * horizontal:  左右
    * compose：     菜单第一级在header中，子级在左侧菜单
    */
-  layout: { type: String as PropType<"vertical" | "horizontal" | "compose">, default: "compose" },
+  layout: { type: String as PropType<"vertical" | "horizontal" | "horizontal-v" | "compose">, default: "compose" },
   //获取当前路由对应的第一级menu name，匹配不到topName的时候会调用
   findCurrentTopName: { type: Function },
   //获取当前路由对应的menu对象，匹配不到activeKey的时候调用
@@ -149,18 +149,36 @@ export const ProLayout = defineComponent({
             <div class={`${props.clsName}-section`}>{slots.default?.()}</div>
           </main>
         );
-      }
-      if (props.layout === "horizontal") {
+      } else if (props.layout === "horizontal") {
         return (
           <main {...pickAttrs} class={`${props.clsName} ${props.clsName}-${props.layout}`}>
-            <Menus {...menuProps} v-slots={menuSlots} />
+            <div class={"pro-layout-menus-wrapper"}>
+              {menuSlots.start?.()}
+              <Menus {...menuProps} v-slots={menuSlots} />
+              {menuSlots.end?.()}
+            </div>
             <div class={`${props.clsName}-structure`}>
               <Header class={`${props.clsName}-header`} v-slots={headerSlots} />
               <div class={`${props.clsName}-section`}>{slots.default?.()}</div>
             </div>
           </main>
         );
+      } else if (props.layout === "horizontal-v") {
+        return (
+          <main {...pickAttrs} class={`${props.clsName} ${props.clsName}-horizontal ${props.clsName}-horizontal-v`}>
+            <Header class={`${props.clsName}-header`} v-slots={headerSlots} />
+            <div class={`${props.clsName}-structure`}>
+              <div class={"pro-layout-menus-wrapper"}>
+                {menuSlots.start?.()}
+                <Menus {...menuProps} v-slots={menuSlots} />
+                {menuSlots.end?.()}
+              </div>
+              <div class={`${props.clsName}-section`}>{slots.default?.()}</div>
+            </div>
+          </main>
+        );
       }
+
       return (
         <main {...pickAttrs} class={`${props.clsName} ${props.clsName}-${props.layout}`}>
           <Header

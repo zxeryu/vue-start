@@ -12,6 +12,7 @@ import {
   Switch,
   Cascader,
 } from "ant-design-vue";
+import { InputNumberRange } from "../comp";
 import { createFormItemComponent } from "./createFormItemComponent";
 
 export const ProFormText = createFormItemComponent({
@@ -33,6 +34,11 @@ export const ProFormTextNumber = createFormItemComponent({
   InputComp: InputNumber,
   valueType: "digit",
   name: "PFormNumber",
+});
+export const ProFormInputNumberRange = createFormItemComponent({
+  InputComp: InputNumberRange,
+  valueType: "digitRange",
+  name: "PFormNumberRange",
 });
 export const ProFormDatePicker = createFormItemComponent({
   InputComp: DatePicker,

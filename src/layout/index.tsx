@@ -18,6 +18,7 @@ export const BasicLayout = defineComponent(() => {
     { label: "compose", value: "compose" },
     { label: "vertical", value: "vertical" },
     { label: "horizontal", value: "horizontal" },
+    { label: "horizontal-v", value: "horizontal-v" },
   ];
 
   const handleLayoutChange = (v: string) => {
@@ -85,6 +86,8 @@ export const BasicLayout = defineComponent(() => {
               />
             </>
           ),
+          "menu-start": () => <div class={css({ lineHeight: "30px" })}>start</div>,
+          "menu-end": () => <div class={css({ lineHeight: "30px" })}>end</div>,
         }}>
         <RouterView />
       </ProLayout>

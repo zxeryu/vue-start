@@ -2,7 +2,7 @@ import { Ref, UnwrapNestedRefs } from "@vue/reactivity";
 import { computed, defineComponent, ExtractPropTypes, inject, PropType, provide, reactive, ref } from "vue";
 import { BooleanObjType, BooleanRulesObjType, TColumn, TColumns, TElementMap } from "../../types";
 import { convertCollection, mergeStateToData, useRuleState } from "@vue-start/hooks";
-import { get, keys, map, omit, size } from "lodash";
+import { get, keys, map, omit, size, debounce } from "lodash";
 import { getColumnFormItemName, getFormItemEl, proBaseProps, ProBaseProps, useProConfig } from "../../core";
 import { createExpose, getValidValues } from "../../util";
 import { ProGridProps, ProOperate, ProGrid, ProOperateProps, IOpeItem, ElementKeys } from "../index";
@@ -27,6 +27,10 @@ interface IProFormProvide extends IProFormProvideExtra {
 
 export const useProForm = (): IProFormProvide => inject(ProFormKey) as IProFormProvide;
 
+export const useFormSubmit = (cb: (...e: any[]) => void, wait = 300, options?: Record<string, any>) => {
+  return debounce(cb, wait, options);
+};
+
 const provideProForm = (ctx: IProFormProvide) => {
   provide(ProFormKey, ctx);
 };
@@ -38,9 +42,9 @@ export enum FormAction {
 }
 
 export type TProFormOperate = ProOperateProps & {
-  onReset?: () => void;
-  onSubmit?: () => void;
-  onContinue?: () => void;
+  onReset?: ({ form }: { form: any }) => void;
+  onSubmit?: ({ form }: { form: any }) => void;
+  onContinue?: ({ form }: { form: any }) => void;
 };
 
 const proFormProps = () => ({
@@ -85,6 +89,13 @@ const proFormProps = () => ({
    * ref 默认中转方法
    */
   formMethods: { type: Array as PropType<string[]> },
+  /**
+   * 防抖提交
+   */
+  debounceSubmit: {
+    type: [Number, Object] as PropType<number | { wait: number; options?: Record<string, any> }>,
+    default: undefined,
+  },
 });
 
 export type ProFormProps = Partial<ExtractPropTypes<ReturnType<typeof proFormProps>>> &
@@ -129,10 +140,19 @@ export const ProForm = defineComponent<ProFormProps>({
       return list;
     });
 
+    /*************** finish **************/
+    const dOpts = props.debounceSubmit;
+    const wait = (typeof dOpts === "object" ? dOpts.wait : dOpts) || 300;
+    const debounceFinish = useFormSubmit((...e: any[]) => emit("finish", ...e), wait, (dOpts as any)?.options);
+
     const handleFinish = (values: Record<string, any>) => {
       //删除不显示的值再触发事件
       const showValues = getValidValues(values, showState, props.showStateRules);
-      emit("finish", showValues, values);
+      if (dOpts !== undefined) {
+        debounceFinish(showValues, values);
+      } else {
+        emit("finish", showValues, values);
+      }
     };
 
     const formRef = ref();
@@ -169,7 +189,7 @@ export const ProForm = defineComponent<ProFormProps>({
     const handleReset = () => {
       //如果注册了onReset方法，优先执行onReset
       if (props.operate?.onReset) {
-        props.operate.onReset();
+        props.operate.onReset({ form: formRef.value });
         return;
       }
       formRef.value?.resetFields();
@@ -177,14 +197,14 @@ export const ProForm = defineComponent<ProFormProps>({
 
     const handleSubmit = () => {
       if (props.operate?.onSubmit) {
-        props.operate.onSubmit();
+        props.operate.onSubmit({ form: formRef.value });
         return;
       }
       formRef.value?.submit();
     };
 
     const handleContinue = () => {
-      props.operate?.onContinue?.();
+      props.operate?.onContinue?.({ form: formRef.value });
     };
 
     const actionClickMap = {
@@ -233,7 +253,7 @@ export const ProForm = defineComponent<ProFormProps>({
       }));
     });
 
-    const invalidKeys = keys(proFormProps());
+    const invalidKeys = [...keys(proFormProps()), ...keys(proBaseProps)];
     const gridKeys = keys(omit(ProGrid.props, "items"));
 
     const Form = get(elementMapP, ElementKeys.FormKey);

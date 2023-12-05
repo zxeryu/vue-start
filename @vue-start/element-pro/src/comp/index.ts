@@ -8,3 +8,5 @@ export * from "./Select";
 export * from "./Tabs";
 export * from "./Menus";
 export * from "./Uploader";
+export * from "./input";
+export * from "./Tree";

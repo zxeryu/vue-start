@@ -1,12 +1,3 @@
-const base64regex = /^([0-9a-zA-Z+/]{4})*(([0-9a-zA-Z+/]{2}==)|([0-9a-zA-Z+/]{3}=))?$/;
-
-const isBase64 = (v: string): boolean => {
-  if (v === "") {
-    return false;
-  }
-  return base64regex.test(v);
-};
-
 export type Config = { [k: string]: string };
 
 export const parse = (s: string): Config => {
@@ -21,11 +12,7 @@ export const parse = (s: string): Config => {
     const [k, ...vs] = kv.split("=");
     const v = vs.join("=");
 
-    if (isBase64(v)) {
-      c[k] = atob(v);
-    } else {
-      c[k] = v;
-    }
+    c[k] = v;
   });
 
   return c;
@@ -46,9 +33,6 @@ export const stringify = (o: Config): string => {
 
   for (const k in o) {
     let v = o[k];
-    if (v.indexOf(",") > -1) {
-      v = btoa(v);
-    }
     kvs.push(`${k}=${v}`);
   }
 

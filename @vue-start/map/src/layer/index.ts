@@ -44,7 +44,12 @@ export const TileLayerFlexible = createFeature("TileLayer.Flexible", {
 export const ImageLayer = createFeature("ImageLayer", { useMapConnect: useMapLayerConnect });
 export const VideoLayer = createFeature("VideoLayer" as any, { useMapConnect: useMapLayerConnect });
 export const CanvasLayer = createFeature("CanvasLayer", { useMapConnect: useMapLayerConnect });
-export const CustomLayer = createFeature("CustomLayer", { useMapConnect: useMapLayerConnect });
+export const CustomLayer = createFeature("CustomLayer", {
+  useMapConnect: useMapLayerConnect,
+  createFeatureObj: (opts) => {
+    return new window.AMap.CustomLayer(opts?.canvas, omit(opts, "canvas"));
+  },
+});
 
 // DistrictLayer
 export const DistrictLayerWorld = createFeature("DistrictLayer.World", {

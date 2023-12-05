@@ -187,7 +187,7 @@ export const createRequestObservable = (
     );
   };
 
-  return rxMerge(
+  const ob = rxMerge(
     actor$.pipe(
       rxFilter(isPreRequestActor),
       rxOperatorMergeMap((actor: IRequestActor) => {
@@ -227,5 +227,11 @@ export const createRequestObservable = (
       }),
       ignoreElements(),
     ),
-  ).pipe(rxOperatorObserveOn(rxAsyncScheduler));
+  );
+
+  if (!opts?.sync) {
+    return ob.pipe(rxOperatorObserveOn(rxAsyncScheduler));
+  }
+
+  return ob;
 };

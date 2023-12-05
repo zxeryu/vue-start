@@ -1,6 +1,7 @@
 :root {
   --header-hei: 60px;
   --divide-vertical-hei: 10px;
+  --pro-left-menu-hei: calc(100vh - 30px - 30px);
 }
 
 html body {
