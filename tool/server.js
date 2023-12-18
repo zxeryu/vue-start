@@ -7,8 +7,6 @@ const init = async () => {
   const app = express();
   const apiRouters = express.Router();
 
-  process.env.VITE_DEV = JSON.stringify({ entry: "src" });
-
   const vite = await createServer({
     server: { middlewareMode: "custom" },
   });

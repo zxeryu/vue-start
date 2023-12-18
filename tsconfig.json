@@ -2,7 +2,8 @@
   "compilerOptions": {
     "paths": {
       "@/*": ["src/*"],
-      "@el/*": ["src-el/*"]
+      "@el/*": ["src-el/*"],
+      "@cheng/*": ["src-cheng/*"],
     },
     "target": "ESNext",
     "useDefineForClassFields": true,

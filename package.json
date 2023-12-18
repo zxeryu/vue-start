@@ -30,8 +30,8 @@
     "localforage": "^1.9.0",
     "lodash": "^4.17.20",
     "rxjs": "^7.3.0",
-    "vue": "^3.2.37",
-    "vue-router": "^4.0.14",
+    "vue": "3.2.47",
+    "vue-router": "^4.2.5",
     "x-data-spreadsheet": "^1.1.9",
     "xlsx": "^0.18.5"
   },

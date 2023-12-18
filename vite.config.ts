@@ -27,6 +27,7 @@ export default defineConfig(({ mode }) => {
         ...alias,
         //
         "@": path.resolve(__dirname, "src"),
+        "@cheng": path.resolve(__dirname, "src-cheng"),
       },
     },
     plugins: [
@@ -79,6 +80,7 @@ export default defineConfig(({ mode }) => {
               "fs",
               "path",
               "querystring",
+              "express",
               "dayjs",
               "prettier",
               //

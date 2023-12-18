@@ -43,6 +43,24 @@ module.exports = {
           };
         },
       },
+      {
+        name: "cheng",
+        path: ["src-cheng", "views"],
+        //options 拓展 自定义
+        options: {
+          importPrefix: "@cheng/views", //前缀
+        },
+        generateName: "routes",
+        generatePath: ["src-cheng", "route"], //生成文件路径
+        routeNames: true,
+        convertData: (routeResult) => {
+          //转换数据
+          return {
+            ...routeResult,
+            routeStr: routeResult.routeStr.replace(/.ts/g, ""),
+          };
+        },
+      },
     ],
   },
   client: {
