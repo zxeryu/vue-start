@@ -6,6 +6,7 @@ import HighState from "./demo/high-state";
 import Layout from "./demo/layout";
 import Slots from "./demo/slots";
 import Debounce from "./demo/debounce";
+import PreFinish from "./demo/pre-finish";
 
 
 export default defineComponent(() => {
@@ -19,6 +20,7 @@ export default defineComponent(() => {
         <Layout />
         <Slots />
         <Debounce />
+        <PreFinish />
       </>
     );
   };
