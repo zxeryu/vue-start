@@ -149,6 +149,7 @@ export const ProForm = defineComponent<ProFormProps>({
 
     /*************** finish **************/
     const emitFinish = (...e: any[]) => {
+      // @ts-ignore
       const flag = props.onPreFinish?.(...e);
       if (flag === true) {
         return;
