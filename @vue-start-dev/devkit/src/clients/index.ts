@@ -44,7 +44,7 @@ const createApiList = (
         path: replace(allPath, new RegExp("{", "g"), "${"),
         method: methodType,
         tag: get(methodDesc, ["tags", 0]),
-        summary: get(methodDesc, "summary"),
+        summary: get(methodDesc, "summary") || get(methodDesc, "operationId"),
         query: filter(methodDesc.parameters, (item) => {
           return (isValidParamName(item.name) && item.in === "query") || item.in === "path";
         }),

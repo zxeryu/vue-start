@@ -96,6 +96,13 @@ const proFormProps = () => ({
     type: [Number, Object] as PropType<number | { wait: number; options?: Record<string, any> }>,
     default: undefined,
   },
+  /**
+   * submit触发前hook，返回true，表示消费了此事件，不执行finish回掉
+   */
+  onPreFinish: {
+    type: Function as PropType<(...e: any[]) => boolean>,
+    default: undefined,
+  },
 });
 
 export type ProFormProps = Partial<ExtractPropTypes<ReturnType<typeof proFormProps>>> &
@@ -141,9 +148,18 @@ export const ProForm = defineComponent<ProFormProps>({
     });
 
     /*************** finish **************/
+    const emitFinish = (...e: any[]) => {
+      // @ts-ignore
+      const flag = props.onPreFinish?.(...e);
+      if (flag === true) {
+        return;
+      }
+      emit("finish", ...e);
+    };
+
     const dOpts = props.debounceSubmit;
     const wait = (typeof dOpts === "object" ? dOpts.wait : dOpts) || 300;
-    const debounceFinish = useFormSubmit((...e: any[]) => emit("finish", ...e), wait, (dOpts as any)?.options);
+    const debounceFinish = useFormSubmit((...e: any[]) => emitFinish(...e), wait, (dOpts as any)?.options);
 
     const handleFinish = (values: Record<string, any>) => {
       //删除不显示的值再触发事件
@@ -151,7 +167,7 @@ export const ProForm = defineComponent<ProFormProps>({
       if (dOpts !== undefined) {
         debounceFinish(showValues, values);
       } else {
-        emit("finish", showValues, values);
+        emitFinish(showValues, values);
       }
     };
 
