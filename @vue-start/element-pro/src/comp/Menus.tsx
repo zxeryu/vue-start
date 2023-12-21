@@ -49,7 +49,10 @@ const MenuItem = defineComponent({
           index={menu?.value as string}
           {...props.convertMenuItemProps?.(menu)}
           onClick={handleClick}
-          v-slots={{ title: () => slots.title?.(menu) || menu?.label }}
+          v-slots={{
+            title: () => slots.title?.(menu) || menu?.label,
+            default: slots.default ? () => slots.default?.(menu) : undefined,
+          }}
         />
       );
     };

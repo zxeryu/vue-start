@@ -1,5 +1,5 @@
 import { defineComponent, ExtractPropTypes, PropType, ref } from "vue";
-import { ElCheckboxGroup, IUseCheckboxGroupProps, ElCheckbox, CheckboxProps, ElCheckboxButton } from "element-plus";
+import { ElCheckboxGroup, CheckboxGroupProps, ElCheckbox, CheckboxProps, ElCheckboxButton } from "element-plus";
 import { keys, map, omit } from "lodash";
 import { createExposeObj, TOption } from "@vue-start/pro";
 
@@ -10,7 +10,7 @@ const proCheckboxProps = () => ({
   optionType: { type: String as PropType<"default" | "button">, default: "default" },
 });
 
-export type ProCheckboxProps = Partial<ExtractPropTypes<ReturnType<typeof proCheckboxProps>>> & IUseCheckboxGroupProps;
+export type ProCheckboxProps = Partial<ExtractPropTypes<ReturnType<typeof proCheckboxProps>>> & CheckboxGroupProps;
 
 export const ProCheckbox = defineComponent<ProCheckboxProps>({
   props: {
