@@ -1,6 +1,6 @@
 import { computed, defineComponent, ExtractPropTypes, inject, PropType, provide, ref, toRef, VNode, Ref } from "vue";
 import { TColumn } from "../../types";
-import { filter, get, isBoolean, isFunction, keys, map, omit, pick, reduce, size, some, sortBy } from "lodash";
+import { filter, get, isBoolean, isFunction, keys, map, omit, pick, reduce, size, some } from "lodash";
 import { getItemEl, proBaseProps, ProBaseProps, useProConfig } from "../../core";
 import { createExpose, filterSlotsByPrefix } from "../../util";
 import { IOpeItem, ProOperate, ProOperateProps } from "../Operate";
@@ -170,8 +170,6 @@ export const ProTable = defineComponent<ProTableProps>({
       const items = map(operate.items, (i) => {
         return { ...get(props.operateItemState, i.value), ...i, ...get(operate.itemState, i.value) };
       });
-      //排序
-      const sortedItems = sortBy(items, (item) => item.sort);
       return {
         ...props.column,
         title: "操作",
@@ -179,7 +177,7 @@ export const ProTable = defineComponent<ProTableProps>({
         fixed: "right",
         ...operate.column,
         customRender: ({ record }) => {
-          const opeItems = map(sortedItems, (item) => {
+          const opeItems = map(items, (item) => {
             return {
               ...item,
               show: isFunction(item.show) ? item.show(record) : item.show,

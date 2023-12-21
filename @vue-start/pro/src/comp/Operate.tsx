@@ -1,6 +1,7 @@
 import { computed, defineComponent, ExtractPropTypes, PropType, VNode } from "vue";
-import { filter, get, has, isBoolean, isFunction, map, omit } from "lodash";
+import { filter, get, has, isBoolean, isFunction, map, omit, sortBy } from "lodash";
 import { ElementKeys, useGetCompByKey } from "./comp";
+import { useHasPer } from "../access";
 
 export interface IOpeItem {
   value: string | number;
@@ -14,6 +15,10 @@ export interface IOpeItem {
   element?: (
     item?: Omit<IOpeItem, "show" | "disabled" | "opeProps" | "element"> & { disabled?: boolean },
   ) => VNode | null;
+  //
+  sort?: number; //排序
+  per?: string; //权限字符串
+  perSuffix?: string; //权限字符串后缀
 }
 
 const proOperateProps = () => ({
@@ -25,6 +30,8 @@ const proOperateProps = () => ({
   //items 的补充
   itemState: { type: Object as PropType<Record<string, IOpeItem>> },
   elementKey: { type: String, default: ElementKeys.ButtonKey },
+  //权限分割字符串
+  splitStr: { type: String },
 });
 
 export type ProOperateProps = Partial<ExtractPropTypes<ReturnType<typeof proOperateProps>>>;
@@ -34,12 +41,26 @@ export const ProOperate = defineComponent<ProOperateProps>({
     ...(proOperateProps() as any),
   },
   setup: (props, { slots }) => {
-    const getComp = useGetCompByKey();
-    const Comp = props.elementKey ? getComp(props.elementKey) : undefined;
+    const hasPer = useHasPer();
 
-    const showItems = computed(() => {
+    //权限字符串判断
+    const isPerPass = (item: IOpeItem) => {
+      let pass: boolean = true;
+      if (item.per) {
+        pass = hasPer(item.per);
+      } else if (item.perSuffix) {
+        pass = hasPer(item.perSuffix, { suffix: true, splitStr: props.splitStr });
+      }
+      return pass;
+    };
+
+    const reItems = computed(() => {
       //去除不显示的
       const items = filter(props.items, (item) => {
+        if (!isPerPass(item)) {
+          return false;
+        }
+
         if (isFunction(item.show)) {
           return item.show();
         } else if (isBoolean(item.show)) {
@@ -49,22 +70,27 @@ export const ProOperate = defineComponent<ProOperateProps>({
         }
       });
       //合并itemState
-      return map(items, (item) => {
+      const list = map(items, (item) => {
         if (has(props.itemState, item.value)) {
           return { ...item, ...get(props.itemState, item.value) };
         }
         return item;
       });
+      //排序
+      return sortBy(items, (item) => item.sort);
     });
 
     const handleItemClick = (item: IOpeItem) => {
       item.onClick?.(item.value);
     };
 
+    const getComp = useGetCompByKey();
+    const Comp = props.elementKey ? getComp(props.elementKey) : undefined;
+
     return () => {
       return (
         <div class={props.clsName}>
-          {map(showItems.value, (item) => {
+          {map(reItems.value, (item) => {
             //是否禁用
             const disabled = isFunction(item.disabled) ? item.disabled() : item.disabled;
             const loading = isFunction(item.loading) ? item.loading() : item.loading;
