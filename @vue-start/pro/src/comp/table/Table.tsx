@@ -53,8 +53,11 @@ export interface IOperateItem {
   //
   extraProps?: object | ((record: Record<string, any>) => Record<string, any>);
   onClick?: (record: Record<string, any>) => void;
-  sort?: number;
   element?: (record: Record<string, any>, item: IOperateItem) => VNode;
+  //
+  sort?: number;
+  per?: string; //权限字符串
+  perSuffix?: string; //权限字符串后缀
 }
 
 /**

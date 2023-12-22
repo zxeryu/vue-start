@@ -45,6 +45,19 @@ export const useHasPer = () => {
   };
 };
 
+export const useHasPer2 = () => {
+  const hasPer = useHasPer();
+
+  return (per?: string, suffix?: string, splitStr?: string) => {
+    if (per) {
+      return hasPer(per);
+    } else if (suffix) {
+      return hasPer(suffix, { suffix: true, splitStr });
+    }
+    return true;
+  };
+};
+
 const permissionProps = () => ({
   //后缀
   suffix: { type: [String, Array as PropType<string[]>] },

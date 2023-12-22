@@ -48,7 +48,19 @@ export const ProCurdList = defineComponent<ProCurdListProps>({
       }),
       (operate: ICurdOperateOpts) => {
         const item = {
-          ...pick(operate, "label", "show", "disabled", "loading", "extraProps", "onClick", "element"),
+          ...pick(
+            operate,
+            "label",
+            "show",
+            "disabled",
+            "loading",
+            "extraProps",
+            "onClick",
+            "element",
+            "sort",
+            "per",
+            "perSuffix",
+          ),
           value: operate.action,
         };
         if (!item.onClick) {

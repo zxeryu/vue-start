@@ -1,8 +1,11 @@
 import { computed, defineComponent, ExtractPropTypes, PropType, VNode } from "vue";
 import { filter, get, has, isBoolean, isFunction, map, omit, sortBy } from "lodash";
 import { ElementKeys, useGetCompByKey } from "./comp";
-import { useHasPer } from "../access";
+import { useHasPer2 } from "../access";
 
+/**
+ * ！！！！ 这块修改后，得同步CudList tableOperateItems
+ */
 export interface IOpeItem {
   value: string | number;
   label?: string | VNode | (() => string | VNode);
@@ -41,23 +44,12 @@ export const ProOperate = defineComponent<ProOperateProps>({
     ...(proOperateProps() as any),
   },
   setup: (props, { slots }) => {
-    const hasPer = useHasPer();
-
-    //权限字符串判断
-    const isPerPass = (item: IOpeItem) => {
-      let pass: boolean = true;
-      if (item.per) {
-        pass = hasPer(item.per);
-      } else if (item.perSuffix) {
-        pass = hasPer(item.perSuffix, { suffix: true, splitStr: props.splitStr });
-      }
-      return pass;
-    };
+    const hasPer2 = useHasPer2();
 
     const reItems = computed(() => {
       //去除不显示的
       const items = filter(props.items, (item) => {
-        if (!isPerPass(item)) {
+        if (!hasPer2(item.per, item.perSuffix, props.splitStr)) {
           return false;
         }
 
@@ -77,7 +69,7 @@ export const ProOperate = defineComponent<ProOperateProps>({
         return item;
       });
       //排序
-      return sortBy(items, (item) => item.sort);
+      return sortBy(list, (item) => item.sort);
     });
 
     const handleItemClick = (item: IOpeItem) => {
