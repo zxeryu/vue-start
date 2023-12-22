@@ -24,8 +24,8 @@ export const ProFormItem = defineComponent<ProFormItemProps>({
           {...omit(props, ...invalidKeys, "name", "prop")}
           prop={props.prop || (props.name as any)}
           v-slots={{
-            ...omit(slots, "label"),
-            label: () => slots.label?.() || props.label,
+            label: props.label ? () => props.label : undefined,
+            ...slots,
           }}
         />
       );
