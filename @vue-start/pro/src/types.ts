@@ -37,6 +37,8 @@ export type TreeOption = {
 
 export type TreeOptions = TreeOption[];
 
+export type TRender = (opts: { value: any; record: any; column?: TColumn }) => VNode | string | number;
+
 export type TColumn = {
   title?: string | VNode;
   dataIndex?: string | number;
@@ -46,6 +48,12 @@ export type TColumn = {
   formItemProps?: { name?: string; label?: string }; //FormItem props
   formFieldProps?: Record<string, any>; //录入组件 props
   search?: boolean; //同extra中的search
+
+  descRender?: string | TRender; //desc
+  formRender?: string | TRender; //form
+  formReadRender?: string | TRender; //form readonly
+  // tableRender?: string | TRender; //table
+
   //拓展属性
   extra?: {
     //DescriptionsItem props

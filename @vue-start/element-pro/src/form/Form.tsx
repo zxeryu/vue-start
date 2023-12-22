@@ -23,7 +23,10 @@ export const ProFormItem = defineComponent<ProFormItemProps>({
         <ElFormItem
           {...omit(props, ...invalidKeys, "name", "prop")}
           prop={props.prop || (props.name as any)}
-          v-slots={slots}
+          v-slots={{
+            ...omit(slots, "label"),
+            label: () => slots.label?.() || props.label,
+          }}
         />
       );
     };
