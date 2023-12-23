@@ -1,9 +1,9 @@
 import { computed, defineComponent, ExtractPropTypes, PropType } from "vue";
 import { ElementKeys, useGetCompByKey } from "./comp";
-import { get, keys, map, omit } from "lodash";
-import { getItemEl, ProBaseProps, proBaseProps, useProConfig } from "../core";
+import { get, isString, keys, map, omit } from "lodash";
+import { getItemEl, mergeState, ProBaseProps, proBaseProps, useProConfig } from "../core";
 import { UnwrapNestedRefs } from "@vue/reactivity";
-import { mergeStateToData } from "@vue-start/hooks";
+import { TColumn, TRender } from "../types";
 
 const proDescProps = () => ({
   /**
@@ -30,8 +30,25 @@ export const ProDesc = defineComponent<ProDescProps>({
     const DescriptionsItem = getComp(ElementKeys.DescriptionsItemKey);
 
     const columns = computed(() => {
-      return mergeStateToData(props.columns!, props.columnState!, "dataIndex");
+      return mergeState(props.columns!, props.columnState, props.columnState2);
     });
+
+    const descRender = (item: TColumn, value: any) => {
+      let render: TRender;
+      if (!item.descRender) {
+        return undefined;
+      }
+      if (isString(item.descRender)) {
+        render = get(item, item.descRender);
+      } else {
+        render = item.descRender;
+      }
+      return render?.({
+        value,
+        record: props.model,
+        column: omit(item, "descRender"),
+      });
+    };
 
     const proBaseKeys = keys(proBaseProps);
     const invalidKeys = keys(proDescProps());
@@ -47,6 +64,7 @@ export const ProDesc = defineComponent<ProDescProps>({
           {map(columns.value, (item) => {
             const dataIndex = item.dataIndex!;
             const value = get(props.model, dataIndex);
+
             return (
               <DescriptionsItem
                 class={`${props.clsName}-item`}
@@ -56,7 +74,7 @@ export const ProDesc = defineComponent<ProDescProps>({
                     return slots.label?.(item) || item.title;
                   },
                 }}>
-                {slots.value?.(value, item) || getItemEl(elementMap, item, value)}
+                {slots.value?.(value, item) || descRender(item, value) || getItemEl(elementMap, item, value)}
               </DescriptionsItem>
             );
           })}

@@ -3,8 +3,12 @@
   --pro-header-hei: 60px;
   --pro-divide-ver-hei: 2px;
   --pro-left-menu-wid: 220px;
-  /*horizontal模式下，菜单的高度，如果添加了"menu-start"/"menu-end"插槽，需要重写此变量*/
-  --pro-left-menu-hei: 100vh;
+  --pro-left-menu-mini-wid: 64px;
+  /*左侧菜单start,end插槽高度*/
+  --pro-menu-start-hei: 0px;
+  --pro-menu-end-hei: 0px;
+  /*左侧菜单高度*/
+  --pro-left-menu-hei: calc(100vh - var(--pro-menu-start-hei) - var(--pro-menu-end-hei));
   /*page*/
   --pro-page-header-hei: 40px;
   --pro-page-footer-hei: 46px;
@@ -47,6 +51,21 @@
   height: var(--pro-secion-hei);
 }
 
+/*左侧菜单*/
+.pro-layout .pro-layout-menus-wrapper .pro-layout-menus {
+  width: var(--pro-left-menu-wid);
+  min-width: var(--pro-left-menu-wid);
+  max-width: var(--pro-left-menu-wid);
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+
+.pro-layout .pro-layout-menus-wrapper .mini {
+  width: var(--pro-left-menu-mini-wid);
+  min-width: var(--pro-left-menu-mini-wid);
+  max-width: var(--pro-left-menu-mini-wid);
+}
+
 /*vertical*/
 .pro-layout-vertical {
 }
@@ -58,12 +77,7 @@
 }
 
 .pro-layout-horizontal .pro-layout-menus {
-  width: var(--pro-left-menu-wid);
-  min-width: var(--pro-left-menu-wid);
-  max-width: var(--pro-left-menu-wid);
   height: var(--pro-left-menu-hei);
-  overflow-y: auto;
-  overflow-x: hidden;
 }
 
 .pro-layout-horizontal .pro-layout-structure {
@@ -73,6 +87,10 @@
 /*horizontal-v*/
 .pro-layout-horizontal-v {
   display: unset !important;
+}
+
+.pro-layout-horizontal-v .pro-layout-menus {
+  height: calc(var(--pro-left-menu-hei) - var(--pro-header-hei) - var(--pro-divide-ver-hei));
 }
 
 .pro-layout-horizontal-v .pro-layout-structure {
@@ -93,13 +111,8 @@
 }
 
 .pro-layout-compose .pro-layout-structure .pro-layout-menus {
-  width: var(--pro-left-menu-wid);
-  min-width: var(--pro-left-menu-wid);
-  max-width: var(--pro-left-menu-wid);
   margin-top: var(--pro-divide-ver-hei);
-  max-height: calc(100vh - var(--pro-header-hei) - var(--pro-divide-ver-hei));
-  overflow-y: auto;
-  overflow-x: hidden;
+  height: calc(var(--pro-left-menu-hei) - var(--pro-header-hei) - var(--pro-divide-ver-hei));
 }
 
 .pro-layout-compose .pro-layout-structure .pro-layout-section {

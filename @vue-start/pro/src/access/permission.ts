@@ -23,23 +23,38 @@ const hasPer = (buttonMap: Record<string, boolean>, value: string | string[]): b
 
 //当前buttonMap中是否存在value
 export const useHasPer = () => {
-  const { per } = useLogonUser();
+  const { per } = useLogonUser() || { per: { menus: [], buttonMap: {} } };
   const route = useRoute();
 
   return (
     perStr: string | string[],
     options?: {
       suffix?: boolean; //是否是后缀
+      splitStr?: string; //路由名称和后缀连接的字符串 `${route.name}${splitStr}${suffix}`
     },
   ) => {
     if (!perStr) return false;
     let value = perStr;
     if (options?.suffix) {
       const name = route.name ? route.name.toString() : "";
+      const splitStr = options?.splitStr || "_";
       //拼接成 `${route.name}:${suffix}`
-      value = isArray(value) ? map(value, (item) => `${name}:${item}`) : `${name}:${value}`;
+      value = isArray(value) ? map(value, (item) => `${name}${splitStr}${item}`) : `${name}${splitStr}${value}`;
     }
     return hasPer(per.buttonMap!, value);
+  };
+};
+
+export const useHasPer2 = () => {
+  const hasPer = useHasPer();
+
+  return (per?: string, suffix?: string, splitStr?: string) => {
+    if (per) {
+      return hasPer(per);
+    } else if (suffix) {
+      return hasPer(suffix, { suffix: true, splitStr });
+    }
+    return true;
   };
 };
 
@@ -48,6 +63,8 @@ const permissionProps = () => ({
   suffix: { type: [String, Array as PropType<string[]>] },
   //完整字符串
   value: { type: [String, Array as PropType<string[]>] },
+  //
+  splitStr: { type: String },
 });
 
 export type PermissionProps = Partial<ExtractPropTypes<ReturnType<typeof permissionProps>>>;
@@ -65,7 +82,7 @@ export const Permission = defineComponent<PermissionProps>({
         return hasPer(props.value);
       }
       if (props.suffix) {
-        return hasPer(props.suffix, { suffix: true });
+        return hasPer(props.suffix, { suffix: true, splitStr: props.splitStr });
       }
       return false;
     });

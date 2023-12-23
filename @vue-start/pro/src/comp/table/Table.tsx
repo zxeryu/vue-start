@@ -1,12 +1,12 @@
 import { computed, defineComponent, ExtractPropTypes, inject, PropType, provide, ref, toRef, VNode, Ref } from "vue";
 import { TColumn } from "../../types";
-import { filter, get, isBoolean, isFunction, keys, map, omit, pick, reduce, size, some, sortBy } from "lodash";
-import { getItemEl, proBaseProps, ProBaseProps, useProConfig } from "../../core";
+import { filter, get, isBoolean, isFunction, keys, map, omit, pick, reduce, size, some } from "lodash";
+import { getItemEl, mergeState, proBaseProps, ProBaseProps, useProConfig } from "../../core";
 import { createExpose, filterSlotsByPrefix } from "../../util";
 import { IOpeItem, ProOperate, ProOperateProps } from "../Operate";
 import { ElementKeys } from "../comp";
 import { ColumnSetting, ProColumnSettingProps } from "./ColumnSetting";
-import { mergeStateToData, useResizeObserver } from "@vue-start/hooks";
+import { useResizeObserver } from "@vue-start/hooks";
 
 const ProTableKey = Symbol("pro-table");
 
@@ -53,8 +53,11 @@ export interface IOperateItem {
   //
   extraProps?: object | ((record: Record<string, any>) => Record<string, any>);
   onClick?: (record: Record<string, any>) => void;
-  sort?: number;
   element?: (record: Record<string, any>, item: IOperateItem) => VNode;
+  //
+  sort?: number;
+  per?: string; //权限字符串
+  perSuffix?: string; //权限字符串后缀
 }
 
 /**
@@ -170,8 +173,6 @@ export const ProTable = defineComponent<ProTableProps>({
       const items = map(operate.items, (i) => {
         return { ...get(props.operateItemState, i.value), ...i, ...get(operate.itemState, i.value) };
       });
-      //排序
-      const sortedItems = sortBy(items, (item) => item.sort);
       return {
         ...props.column,
         title: "操作",
@@ -179,7 +180,7 @@ export const ProTable = defineComponent<ProTableProps>({
         fixed: "right",
         ...operate.column,
         customRender: ({ record }) => {
-          const opeItems = map(sortedItems, (item) => {
+          const opeItems = map(items, (item) => {
             return {
               ...item,
               show: isFunction(item.show) ? item.show(record) : item.show,
@@ -253,9 +254,7 @@ export const ProTable = defineComponent<ProTableProps>({
     };
 
     const columns = computed(() => {
-      const mergeColumns = mergeStateToData(showColumns.value as any, props.columnState!, (item) => item.dataIndex, {
-        children: "children",
-      });
+      const mergeColumns = mergeState(props.columns!, props.columnState, props.columnState2);
       //根据valueType选择对应的展示组件
       const columns = convertColumns(mergeColumns);
       //处理序号

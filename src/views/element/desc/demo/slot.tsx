@@ -1,5 +1,5 @@
 /*---
-title: 基础使用
+title: slots方式重写
 ---*/
 import { defineComponent } from "vue";
 import { columns } from "@/common/columns";

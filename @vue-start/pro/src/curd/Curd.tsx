@@ -2,6 +2,7 @@ import { computed, defineComponent, ExtractPropTypes, PropType, reactive, ref, V
 import {
   IProModuleProvide,
   IRequestOpts,
+  mergeState,
   proBaseProps,
   ProBaseProps,
   ProModule,
@@ -12,7 +13,7 @@ import {
   useProModule,
 } from "../core";
 import { filter, get, keys, map, omit, pick, reduce, sortBy } from "lodash";
-import { TActionEvent, TColumn } from "../types";
+import { TActionEvent, TColumn, TColumns } from "../types";
 import { UnwrapNestedRefs } from "@vue/reactivity";
 import {
   CurdAction,
@@ -25,8 +26,7 @@ import {
 } from "./ctx";
 import { IOperateItem } from "../comp";
 import { IRequestActor } from "@vue-start/request";
-import { getColumnFormItemName, getFormItemEl, getItemEl } from "../core";
-import { mergeStateToData } from "@vue-start/hooks";
+import { getFormItemEl, getItemEl } from "../core";
 
 export interface IListData extends Record<string, any> {
   total: number;
@@ -105,7 +105,7 @@ const Curd = defineComponent<CurdProps>({
      * columns columnState 合并
      */
     const columns = computed(() => {
-      return mergeStateToData(props.columns!, props.columnState!, (item) => getColumnFormItemName(item) as string);
+      return mergeState(props.columns!, props.columnState, props.columnState2);
     });
 
     /*********************************** 渲染组件 ***************************************/
@@ -137,7 +137,7 @@ const Curd = defineComponent<CurdProps>({
       });
       return sortBy(signColumns, (item) => {
         return get(item, ["extra", `${signName}Sort`]) || get(item, `${signName}Sort`);
-      });
+      }) as TColumns;
     };
 
     const formColumns = computed(() => getSignColumns("form", true));

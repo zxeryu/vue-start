@@ -1,4 +1,4 @@
-import { defineComponent } from "vue";
+import { defineComponent, ref } from "vue";
 import { RouterView } from "vue-router";
 import { findTreeItem, useEffect } from "@vue-start/hooks";
 import { ProLayout, useProRouter } from "@vue-start/pro";
@@ -57,6 +57,40 @@ export const BasicLayout = defineComponent(() => {
     router.openMenu(item);
   };
 
+  const collapseRef = ref(false);
+
+  const handleCollapse = () => {
+    collapseRef.value = !collapseRef.value;
+  };
+
+  // element-plus 中 collapse模式 使用
+  const elCollapseSlots = {
+    "menu-default": (menu: any) => {
+      return <span>icon</span>;
+    },
+    "menu-title": (menu: any) => {
+      if (menu.children && menu.children.length > 0) {
+        return (
+          <>
+            <i>sub</i>
+            <span>{menu.label}</span>
+          </>
+        );
+      }
+      return <span>{menu.label}</span>;
+    },
+  };
+
+  // ant-design-vue 中 collapse模式 使用
+  const antCollapseSlots = {
+    "menu-icon": (menu: any) => {
+      if (menu.children && menu.children.length > 0) {
+        return <span>sub</span>;
+      }
+      return <span>icon</span>;
+    },
+  };
+
   return () => {
     return (
       <ProLayout
@@ -70,8 +104,12 @@ export const BasicLayout = defineComponent(() => {
         fieldNames={{ value: "name", label: "title", children: "children" }}
         findCurrentTopName={findCurrentTopName}
         findActiveKey={findActiveKey}
-        // @ts-ignore
         onMenuItemClick={onMenuItemClick}
+        menuProps={{
+          class: collapseRef.value ? "pro-layout-menus mini" : "pro-layout-menus",
+          collapse: collapseRef.value, //el
+          inlineCollapsed: collapseRef.value, //ant
+        }}
         v-slots={{
           "header-start": () => <HeaderLeft />,
           "header-end": () => (
@@ -87,7 +125,11 @@ export const BasicLayout = defineComponent(() => {
             </>
           ),
           "menu-start": () => <div class={css({ lineHeight: "30px" })}>start</div>,
-          "menu-end": () => <div class={css({ lineHeight: "30px" })}>end</div>,
+          "menu-end": () => (
+            <div class={css({ lineHeight: "30px", textAlign: "center" })} onClick={handleCollapse}>
+              {collapseRef.value ? "展开" : "合并"}
+            </div>
+          ),
         }}>
         <RouterView />
       </ProLayout>

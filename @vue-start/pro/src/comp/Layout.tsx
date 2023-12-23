@@ -60,6 +60,8 @@ const layoutProps = () => ({
   convertMenuItemProps: { type: Function },
   //MenuItem点击事件
   onMenuItemClick: { type: Function },
+  //menu参数
+  menuProps: { type: Object },
 });
 
 export const ProLayout = defineComponent({
@@ -127,10 +129,11 @@ export const ProLayout = defineComponent({
       const pickAttrs = pick(attrs, "class");
 
       const menuProps = {
-        class: "pro-layout-menus",
+        class: `${props.clsName}-menus`,
         options: reMenus.value,
         activeKey: activeKey.value,
         ...pick(props, "convertSubMenuProps", "convertMenuItemProps", "onMenuItemClick"),
+        ...props.menuProps,
       };
 
       if (props.layout === "vertical") {
@@ -152,7 +155,7 @@ export const ProLayout = defineComponent({
       } else if (props.layout === "horizontal") {
         return (
           <main {...pickAttrs} class={`${props.clsName} ${props.clsName}-${props.layout}`}>
-            <div class={"pro-layout-menus-wrapper"}>
+            <div class={`${props.clsName}-menus-wrapper`}>
               {menuSlots.start?.()}
               <Menus {...menuProps} v-slots={menuSlots} />
               {menuSlots.end?.()}
@@ -165,10 +168,10 @@ export const ProLayout = defineComponent({
         );
       } else if (props.layout === "horizontal-v") {
         return (
-          <main {...pickAttrs} class={`${props.clsName} ${props.clsName}-horizontal ${props.clsName}-horizontal-v`}>
+          <main {...pickAttrs} class={`${props.clsName} ${props.clsName}-${props.layout}`}>
             <Header class={`${props.clsName}-header`} v-slots={headerSlots} />
             <div class={`${props.clsName}-structure`}>
-              <div class={"pro-layout-menus-wrapper"}>
+              <div class={`${props.clsName}-menus-wrapper`}>
                 {menuSlots.start?.()}
                 <Menus {...menuProps} v-slots={menuSlots} />
                 {menuSlots.end?.()}
@@ -189,7 +192,7 @@ export const ProLayout = defineComponent({
                 return (
                   <Menus
                     style={`width:${width}px`}
-                    class={"pro-layout-menus"}
+                    class={`${props.clsName}-menus`}
                     mode={"horizontal"}
                     options={map(reMenus.value, (item) => omit(item, "children"))}
                     activeKey={currentTopName.value}
@@ -204,7 +207,11 @@ export const ProLayout = defineComponent({
           />
           <div class={`${props.clsName}-structure`}>
             {currentTop.value && size(currentTop.value.children) > 0 && (
-              <Menus options={currentTop.value.children} {...omit(menuProps, "options")} v-slots={menuSlots} />
+              <div class={`${props.clsName}-menus-wrapper`}>
+                {menuSlots.start?.()}
+                <Menus options={currentTop.value.children} {...omit(menuProps, "options")} v-slots={menuSlots} />
+                {menuSlots.end?.()}
+              </div>
             )}
             <div class={`${props.clsName}-section`}>{slots.default?.()}</div>
           </div>

@@ -6,6 +6,8 @@ import { IRequestActor, useRequestProvide } from "@vue-start/request";
 import { TMeta, useMetaRegister } from "./request";
 import { TRouter } from "./router";
 import { Router } from "vue-router";
+import { mergeStateToData, mergeStateToData2 } from "@vue-start/hooks";
+import { getColumnFormItemName } from "./core";
 
 const proBasePropsFn = () => ({
   /**
@@ -27,11 +29,30 @@ const proBasePropsFn = () => ({
    * 通常对columns为静态值时候使用
    */
   columnState: { type: Object as PropType<Record<string, any>> },
+  /**
+   * columnState2
+   */
+  columnState2: { type: Object as PropType<Record<string, any>> },
 });
 
 export type ProBaseProps = Partial<ExtractPropTypes<ReturnType<typeof proBasePropsFn>>>;
 
 export const proBaseProps: ProBaseProps = proBasePropsFn() as any;
+
+export const mergeState = (
+  columns: TColumns,
+  columnState?: Record<string, any>,
+  columnState2?: Record<string, any>,
+) => {
+  let list = columns;
+  if (columnState) {
+    list = mergeStateToData(list, columnState, (item) => getColumnFormItemName(item) as string);
+  }
+  if (columnState2) {
+    list = mergeStateToData2(list, columnState2, (item) => getColumnFormItemName(item) as string);
+  }
+  return list;
+};
 
 export type ProDispatchRequestType = (
   actorName: string,
