@@ -1,9 +1,8 @@
 import { computed, defineComponent, ExtractPropTypes, PropType } from "vue";
 import { ElementKeys, useGetCompByKey } from "./comp";
 import { get, isString, keys, map, omit } from "lodash";
-import { getItemEl, ProBaseProps, proBaseProps, useProConfig } from "../core";
+import { getItemEl, mergeState, ProBaseProps, proBaseProps, useProConfig } from "../core";
 import { UnwrapNestedRefs } from "@vue/reactivity";
-import { mergeStateToData } from "@vue-start/hooks";
 import { TColumn, TRender } from "../types";
 
 const proDescProps = () => ({
@@ -31,7 +30,7 @@ export const ProDesc = defineComponent<ProDescProps>({
     const DescriptionsItem = getComp(ElementKeys.DescriptionsItemKey);
 
     const columns = computed(() => {
-      return mergeStateToData(props.columns!, props.columnState!, "dataIndex");
+      return mergeState(props.columns!, props.columnState, props.columnState2);
     });
 
     const descRender = (item: TColumn, value: any) => {

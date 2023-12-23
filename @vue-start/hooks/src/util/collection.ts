@@ -13,10 +13,13 @@ import {
   mergeWith,
   omit,
   reduce,
+  set,
   size,
 } from "lodash";
 import { FieldNames, TOption } from "@vue-start/pro";
 import { getFieldNames } from "./options";
+import { isReactive } from "vue";
+import { isEmptyState } from "../useState";
 
 type TData = Record<string, any>;
 
@@ -265,26 +268,75 @@ export const mergeStateToData = (
   value: string | ((item: TData) => string),
   fieldNames?: { children: "children" | string },
 ) => {
-  if (!data || !value) return data;
+  if (!data || !state || !value) return data;
 
   return map(data, (item) => {
+    let nextItem = { ...item };
+
+    const childrenName = fieldNames?.children || "children";
+    if (item[childrenName]) {
+      nextItem[childrenName] = mergeStateToData(item[childrenName], state, value, fieldNames);
+    }
+
     const id = isFunction(value) ? value(item) : item[value];
     const stateData = get(state, id);
-
-    if (!stateData || isEmpty(stateData) || isFunction(stateData) || !isObject(stateData)) {
-      return item;
+    if (!stateData || isEmpty(stateData) || isArray(stateData) || isFunction(stateData) || !isObject(stateData)) {
+      return nextItem;
     }
-    const reItem = fieldNames?.children ? omit(item, fieldNames.children) : { ...item };
-    const reStateData = fieldNames?.children ? omit(stateData, fieldNames.children) : stateData;
 
-    const nextItem: TData = mergeWith(reItem, reStateData, (objValue, srcValue) => {
+    const reItem = omit(item, childrenName);
+    const reStateData = omit(stateData, childrenName);
+
+    nextItem = mergeWith(reItem, reStateData, (objValue, srcValue) => {
       if (isArray(objValue) || isArray(srcValue)) {
         return srcValue;
       }
     });
-    if (fieldNames?.children && item[fieldNames.children]) {
-      nextItem[fieldNames.children] = mergeStateToData(item[fieldNames.children], state, value, fieldNames);
+
+    return nextItem;
+  });
+};
+
+/**
+ * data { paths:string | {path:string; key:string}[], ...extra }[]
+ * @param data
+ * @param state
+ * @param value
+ * @param fieldNames
+ */
+export const mergeStateToData2 = (
+  data: TData[],
+  state: Record<string, any>,
+  value?: string | ((item: TData) => string),
+  fieldNames?: { children: "children" | string },
+) => {
+  if (!data || !state || isEmpty(state)) return data;
+  if (isReactive(state) && isEmptyState(state)) return data;
+
+  return map(data, (item) => {
+    const nextItem = { ...item };
+
+    const childrenName = fieldNames?.children || "children";
+
+    //处理children
+    if (isArray(item[childrenName])) {
+      nextItem[childrenName] = mergeStateToData2(item[childrenName], state, value, fieldNames);
     }
+
+    //需要设置值的path
+    if (!item.paths) return nextItem;
+
+    const id = isFunction(value) ? value(item) : item[value!];
+    const paths = isArray(item.paths) ? item.paths : [{ path: item.paths, key: id }];
+
+    forEach(paths, ({ path, key }) => {
+      const stateData = get(state, key);
+      //如果不存在目标值，不处理
+      if (!stateData || isEmpty(stateData) || isFunction(stateData)) {
+        return;
+      }
+      set(nextItem, path, stateData);
+    });
 
     return nextItem;
   });
