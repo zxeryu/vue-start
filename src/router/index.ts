@@ -1,21 +1,10 @@
-import { forEach, size } from "lodash";
-import { RouterView, createRouter as createRouterOrigin, createWebHistory } from "vue-router";
+import { size } from "lodash";
+import { createRouter as createRouterOrigin, createWebHistory } from "vue-router";
 import { routes } from "./routes";
 import { routes as moduleRoutes } from "./modules";
 import { BasicLayout } from "@/layout";
 import { IProConfigProvide, TRouter } from "@vue-start/pro";
 import { findFirstValidMenu } from "@vue-start/hooks";
-
-const replenishRoute = (routes: any[]) => {
-  forEach(routes, (route) => {
-    if (!route.component && !route.redirect) {
-      route.component = RouterView;
-    }
-    if (size(route.children) > 0) {
-      replenishRoute(route.children);
-    }
-  });
-};
 
 const reRoutes = [
   {
@@ -24,8 +13,6 @@ const reRoutes = [
     children: [...routes, ...moduleRoutes],
   },
 ];
-
-replenishRoute(reRoutes);
 
 export const createRouter = () => {
   return createRouterOrigin({

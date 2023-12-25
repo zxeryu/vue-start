@@ -12,12 +12,16 @@ import { CurdAction, CurdSubAction, useProCurd } from "../ctx";
 import { filter, get, keys, map, omit, pick } from "lodash";
 import { ICurdOperateOpts } from "../Curd";
 import { AddButton } from "./button";
+import { useSafeActivated } from "@vue-start/hooks";
 
 const curdListProps = () => ({
+  //新增按钮位置
   addConfig: {
     type: Object as PropType<{ inSearch: boolean; inTable: boolean; buttonProps: Record<string, any> }>,
     default: { inSearch: true },
   },
+  //当CurdList处于keep-alive模式下，是否在onActivated回调中refreshList
+  activatedRefresh: { type: Boolean, default: true },
 });
 
 export type ProCurdListProps = Partial<ExtractPropTypes<ReturnType<typeof curdListProps>>> & ProListProps;
@@ -31,7 +35,7 @@ export const ProCurdList = defineComponent<ProCurdListProps>({
     ...curdListProps(),
   },
   setup: (props, { slots }) => {
-    const { elementMap, formElementMap, curdState, searchColumns, tableColumns, sendCurdEvent, operates } =
+    const { elementMap, formElementMap, curdState, searchColumns, tableColumns, sendCurdEvent, operates, refreshList } =
       useProCurd();
 
     //从operates中提取table items
@@ -75,6 +79,12 @@ export const ProCurdList = defineComponent<ProCurdListProps>({
     const handleSearch = (values: Record<string, any>) => {
       sendCurdEvent({ action: CurdAction.LIST, type: CurdSubAction.EMIT, values });
     };
+
+    useSafeActivated(() => {
+      if (props.activatedRefresh) {
+        refreshList();
+      }
+    });
 
     const searchProps = computed(() => {
       return { formElementMap, columns: searchColumns.value, ...props.searchProps };
