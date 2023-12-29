@@ -43,6 +43,21 @@ export const getColumnFormItemName = (column: TColumn): string | number | undefi
 };
 
 /**
+ * 获取column 中对应的render方法
+ * case1：render为方法的时候，直接返回render；
+ * case2：render为字符串的时候，返回column中该字符串对应的属性；
+ *      如：render为"customRender"时候，返回customRender方法；
+ * @param column
+ * @param render
+ */
+export const getRealRender = (column: TColumn, render: string | undefined | ((...args: any[]) => any)) => {
+  if (isString(render)) {
+    return get(column, render);
+  }
+  return render;
+};
+
+/**
  * 根据Column生成FormItem VNode
  * formFieldProps中的slots参数会以v-slots的形式传递到FormItem的录入组件（子组件）中
  * @param formElementMap
@@ -58,6 +73,21 @@ export const getFormItemEl = (formElementMap: any, column: TColumn): VNode | nul
 
   const name = getColumnFormItemName(column);
 
+  const slots = column.formFieldProps?.slots || {};
+  const slotsExtra: Record<string, any> = {};
+
+  //展示组件
+  const formReadRender = getRealRender(column, column.formReadRender);
+  if (!slots.renderShow && isFunction(formReadRender)) {
+    slotsExtra.renderShow = (opts: any) => formReadRender({ ...opts, column });
+  }
+
+  //输入组件
+  const formRender = getRealRender(column, column.formRender);
+  if (!slots.renderInput && formRender) {
+    slotsExtra.renderInput = (opts: any) => formRender({ ...opts, column });
+  }
+
   return h(
     Comp,
     {
@@ -68,7 +98,7 @@ export const getFormItemEl = (formElementMap: any, column: TColumn): VNode | nul
       fieldProps: omit(column.formFieldProps, "slots"),
       showProps: column.showProps,
     },
-    column.formFieldProps?.slots,
+    { ...slots, ...slotsExtra },
   );
 };
 

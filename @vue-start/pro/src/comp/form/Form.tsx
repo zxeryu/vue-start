@@ -2,7 +2,7 @@ import { Ref, UnwrapNestedRefs } from "@vue/reactivity";
 import { computed, defineComponent, ExtractPropTypes, inject, PropType, provide, reactive, ref } from "vue";
 import { BooleanObjType, BooleanRulesObjType, TColumn, TColumns, TElementMap } from "../../types";
 import { convertCollection, useRuleState } from "@vue-start/hooks";
-import { get, keys, map, omit, size, debounce } from "lodash";
+import { get, keys, map, omit, size, debounce, filter } from "lodash";
 import { getColumnFormItemName, getFormItemEl, mergeState, proBaseProps, ProBaseProps, useProConfig } from "../../core";
 import { createExpose, getValidValues } from "../../util";
 import { ProGridProps, ProOperate, ProGrid, ProOperateProps, IOpeItem, ElementKeys } from "../index";
@@ -255,10 +255,17 @@ export const ProForm = defineComponent<ProFormProps>({
     };
 
     const items = computed(() => {
+      //根据showState filter columns
+      const showColumns = filter(columns.value, (item) => {
+        const name = getColumnFormItemName(item);
+        if (!get(showState, name!, true)) return false;
+        return true;
+      });
+
       if (!props.row) {
-        return map(columns.value, (item) => renderItem(item));
+        return map(showColumns, (item) => renderItem(item));
       }
-      return map(columns.value, (item) => ({
+      return map(showColumns, (item) => ({
         rowKey: getColumnFormItemName(item),
         vNode: renderItem(item) as any,
         col: get(item, ["extra", "col"]),

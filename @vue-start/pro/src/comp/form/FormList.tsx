@@ -1,4 +1,4 @@
-import { computed, defineComponent, ExtractPropTypes, inject, PropType, provide, VNode } from "vue";
+import { defineComponent, ExtractPropTypes, inject, PropType, provide, VNode } from "vue";
 import { get, isArray, keys, map, omit, set, size } from "lodash";
 import { useProForm } from "./Form";
 import { convertPathToList } from "../../util";
@@ -6,6 +6,7 @@ import { ElementKeys, useGetCompByKey } from "../comp";
 import { TColumn, TColumns } from "../../types";
 import { ProGrid, ProGridProps } from "../Grid";
 import { getColumnFormItemName, getFormItemEl } from "../../core";
+import { useUpdateKey } from "@vue-start/hooks";
 
 /**
  * ProFormList ctx
@@ -69,6 +70,8 @@ export const ProFormList = defineComponent<ProFormListProps>({
     const nameList = convertPathToList(props.name);
     const path = formListCtx?.pathList ? [...formListCtx.pathList, ...nameList!] : nameList!;
 
+    const [key, updateKey] = useUpdateKey();
+
     const handleAdd = () => {
       let targetList = get(formState, path);
       if (!isArray(targetList)) {
@@ -86,29 +89,36 @@ export const ProFormList = defineComponent<ProFormListProps>({
         return;
       }
       targetList.splice(index, 1);
+      updateKey();
     };
 
     /************************************** render ******************************************/
 
-    const renderItem = (item: TColumn) => {
+    const renderItem = (item: TColumn, pathList: (string | number)[]) => {
       const rowKey = getColumnFormItemName(item);
       //插槽优先
       if (rowKey && slots[rowKey]) {
-        return slots[rowKey]!(item, formState);
+        return slots[rowKey]!(item, formState, pathList);
       }
       return getFormItemEl(formElementMap, item)!;
     };
 
-    const items = computed(() => {
-      if (!props.row) {
-        return map(props.columns, (item) => renderItem(item));
+    const renderItems = (pathList: (string | number)[]) => {
+      if (!formElementMap || size(props.columns) <= 0) {
+        return null;
       }
-      return map(props.columns, (item) => ({
+      if (!props.row) {
+        return map(props.columns, (item) => renderItem(item, pathList));
+      }
+
+      const items = map(props.columns, (item) => ({
         rowKey: getColumnFormItemName(item),
-        vNode: renderItem(item) as any,
+        vNode: renderItem(item, pathList) as any,
         col: get(item, ["extra", "col"]),
       }));
-    });
+
+      return <ProGrid row={props.row} col={props.col} items={items} />;
+    };
 
     const invalidKeys = keys(proFormListProps());
 
@@ -121,31 +131,30 @@ export const ProFormList = defineComponent<ProFormListProps>({
           class={`pro-form-list ${props.inline ? "pro-form-list-inline" : ""}`}
           name={props.name}
           {...omit(props, invalidKeys)}>
-          {map(get(formState, path), (item, index: number) => (
-            <FormListProvider key={item[props.rowKey!] || index} pathList={[...path, index]}>
-              <div class={"pro-form-list-item"}>
-                {slots.start?.({ state: formState, path, index })}
+          {map(get(formState, path), (item, index: number) => {
+            const pathList = [...path, index];
+            return (
+              <FormListProvider key={item[props.rowKey!] + key.value} pathList={pathList}>
+                <div class={"pro-form-list-item"}>
+                  {slots.start?.({ state: formState, path, index })}
 
-                {formElementMap && size(props.columns) > 0 && (
-                  <>
-                    {props.row ? <ProGrid row={props.row} col={props.col} items={items.value as any} /> : items.value}
-                  </>
-                )}
+                  {renderItems(pathList)}
 
-                {slots.default?.()}
-                {!readonly.value && (
-                  <>
-                    <div class={"pro-form-list-item-add"} onClick={handleAdd}>
-                      {slots.itemAdd?.() || props.renderItemAdd?.()}
-                    </div>
-                    <div class={"pro-form-list-item-minus"} onClick={() => handleRemove(index)}>
-                      {slots.itemMinus?.() || props.renderItemMinus?.()}
-                    </div>
-                  </>
-                )}
-              </div>
-            </FormListProvider>
-          ))}
+                  {slots.default?.()}
+                  {!readonly.value && (
+                    <>
+                      <div class={"pro-form-list-item-add"} onClick={handleAdd}>
+                        {slots.itemAdd?.() || props.renderItemAdd?.()}
+                      </div>
+                      <div class={"pro-form-list-item-minus"} onClick={() => handleRemove(index)}>
+                        {slots.itemMinus?.() || props.renderItemMinus?.()}
+                      </div>
+                    </>
+                  )}
+                </div>
+              </FormListProvider>
+            );
+          })}
           {!readonly.value && (
             <div class={"pro-form-list-add"} onClick={handleAdd}>
               {slots.add?.() || props.renderAdd?.()}

@@ -32,7 +32,7 @@ export const createFormItemCompFn = <T extends FormItemProps>(
       },
       setup: (props, { slots }) => {
         const { formExtraMap } = useProConfig();
-        const { formState, showState, readonlyState, disableState, readonly: formReadonly, elementMap } = useProForm();
+        const { formState, readonlyState, disableState, readonly: formReadonly, elementMap } = useProForm();
         const formListCtx = useProFormList();
 
         //优先级 props.readonly > readonlyState > formContext.readonly
@@ -78,37 +78,41 @@ export const createFormItemCompFn = <T extends FormItemProps>(
 
         const invalidKeys = keys(proFormItemProps());
 
-        return () => {
-          const show = get(showState, path);
-          if (isBoolean(show) && !show) {
-            return null;
-          }
-
+        /************************/
+        const renderShow = () => {
           const value = get(formState, path);
+          //插槽优先
+          if (slots.renderShow) {
+            return slots.renderShow({ value, record: formState });
+          }
           //valueType对应的展示组件
           const ShowComp: any = get(elementMap, valueType);
+          if (ShowComp) {
+            return <ShowComp value={value} {...props.fieldProps} showProps={props.showProps} v-slots={slots} />;
+          }
+          return <span>{value}</span>;
+        };
 
+        const renderInput = () => {
+          const value = get(formState, path);
+          const disabled = get(disableState, path);
+          //插槽优先
+          if (slots.renderInput) {
+            return slots.renderInput({ value, setValue, disabled, record: formState });
+          }
+          return (
+            <InputComp {...convertInputCompProps(value, setValue, disabled)} {...props.fieldProps} v-slots={slots} />
+          );
+        };
+
+        return () => {
           return (
             <FormItem
-              {...omit(props, ...invalidKeys, "name", "rules", "slots")}
+              {...omit(props, ...invalidKeys, "name", "rules")}
               name={path}
               rules={rules.value}
               v-slots={props.slots}>
-              {readonly.value ? (
-                <>
-                  {ShowComp ? (
-                    <ShowComp value={value} {...props.fieldProps} showProps={props.showProps} v-slots={slots} />
-                  ) : (
-                    <span>{value}</span>
-                  )}
-                </>
-              ) : (
-                <InputComp
-                  {...convertInputCompProps(value, setValue, get(disableState, path))}
-                  {...props.fieldProps}
-                  v-slots={slots}
-                />
-              )}
+              {readonly.value ? renderShow() : renderInput()}
             </FormItem>
           );
         };

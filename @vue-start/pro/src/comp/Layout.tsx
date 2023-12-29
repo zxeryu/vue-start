@@ -92,11 +92,14 @@ export const ProLayout = defineComponent({
 
     //当前定位的第一级路由名称
     const currentTopName = computed(() => {
+      if (props.findCurrentTopName) {
+        return props.findCurrentTopName(route, menuTopMap.value);
+      }
       const target = findLast(route.matched, (item) => !!get(menuTopMap.value, item.name!));
       if (target) {
         return get(menuTopMap.value, target.name!);
       }
-      return props.findCurrentTopName?.(route, menuTopMap.value);
+      return undefined;
     });
 
     //当前定位的一级路由数据
@@ -109,10 +112,13 @@ export const ProLayout = defineComponent({
 
     //当前路由对应的menu
     const activeKey = computed(() => {
+      if (props.findActiveKey) {
+        return props.findActiveKey(route, menuTopMap.value);
+      }
       if (route.name && get(menuTopMap.value, route.name!)) {
         return route.name;
       }
-      return props.findActiveKey?.(route, menuTopMap.value);
+      return undefined;
     });
 
     const onMenuItemClick = (menu: TreeOption) => {

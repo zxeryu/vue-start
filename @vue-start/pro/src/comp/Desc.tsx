@@ -1,7 +1,7 @@
 import { computed, defineComponent, ExtractPropTypes, PropType } from "vue";
 import { ElementKeys, useGetCompByKey } from "./comp";
-import { get, isString, keys, map, omit } from "lodash";
-import { getItemEl, mergeState, ProBaseProps, proBaseProps, useProConfig } from "../core";
+import { get, keys, map, omit } from "lodash";
+import { getItemEl, getRealRender, mergeState, ProBaseProps, proBaseProps, useProConfig } from "../core";
 import { UnwrapNestedRefs } from "@vue/reactivity";
 import { TColumn, TRender } from "../types";
 
@@ -34,20 +34,11 @@ export const ProDesc = defineComponent<ProDescProps>({
     });
 
     const descRender = (item: TColumn, value: any) => {
-      let render: TRender;
-      if (!item.descRender) {
+      const render: TRender = getRealRender(item, item.descRender);
+      if (!render) {
         return undefined;
       }
-      if (isString(item.descRender)) {
-        render = get(item, item.descRender);
-      } else {
-        render = item.descRender;
-      }
-      return render?.({
-        value,
-        record: props.model,
-        column: omit(item, "descRender"),
-      });
+      return render({ value, record: props.model, column: omit(item, "descRender") });
     };
 
     const proBaseKeys = keys(proBaseProps);
@@ -74,7 +65,10 @@ export const ProDesc = defineComponent<ProDescProps>({
                     return slots.label?.(item) || item.title;
                   },
                 }}>
-                {slots.value?.(value, item) || descRender(item, value) || getItemEl(elementMap, item, value)}
+                {slots[dataIndex]?.(value, item) ||
+                  slots.value?.(value, item) ||
+                  descRender(item, value) ||
+                  getItemEl(elementMap, item, value)}
               </DescriptionsItem>
             );
           })}
