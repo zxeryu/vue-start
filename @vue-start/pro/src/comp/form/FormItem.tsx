@@ -32,7 +32,7 @@ export const createFormItemCompFn = <T extends FormItemProps>(
       },
       setup: (props, { slots }) => {
         const { formExtraMap } = useProConfig();
-        const { formState, readonlyState, disableState, readonly: formReadonly, elementMap } = useProForm();
+        const { formState, readonlyState, disableState, readonly: formReadonly } = useProForm();
         const formListCtx = useProFormList();
 
         //优先级 props.readonly > readonlyState > formContext.readonly
@@ -83,12 +83,7 @@ export const createFormItemCompFn = <T extends FormItemProps>(
           const value = get(formState, path);
           //插槽优先
           if (slots.renderShow) {
-            return slots.renderShow({ value, record: formState });
-          }
-          //valueType对应的展示组件
-          const ShowComp: any = get(elementMap, valueType);
-          if (ShowComp) {
-            return <ShowComp value={value} {...props.fieldProps} showProps={props.showProps} v-slots={slots} />;
+            return slots.renderShow({ value, record: formState, path });
           }
           return <span>{value}</span>;
         };
@@ -98,7 +93,7 @@ export const createFormItemCompFn = <T extends FormItemProps>(
           const disabled = get(disableState, path);
           //插槽优先
           if (slots.renderInput) {
-            return slots.renderInput({ value, setValue, disabled, record: formState });
+            return slots.renderInput({ value, setValue, disabled, record: formState, path });
           }
           return (
             <InputComp {...convertInputCompProps(value, setValue, disabled)} {...props.fieldProps} v-slots={slots} />
@@ -108,6 +103,7 @@ export const createFormItemCompFn = <T extends FormItemProps>(
         return () => {
           return (
             <FormItem
+              class={"pro-form-item"}
               {...omit(props, ...invalidKeys, "name", "rules")}
               name={path}
               rules={rules.value}

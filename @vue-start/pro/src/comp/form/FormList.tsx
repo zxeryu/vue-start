@@ -5,7 +5,7 @@ import { convertPathToList } from "../../util";
 import { ElementKeys, useGetCompByKey } from "../comp";
 import { TColumn, TColumns } from "../../types";
 import { ProGrid, ProGridProps } from "../Grid";
-import { getColumnFormItemName, getFormItemEl } from "../../core";
+import { getColumnFormItemName, renderInputColumn } from "../../core";
 import { useUpdateKey } from "@vue-start/hooks";
 
 /**
@@ -63,7 +63,7 @@ export const ProFormList = defineComponent<ProFormListProps>({
     const getComp = useGetCompByKey();
     const FormItem = getComp(ElementKeys.FormItemKey);
 
-    const { formState, readonly, formElementMap } = useProForm();
+    const { formState, readonly, elementMap, formElementMap } = useProForm();
 
     const formListCtx = useProFormList();
 
@@ -100,7 +100,7 @@ export const ProFormList = defineComponent<ProFormListProps>({
       if (rowKey && slots[rowKey]) {
         return slots[rowKey]!(item, formState, pathList);
       }
-      return getFormItemEl(formElementMap, item)!;
+      return renderInputColumn(elementMap, formElementMap, item)!;
     };
 
     const renderItems = (pathList: (string | number)[]) => {

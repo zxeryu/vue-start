@@ -1,6 +1,6 @@
 import { ComputedRef, Ref, UnwrapNestedRefs } from "@vue/reactivity";
-import { TColumn, TColumns, TElementMap } from "../types";
-import { inject, provide, VNode } from "vue";
+import { TColumns, TElementMap } from "../types";
+import { inject, provide } from "vue";
 import { ICurdOperateOpts, ICurdState, TCurdActionEvent } from "./Curd";
 
 const ProCurdKey = Symbol("pro-curd");
@@ -8,8 +8,6 @@ const ProCurdKey = Symbol("pro-curd");
 export interface IProCurdProvide {
   columns: Ref<TColumns>;
   getSignColumns: (signName: string) => TColumns; //获取标记的column
-  getFormItemVNode: (column: TColumn) => VNode | null;
-  getItemVNode: (column: TColumn, value: any) => VNode | null;
   elementMap: TElementMap;
   formElementMap: TElementMap;
   //

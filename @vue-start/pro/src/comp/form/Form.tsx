@@ -3,7 +3,14 @@ import { computed, defineComponent, ExtractPropTypes, inject, PropType, provide,
 import { BooleanObjType, BooleanRulesObjType, TColumn, TColumns, TElementMap } from "../../types";
 import { convertCollection, useRuleState } from "@vue-start/hooks";
 import { get, keys, map, omit, size, debounce, filter } from "lodash";
-import { getColumnFormItemName, getFormItemEl, mergeState, proBaseProps, ProBaseProps, useProConfig } from "../../core";
+import {
+  getColumnFormItemName,
+  mergeState,
+  proBaseProps,
+  ProBaseProps,
+  renderInputColumn,
+  useProConfig,
+} from "../../core";
 import { createExpose, getValidValues } from "../../util";
 import { ProGridProps, ProOperate, ProGrid, ProOperateProps, IOpeItem, ElementKeys } from "../index";
 import { provideProFormList } from "./FormList";
@@ -251,7 +258,7 @@ export const ProForm = defineComponent<ProFormProps>({
       if (rowKey && slots[rowKey]) {
         return slots[rowKey]!(item, formState);
       }
-      return getFormItemEl(formElementMap, item)!;
+      return renderInputColumn(elementMap, formElementMap, item)!;
     };
 
     const items = computed(() => {

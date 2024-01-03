@@ -44,15 +44,25 @@ export type TColumn = {
   dataIndex?: string | number;
   valueType?: TValueType; //展示组件类型
   formValueType?: TValueType; //录入组件类型 如不存在，默认取valueType的值
+
   showProps?: Record<string, any>; //文字展示组件的props
   formItemProps?: { name?: string; label?: string }; //FormItem props
-  formFieldProps?: Record<string, any>; //录入组件 props
-  search?: boolean; //同extra中的search
+  formFieldProps?: Record<string, any>; //录入组件 props，过时
 
+  /********* props *********/
+  props?: Record<string, any>; //渲染valueType对应的组件的props
+  inputProps?: Record<string, any>; //form模式下输入组件的props
+
+  /********* 自定义render方法 *********/
+  render?: TRender; //自定义渲染方法
+  inputRender?: TRender; //form模式下输入组件渲染方法
+
+  //下述各类render其实是对各类组件的兼容及拓展，如当desc中展示的内容与render不同时，可使用descRender
   descRender?: string | TRender; //desc
-  formRender?: string | TRender; //form
   formReadRender?: string | TRender; //form readonly
-  // tableRender?: string | TRender; //table
+  tableRender?: string | TRender; //table
+
+  search?: boolean; //同extra中的search
 
   //拓展属性
   extra?: {
