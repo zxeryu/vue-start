@@ -1,5 +1,5 @@
-import { Ref, unref, ComponentPublicInstance } from "vue";
-import { forEach, isFunction, size } from "lodash";
+import { Ref, unref, ComponentPublicInstance, onMounted, onActivated } from "vue";
+import { debounce, forEach, isFunction, size } from "lodash";
 
 export const createExposeObj = (targetRef: Ref, methods?: string[], opts?: Record<string, any>) => {
   const exposeObj: Record<string, any> = { originRef: targetRef, ...opts };
@@ -22,4 +22,24 @@ export type MaybeElement = HTMLElement | SVGElement | ComponentPublicInstance | 
 export const unrefElement = <T extends MaybeElement>(elRef: T | Ref<T> | (() => T)) => {
   const plain = toValue(elRef);
   return (plain as ComponentPublicInstance)?.$el ?? plain;
+};
+
+export const useSafeActivated = (cb: () => void) => {
+  let isInit = false;
+
+  const resetFlag = debounce(() => {
+    isInit = false;
+  }, 500);
+
+  onMounted(() => {
+    isInit = true;
+    resetFlag();
+  });
+
+  onActivated(() => {
+    //如果执行了onMounted，不响应
+    if (isInit) return;
+
+    cb();
+  });
 };

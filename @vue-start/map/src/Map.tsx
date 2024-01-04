@@ -62,7 +62,7 @@ const setSecurityCode = (code?: string) => {
   }
 };
 
-const MapEvents = defineComponent({
+export const MapEvents = defineComponent({
   props: {
     events: { type: Array as PropType<TEvents> },
   },

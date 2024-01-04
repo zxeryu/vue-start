@@ -53,10 +53,6 @@ export const BasicLayout = defineComponent(() => {
     }
   };
 
-  const onMenuItemClick = (item: any) => {
-    router.openMenu(item);
-  };
-
   const collapseRef = ref(false);
 
   const handleCollapse = () => {
@@ -104,7 +100,6 @@ export const BasicLayout = defineComponent(() => {
         fieldNames={{ value: "name", label: "title", children: "children" }}
         findCurrentTopName={findCurrentTopName}
         findActiveKey={findActiveKey}
-        onMenuItemClick={onMenuItemClick}
         menuProps={{
           class: collapseRef.value ? "pro-layout-menus mini" : "pro-layout-menus",
           collapse: collapseRef.value, //el

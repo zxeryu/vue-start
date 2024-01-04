@@ -1,7 +1,7 @@
 import { computed, defineComponent, ExtractPropTypes, inject, PropType, provide, ref, toRef, VNode, Ref } from "vue";
 import { TColumn } from "../../types";
 import { filter, get, isBoolean, isFunction, keys, map, omit, pick, reduce, size, some } from "lodash";
-import { getItemEl, mergeState, proBaseProps, ProBaseProps, useProConfig } from "../../core";
+import { mergeState, proBaseProps, ProBaseProps, renderColumn, useProConfig } from "../../core";
 import { createExpose, filterSlotsByPrefix } from "../../util";
 import { IOpeItem, ProOperate, ProOperateProps } from "../Operate";
 import { ElementKeys } from "../comp";
@@ -239,14 +239,12 @@ export const ProTable = defineComponent<ProTableProps>({
         }
         //如果是子节点，且不存在 customRender ，重写
         if (!item.customRender) {
-          nextItem.customRender = ({ text }) => {
-            const vn = getItemEl(
-              elementMap,
-              { ...item, showProps: { ...item.showProps, content: item.showProps?.content || props.columnEmptyText } },
-              text,
-            );
-            //如果找不到注册的组件，使用当前值 及 columnEmptyText
-            return vn || text || props.columnEmptyText;
+          nextItem.customRender = ({ value }) => {
+            if (typeof value === "undefined" || value === null || value === "") {
+              return props.columnEmptyText;
+            }
+
+            return renderColumn(elementMap, item, { value }, { render: "tableRender" }) || value;
           };
         }
         return nextItem;
@@ -254,7 +252,7 @@ export const ProTable = defineComponent<ProTableProps>({
     };
 
     const columns = computed(() => {
-      const mergeColumns = mergeState(props.columns!, props.columnState, props.columnState2);
+      const mergeColumns = mergeState(showColumns.value as any, props.columnState, props.columnState2);
       //根据valueType选择对应的展示组件
       const columns = convertColumns(mergeColumns);
       //处理序号

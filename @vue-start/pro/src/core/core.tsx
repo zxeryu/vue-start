@@ -24,8 +24,6 @@ import { TFunItem, TObjItem, TParamItem } from "./expression";
 import { isPathHasParent, isValidPath, restorePath } from "@vue-start/hooks";
 import { css } from "@emotion/css";
 
-/***************************************** curd模式 *****************************************/
-
 /**
  * 获取Column的valueType，默认"text"
  * @param column
@@ -39,60 +37,110 @@ export const getColumnValueType = (column: TColumn): TValueType => {
  * @param column
  */
 export const getColumnFormItemName = (column: TColumn): string | number | undefined => {
-  return (column.formItemProps?.name || column.dataIndex) as any;
+  //兼容：原始版name
+  const origin = column.formItemProps?.name;
+  //
+  const name = column.inputProps?.name;
+  return name || origin || column.dataIndex;
 };
 
 /**
- * 根据Column生成FormItem VNode
- * formFieldProps中的slots参数会以v-slots的形式传递到FormItem的录入组件（子组件）中
- * @param formElementMap
+ * 获取column 中对应的render方法
+ * case1：render为方法的时候，直接返回render；
+ * case2：render为字符串的时候，返回column中该字符串对应的属性；
+ *      如：render为"customRender"时候，返回customRender方法；
  * @param column
- * @param needRules
+ * @param render
  */
-export const getFormItemEl = (formElementMap: any, column: TColumn): VNode | null => {
-  const valueType = getColumnValueType(column);
-  const Comp: any = get(formElementMap, valueType);
-  if (!Comp) {
-    return null;
+export const getRealRender = (column: TColumn, render?: string | Function): Function | undefined => {
+  let r: any = render;
+  if (isString(render)) {
+    r = get(column, render);
   }
-
-  const name = getColumnFormItemName(column);
-
-  return h(
-    Comp,
-    {
-      key: name,
-      name,
-      label: column.title,
-      ...column.formItemProps,
-      fieldProps: omit(column.formFieldProps, "slots"),
-      showProps: column.showProps,
-    },
-    column.formFieldProps?.slots,
-  );
+  if (!isFunction(r)) {
+    r = get(column, "render");
+  }
+  return isFunction(r) ? r : undefined;
 };
 
 /**
- *  根据Column生成Item VNode
+ * 渲染column描述的组件
  * @param elementMap
  * @param column
- * @param value
+ * @param extra 动态props，一般传递value
+ * @param opts
  */
-export const getItemEl = <T extends TColumn>(elementMap: any, column: T, value: any): VNode | null => {
+export const renderColumn = (
+  elementMap: any,
+  column: TColumn,
+  extra?: Record<string, any>,
+  opts?: {
+    render?: string; //默认使用render函数名称
+  },
+) => {
+  //如果配置了render方法，优先执行
+  const render = getRealRender(column, opts?.render);
+  if (render) {
+    return render({ ...extra, column });
+  }
+
   const valueType = column.valueType || "text";
   const Comp: any = get(elementMap, valueType);
   if (!Comp) {
     return null;
   }
-  return h(
-    Comp,
-    {
-      ...omit(column.formFieldProps, "slots"),
-      showProps: column.showProps,
-      value,
-    },
-    column.formFieldProps?.slots,
-  );
+
+  //兼容：formFieldProps
+  const slots = column.props?.slots || column.formFieldProps?.slots || {};
+
+  const extraProps: Record<string, any> = extra || {};
+  //兼容：showProps
+  if (Comp.props.showProps) {
+    extraProps.showProps = column.props ? column.props?.showProps : column.showProps;
+  }
+
+  const props = column.props
+    ? { ...omit(column.props, "slots"), ...extraProps }
+    : { ...omit(column.formFieldProps, "slots"), ...extraProps };
+
+  return h(Comp, { ...props }, slots);
+};
+
+/**
+ * form 中渲染column对应的输入组件
+ * @param elementMap
+ * @param formElementMap
+ * @param column
+ */
+export const renderInputColumn = (elementMap: any, formElementMap: any, column: TColumn) => {
+  const valueType = getColumnValueType(column);
+  const Comp: any = get(formElementMap, valueType);
+  if (!Comp) {
+    return null;
+  }
+  const inputProps = column.inputProps;
+  //兼容：formFieldProps
+  const slots = inputProps?.fieldProps?.slots || column.formFieldProps?.slots || {};
+  //输入组件
+  if (!slots.renderInput && isFunction(column.inputRender)) {
+    slots.renderInput = (opts: any) => column.inputRender!({ ...opts, column });
+  }
+  //展示组件
+  if (!slots.renderShow) {
+    slots.renderShow = (opts: any) => {
+      return renderColumn(elementMap, column, { value: opts.value }, { render: "formReadRender" }) || opts.value;
+    };
+  }
+
+  const name = getColumnFormItemName(column);
+  const label = column.title;
+
+  //兼容：showProps、formItemProps、formFieldProps
+  const props = inputProps
+    ? { ...inputProps, fieldProps: omit(inputProps, "slots") }
+    : { ...column.formItemProps, fieldProps: omit(column.formFieldProps, "slots"), showProps: column.showProps };
+
+  return h(Comp, { key: name, name, label, ...props }, slots);
 };
 
 /***************************************** 通用模式 *****************************************/

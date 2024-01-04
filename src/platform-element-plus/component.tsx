@@ -21,6 +21,7 @@ import {
   ProCurd,
   ProCurdList,
   ProForm,
+  ProFormList,
   ProModalCurd,
   ProSearchForm,
   ProPage,
@@ -121,6 +122,7 @@ export const initComp = (app: App) => {
   app.component("pro-table", ProTable);
   app.component("pro-form", ProForm);
   app.component("pro-form-item", ProFormItem);
+  app.component("pro-form-list", ProFormList);
   app.component("pro-search-form", ProSearchForm);
   app.component("pro-desc", ProDesc);
   app.component("pro-grid", ProGrid);

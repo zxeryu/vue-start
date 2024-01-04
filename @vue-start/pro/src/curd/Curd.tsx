@@ -26,7 +26,6 @@ import {
 } from "./ctx";
 import { IOperateItem } from "../comp";
 import { IRequestActor } from "@vue-start/request";
-import { getFormItemEl, getItemEl } from "../core";
 
 export interface IListData extends Record<string, any> {
   total: number;
@@ -107,18 +106,6 @@ const Curd = defineComponent<CurdProps>({
     const columns = computed(() => {
       return mergeState(props.columns!, props.columnState, props.columnState2);
     });
-
-    /*********************************** 渲染组件 ***************************************/
-
-    // 获取FormItem VNode
-    const getFormItemVNode = (column: TColumn): VNode | null => {
-      return getFormItemEl(props.formElementMap, column);
-    };
-
-    // 获取Item VNode
-    const getItemVNode = (column: TColumn, value: any): VNode | null => {
-      return getItemEl(elementMap, column, value);
-    };
 
     /**
      * ${signName} 配置为true 会被选择
@@ -222,8 +209,6 @@ const Curd = defineComponent<CurdProps>({
     provideProCurd({
       columns: columns as any,
       getSignColumns,
-      getFormItemVNode,
-      getItemVNode,
       elementMap,
       formElementMap: props.formElementMap!,
       //

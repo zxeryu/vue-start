@@ -1,10 +1,10 @@
 import { computed, defineComponent, PropType, ref } from "vue";
 import { findTreeItem, getMenuTopNameMap, useResizeObserver, convertCollection } from "@vue-start/hooks";
-import { useRoute } from "vue-router";
 import { findLast, get, map, omit, pick, size } from "lodash";
 import { filterSlotsByPrefix } from "../util";
 import { ElementKeys, useGetCompByKey } from "./comp";
 import { TreeOption } from "../types";
+import { useProRouter } from "../core";
 
 const Header = defineComponent((_, { slots }) => {
   const menuWrapperRef = ref();
@@ -73,7 +73,7 @@ export const ProLayout = defineComponent({
     const getComp = useGetCompByKey();
     const Menus = getComp(ElementKeys.MenusKey);
 
-    const route = useRoute();
+    const { router, route } = useProRouter();
 
     const reMenus = computed(() =>
       convertCollection(
@@ -92,11 +92,14 @@ export const ProLayout = defineComponent({
 
     //当前定位的第一级路由名称
     const currentTopName = computed(() => {
+      if (props.findCurrentTopName) {
+        return props.findCurrentTopName(route, menuTopMap.value);
+      }
       const target = findLast(route.matched, (item) => !!get(menuTopMap.value, item.name!));
       if (target) {
         return get(menuTopMap.value, target.name!);
       }
-      return props.findCurrentTopName?.(route, menuTopMap.value);
+      return undefined;
     });
 
     //当前定位的一级路由数据
@@ -109,16 +112,27 @@ export const ProLayout = defineComponent({
 
     //当前路由对应的menu
     const activeKey = computed(() => {
+      if (props.findActiveKey) {
+        return props.findActiveKey(route, menuTopMap.value);
+      }
       if (route.name && get(menuTopMap.value, route.name!)) {
         return route.name;
       }
-      return props.findActiveKey?.(route, menuTopMap.value);
+      return undefined;
     });
+
+    const onMenuItemClick = (menu: TreeOption) => {
+      if (props.onMenuItemClick) {
+        props.onMenuItemClick(menu);
+      } else {
+        router.openMenu(menu);
+      }
+    };
 
     //compose 模式 header中的menu item 事件
     const handleComposeTopMenuClick = (menu: TreeOption) => {
       const target = findTreeItem(reMenus.value, (item) => item.value === menu.value).target;
-      props.onMenuItemClick?.(target);
+      onMenuItemClick(target as any);
     };
 
     const headerSlots = filterSlotsByPrefix(slots, "header");
@@ -132,7 +146,8 @@ export const ProLayout = defineComponent({
         class: `${props.clsName}-menus`,
         options: reMenus.value,
         activeKey: activeKey.value,
-        ...pick(props, "convertSubMenuProps", "convertMenuItemProps", "onMenuItemClick"),
+        ...pick(props, "convertSubMenuProps", "convertMenuItemProps"),
+        onMenuItemClick,
         ...props.menuProps,
       };
 
