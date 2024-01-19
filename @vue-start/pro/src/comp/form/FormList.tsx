@@ -1,5 +1,5 @@
 import { defineComponent, ExtractPropTypes, inject, PropType, provide, VNode } from "vue";
-import { get, isArray, keys, map, omit, set, size } from "lodash";
+import { filter, get, isArray, keys, map, omit, set, size } from "lodash";
 import { useProForm } from "./Form";
 import { convertPathToList } from "../../util";
 import { ElementKeys, useGetCompByKey } from "../comp";
@@ -36,6 +36,8 @@ const FormListProvider = defineComponent<{
   },
 });
 
+type TOriginFn = () => void;
+
 const proFormListProps = () => ({
   //每行默认id
   rowKey: { type: String, default: "id" },
@@ -49,6 +51,11 @@ const proFormListProps = () => ({
   renderAdd: { type: Function as PropType<() => VNode> },
   renderItemAdd: { type: Function as PropType<() => VNode> },
   renderItemMinus: { type: Function as PropType<() => VNode> },
+  //方法
+  onPreAdd: { type: Function as PropType<() => boolean | undefined> }, //新增方法执行前判断
+  onAdd: { type: Function as PropType<(fn: TOriginFn) => void> }, //新增回调
+  onPreRemove: { type: Function as PropType<(opts: any) => boolean | undefined> }, //删除方法执行前判断
+  onRemove: { type: Function as PropType<(fn: TOriginFn, opts: any) => void> }, //删除回调
 });
 
 export type ProFormListProps = Partial<ExtractPropTypes<ReturnType<typeof proFormListProps>>> &
@@ -73,23 +80,43 @@ export const ProFormList = defineComponent<ProFormListProps>({
     const [key, updateKey] = useUpdateKey();
 
     const handleAdd = () => {
-      let targetList = get(formState, path);
-      if (!isArray(targetList)) {
-        targetList = [];
-      }
-      targetList.push({
-        [props.rowKey!]: new Date().valueOf(),
-      });
-      set(formState, path, targetList);
-    };
+      const preFlag = props.onPreAdd?.();
+      if (preFlag === true) return;
 
-    const handleRemove = (index: number) => {
-      const targetList = get(formState, path);
-      if (size(targetList) <= 0) {
+      const fn = () => {
+        let targetList = get(formState, path);
+        if (!isArray(targetList)) {
+          targetList = [];
+        }
+        targetList.push({
+          [props.rowKey!]: new Date().valueOf(),
+        });
+        set(formState, path, targetList);
+      };
+      if (props.onAdd) {
+        props.onAdd(fn);
         return;
       }
-      targetList.splice(index, 1);
-      updateKey();
+      fn();
+    };
+
+    const handleRemove = (index: number, item: any) => {
+      const preFlag = props.onPreRemove?.({ index, item });
+      if (preFlag === true) return;
+
+      const fn = () => {
+        const targetList = get(formState, path);
+        if (size(targetList) <= 0) {
+          return;
+        }
+        targetList.splice(index, 1);
+        updateKey();
+      };
+      if (props.onRemove) {
+        props.onRemove(fn, { index, item });
+        return;
+      }
+      fn();
     };
 
     /************************************** render ******************************************/
@@ -98,12 +125,12 @@ export const ProFormList = defineComponent<ProFormListProps>({
       const rowKey = getColumnFormItemName(item);
       //插槽优先
       if (rowKey && slots[rowKey]) {
-        return slots[rowKey]!(item, formState, pathList);
+        return slots[rowKey]!({item, formState, pathList});
       }
       return renderInputColumn(elementMap, formElementMap, item)!;
     };
 
-    const renderItems = (pathList: (string | number)[]) => {
+    const renderItems = (pathList: (string | number)[], record: any) => {
       if (!formElementMap || size(props.columns) <= 0) {
         return null;
       }
@@ -138,7 +165,7 @@ export const ProFormList = defineComponent<ProFormListProps>({
                 <div class={"pro-form-list-item"}>
                   {slots.start?.({ state: formState, path, index })}
 
-                  {renderItems(pathList)}
+                  {renderItems(pathList, item)}
 
                   {slots.default?.()}
                   {!readonly.value && (
@@ -146,7 +173,7 @@ export const ProFormList = defineComponent<ProFormListProps>({
                       <div class={"pro-form-list-item-add"} onClick={handleAdd}>
                         {slots.itemAdd?.() || props.renderItemAdd?.()}
                       </div>
-                      <div class={"pro-form-list-item-minus"} onClick={() => handleRemove(index)}>
+                      <div class={"pro-form-list-item-minus"} onClick={() => handleRemove(index, item)}>
                         {slots.itemMinus?.() || props.renderItemMinus?.()}
                       </div>
                     </>
