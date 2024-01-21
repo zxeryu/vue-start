@@ -8,6 +8,7 @@ import Slots from "./demo/slots";
 import Debounce from "./demo/debounce";
 import PreFinish from "./demo/pre-finish";
 import FormList from "./demo/form-list";
+import FormList2 from "./demo/form-list-2";
 
 
 export default defineComponent(() => {
@@ -23,6 +24,7 @@ export default defineComponent(() => {
         <Debounce />
         <PreFinish />
         <FormList />
+        <FormList2 />
       </>
     );
   };

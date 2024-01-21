@@ -107,7 +107,7 @@ const proFormProps = () => ({
    * submit触发前hook，返回true，表示消费了此事件，不执行finish回掉
    */
   onPreFinish: {
-    type: Function as PropType<(...e: any[]) => boolean>,
+    type: Function as PropType<(...e: any[]) => boolean | undefined>,
     default: undefined,
   },
 });
