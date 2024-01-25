@@ -1,9 +1,10 @@
-import { defineComponent, ref } from "vue";
+import { computed, defineComponent, PropType, ref } from "vue";
 import { ElTable, ElTableColumn, ElButton } from "element-plus";
 import { TableColumnCtx } from "../../types";
 import { get, map, omit, pick, size } from "lodash";
 import { createExpose } from "@vue-start/pro";
 import { createLoadingId, ProLoading } from "../comp";
+import { getNameMapByMergeOpts, signTableMerge, TTableMergeOpts } from "@vue-start/hooks";
 
 export type ProTableColumnProps = TableColumnCtx<any>;
 
@@ -96,6 +97,10 @@ export const ProTable = defineComponent({
     columns: { type: Array },
     dataSource: { type: Array },
     loading: { type: Boolean },
+    /**
+     * 行、列合并配置
+     */
+    mergeOpts: { type: Object as PropType<TTableMergeOpts> },
   },
   setup: (props, { slots, expose }) => {
     const tableRef = ref();
@@ -104,14 +109,35 @@ export const ProTable = defineComponent({
 
     expose(createExpose(TableMethods, tableRef));
 
+    const createSpanMethod = () => {
+      if (props.spanMethod) return props.spanMethod;
+      if (props.mergeOpts?.rowNames || props.mergeOpts?.colNames) {
+        const nameMap = getNameMapByMergeOpts(props.mergeOpts);
+        return ({ row, column }: any) => {
+          const name = column.property;
+          if (nameMap[name]) {
+            const rs = row[nameMap[name] as string];
+            const cs = row[name + "-colspan"];
+            return {
+              rowspan: rs !== undefined ? rs : 1,
+              colspan: cs !== undefined ? cs : 1,
+            };
+          }
+        };
+      }
+      return props.spanMethod;
+    };
+    const spanMethod = createSpanMethod();
+
     return () => {
       return (
         <ElTable
           ref={tableRef}
           // @ts-ignore
           id={id}
-          {...omit(props, "columns", "dataSource", "loading")}
+          {...omit(props, "columns", "dataSource", "data", "loading", "spanMethod")}
           data={props.dataSource || props.data}
+          spanMethod={spanMethod}
           v-slots={pick(slots, "append", "empty")}>
           {slots.start?.()}
           {map(props.columns, (item) => (
