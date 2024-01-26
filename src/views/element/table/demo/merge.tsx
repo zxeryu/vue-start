@@ -21,6 +21,10 @@ export default defineComponent(() => {
       ["year", "month", "day"],
       ["A-1", "A-2", "A-3"],
     ],
+    //行合并展示取值补充
+    extra: {
+      "A-total": ["year", "month"],
+    },
   };
 
   /****** antd方式 ******/

@@ -394,6 +394,8 @@ export type TTableMergeOpts = {
    * 列合并标记与行不同，为了解决多个不相邻的列合并情况，需要分组标记。
    */
   colNames?: string[][];
+  //行合并补充
+  extra?: Record<string, TName | boolean>;
 };
 
 export const getRecordValueByName = (record: TData, name: TName): string => {
@@ -463,6 +465,13 @@ export const signTableMerge = (data: TData[], opts: TTableMergeOpts) => {
 export const getNameMapByMergeOpts = (opts: TTableMergeOpts) => {
   //记录需要merge的列
   const nameMap: { [key: string]: string | boolean } = {};
+  //col
+  forEach(opts.colNames, (names) => {
+    forEach(names, (name) => {
+      if (!name) return;
+      nameMap[name] = true;
+    });
+  });
   //row
   forEach(opts.rowNames, (name) => {
     if (!name) return;
@@ -472,13 +481,14 @@ export const getNameMapByMergeOpts = (opts: TTableMergeOpts) => {
     }
     nameMap[name] = name + "-rowspan";
   });
-  //col
-  forEach(opts.colNames, (names) => {
-    forEach(names, (name) => {
-      if (!name) return;
-      if (nameMap[name]) return;
-      nameMap[name] = true;
-    });
+  //extra
+  forEach(opts.extra, (name, k) => {
+    if (!name || !k) return;
+    if (isArray(name)) {
+      nameMap[k] = getNameStr(name) + "-rowspan";
+      return;
+    }
+    nameMap[k] = name + "-rowspan";
   });
   return nameMap;
 };
