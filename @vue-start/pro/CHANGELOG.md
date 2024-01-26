@@ -3,6 +3,10 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# 0.5.33
+
+- ProTable 新增 mergeOpts 属性，支持行、列合并
+
 # [0.4.0](https://github.com/zxeryu/vue-start/compare/@vue-start/pro@0.3.2...@vue-start/pro@0.4.0) (2022-09-02)
 
 ### Bug Fixes

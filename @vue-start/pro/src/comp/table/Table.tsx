@@ -6,7 +6,7 @@ import { createExpose, filterSlotsByPrefix } from "../../util";
 import { IOpeItem, ProOperate, ProOperateProps } from "../Operate";
 import { ElementKeys } from "../comp";
 import { ColumnSetting, ProColumnSettingProps } from "./ColumnSetting";
-import { useResizeObserver } from "@vue-start/hooks";
+import { signTableMerge, TTableMergeOpts, useResizeObserver } from "@vue-start/hooks";
 
 const ProTableKey = Symbol("pro-table");
 
@@ -117,13 +117,16 @@ const proTableProps = () => ({
    * ref 默认中转方法
    */
   tableMethods: { type: Array as PropType<string[]> },
+  /**
+   * 行、列合并配置
+   */
+  mergeOpts: { type: Object as PropType<TTableMergeOpts> },
+  //
+  dataSource: { type: Array as PropType<Record<string, any>[]> },
 });
 
 export type ProTableProps = Partial<ExtractPropTypes<ReturnType<typeof proTableProps>>> &
-  ProBaseProps & {
-    loading?: boolean;
-    dataSource?: Record<string, any>[];
-  };
+  ProBaseProps & { loading?: boolean };
 
 export const ProTable = defineComponent<ProTableProps>({
   inheritAttrs: false,
@@ -268,6 +271,15 @@ export const ProTable = defineComponent<ProTableProps>({
       return columns;
     });
 
+    //行、列合并标记
+    const dataSource = computed(() => {
+      const list = props.dataSource;
+      if (list && (props.mergeOpts?.rowNames || props.mergeOpts?.colNames)) {
+        signTableMerge(list, props.mergeOpts);
+      }
+      return list;
+    });
+
     const tableRef = ref();
 
     provideProTable({
@@ -325,6 +337,8 @@ export const ProTable = defineComponent<ProTableProps>({
             ref={tableRef}
             {...omit(attrs, "class")}
             {...omit(props, invalidKeys)}
+            mergeOpts={props.mergeOpts}
+            dataSource={dataSource.value}
             columns={columns.value}
             v-slots={slots}
           />

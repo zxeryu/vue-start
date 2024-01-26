@@ -9,6 +9,9 @@ import {
   isEmpty,
   isFunction,
   isObject,
+  isString,
+  join,
+  last,
   map,
   mergeWith,
   omit,
@@ -375,4 +378,117 @@ export const assignStateToData = (
 
     return nextItem;
   });
+};
+
+/************************************** table *******************************************/
+
+/**
+ * 行合并标记的时候 可以为单个字符串，也可以为数组
+ * 当name为数组的时候，代表：取record中name数组属性对应的值拼成的字符串。
+ */
+export type TName = string | string[];
+
+export type TTableMergeOpts = {
+  rowNames?: TName[];
+  /**
+   * 列合并标记与行不同，为了解决多个不相邻的列合并情况，需要分组标记。
+   */
+  colNames?: string[][];
+  //行合并补充
+  extra?: Record<string, TName | boolean>;
+};
+
+export const getRecordValueByName = (record: TData, name: TName): string => {
+  if (!name) return "";
+  if (isString(name)) {
+    return get(record, name);
+  }
+  const values = map(name, (n) => get(record, n));
+  return join(values, "-");
+};
+
+export const getNameStr = (name: TName): string => {
+  if (!name) return "";
+  if (isString(name)) return name;
+  return join(name, "-");
+};
+
+export const signTableMerge = (data: TData[], opts: TTableMergeOpts) => {
+  //记录rowName相同值第一条数据 index
+  const rowTmp: { [key: string]: { index: number; value: any } } = {};
+  forEach(data, (record, index) => {
+    //标记行合并
+    forEach(opts.rowNames, (name) => {
+      //signName对应的值
+      const signValue = getRecordValueByName(record, name);
+      const spanName = getNameStr(name) + "-" + "rowspan";
+
+      const tmp = rowTmp[spanName];
+      //不同值
+      if (!tmp || tmp.value !== signValue) {
+        rowTmp[spanName] = { index, value: signValue };
+        record[spanName] = 1;
+        return;
+      }
+      //相同值
+      data[tmp.index][spanName] += 1; //第一行合并+1
+      record[spanName] = 0; //当前赋值0
+    });
+
+    //标记列合并
+    forEach(opts.colNames, (names) => {
+      //1列不存在合并的情况
+      if (size(names) <= 1) return;
+
+      const tmp: { name: string; value: any } = {} as any;
+      forEach(names, (name, index) => {
+        const value = record[name];
+        //赋第一个值 或 reset
+        if (index === 0 || value !== tmp.value) {
+          tmp.name = name;
+          tmp.value = value;
+          record[`${name}-colspan`] = 1;
+          return;
+        }
+        record[`${tmp.name}-colspan`] += 1; //当前value的第一个属性+1
+        record[`${name}-colspan`] = 0;
+      });
+    });
+  });
+};
+/**
+ * 根据merge opts生成标记对象
+ * key为行name时，value为对应行合并的标记字段；
+ * key为列name时，value为true；
+ * @param opts
+ */
+export const getNameMapByMergeOpts = (opts: TTableMergeOpts) => {
+  //记录需要merge的列
+  const nameMap: { [key: string]: string | boolean } = {};
+  //col
+  forEach(opts.colNames, (names) => {
+    forEach(names, (name) => {
+      if (!name) return;
+      nameMap[name] = true;
+    });
+  });
+  //row
+  forEach(opts.rowNames, (name) => {
+    if (!name) return;
+    if (isArray(name)) {
+      nameMap[last(name)!] = getNameStr(name) + "-rowspan";
+      return;
+    }
+    nameMap[name] = name + "-rowspan";
+  });
+  //extra
+  forEach(opts.extra, (name, k) => {
+    if (!name || !k) return;
+    if (isArray(name)) {
+      nameMap[k] = getNameStr(name) + "-rowspan";
+      return;
+    }
+    nameMap[k] = name + "-rowspan";
+  });
+  return nameMap;
 };

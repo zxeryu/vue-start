@@ -6,6 +6,7 @@ import Extra from "./demo/extra";
 import Slots from "./demo/slots";
 import Group from "./demo/group";
 import Header from "./demo/header";
+import Merge from "./demo/merge";
 
 export default defineComponent(() => {
   return () => {
@@ -17,6 +18,7 @@ export default defineComponent(() => {
         <Slots />
         <Group />
         <Header />
+        <Merge />
       </>
     );
   };
