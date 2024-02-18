@@ -1,6 +1,7 @@
 const { join, resolve } = require("path");
-const { existsSync, copyFileSync } = require("fs");
+const { copyFileSync, readdirSync } = require("fs");
 const spawn = require("cross-spawn");
+const { forEach, endsWith } = require("lodash");
 
 const build = () => {
   const targetPath = process.cwd();
@@ -40,12 +41,14 @@ const build = () => {
     },
   });
 
-  //copy index.css 文件 （如果有）
-  const cssPth = join(targetPath, "index.css");
-  if (existsSync(cssPth)) {
-    const outCssPath = join(outDir, "index.css");
-    copyFileSync(cssPth, outCssPath);
-  }
+  //copy **.css 文件 （如果有）
+  const files = readdirSync(targetPath);
+  forEach(files, (file) => {
+    if (endsWith(file, ".css")) {
+      const outCssPath = join(outDir, file);
+      copyFileSync(file, outCssPath);
+    }
+  });
 };
 
 build();

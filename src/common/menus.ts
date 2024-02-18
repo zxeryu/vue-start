@@ -81,11 +81,10 @@ export const menus = [
       { title: "api", name: "MapApiIndex" },
     ],
   },
+  { title: "css", name: "CssIndex" },
   {
-    title:"module",
-    name:"Module",
-    children: [
-      { title: "list", name: "QuotaList" },
-    ]
-  }
+    title: "module",
+    name: "Module",
+    children: [{ title: "list", name: "QuotaList" }],
+  },
 ];

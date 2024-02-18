@@ -1,8 +1,12 @@
 {
-  "name": "@vue-start-dev/devkit",
-  "version": "0.5.7",
-  "bin": "bin/devkit.js",
-  "description": "> TODO: description",
+  "name": "@vue-start/css",
+  "version": "0.0.2",
+  "description": "css-in-js base on emotion/css",
+  "keywords": [
+    "css-in-js",
+    "emotion",
+    "vue3"
+  ],
   "author": "zx <zxpstudy@163.com>",
   "homepage": "https://github.com/zxeryu/vue-start#readme",
   "license": "MIT",
@@ -26,12 +30,6 @@
     "url": "https://github.com/zxeryu/vue-start/issues"
   },
   "peerDependencies": {
-    "lodash": ">= 4.x"
-  },
-  "dependencies": {
-    "@types/cross-spawn": "^6.0.2",
-    "@types/js-yaml": "^3.12.5",
-    "cross-spawn": "^7.0.3",
-    "js-yaml": "^4.0.0"
+    "@emotion/css": "*"
   }
 }

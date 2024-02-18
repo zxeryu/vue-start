@@ -9,6 +9,9 @@ import { createHtml } from "./plugin/html";
 
 import { tsxWithCode } from "./plugin/tsxWithCode";
 
+// @ts-ignore
+import { cssToCls } from "./@vue-start-dev/devkit";
+
 import { dirAlias } from "./tool/script";
 
 const devData = process.env.VITE_DEV ? JSON.parse(process.env.VITE_DEV) : undefined;
@@ -32,6 +35,7 @@ export default defineConfig(({ mode }) => {
     },
     plugins: [
       vue(),
+      cssToCls(),
       tsxWithCode(),
       vueJsx(),
       devData

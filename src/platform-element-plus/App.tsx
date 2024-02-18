@@ -5,12 +5,14 @@ import { RouterView } from "vue-router";
 import { convertRouter } from "@/router";
 import { proStore } from "@/store/StoreCurrent";
 import { ElMessage } from "element-plus";
+import { Global, createAtom } from "@vue-start/css";
 
 const showMsg = (opts: any) => {
   ElMessage({ type: opts.type, message: opts.message });
 };
 
 export const App = defineComponent(() => {
+  const { clsObj } = createAtom();
   return () => {
     return (
       <ProConfig
@@ -20,6 +22,7 @@ export const App = defineComponent(() => {
         registerStores={[proStore]}
         convertRouter={convertRouter}
         showMsg={showMsg}>
+        <Global styles={clsObj} />
         <RouterView />
       </ProConfig>
     );
