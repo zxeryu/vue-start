@@ -6,10 +6,10 @@ import { createStore } from "@/store";
 import { createConfig } from "@vue-start/config";
 import { createRequest, ContentTypeInterceptor } from "@vue-start/request";
 
+import '@vue-start/css/normalize.css'
 import "@vue-start/pro/index.css";
 import "@vue-start/media/index.css";
 
-import "@/style/normalize.css";
 import "@/style/index.css";
 //
 import "highlight.js/styles/github.css";

@@ -8,6 +8,7 @@ import zhCN from "ant-design-vue/es/locale/zh_CN";
 import { convertRouter } from "@/router";
 import { proStore } from "@/store/StoreCurrent";
 import { get } from "lodash";
+import { createAtom, Global } from "@vue-start/css";
 
 const showMsg = (opts: any) => {
   const typeFn = get(message, opts.type as any);
@@ -15,6 +16,7 @@ const showMsg = (opts: any) => {
 };
 
 export const App = defineComponent(() => {
+  const { clsObj } = createAtom();
   return () => {
     return (
       <ProConfig
@@ -24,6 +26,7 @@ export const App = defineComponent(() => {
         registerStores={[proStore]}
         convertRouter={convertRouter}
         showMsg={showMsg}>
+        <Global styles={clsObj} />
         <ConfigProvider locale={zhCN}>
           <RouterView />
         </ConfigProvider>

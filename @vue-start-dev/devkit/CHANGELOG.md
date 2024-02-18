@@ -3,6 +3,10 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# 0.5.7
+
+- 新增 css 属性转换插件，cssToCls
+
 ## [0.4.3](https://github.com/zxeryu/vue-start/compare/@vue-start-dev/devkit@0.4.2...@vue-start-dev/devkit@0.4.3) (2022-02-16)
 
 ### Bug Fixes
