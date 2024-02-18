@@ -1,5 +1,5 @@
 {
-  "name": "css",
+  "name": "@vue-start/css",
   "version": "0.0.1",
   "description": "css-in-js base on emotion/css",
   "keywords": [
