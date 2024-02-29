@@ -137,7 +137,7 @@ export const renderInputColumn = (elementMap: any, formElementMap: any, column: 
 
   //兼容：showProps、formItemProps、formFieldProps
   const props = inputProps
-    ? { ...inputProps, fieldProps: omit(inputProps, "slots") }
+    ? { ...inputProps, fieldProps: omit(inputProps.fieldProps, "slots") }
     : { ...column.formItemProps, fieldProps: omit(column.formFieldProps, "slots"), showProps: column.showProps };
 
   return h(Comp, { key: name, name, label, ...props }, slots);
