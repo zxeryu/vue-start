@@ -2,7 +2,7 @@ import { Plugin } from "vite";
 import { forEach, reduce, size } from "lodash";
 
 /**
- * 必须放在 @vitejs/plugin-vue-jsx 之前
+ * 必须放在 @vitejs/plugin-vue-jsx 之前（因为只是代码层面的转换）
  * @param opts
  */
 export const cssToCls = (opts?: { fileTypes?: string[] }): Plugin => {
