@@ -34,18 +34,12 @@ export default defineConfig(({ mode }) => {
     },
     plugins: [
       vue(),
-      cssToCls(),
-      tsxWithCode(),
+      devData ? cssToCls() : undefined,
+      devData ? tsxWithCode() : undefined,
       vueJsx(),
       devData
         ? htmlPlugin({
-            scripts: [
-              "",
-              {
-                src: `/${devData.entry}/index.ts`,
-                type: "module",
-              },
-            ],
+            scripts: [{ src: `/${devData.entry}/index.ts`, type: "module" }],
           })
         : undefined,
       createHtml(omit(env, "VITE_DEV")),
