@@ -1,0 +1,67 @@
+.cheng {
+  position: fixed;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  background-color: white;
+  z-index: 9;
+}
+
+.cheng .cheng-header {
+  height: 46px;
+  display: flex;
+  align-items: center;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+}
+
+.cheng .cheng-layout {
+  height: calc(100vh - 46px);
+  display: flex;
+}
+
+.cheng .cheng-layout .cheng-elements {
+  width: 280px;
+  height: 100%;
+  overflow-y: auto;
+  padding: 0 10px;
+}
+
+.cheng .cheng-layout .cheng-elements .group {
+  line-height: 30px;
+}
+
+.cheng .cheng-layout .cheng-elements .item {
+  margin-left: unset;
+  padding: unset;
+  min-width: calc(50% - 4px);
+  margin-right: 4px;
+  margin-bottom: 4px;
+  font-size: 12px;
+  color: #aaa;
+}
+
+.cheng .cheng-layout .cheng-layout-center {
+  flex: 1;
+  height: 100%;
+  overflow-y: auto;
+  border-left: 1px solid rgba(0, 0, 0, 0.05);
+  border-right: 1px solid rgba(0, 0, 0, 0.05);
+}
+
+.cheng .cheng-layout .cheng-element-set {
+  height: 100%;
+  overflow-y: auto;
+  width: 280px;
+  padding: 0 10px;
+}
+/******************** 设置项 *************************/
+.cheng .cheng-layout .cheng-element-set .set-item {
+  margin-top: 4px;
+}
+
+.cheng .cheng-layout .cheng-element-set .set-item .title {
+  line-height: 20px;
+  color: #666;
+}
+

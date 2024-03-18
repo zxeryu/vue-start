@@ -1,5 +1,5 @@
 import { App } from "@vue/runtime-core";
-import { ElButton, ElInputNumber, ElMessageBox, ElIcon } from "element-plus";
+import { ElButton, ElInputNumber, ElMessageBox, ElIcon, ElTree, ElInput, ElSwitch } from "element-plus";
 import { ArrowLeftBold } from "@element-plus/icons-vue";
 import {
   ProLoading,
@@ -111,6 +111,12 @@ export const elementMap = {
   ...elementMapOrigin,
   ProPage,
   ProTypography,
+  Tree$: ElTree,
+  Input$: ElInput,
+  InputNumber$: ElInputNumber,
+  Switch$: ElSwitch,
+  Select$: ProSelect,
+  Tabs$: ProTabs,
 };
 
 export const formElementMap = {

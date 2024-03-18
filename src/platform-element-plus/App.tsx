@@ -6,6 +6,8 @@ import { convertRouter } from "@/router";
 import { proStore } from "@/store/StoreCurrent";
 import { ElMessage } from "element-plus";
 import { Global, createAtom } from "@vue-start/css";
+import { ChengOpe } from "@/layout/cheng";
+
 
 const showMsg = (opts: any) => {
   ElMessage({ type: opts.type, message: opts.message });
@@ -24,6 +26,7 @@ export const App = defineComponent(() => {
         showMsg={showMsg}>
         <Global styles={clsObj} />
         <RouterView />
+        <ChengOpe />
       </ProConfig>
     );
   };

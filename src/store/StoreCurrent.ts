@@ -10,3 +10,5 @@ export const proStore: TRegisterStore = {
   initialState: { aaa: "aaa" },
   persist: true,
 };
+
+export const useChengState = createStateUse("cheng-state", { show: true }, false);

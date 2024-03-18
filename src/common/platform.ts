@@ -9,8 +9,8 @@ export const setPlatform = (platform: string) => {
 };
 
 export const PlatformOptions = [
-  { value: "element-plus", label: "element" },
-  { value: "ant-design-vue", label: "antv" },
+  { value: "element-plus", label: "el" },
+  { value: "ant-design-vue", label: "ant" },
 ];
 
 export const isElementPlus = () => {

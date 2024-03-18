@@ -1,0 +1,217 @@
+{
+  "initState": {
+    "num": 0
+  },
+  "storeKeys": ["pro"],
+  "elementConfigs": {
+    "elementType": "ProPage",
+    "elementId": "ProPage",
+    "elementProps": {
+      "title": "List",
+      "subTitle": "sub title"
+    },
+    "slots": {
+      "extra": "extra"
+    },
+    "children": [
+      {
+        "elementType": "ProTypography",
+        "elementId": "ProTypography",
+        "elementProps": {
+          "content": "这是一串ProTypography内容"
+        }
+      },
+      {
+        "elementType": "ProSearchForm$",
+        "elementId": "ProSearchForm$",
+        "elementProps": {
+          "operate": {},
+          "columns": [
+            {
+              "title": "name",
+              "dataIndex": "name",
+              "valueType": "text"
+            },
+            {
+              "title": "age",
+              "dataIndex": "age",
+              "valueType": "digit"
+            }
+          ]
+        },
+        "highConfig$": {
+          "registerEventList": [
+            {
+              "name": "onFinish"
+            }
+          ]
+        }
+      },
+      {
+        "elementType": "ProTable$",
+        "elementId": "ProTable$",
+        "elementProps": {
+          "columns": [
+            {
+              "title": "name",
+              "dataIndex": "name",
+              "valueType": "text"
+            },
+            {
+              "title": "age",
+              "dataIndex": "age",
+              "valueType": "digit"
+            }
+          ],
+          "operate": {
+            "items": [
+              {
+                "value": "detail",
+                "label": "查看",
+                "show": true
+              }
+            ]
+          },
+          "dataSource": [{ "id": "111", "name": "zx", "age": 18 }]
+        },
+        "highConfig$": {
+          "registerEventList": [
+            {
+              "name": "operate.items.[value,detail].onClick",
+              "executeList": [
+                [
+                  "router",
+                  "push",
+                  {
+                    "type$": "obj",
+                    "query.id$": { "type$": "data$", "name$": "args", "namePath$": "0.id" },
+                    "name": "QuotaDetail"
+                  }
+                ]
+              ]
+            }
+          ]
+        }
+      },
+      {
+        "elementType": "div",
+        "elementId": "div-state",
+        "elementProps": {
+          "class": "background: pink;\ncolor: red;"
+        },
+        "slots": {
+          "default": "state测试"
+        }
+      },
+      {
+        "elementType": "ProTypography",
+        "elementId": "ProTypography-state-v1",
+        "highConfig$": {
+          "registerStateList": [
+            {
+              "name": "num",
+              "mapName": "content"
+            }
+          ]
+        }
+      },
+      {
+        "elementType": "Button$",
+        "elementId": "Button$",
+        "slots": {
+          "default": "Add"
+        },
+        "highConfig$": {
+          "registerEventList": [
+            {
+              "name": "onClick",
+              "executeList": [
+                [
+                  "state",
+                  "dispatch",
+                  {
+                    "type$": "obj",
+                    "type": "num",
+                    "payload$": ["add$", { "type$": "data$", "name$": "state", "namePath$": "num" }, 1]
+                  }
+                ]
+              ]
+            }
+          ]
+        }
+      },
+      {
+        "elementType": "Button$",
+        "elementId": "Button$-subtract",
+        "slots": {
+          "default": "Subtract"
+        },
+        "highConfig$": {
+          "registerEventList": [
+            {
+              "name": "onClick",
+              "executeList": [
+                [
+                  "state",
+                  "dispatch",
+                  {
+                    "type$": "obj",
+                    "type": "num",
+                    "payload$": ["subtract$", { "type$": "data$", "name$": "state", "namePath$": "num" }, 1]
+                  }
+                ]
+              ]
+            }
+          ]
+        }
+      },
+      {
+        "elementType": "div",
+        "elementId": "div-store",
+        "slots": {
+          "default": "store测试"
+        }
+      },
+      {
+        "elementType": "ProTypography",
+        "elementId": "ProTypography-store-aaa",
+        "highConfig$": {
+          "registerStateList": [
+            {
+              "name": "pro.aaa",
+              "mapName": "content"
+            }
+          ]
+        }
+      },
+      {
+        "elementType": "span",
+        "elementId": "span-111",
+        "highConfig$": {
+          "registerStateList": [
+            {
+              "name": "pro.aaa",
+              "mapName": "default",
+              "target": "slot"
+            }
+          ]
+        }
+      },
+      {
+        "elementType": "Button$",
+        "elementId": "Button$-store",
+        "slots": {
+          "default": "change pro store"
+        },
+        "highConfig$": {
+          "registerEventList": [
+            {
+              "name": "onClick",
+              "executeList": [["state", "dispatchStore", "pro", { "aaa": "bbb" }]]
+            }
+          ]
+        }
+      }
+    ]
+  }
+}

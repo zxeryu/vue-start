@@ -9,6 +9,7 @@ import { createRequest, ContentTypeInterceptor } from "@vue-start/request";
 import '@vue-start/css/normalize.css'
 import "@vue-start/pro/index.css";
 import "@vue-start/media/index.css";
+import '@vue-start/cheng/index.css'
 
 import "@/style/index.css";
 //

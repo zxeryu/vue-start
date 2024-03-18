@@ -1,44 +1,48 @@
-import { defineComponent } from "vue";
+import { defineComponent, Teleport } from "vue";
 import { ElementKeys, useGetCompByKey } from "@vue-start/pro";
 import { useCheng } from "./Cheng";
-import { map } from "lodash";
-import { Elements } from "./element/Elements";
-import { Modules } from "./module/Modules";
-import { TTab } from "./types";
+import { Elements } from "./comp/Elements";
+import { DataTree } from "./comp/DataTree";
+import { ElementSet } from "./comp/ElementSet";
 
-export const Overview = defineComponent({
+const Header = defineComponent({
   props: {} as any,
   setup: () => {
-    const { tabRef } = useCheng();
+    const { onClose } = useCheng();
 
-    const options = [{ value: "element" }, { value: "module" }];
-
-    const handleTabClick = (tab: TTab) => {
-      if (tabRef.value && tabRef.value === tab) {
-        tabRef.value = undefined;
-        return;
-      }
-      tabRef.value = tab;
-    };
+    const handleClose = () => onClose?.();
 
     const getComp = useGetCompByKey();
     const Button = getComp(ElementKeys.ButtonKey);
 
     return () => {
       return (
-        <div>
-          {map(options, ({ value }) => {
-            return (
-              <Button
-                type={value === tabRef.value ? "primary" : undefined}
-                onClick={() => handleTabClick(value as TTab)}>
-                {value}
-              </Button>
-            );
-          })}
-          {tabRef.value === "element" && <Elements />}
-          {tabRef.value === "module" && <Modules />}
+        <div class={"cheng-header"}>
+          <Button onClick={handleClose}>退出</Button>
+          Cheng Header
         </div>
+      );
+    };
+  },
+});
+
+export const Overview = defineComponent({
+  props: {} as any,
+  setup: () => {
+    return () => {
+      return (
+        <Teleport to={"body"}>
+          <div class={"cheng"}>
+            <Header />
+            <div class={"cheng-layout"}>
+              <Elements />
+              <div class={"cheng-layout-center"}>
+                <DataTree />
+              </div>
+              <ElementSet />
+            </div>
+          </div>
+        </Teleport>
       );
     };
   },

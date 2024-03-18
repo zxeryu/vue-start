@@ -1,11 +1,15 @@
+import { TConfigData } from "../../pro";
+
 /**
  * string、boolean、number对应的描述
  */
 export interface ISetPropItem {
   name: string; //属性名
-  elementType: string; //属性对应的输入组件类型
   label?: string; //属性描述
-  [key: string]: any;
+  //设置属性的时候 form-item-field 配置
+  elementType: string; //输入组件类型
+  inputProps?: Record<string, any>;
+  options?: (string | boolean | number)[]; //select拓展
 }
 
 /**
@@ -31,14 +35,23 @@ export interface IElement {
   childrenSlotName?: string;
 
   custom?: boolean; //是否是自定义组件
-
-  group?: string; //分组，仅展示用
 }
 
 /**
- * Module描述
+ * 组件分组title
  */
-export interface IModule {}
+export interface IElementGroup {
+  title: string;
+  desc?: string;
+}
 
+/**
+ *  页面描述
+ */
+export interface IPage {
+  id?: string; //todo::线上拓展
+  path?: string; //组件路径（本地）
+  configData: TConfigData;
+}
 
 export type TTab = "element" | "module";

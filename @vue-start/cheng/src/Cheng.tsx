@@ -1,34 +1,83 @@
-import { defineComponent, inject, provide, ref, Ref } from "vue";
-import { IElement, IModule, TTab } from "./types";
+import {
+  defineComponent,
+  ExtractPropTypes,
+  inject,
+  PropType,
+  provide,
+  reactive,
+  ref,
+  Ref,
+  UnwrapNestedRefs,
+} from "vue";
+import { IElement, IElementGroup, IPage, TTab } from "./types";
+import { filter, reduce } from "lodash";
+import configData from "./comp/config.json";
+import { IElementConfig } from "../../pro";
+
+export interface IChengState {
+  tab?: TTab;
+}
 
 export interface IChengProvide {
+  groupElements: (IElement | IElementGroup)[];
   //基础组件
   elements: IElement[];
-  //当前选中的tab
-  tabRef: Ref<TTab | undefined>;
-  //当前操作的组件对象
-  elementRef?: Ref<IElement | undefined>;
-  //当前操作的Module
-  moduleRef?: Ref<IModule | undefined>;
+  elementsMap: Record<string, IElement>;
+  //当前操作的Page
+  pageRef: Ref<IPage | undefined>;
+  //当前Page中的Element
+  elementRef: Ref<IElementConfig | undefined>;
+  //
+  chengState: UnwrapNestedRefs<IChengState>;
+  //
+  onClose: () => void;
 }
 
 const ProChengKey = Symbol("cheng");
 
 export const useCheng = () => inject(ProChengKey) as IChengProvide;
 
-export const ProCheng = defineComponent({
+const chengProps = () => ({
+  //是否展示
+  show: { type: Boolean },
+  //关闭回掉
+  onClose: { type: Function as PropType<IChengProvide["onClose"]> },
+  //组件描述
+  groupElements: { type: Array as PropType<(IElement | IElementGroup)[]> },
+});
+
+export type MapProps = Partial<ExtractPropTypes<ReturnType<typeof chengProps>>>;
+
+export const ProCheng = defineComponent<MapProps>({
   props: {
-    elements: Array,
-  },
+    ...chengProps(),
+  } as any,
   setup: (props, { slots }) => {
-    const tabRef = ref<TTab>();
+    const chengState = reactive<IChengState>({});
+    const pageRef = ref<IPage>({
+      path: "",
+      configData: configData as any,
+    });
+    const elementRef = ref<IElementConfig>();
 
-    const elementRef = ref<IElement>();
-    const moduleRef = ref<IElement>();
+    const groupElements = props.groupElements;
+    const elements = filter(groupElements, (item) => !(item as IElementGroup).title) as IElement[];
+    const elementsMap = reduce(elements, (pair, item) => ({ ...pair, [item.elementType]: item }), {});
 
-    provide(ProChengKey, { elements: props.elements, tabRef, elementRef, moduleRef });
+    provide<IChengProvide>(ProChengKey, {
+      groupElements: groupElements!,
+      elements,
+      elementsMap,
+      pageRef: pageRef,
+      elementRef: elementRef,
+      chengState,
+      onClose: props.onClose!,
+    });
 
     return () => {
+      if (!props.show) {
+        return null;
+      }
       return <>{slots.default?.()}</>;
     };
   },

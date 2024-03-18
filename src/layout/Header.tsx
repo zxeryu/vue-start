@@ -4,7 +4,7 @@ import { css } from "@emotion/css";
 import { getPlatform, PlatformOptions, setPlatform } from "@/common/platform";
 import { columnStr } from "@/common/columns";
 import { useEffect } from "@vue-start/hooks";
-import { Test } from "@/layout/test";
+import { useChengState } from "@/store/StoreCurrent";
 
 const DemoDataModal = defineComponent(() => {
   const visibleRef = ref(false);
@@ -70,13 +70,19 @@ export const HeaderLeft = defineComponent(() => {
 });
 
 export const HeaderRight = defineComponent(() => {
+  const [, setChengState] = useChengState();
+
+  const handleChengClick = () => {
+    setChengState({ show: true });
+  };
+
   return () => {
     return (
       <>
+        <pro-operate items={[{ value: "value", label: "cheng", onClick: handleChengClick }]} />
         <DemoDataModal />
         <div class={css({ width: 16 })} />
         <Platform />
-        <Test/>
       </>
     );
   };
