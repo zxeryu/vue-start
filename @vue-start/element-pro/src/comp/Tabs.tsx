@@ -15,7 +15,8 @@ export const ProTabs = defineComponent({
           {...omit(props, "options")}
           onUpdate:modelValue={(v) => {
             emit("update:modelValue", v);
-          }}>
+          }}
+          v-slots={slots}>
           {slots.start?.()}
 
           {map(props.options, (item) => {
@@ -33,7 +34,7 @@ export const ProTabs = defineComponent({
             );
           })}
 
-          {slots.default?.()}
+          {slots.end?.()}
         </ElTabs>
       );
     };
