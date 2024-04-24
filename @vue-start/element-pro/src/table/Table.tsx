@@ -127,7 +127,9 @@ export const ProTable = defineComponent({
       }
       return props.spanMethod;
     };
-    const spanMethod = createSpanMethod();
+    const spanMethod = computed(() => {
+      return createSpanMethod();
+    });
 
     return () => {
       return (
@@ -137,7 +139,7 @@ export const ProTable = defineComponent({
           id={id}
           {...omit(props, "columns", "dataSource", "data", "loading", "spanMethod")}
           data={props.dataSource || props.data}
-          spanMethod={spanMethod}
+          spanMethod={spanMethod.value}
           v-slots={pick(slots, "append", "empty")}>
           {slots.start?.()}
           {map(props.columns, (item) => (
