@@ -31,7 +31,7 @@ export const createFormItemCompFn = <T extends FormItemProps>(
         ...proFormItemProps(),
       },
       setup: (props, { slots }) => {
-        const { formExtraMap } = useProConfig();
+        const { formExtraMap, elementMap } = useProConfig();
         const { formState, readonlyState, disableState, readonly: formReadonly } = useProForm();
         const formListCtx = useProFormList();
 
@@ -85,6 +85,12 @@ export const createFormItemCompFn = <T extends FormItemProps>(
           if (slots.renderShow) {
             return slots.renderShow({ value, record: formState, path });
           }
+          //valueType对应的展示组件
+          const ShowComp: any = get(elementMap, valueType);
+          if (ShowComp) {
+            return <ShowComp value={value} {...props.fieldProps} showProps={props.showProps} v-slots={slots} />;
+          }
+          //最后逻辑
           return <span>{value}</span>;
         };
 
