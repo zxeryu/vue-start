@@ -182,6 +182,32 @@ export const findTreeItem = (
 };
 
 /**
+ * @param data
+ * @param value
+ * @param fieldNames
+ */
+export const findTreeItem2 = (
+  data: TData[],
+  value: (string | number)[],
+  fieldNames: { children: string; value: string } | undefined = { children: "children", value: "value" },
+): TFindTarget => {
+  const target: TFindTarget = {
+    parentList: [],
+  };
+  let temp: TData[] | undefined = data;
+  forEach(value, (v) => {
+    const current = find(temp, (i) => i[fieldNames.value] === v);
+    if (current && size(current[fieldNames.children]) > 0) {
+      temp = current[fieldNames.children];
+    }
+    target.parentList!.push(current!);
+  });
+  target.target = last(target.parentList);
+  target.list = temp;
+  return target;
+};
+
+/**
  * tree数据转化为Map对象
  * @param data
  * @param convert
@@ -430,6 +456,11 @@ export const getNameStr = (name: TName): string => {
   return join(name, "-");
 };
 
+/**
+ * 根据columns 和 colNames 生成有效的 colNames
+ * @param columns
+ * @param colNames
+ */
 const createColNames = (columns: string[], colNames: Array<string[]>): Array<string[]> => {
   //标记colNames
   const nameMap: Record<string, number> = {};
