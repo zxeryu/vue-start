@@ -1,4 +1,4 @@
-import { defineComponent } from "vue";
+import { defineComponent, reactive } from "vue";
 import { css } from "@emotion/css";
 import { ProTypography, ProShowText, ProShowDigit, ProShowOptions, ProShowTree, ProShowDate } from "@vue-start/pro";
 import dayjs from "dayjs";
@@ -7,19 +7,40 @@ import { useRouter } from "vue-router";
 export default defineComponent(() => {
   const router = useRouter();
 
+  const state = reactive({
+    fillMode: true,
+    showFooter: true,
+  });
+
+  const handleOpeFill = () => {
+    state.fillMode = !state.fillMode;
+  };
+
+  const handleOpeFooter = () => {
+    state.showFooter = !state.showFooter;
+  };
+
   return () => {
     return (
       <pro-page
-
+        // loading
+        fillMode={state.fillMode}
         title={"这是一个标题"}
         subTitle={"这是一个副标题"}
         // fillMode={false}
         v-slots={{
           extra: () => <div>extra</div>,
-          footer: () => <>底部内容</>,
+          footer: () => {
+            if (!state.showFooter) {
+              return null;
+            }
+            return <>底部内容</>;
+          },
         }}>
         Test
         <div onClick={() => router.push({ name: "TestDetail" })}>to detail</div>
+        <div onClick={handleOpeFill}>{state.fillMode ? "不固定" : "固定"} header footer</div>
+        <div onClick={handleOpeFooter}>{state.showFooter ? "关闭" : "打开"}footer</div>
         <div
           class={css({
             width: 300,

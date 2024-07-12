@@ -1,5 +1,5 @@
 import { defineComponent, ExtractPropTypes, PropType, VNode } from "vue";
-import { keys, omit, pick } from "lodash";
+import { keys, omit, pick, size } from "lodash";
 import { ElementKeys, useGetCompByKey } from "./comp";
 import { useRouter } from "vue-router";
 
@@ -71,9 +71,20 @@ export const ProPage = defineComponent<ProPageProps>({
 
     const headerKeys = keys(PageHeader.props);
 
+    const hasFooter = (vns?: VNode[]) => {
+      if (!vns) {
+        return false;
+      }
+      //注册了footer插槽，但是返回的是null
+      if (size(vns) === 1 && vns[0].children === null) {
+        return false;
+      }
+      return true;
+    };
+
     return () => {
       const hasHeader = props.title || slots.title || props.subTitle || slots.subTitle || slots.extra;
-      const hasFooter = !!slots.footer;
+      const footer = slots.footer?.();
 
       return (
         <div class={`pro-page ${props.fillMode ? "pro-page-fill" : ""}`}>
@@ -90,7 +101,7 @@ export const ProPage = defineComponent<ProPageProps>({
               slots.default?.()
             )}
           </div>
-          {!props.loading && hasFooter && <div class={"pro-page-footer"}>{slots.footer?.()}</div>}
+          {!props.loading && hasFooter(footer) && <div class={"pro-page-footer"}>{footer}</div>}
         </div>
       );
     };

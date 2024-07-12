@@ -1,7 +1,7 @@
 :root {
   /***************layout****************/
   --pro-header-hei: 60px;
-  --pro-divide-ver-hei: 2px;
+  --pro-divide-ver-hei: 0px;
   --pro-left-menu-wid: 220px;
   --pro-left-menu-mini-wid: 64px;
   /*左侧菜单start,end插槽高度*/
@@ -20,15 +20,20 @@
 /********************************** pro-layout ***********************************/
 
 .pro-layout {
-  --pro-secion-hei: calc(100vh - var(--pro-header-hei) - var(--pro-divide-ver-hei));
+  /*--pro-secion-hei: calc(100vh - var(--pro-header-hei) - var(--pro-divide-ver-hei));*/
+ /*--pro-sticky-top: calc(var(--pro-header-hei) + var(--pro-divide-ver-hei))*/
+ --pro-sticky-top: var(--pro-header-hei)
 }
 
 .pro-layout .pro-layout-header {
+  position: sticky;
   height: var(--pro-header-hei);
   display: flex;
   align-items: center;
   box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1);
+  background-color: white;
   z-index: 9;
+  top: 0;
 }
 
 .pro-layout .pro-layout-header .pro-header-menus-wrapper {
@@ -48,7 +53,21 @@
 
 .pro-layout .pro-layout-section {
   margin-top: var(--pro-divide-ver-hei);
-  height: var(--pro-secion-hei);
+  /*height: var(--pro-secion-hei);*/
+}
+
+/*左侧菜单 compose horizontal-v */
+.pro-layout .pro-layout-menus-wrapper .wrapper {
+  position: sticky;
+  top: var(--pro-sticky-top);
+  z-index: 1;
+}
+
+/*左侧菜单 horizontal */
+.pro-layout-horizontal .pro-layout-menus-wrapper .wrapper {
+  position: sticky;
+  top: 0;
+  z-index: 1;
 }
 
 /*左侧菜单*/
@@ -204,10 +223,10 @@
 /********************************** pro-page ***********************************/
 
 .pro-page {
-  height: var(--pro-secion-hei);
-  max-height: var(--pro-secion-hei);
-  overflow-y: auto;
-  box-sizing: border-box;
+  /*height: var(--pro-secion-hei);*/
+  /*max-height: var(--pro-secion-hei);*/
+  /*overflow-y: auto;*/
+  /*box-sizing: border-box;*/
 }
 
 .pro-page-header {
@@ -261,7 +280,7 @@
 
 .pro-page-fill .pro-page-header {
   position: sticky;
-  top: 0;
+  top: var(--pro-sticky-top);
   right: 0;
   left: 0;
   z-index: 1;
