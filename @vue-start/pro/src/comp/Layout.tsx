@@ -171,11 +171,9 @@ export const ProLayout = defineComponent({
         return (
           <main {...pickAttrs} class={`${props.clsName} ${props.clsName}-${props.layout}`}>
             <div class={`${props.clsName}-menus-wrapper`}>
-              <div class={"wrapper"}>
-                {menuSlots.start?.()}
-                <Menus {...menuProps} v-slots={menuSlots} />
-                {menuSlots.end?.()}
-              </div>
+              {menuSlots.start?.()}
+              <Menus {...menuProps} v-slots={menuSlots} />
+              {menuSlots.end?.()}
             </div>
             <div class={`${props.clsName}-structure`}>
               <Header class={`${props.clsName}-header`} v-slots={headerSlots} />
@@ -189,11 +187,9 @@ export const ProLayout = defineComponent({
             <Header class={`${props.clsName}-header`} v-slots={headerSlots} />
             <div class={`${props.clsName}-structure`}>
               <div class={`${props.clsName}-menus-wrapper`}>
-                <div class={"wrapper"}>
-                  {menuSlots.start?.()}
-                  <Menus {...menuProps} v-slots={menuSlots} />
-                  {menuSlots.end?.()}
-                </div>
+                {menuSlots.start?.()}
+                <Menus {...menuProps} v-slots={menuSlots} />
+                {menuSlots.end?.()}
               </div>
               <div class={`${props.clsName}-section`}>{slots.default?.()}</div>
             </div>
@@ -227,11 +223,9 @@ export const ProLayout = defineComponent({
           <div class={`${props.clsName}-structure`}>
             {currentTop.value && size(currentTop.value.children) > 0 && (
               <div class={`${props.clsName}-menus-wrapper`}>
-                <div class={"wrapper"}>
-                  {menuSlots.start?.()}
-                  <Menus options={currentTop.value.children} {...omit(menuProps, "options")} v-slots={menuSlots} />
-                  {menuSlots.end?.()}
-                </div>
+                {menuSlots.start?.()}
+                <Menus options={currentTop.value.children} {...omit(menuProps, "options")} v-slots={menuSlots} />
+                {menuSlots.end?.()}
               </div>
             )}
             <div class={`${props.clsName}-section`}>{slots.default?.()}</div>

@@ -1,14 +1,12 @@
 :root {
   /***************layout****************/
   --pro-header-hei: 60px;
-  --pro-divide-ver-hei: 0px;
+  --pro-divide-ver-hei: 2px;
+  /*菜单宽度变量，合并/展开会重新赋值*/
   --pro-left-menu-wid: 220px;
-  --pro-left-menu-mini-wid: 64px;
   /*左侧菜单start,end插槽高度*/
   --pro-menu-start-hei: 0px;
   --pro-menu-end-hei: 0px;
-  /*左侧菜单高度*/
-  --pro-left-menu-hei: calc(100vh - var(--pro-menu-start-hei) - var(--pro-menu-end-hei));
   /*page*/
   --pro-page-header-hei: 40px;
   --pro-page-footer-hei: 46px;
@@ -20,20 +18,18 @@
 /********************************** pro-layout ***********************************/
 
 .pro-layout {
-  /*--pro-secion-hei: calc(100vh - var(--pro-header-hei) - var(--pro-divide-ver-hei));*/
- /*--pro-sticky-top: calc(var(--pro-header-hei) + var(--pro-divide-ver-hei))*/
- --pro-sticky-top: var(--pro-header-hei)
+  /*section高度*/
+  --pro-secion-hei: calc(100vh - var(--pro-header-hei) - var(--pro-divide-ver-hei));
+  /*左侧菜单高度*/
+  --pro-left-menu-hei: calc(var(--pro-secion-hei) - var(--pro-menu-start-hei) - var(--pro-menu-end-hei));
 }
 
 .pro-layout .pro-layout-header {
-  position: sticky;
   height: var(--pro-header-hei);
   display: flex;
   align-items: center;
   box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1);
-  background-color: white;
   z-index: 9;
-  top: 0;
 }
 
 .pro-layout .pro-layout-header .pro-header-menus-wrapper {
@@ -51,27 +47,9 @@
   border-bottom: unset;
 }
 
-.pro-layout .pro-layout-section {
-  margin-top: var(--pro-divide-ver-hei);
-  /*height: var(--pro-secion-hei);*/
-}
-
-/*左侧菜单 compose horizontal-v */
-.pro-layout .pro-layout-menus-wrapper .wrapper {
-  position: sticky;
-  top: var(--pro-sticky-top);
-  z-index: 1;
-}
-
-/*左侧菜单 horizontal */
-.pro-layout-horizontal .pro-layout-menus-wrapper .wrapper {
-  position: sticky;
-  top: 0;
-  z-index: 1;
-}
-
 /*左侧菜单*/
 .pro-layout .pro-layout-menus-wrapper .pro-layout-menus {
+  height: var(--pro-left-menu-hei);
   width: var(--pro-left-menu-wid);
   min-width: var(--pro-left-menu-wid);
   max-width: var(--pro-left-menu-wid);
@@ -80,13 +58,21 @@
 }
 
 .pro-layout .pro-layout-menus-wrapper .mini {
-  width: var(--pro-left-menu-mini-wid);
-  min-width: var(--pro-left-menu-mini-wid);
-  max-width: var(--pro-left-menu-mini-wid);
+  --pro-left-menu-wid: 64px;
+}
+
+/*section*/
+.pro-layout .pro-layout-section {
+  height: var(--pro-secion-hei);
+  overflow-y: auto;
 }
 
 /*vertical*/
 .pro-layout-vertical {
+}
+
+.pro-layout-vertical .pro-layout-section {
+  margin-top: var(--pro-divide-ver-hei);
 }
 
 /*horizontal*/
@@ -96,11 +82,15 @@
 }
 
 .pro-layout-horizontal .pro-layout-menus {
-  height: var(--pro-left-menu-hei);
+  --pro-left-menu-hei: calc(100vh - var(--pro-menu-start-hei) - var(--pro-menu-end-hei));
 }
 
 .pro-layout-horizontal .pro-layout-structure {
-  flex-grow: 1;
+  flex: 1;
+}
+
+.pro-layout-horizontal .pro-layout-section {
+  margin-top: var(--pro-divide-ver-hei);
 }
 
 /*horizontal-v*/
@@ -108,12 +98,9 @@
   display: unset !important;
 }
 
-.pro-layout-horizontal-v .pro-layout-menus {
-  height: calc(var(--pro-left-menu-hei) - var(--pro-header-hei) - var(--pro-divide-ver-hei));
-}
-
 .pro-layout-horizontal-v .pro-layout-structure {
   display: flex;
+  margin-top: var(--pro-divide-ver-hei);
 }
 
 .pro-layout-horizontal-v .pro-layout-structure .pro-layout-section {
@@ -127,11 +114,7 @@
 
 .pro-layout-compose .pro-layout-structure {
   display: flex;
-}
-
-.pro-layout-compose .pro-layout-structure .pro-layout-menus {
   margin-top: var(--pro-divide-ver-hei);
-  height: calc(var(--pro-left-menu-hei) - var(--pro-header-hei) - var(--pro-divide-ver-hei));
 }
 
 .pro-layout-compose .pro-layout-structure .pro-layout-section {
@@ -223,10 +206,10 @@
 /********************************** pro-page ***********************************/
 
 .pro-page {
-  /*height: var(--pro-secion-hei);*/
-  /*max-height: var(--pro-secion-hei);*/
-  /*overflow-y: auto;*/
-  /*box-sizing: border-box;*/
+  height: var(--pro-secion-hei);
+  max-height: var(--pro-secion-hei);
+  overflow-y: auto;
+  box-sizing: border-box;
 }
 
 .pro-page-header {
@@ -280,7 +263,7 @@
 
 .pro-page-fill .pro-page-header {
   position: sticky;
-  top: var(--pro-sticky-top);
+  top: 0;
   right: 0;
   left: 0;
   z-index: 1;
