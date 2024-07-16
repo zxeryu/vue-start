@@ -1,5 +1,5 @@
 import { App } from "@vue/runtime-core";
-import { ElButton, ElInputNumber, ElMessageBox, ElIcon } from "element-plus";
+import { ElButton, ElInputNumber, ElMessageBox, ElIcon, ElScrollbar } from "element-plus";
 import { ArrowLeftBold } from "@element-plus/icons-vue";
 import {
   ProLoading,
@@ -35,6 +35,7 @@ import {
   ColumnSetting,
   IOperateItem,
   TColumn,
+  ElementKeys,
 } from "@vue-start/pro";
 
 import { ProPreview } from "@vue-start/media";
@@ -109,6 +110,7 @@ ProPage.props = {
 
 export const elementMap = {
   ...elementMapOrigin,
+  [ElementKeys.ScrollKey]: ElScrollbar,
   ProPage,
   ProTypography,
 };

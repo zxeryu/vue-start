@@ -68,6 +68,7 @@ export const ProPage = defineComponent<ProPageProps>({
   setup: (props, { slots }) => {
     const getComp = useGetCompByKey();
     const Loading = getComp(ElementKeys.LoadingKey);
+    const Scroll = getComp(ElementKeys.ScrollKey) || "div";
 
     const headerKeys = keys(PageHeader.props);
 
@@ -87,7 +88,7 @@ export const ProPage = defineComponent<ProPageProps>({
       const footer = slots.footer?.();
 
       return (
-        <div class={`pro-page ${props.fillMode ? "pro-page-fill" : ""}`}>
+        <Scroll class={`pro-page ${props.fillMode ? "pro-page-fill" : ""}`}>
           {slots.start?.()}
           {hasHeader && <PageHeader {...pick(props, headerKeys)} v-slots={omit(slots, "start", "default", "footer")} />}
           <div class={"pro-page-content"}>
@@ -102,7 +103,7 @@ export const ProPage = defineComponent<ProPageProps>({
             )}
           </div>
           {!props.loading && hasFooter(footer) && <div class={"pro-page-footer"}>{footer}</div>}
-        </div>
+        </Scroll>
       );
     };
   },

@@ -72,6 +72,7 @@ export const ProLayout = defineComponent({
   setup: (props, { slots, attrs }) => {
     const getComp = useGetCompByKey();
     const Menus = getComp(ElementKeys.MenusKey);
+    const Scroll = getComp(ElementKeys.ScrollKey) || "div";
 
     const { router, route } = useProRouter();
 
@@ -138,6 +139,19 @@ export const ProLayout = defineComponent({
     const headerSlots = filterSlotsByPrefix(slots, "header");
     const menuSlots = filterSlotsByPrefix(slots, "menu");
 
+    //左侧菜单
+    const renderLeftMenu = (menuProps: object) => {
+      return (
+        <div class={`${props.clsName}-menus-wrapper`}>
+          {menuSlots.start?.()}
+          <Scroll class={`${props.clsName}-menus-scroll`}>
+            <Menus {...menuProps} v-slots={menuSlots} />
+          </Scroll>
+          {menuSlots.end?.()}
+        </div>
+      );
+    };
+
     return () => {
       if (!Menus) return null;
       const pickAttrs = pick(attrs, "class");
@@ -150,6 +164,9 @@ export const ProLayout = defineComponent({
         onMenuItemClick,
         ...props.menuProps,
       };
+
+      //内容区
+      const section = <div class={`${props.clsName}-section`}>{slots.default?.()}</div>;
 
       if (props.layout === "vertical") {
         return (
@@ -164,20 +181,16 @@ export const ProLayout = defineComponent({
                 ...headerSlots,
               }}
             />
-            <div class={`${props.clsName}-section`}>{slots.default?.()}</div>
+            {section}
           </main>
         );
       } else if (props.layout === "horizontal") {
         return (
           <main {...pickAttrs} class={`${props.clsName} ${props.clsName}-${props.layout}`}>
-            <div class={`${props.clsName}-menus-wrapper`}>
-              {menuSlots.start?.()}
-              <Menus {...menuProps} v-slots={menuSlots} />
-              {menuSlots.end?.()}
-            </div>
+            {renderLeftMenu(menuProps)}
             <div class={`${props.clsName}-structure`}>
               <Header class={`${props.clsName}-header`} v-slots={headerSlots} />
-              <div class={`${props.clsName}-section`}>{slots.default?.()}</div>
+              {section}
             </div>
           </main>
         );
@@ -186,12 +199,8 @@ export const ProLayout = defineComponent({
           <main {...pickAttrs} class={`${props.clsName} ${props.clsName}-${props.layout}`}>
             <Header class={`${props.clsName}-header`} v-slots={headerSlots} />
             <div class={`${props.clsName}-structure`}>
-              <div class={`${props.clsName}-menus-wrapper`}>
-                {menuSlots.start?.()}
-                <Menus {...menuProps} v-slots={menuSlots} />
-                {menuSlots.end?.()}
-              </div>
-              <div class={`${props.clsName}-section`}>{slots.default?.()}</div>
+              {renderLeftMenu(menuProps)}
+              {section}
             </div>
           </main>
         );
@@ -221,14 +230,10 @@ export const ProLayout = defineComponent({
             }}
           />
           <div class={`${props.clsName}-structure`}>
-            {currentTop.value && size(currentTop.value.children) > 0 && (
-              <div class={`${props.clsName}-menus-wrapper`}>
-                {menuSlots.start?.()}
-                <Menus options={currentTop.value.children} {...omit(menuProps, "options")} v-slots={menuSlots} />
-                {menuSlots.end?.()}
-              </div>
-            )}
-            <div class={`${props.clsName}-section`}>{slots.default?.()}</div>
+            {currentTop.value &&
+              size(currentTop.value.children) > 0 &&
+              renderLeftMenu({ ...menuProps, options: currentTop.value.children })}
+            {section}
           </div>
         </main>
       );

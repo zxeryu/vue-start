@@ -1,8 +1,12 @@
 :root {
   /***************layout****************/
+  /*header高度*/
   --pro-header-hei: 60px;
+  /*header与内容间隔*/
   --pro-divide-ver-hei: 2px;
-  /*菜单宽度变量，合并/展开会重新赋值*/
+  /*面包屑高度*/
+  --pro-bread-hei: 0px;
+  /*菜单宽度变量：合并/展开会重新赋值；媒体查询重新赋值*/
   --pro-left-menu-wid: 220px;
   /*左侧菜单start,end插槽高度*/
   --pro-menu-start-hei: 0px;
@@ -13,6 +17,7 @@
 
   /*color*/
   --pro-color-primary: #1890ff;
+  --pro-color-bg: #f8f8f8;
 }
 
 /********************************** pro-layout ***********************************/
@@ -48,13 +53,16 @@
 }
 
 /*左侧菜单*/
-.pro-layout .pro-layout-menus-wrapper .pro-layout-menus {
+
+.pro-layout .pro-layout-menus-scroll {
   height: var(--pro-left-menu-hei);
+  overflow-y: auto;
+}
+
+.pro-layout .pro-layout-menus-wrapper .pro-layout-menus {
   width: var(--pro-left-menu-wid);
   min-width: var(--pro-left-menu-wid);
   max-width: var(--pro-left-menu-wid);
-  overflow-y: auto;
-  overflow-x: hidden;
 }
 
 .pro-layout .pro-layout-menus-wrapper .mini {
@@ -64,7 +72,9 @@
 /*section*/
 .pro-layout .pro-layout-section {
   height: var(--pro-secion-hei);
-  overflow-y: auto;
+  overflow: auto;
+  position: relative;
+  box-sizing: border-box;
 }
 
 /*vertical*/
@@ -81,7 +91,7 @@
   display: flex;
 }
 
-.pro-layout-horizontal .pro-layout-menus {
+.pro-layout-horizontal .pro-layout-menus-scroll {
   --pro-left-menu-hei: calc(100vh - var(--pro-menu-start-hei) - var(--pro-menu-end-hei));
 }
 
@@ -210,6 +220,15 @@
   max-height: var(--pro-secion-hei);
   overflow-y: auto;
   box-sizing: border-box;
+}
+
+.pro-page-sub {
+  position: absolute !important;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  /*overflow-y: auto;*/
 }
 
 .pro-page-header {
