@@ -17,8 +17,12 @@ blockquote {
 
 /* pro */
 
-.pro-layout .pro-layout-section {
-  /*padding: 10px;*/
+.pro-layout .pro-layout-header {
+  background-color: white;
+}
+
+.pro-layout .pro-layout-menus-wrapper {
+  background-color: white;
 }
 
 /*样式一*/
@@ -35,7 +39,7 @@ blockquote {
   /*margin:10px;*/
 }
 
-.pro-page .pro-page-header{
+.pro-page .pro-page-header {
   margin-bottom: 10px;
 }
 
@@ -44,12 +48,12 @@ blockquote {
   background-color: #f8f8f8;
   content: "";
   position: absolute;
-  bottom:-10px;
-  left:0;
-  right:0;
+  bottom: -10px;
+  left: 0;
+  right: 0;
 }
 
-.pro-page .pro-page-footer{
+.pro-page .pro-page-footer {
   margin-top: 10px;
 }
 
@@ -58,14 +62,14 @@ blockquote {
   background-color: #f8f8f8;
   content: "";
   position: absolute;
-  top:-10px;
-  left:0;
-  right:0;
+  top: -10px;
+  left: 0;
+  right: 0;
 }
 
 .pro-page .pro-page-content {
-  background-color: white;
-  margin: 10px 10px 0;
+  /*background-color: white;*/
+  margin: 0px 10px;
   padding: 10px;
 }
 

@@ -23,7 +23,7 @@ type ModalCurdProps = Partial<ExtractPropTypes<ReturnType<typeof modalCurdProps>
 /**
  * 事件处理
  */
-const ModalCurd = defineComponent<ModalCurdProps>({
+export const ModalCurdOpe = defineComponent<ModalCurdProps>({
   props: {
     ...modalCurdProps(),
   } as any,
@@ -131,14 +131,14 @@ export type ProModalCurdProps = ModalCurdProps & ProCurdProps;
 export const ProModalCurd = defineComponent<ProModalCurdProps>({
   props: {
     ...ProCurd.props,
-    ...ModalCurd.props,
+    ...ModalCurdOpe.props,
   },
   setup: (props, { slots, expose }) => {
     const curdRef = ref();
 
     expose(createExpose(CurdMethods, curdRef));
 
-    const invalidKeys = keys(ModalCurd.props);
+    const invalidKeys = keys(ModalCurdOpe.props);
 
     const getComp = useGetCompByKey();
     const Curd = getComp(ElementKeys.ProCurdKey);
@@ -147,7 +147,7 @@ export const ProModalCurd = defineComponent<ProModalCurdProps>({
       if (!Curd) return null;
       return (
         <Curd ref={curdRef} {...(omit(props, invalidKeys) as any)}>
-          <ModalCurd {...pick(props, invalidKeys)} />
+          <ModalCurdOpe {...pick(props, invalidKeys)} />
           {slots.default?.()}
         </Curd>
       );

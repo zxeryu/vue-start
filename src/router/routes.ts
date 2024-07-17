@@ -89,6 +89,45 @@ export const routes = [
     ],
   },
   {
+    name: "CurdDemo",
+    path: "curd-demo",
+    children: [
+      {
+        name: "CurdDemoBasic",
+        path: "basic",
+        children: [
+          {
+            name: "CurdDemoBasicIndex",
+            path: "index",
+            component: () => import("@/views/curd-demo/basic/index"),
+          },
+        ],
+      },
+      {
+        name: "CurdDemoModal",
+        path: "modal",
+        children: [
+          {
+            name: "CurdDemoModalIndex",
+            path: "index",
+            component: () => import("@/views/curd-demo/modal/index"),
+          },
+        ],
+      },
+      {
+        name: "CurdDemoPage",
+        path: "page",
+        children: [
+          {
+            name: "CurdDemoPageIndex",
+            path: "index",
+            component: () => import("@/views/curd-demo/page/index"),
+          },
+        ],
+      },
+    ],
+  },
+  {
     name: "Devkit",
     path: "devkit",
     children: [

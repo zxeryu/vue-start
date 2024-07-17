@@ -25,6 +25,20 @@ import { isPathHasParent, isValidPath, restorePath } from "@vue-start/hooks";
 import { css } from "@emotion/css";
 
 /**
+ *  渲染后的插槽是否是有效的vnode
+ */
+export const isValidNode = (vns?: VNode[]) => {
+  if (!vns) {
+    return false;
+  }
+  //注册了footer插槽，但是返回的是null
+  if (size(vns) === 1 && vns[0].children === null) {
+    return false;
+  }
+  return true;
+};
+
+/**
  * 获取Column的valueType，默认"text"
  * @param column
  */

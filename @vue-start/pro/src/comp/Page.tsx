@@ -1,7 +1,8 @@
 import { defineComponent, ExtractPropTypes, PropType, VNode } from "vue";
-import { keys, omit, pick, size } from "lodash";
+import { keys, omit, pick } from "lodash";
 import { ElementKeys, useGetCompByKey } from "./comp";
 import { useRouter } from "vue-router";
+import { isValidNode } from "../core";
 
 const proPageHeaderProps = () => ({
   title: { type: String },
@@ -56,6 +57,8 @@ const proPageProps = () => ({
   loadingOpts: Object,
   //是否启用填充模式，即："pro-page-content"高度铺满"pro-page"中除header、footer的其他高度
   fillMode: { type: Boolean, default: true },
+  //根作为什么元素渲染
+  as: { type: String },
 });
 
 export type ProPageProps = Partial<ExtractPropTypes<ReturnType<typeof proPageProps>>> & PageHeaderProps;
@@ -68,42 +71,34 @@ export const ProPage = defineComponent<ProPageProps>({
   setup: (props, { slots }) => {
     const getComp = useGetCompByKey();
     const Loading = getComp(ElementKeys.LoadingKey);
-    const Scroll = getComp(ElementKeys.ScrollKey) || "div";
+    const RComp = props.as || getComp(ElementKeys.ScrollKey) || "div";
+
+    const renderLoading = () => {
+      if (!Loading) {
+        return null;
+      }
+      return (
+        <Loading loading {...props.loadingOpts}>
+          <div class={"pro-loading-dom"} />
+        </Loading>
+      );
+    };
 
     const headerKeys = keys(PageHeader.props);
-
-    const hasFooter = (vns?: VNode[]) => {
-      if (!vns) {
-        return false;
-      }
-      //注册了footer插槽，但是返回的是null
-      if (size(vns) === 1 && vns[0].children === null) {
-        return false;
-      }
-      return true;
-    };
 
     return () => {
       const hasHeader = props.title || slots.title || props.subTitle || slots.subTitle || slots.extra;
       const footer = slots.footer?.();
 
       return (
-        <Scroll class={`pro-page ${props.fillMode ? "pro-page-fill" : ""}`}>
+        <RComp class={`pro-page ${props.fillMode ? "pro-page-fill" : ""}`}>
           {slots.start?.()}
           {hasHeader && <PageHeader {...pick(props, headerKeys)} v-slots={omit(slots, "start", "default", "footer")} />}
-          <div class={"pro-page-content"}>
-            {props.loading ? (
-              Loading ? (
-                <Loading loading {...props.loadingOpts}>
-                  <div class={"pro-loading-dom"} />
-                </Loading>
-              ) : null
-            ) : (
-              slots.default?.()
-            )}
-          </div>
-          {!props.loading && hasFooter(footer) && <div class={"pro-page-footer"}>{footer}</div>}
-        </Scroll>
+
+          <div class={"pro-page-content"}>{props.loading ? renderLoading() : slots.default?.()}</div>
+
+          {!props.loading && isValidNode(footer) && <div class={"pro-page-footer"}>{footer}</div>}
+        </RComp>
       );
     };
   },

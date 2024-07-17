@@ -53,7 +53,7 @@ export const ProCurdModal = defineComponent<ProCurdModalProps>({
           title={props.title || getOperate(curdState.mode!)?.label}
           confirmLoading={curdState.operateLoading}
           maskClosable={curdState.mode === CurdAction.DETAIL}
-          footer={curdState.mode === CurdAction.DETAIL ? false : undefined}
+          footer={curdState.detailLoading || curdState.mode === CurdAction.DETAIL ? false : undefined}
           {...props.overrideProps}
           onCancel={handleCancel}
           v-slots={omit(slots, "default")}>
