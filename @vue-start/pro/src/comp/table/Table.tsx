@@ -295,10 +295,24 @@ export const ProTable = defineComponent<ProTableProps>({
 
     /******************************** toolbar class *******************************/
 
+    const toolbarRef = ref();
+    const toolbarHeiRef = ref(0);
+
     const toolbarStartDomRef = ref(); //dom
     const toolbarStartValidRef = ref(false); //dom是否为空
     const toolbarExtraDomRef = ref();
     const toolbarExtraValidRef = ref(false);
+
+    //计算toolbar高度
+    useResizeObserver(toolbarRef, (entries) => {
+      const rect = get(entries, [0, "contentRect"]);
+      const styles = window.getComputedStyle(toolbarRef.value);
+      if (rect.height && styles) {
+        const mbs = styles.getPropertyValue("margin-bottom");
+        const mb = parseInt(mbs.replace("px", ""));
+        toolbarHeiRef.value = rect.height + mb;
+      }
+    });
 
     useResizeObserver(toolbarStartDomRef, () => {
       toolbarStartValidRef.value = !!toolbarStartDomRef.value.innerText;
@@ -324,8 +338,11 @@ export const ProTable = defineComponent<ProTableProps>({
       ) : null;
 
       return (
-        <div class={props.clsName} {...(pick(attrs, "class") as any)}>
-          <div class={`${props.clsName}-toolbar ${toolbarValidClass.value}`}>
+        <div
+          class={props.clsName}
+          style={`--pro-table-toolbar-hei: ${toolbarHeiRef.value}px`}
+          {...(pick(attrs, "class") as any)}>
+          <div ref={toolbarRef} class={`${props.clsName}-toolbar ${toolbarValidClass.value}`}>
             <div ref={toolbarStartDomRef} class={`${props.clsName}-toolbar-start`}>
               {slots.toolbar?.()}
             </div>
