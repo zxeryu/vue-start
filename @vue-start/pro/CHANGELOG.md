@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# 0.5.36
+
+- ProTable 新增 toolbar 高度计算，值为 css 变量：--pro-table-toolbar-hei；
+- ProLayout Scroll 组件支持（element-plus）；
+- ProPage Scroll 组件支持（element-plus）；pro-page-sub 模式（支持 PageCurd 场景）
+
 # 0.5.33
 
 - ProTable 新增 mergeOpts 属性，支持行、列合并
