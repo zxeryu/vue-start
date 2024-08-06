@@ -88,16 +88,23 @@ export const ProPage = defineComponent<ProPageProps>({
 
     return () => {
       const hasHeader = props.title || slots.title || props.subTitle || slots.subTitle || slots.extra;
+
       const footer = slots.footer?.();
+      const hasFooter = !props.loading && isValidNode(footer);
+
+      const cls = ["pro-page"];
+      if (props.fillMode) cls.push("pro-page-fill");
+      if (hasHeader) cls.push("has-header");
+      if (hasFooter) cls.push("has-footer");
 
       return (
-        <RComp class={`pro-page ${props.fillMode ? "pro-page-fill" : ""}`}>
+        <RComp class={cls}>
           {slots.start?.()}
           {hasHeader && <PageHeader {...pick(props, headerKeys)} v-slots={omit(slots, "start", "default", "footer")} />}
 
           <div class={"pro-page-content"}>{props.loading ? renderLoading() : slots.default?.()}</div>
 
-          {!props.loading && isValidNode(footer) && <div class={"pro-page-footer"}>{footer}</div>}
+          {hasFooter && <div class={"pro-page-footer"}>{footer}</div>}
         </RComp>
       );
     };

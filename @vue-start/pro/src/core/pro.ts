@@ -121,11 +121,11 @@ const proConfigProps = () => ({
   //表达式工具集
   expressionMethods: { type: Object as PropType<{ [key: string]: (...params: any[]) => any }> },
   //message toast
-  showMsg: { type: Object },
+  showMsg: { type: Function },
   //modal message-box
-  showModal: { type: Object },
+  showModal: { type: Function },
   //notify
-  showNotify: { type: Object },
+  showNotify: { type: Function },
 });
 
 const ProConfigKey = Symbol("pro-config");

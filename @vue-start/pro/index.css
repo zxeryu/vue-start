@@ -154,13 +154,13 @@
 .pro-search-form {
 }
 
-.pro-search-form .pro-search-form-operate {
+.pro-search-form .pro-form-operate {
   display: inline-flex;
   vertical-align: middle;
   margin-bottom: 18px;
 }
 
-.pro-search-form .pro-search-form-operate button:not(:first-child) {
+.pro-search-form .pro-form-operate button:not(:first-child) {
   margin-left: 12px;
 }
 
