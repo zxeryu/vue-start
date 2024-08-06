@@ -3,6 +3,10 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# 0.5.37
+
+- ProPage class 新增 has-header has-footer 标记
+
 # 0.5.36
 
 - ProTable 新增 toolbar 高度计算，值为 css 变量：--pro-table-toolbar-hei；
