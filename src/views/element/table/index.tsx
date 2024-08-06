@@ -7,6 +7,7 @@ import Slots from "./demo/slots";
 import Group from "./demo/group";
 import Header from "./demo/header";
 import Merge from "./demo/merge";
+import Selection from "./demo/selection";
 
 export default defineComponent(() => {
   return () => {
@@ -19,6 +20,7 @@ export default defineComponent(() => {
         <Group />
         <Header />
         <Merge />
+        <Selection />
       </>
     );
   };

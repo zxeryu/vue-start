@@ -1,10 +1,10 @@
-import { computed, defineComponent, PropType, ref } from "vue";
-import { ElTable, ElTableColumn, ElButton } from "element-plus";
+import { computed, defineComponent, ExtractPropTypes, PropType, ref, nextTick } from "vue";
+import { ElTable, ElTableColumn, ElButton, TableProps } from "element-plus";
 import { TableColumnCtx } from "../../types";
-import { get, map, omit, pick, size } from "lodash";
-import { createExpose } from "@vue-start/pro";
+import { find, forEach, get, isFunction, map, omit, pick, reduce, size } from "lodash";
+import { createExpose, TColumns } from "@vue-start/pro";
 import { createLoadingId, ProLoading } from "../comp";
-import { getNameMapByMergeOpts, signTableMerge, TTableMergeOpts } from "@vue-start/hooks";
+import { getNameMapByMergeOpts, TTableMergeOpts, useEffect } from "@vue-start/hooks";
 
 export type ProTableColumnProps = TableColumnCtx<any>;
 
@@ -91,23 +91,160 @@ export const TableMethods = [
   "setScrollLeft",
 ];
 
-export const ProTable = defineComponent({
+const proTableProps = () => ({
+  columns: { type: Array as PropType<TColumns> },
+  dataSource: { type: Array },
+  loading: { type: Boolean },
+  /**
+   * 行、列合并配置
+   */
+  mergeOpts: { type: Object as PropType<TTableMergeOpts> },
+  /**
+   * 选择
+   */
+  selectedRowKeys: { type: Array as PropType<string[]> },
+  rowSelection: {
+    type: Object as PropType<{
+      type?: "single" | "multi"; //默认multi
+      column?: ProTableColumnProps & { slots?: Record<string, any> };
+      onChange?: (selectedRowKeys: string[], selectedRows: Record<string, any>[]) => void;
+    }>,
+    default: undefined,
+  },
+});
+
+export type ProTableProps = Partial<ExtractPropTypes<ReturnType<typeof proTableProps>>> & TableProps<any>;
+
+export const ProTable = defineComponent<ProTableProps>({
   props: {
     ...ElTable.props,
-    columns: { type: Array },
-    dataSource: { type: Array },
-    loading: { type: Boolean },
-    /**
-     * 行、列合并配置
-     */
-    mergeOpts: { type: Object as PropType<TTableMergeOpts> },
+    ...proTableProps(),
   },
-  setup: (props, { slots, expose }) => {
+  setup: (props, { slots, expose, emit }) => {
     const tableRef = ref();
 
     const id = createLoadingId("table");
 
     expose(createExpose(TableMethods, tableRef));
+
+    //获取record id
+    const getRowId = (record: any) => {
+      const rowKey = props.rowKey;
+      if (isFunction(rowKey)) {
+        return rowKey(record);
+      }
+      if (rowKey) {
+        return record[rowKey];
+      }
+      return record.id;
+    };
+
+    /***************************** rowSelection ********************************/
+
+    //是否是多选
+    const isMulti = computed(() => {
+      const rs = props.rowSelection;
+      if (!rs) return false;
+      return !rs.type || rs.type === "multi";
+    });
+
+    //标记是否是内部操作引起的变化
+    let changeByInside = false;
+
+    //单个选择监听
+    const handleCurrentChange = (currentRow: any) => {
+      const ids = currentRow ? [getRowId(currentRow)] : [];
+      props.rowSelection!.onChange?.(ids, currentRow ? [currentRow] : []);
+
+      changeByInside = true;
+      emit("update:selectedRowKeys", ids);
+    };
+    //多选监听
+    const handleSelectionChange = (rows: any[]) => {
+      const ids = map(rows, (item) => getRowId(item));
+      props.rowSelection!.onChange?.(ids, rows);
+
+      changeByInside = true;
+      emit("update:selectedRowKeys", ids);
+    };
+
+    const rowSelection = computed(() => {
+      const rs = props.rowSelection;
+      if (!rs) return undefined;
+
+      if (isMulti.value) {
+        return { onSelectionChange: handleSelectionChange };
+      }
+      //单选
+      return { highlightCurrentRow: true, onCurrentChange: handleCurrentChange };
+    });
+
+    //根据 props.selectedRowKeys 选择
+    useEffect(() => {
+      const data = props.dataSource || props.data;
+
+      //选择操作
+      if (!changeByInside) {
+        if (isMulti.value) {
+          //多选模式，有变化时候执行
+
+          const selectedRowKeys = props.selectedRowKeys;
+          const propKeyMap: Record<string, boolean | undefined> = reduce(
+            selectedRowKeys,
+            (pair, item) => ({ ...pair, [item]: true }),
+            {},
+          );
+          //
+          const selectedRows = tableRef.value?.getSelectionRows();
+          const curKeyMap: Record<string, boolean | undefined> = reduce(
+            selectedRows,
+            (pair, item) => ({ ...pair, [getRowId(item)]: true }),
+            {},
+          );
+
+          //是否操作
+          let isOpe = false;
+          //len不等
+          if (size(selectedRowKeys) !== size(selectedRows)) {
+            isOpe = true;
+          } else if (size(selectedRowKeys) !== 0) {
+            //相等 非0
+            for (let i = 0; i < selectedRowKeys!.length; i++) {
+              const key = selectedRowKeys![i];
+              //有值不匹配
+              if (!curKeyMap[key]) {
+                isOpe = true;
+                break;
+              }
+            }
+          }
+          if (isOpe) {
+            nextTick(() => {
+              forEach(data, (item) => {
+                const id = getRowId(item);
+                if (propKeyMap[id] !== curKeyMap[id]) {
+                  tableRef.value?.toggleRowSelection(item, !!propKeyMap[id]);
+                }
+              });
+            });
+          }
+        } else {
+          //单选模式，直接执行
+          const key = props.selectedRowKeys?.[0];
+          let target: any = null;
+          if (key) {
+            target = find(data, (item) => getRowId(item) === key);
+          }
+          nextTick(() => {
+            tableRef.value?.setCurrentRow(target);
+          });
+        }
+      }
+
+      changeByInside = false;
+    }, [() => props.selectedRowKeys, () => props.dataSource, () => props.data]);
+
+    /***************************** 行/列合并 ********************************/
 
     const createSpanMethod = () => {
       if (props.spanMethod) return props.spanMethod;
@@ -140,8 +277,18 @@ export const ProTable = defineComponent({
           {...omit(props, "columns", "dataSource", "data", "loading", "spanMethod")}
           data={props.dataSource || props.data}
           spanMethod={spanMethod.value}
+          {...rowSelection.value}
           v-slots={pick(slots, "append", "empty")}>
           {slots.start?.()}
+
+          {isMulti.value && (
+            <ElTableColumn
+              type={"selection"}
+              {...(omit(props.rowSelection?.column, "slots") as any)}
+              v-slots={props.rowSelection?.column?.slots}
+            />
+          )}
+
           {map(props.columns, (item) => (
             <ProTableColumn key={item.dataIndex} {...item} v-slots={slots} />
           ))}
