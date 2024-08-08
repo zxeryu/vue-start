@@ -1,10 +1,10 @@
-import { computed, defineComponent, ExtractPropTypes, PropType, ref, nextTick } from "vue";
+import { computed, defineComponent, ExtractPropTypes, PropType, ref, nextTick, reactive } from "vue";
 import { ElTable, ElTableColumn, ElButton, TableProps } from "element-plus";
 import { TableColumnCtx } from "../../types";
 import { find, forEach, get, isFunction, map, omit, pick, reduce, size } from "lodash";
 import { createExpose, TColumns } from "@vue-start/pro";
 import { createLoadingId, ProLoading } from "../comp";
-import { getNameMapByMergeOpts, TTableMergeOpts, useEffect } from "@vue-start/hooks";
+import { getNameMapByMergeOpts, TTableMergeOpts, useEffect, isSame } from "@vue-start/hooks";
 
 export type ProTableColumnProps = TableColumnCtx<any>;
 
@@ -148,23 +148,28 @@ export const ProTable = defineComponent<ProTableProps>({
       return !rs.type || rs.type === "multi";
     });
 
-    //标记是否是内部操作引起的变化
-    let changeByInside = false;
-
     //单个选择监听
     const handleCurrentChange = (currentRow: any) => {
       const ids = currentRow ? [getRowId(currentRow)] : [];
-      props.rowSelection!.onChange?.(ids, currentRow ? [currentRow] : []);
 
-      changeByInside = true;
+      //如果值相等，无需更新
+      if (isSame(props.selectedRowKeys, ids, { sort: true })) {
+        return;
+      }
+
+      props.rowSelection!.onChange?.(ids, currentRow ? [currentRow] : []);
       emit("update:selectedRowKeys", ids);
     };
     //多选监听
     const handleSelectionChange = (rows: any[]) => {
       const ids = map(rows, (item) => getRowId(item));
-      props.rowSelection!.onChange?.(ids, rows);
 
-      changeByInside = true;
+      //如果值相等，无需更新
+      if (isSame(props.selectedRowKeys, ids, { sort: true })) {
+        return;
+      }
+
+      props.rowSelection!.onChange?.(ids, rows);
       emit("update:selectedRowKeys", ids);
     };
 
@@ -184,64 +189,60 @@ export const ProTable = defineComponent<ProTableProps>({
       const data = props.dataSource || props.data;
 
       //选择操作
-      if (!changeByInside) {
-        if (isMulti.value) {
-          //多选模式，有变化时候执行
+      if (isMulti.value) {
+        //多选模式，有变化时候执行
 
-          const selectedRowKeys = props.selectedRowKeys;
-          const propKeyMap: Record<string, boolean | undefined> = reduce(
-            selectedRowKeys,
-            (pair, item) => ({ ...pair, [item]: true }),
-            {},
-          );
-          //
-          const selectedRows = tableRef.value?.getSelectionRows();
-          const curKeyMap: Record<string, boolean | undefined> = reduce(
-            selectedRows,
-            (pair, item) => ({ ...pair, [getRowId(item)]: true }),
-            {},
-          );
+        const selectedRowKeys = props.selectedRowKeys;
+        const propKeyMap: Record<string, boolean | undefined> = reduce(
+          selectedRowKeys,
+          (pair, item) => ({ ...pair, [item]: true }),
+          {},
+        );
+        //
+        const selectedRows = tableRef.value?.getSelectionRows();
+        const curKeyMap: Record<string, boolean | undefined> = reduce(
+          selectedRows,
+          (pair, item) => ({ ...pair, [getRowId(item)]: true }),
+          {},
+        );
 
-          //是否操作
-          let isOpe = false;
-          //len不等
-          if (size(selectedRowKeys) !== size(selectedRows)) {
-            isOpe = true;
-          } else if (size(selectedRowKeys) !== 0) {
-            //相等 非0
-            for (let i = 0; i < selectedRowKeys!.length; i++) {
-              const key = selectedRowKeys![i];
-              //有值不匹配
-              if (!curKeyMap[key]) {
-                isOpe = true;
-                break;
-              }
+        //是否操作
+        let isOpe = false;
+        //len不等
+        if (size(selectedRowKeys) !== size(selectedRows)) {
+          isOpe = true;
+        } else if (size(selectedRowKeys) !== 0) {
+          //相等 非0
+          for (let i = 0; i < selectedRowKeys!.length; i++) {
+            const key = selectedRowKeys![i];
+            //有值不匹配
+            if (!curKeyMap[key]) {
+              isOpe = true;
+              break;
             }
           }
-          if (isOpe) {
-            nextTick(() => {
-              forEach(data, (item) => {
-                const id = getRowId(item);
-                if (propKeyMap[id] !== curKeyMap[id]) {
-                  tableRef.value?.toggleRowSelection(item, !!propKeyMap[id]);
-                }
-              });
-            });
-          }
-        } else {
-          //单选模式，直接执行
-          const key = props.selectedRowKeys?.[0];
-          let target: any = null;
-          if (key) {
-            target = find(data, (item) => getRowId(item) === key);
-          }
+        }
+        if (isOpe) {
           nextTick(() => {
-            tableRef.value?.setCurrentRow(target);
+            forEach(data, (item) => {
+              const id = getRowId(item);
+              if (propKeyMap[id] !== curKeyMap[id]) {
+                tableRef.value?.toggleRowSelection(item, !!propKeyMap[id]);
+              }
+            });
           });
         }
+      } else {
+        //单选模式，直接执行
+        const key = props.selectedRowKeys?.[0];
+        let target: any = null;
+        if (key) {
+          target = find(data, (item) => getRowId(item) === key);
+        }
+        nextTick(() => {
+          tableRef.value?.setCurrentRow(target);
+        });
       }
-
-      changeByInside = false;
     }, [() => props.selectedRowKeys, () => props.dataSource, () => props.data]);
 
     /***************************** 行/列合并 ********************************/
