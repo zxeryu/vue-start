@@ -17,7 +17,7 @@ const proPageHeaderProps = () => ({
 
 export type PageHeaderProps = Partial<ExtractPropTypes<ReturnType<typeof proPageHeaderProps>>>;
 
-const PageHeader = defineComponent({
+export const PageHeader = defineComponent({
   props: {
     ...proPageHeaderProps(),
   },
