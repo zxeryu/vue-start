@@ -3,6 +3,10 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# 0.2.8
+
+- useFetch 新增 cancelWhileUnmount，组件卸载是否取消请求
+
 ## [0.1.10](https://github.com/zxeryu/vue-start/compare/@vue-start/request@0.1.9...@vue-start/request@0.1.10) (2022-08-29)
 
 ### Bug Fixes

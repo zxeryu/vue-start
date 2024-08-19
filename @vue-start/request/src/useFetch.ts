@@ -14,6 +14,8 @@ export interface IUseFetchOptions<TRequestActor extends IRequestActor> {
   onSuccess?: (actor: TRequestActor, data?: any) => void;
   onFail?: (actor: TRequestActor) => void;
   onFinish?: () => void;
+  //组件卸载是否cancel request
+  cancelWhileUnmount?: boolean;
 }
 
 export interface IUseFetchResult<TRequestActor extends IRequestActor> {
@@ -91,7 +93,11 @@ export const useFetch = <TRequestActor extends IRequestActor>(
 
     return () => {
       //组件卸载
-      cancelIfExists();
+      //默认(undefined) 或着 cancelWhileUnmount标记为true的时候
+      if (options.cancelWhileUnmount === undefined || options.cancelWhileUnmount) {
+        //取消请求
+        cancelIfExists();
+      }
       sub && sub.unsubscribe();
     };
   }, []);
