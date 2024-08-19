@@ -30,6 +30,10 @@ interface IProFormProvide extends IProFormProvideExtra {
   formElementMap?: TElementMap;
   //
   columns: Ref<TColumns>;
+  //记录用户是否操作
+  userOpe: Ref<boolean>;
+  //记录正在进行的异步任务，比如：上传
+  asyncNum: Ref<number>;
 }
 
 export const useProForm = (): IProFormProvide => inject(ProFormKey) as IProFormProvide;
@@ -115,7 +119,11 @@ const proFormProps = () => ({
 export type ProFormProps = Partial<ExtractPropTypes<ReturnType<typeof proFormProps>>> &
   ProBaseProps &
   Omit<ProGridProps, "items"> & {
-    onFinish?: (showValues?: Record<string, any>, values?: Record<string, any>) => void;
+    onFinish?: (
+      showValues?: Record<string, any>,
+      values?: Record<string, any>,
+      opts?: Pick<IProFormProvide, "userOpe" | "asyncNum">,
+    ) => void;
     onFinishFailed?: (errs: any) => void;
   };
 
@@ -150,6 +158,11 @@ export const ProForm = defineComponent<ProFormProps>({
       return list;
     });
 
+    //
+    const userOpe = ref(false);
+    //
+    const asyncNum = ref(0);
+
     /*************** finish **************/
     const emitFinish = (...e: any[]) => {
       // @ts-ignore
@@ -157,7 +170,7 @@ export const ProForm = defineComponent<ProFormProps>({
       if (flag === true) {
         return;
       }
-      emit("finish", ...e);
+      emit("finish", ...e, { userOpe, asyncNum });
     };
 
     const dOpts = props.debounceSubmit;
@@ -175,7 +188,13 @@ export const ProForm = defineComponent<ProFormProps>({
     };
 
     const formRef = ref();
-    expose(createExpose(props.formMethods || [], formRef));
+    expose({
+      //form 原始方法
+      ...createExpose(props.formMethods || [], formRef),
+      //
+      userOpe,
+      asyncNum,
+    });
 
     provideProForm({
       formState,
@@ -191,6 +210,9 @@ export const ProForm = defineComponent<ProFormProps>({
       columns: columns as any,
       //
       formRef,
+      //
+      userOpe: userOpe as any,
+      asyncNum: asyncNum as any,
       //
       ...props.provideExtra,
     });

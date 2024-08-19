@@ -32,7 +32,7 @@ export const createFormItemCompFn = <T extends FormItemProps>(
       },
       setup: (props, { slots }) => {
         const { formExtraMap, elementMap } = useProConfig();
-        const { formState, readonlyState, disableState, readonly: formReadonly } = useProForm();
+        const { formState, readonlyState, disableState, readonly: formReadonly, userOpe } = useProForm();
         const formListCtx = useProFormList();
 
         //优先级 props.readonly > readonlyState > formContext.readonly
@@ -73,6 +73,8 @@ export const createFormItemCompFn = <T extends FormItemProps>(
         const path = formListCtx?.pathList ? [...formListCtx.pathList, ...nameList] : nameList;
 
         const setValue = (v: any) => {
+          //标记用户操作过
+          userOpe.value = true;
           set(formState, path, v);
         };
 

@@ -6,6 +6,7 @@ See [Conventional Commits](https://conventionalcommits.org) for commit guideline
 # 0.5.37
 
 - ProPage class 新增 has-header has-footer 标记
+- ProForm 新增 userOpe 属性：标记用户是否操作过 Form
 
 # 0.5.36
 
