@@ -16,6 +16,8 @@ import {
   ProShowDate,
   ProShowOptions,
   ProShowTree,
+  ProPage,
+  ProTip,
 } from "@vue-start/pro";
 import {
   ElForm,
@@ -26,6 +28,7 @@ import {
   ElButton,
   ElDescriptionsItem,
   ElCheckbox,
+  ElTooltip,
 } from "element-plus";
 import {
   FormMethods,
@@ -99,6 +102,12 @@ ProUploaderText.props = {
   modelValue: String,
 };
 
+ProTip.props = {
+  ...ElTooltip.props,
+  ...ProTip.props,
+  placement: { type: String, default: "top-start" },
+};
+
 export const elementMap = {
   //element-plus
   [ElementKeys.LoadingKey]: ProLoading,
@@ -111,6 +120,7 @@ export const elementMap = {
   [ElementKeys.ModalKey]: ProModal,
   [ElementKeys.PaginationKey]: ProPagination,
   [ElementKeys.PopoverKey]: ProPopover,
+  [ElementKeys.TooltipKey]: ElTooltip,
   [ElementKeys.CheckboxKey]: ElCheckbox,
   [ElementKeys.FormKey]: Form,
   [ElementKeys.FormItemKey]: ProFormItem,
@@ -123,6 +133,7 @@ export const elementMap = {
   [ElementKeys.ProTableKey]: ProTable,
   [ElementKeys.ProCurdKey]: ProCurd,
   [ElementKeys.ProListKey]: ProList,
+  [ElementKeys.ProPageKey]: ProPage,
   //show
   text: ProShowText,
   digit: ProShowDigit,
