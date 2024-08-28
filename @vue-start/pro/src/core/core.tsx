@@ -31,8 +31,8 @@ export const isValidNode = (vns?: VNode[]) => {
   if (!vns) {
     return false;
   }
-  //注册了footer插槽，但是返回的是null
-  if (size(vns) === 1 && vns[0].children === null) {
+  //注释节点，vue3中使用注释组件标记逻辑组件返回null/undefined的情况
+  if (vns?.[0]?.type?.toString() === "Symbol(Comment)") {
     return false;
   }
   return true;

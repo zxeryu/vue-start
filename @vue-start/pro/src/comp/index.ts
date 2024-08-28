@@ -9,5 +9,6 @@ export * from "./Typography";
 export * from "./show";
 export * from "./Layout";
 export * from "./Uploader";
+export * from "./Tip";
 
 export * from "./comp";

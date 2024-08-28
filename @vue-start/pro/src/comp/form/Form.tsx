@@ -5,6 +5,7 @@ import { convertCollection, useRuleState } from "@vue-start/hooks";
 import { get, keys, map, omit, size, debounce, filter } from "lodash";
 import {
   getColumnFormItemName,
+  isValidNode,
   mergeState,
   proBaseProps,
   ProBaseProps,
@@ -310,23 +311,35 @@ export const ProForm = defineComponent<ProFormProps>({
       if (!Form) {
         return null;
       }
+
+      const start = slots.start?.();
+      const content = slots.default?.();
+      const end = slots.end?.();
+
+      const cls = [props.clsName];
+      //空，无自组件
+      const isEmpty = size(items.value) <= 0 && !isValidNode(start) && !isValidNode(content) && !isValidNode(end);
+      if (isEmpty) {
+        cls.push("is-empty");
+      }
+
       return (
         <Form
           ref={formRef}
-          class={props.clsName}
+          class={cls}
           {...omit(attrs, "onFinish")}
           {...omit(props, ...invalidKeys, ...gridKeys, "onFinish", "operate")}
           model={formState}
           onFinish={handleFinish}>
-          {slots.start?.()}
+          {start}
 
           {formElementMap && size(columns.value) > 0 && (
             <>{props.row ? <ProGrid row={props.row} col={props.col} items={items.value as any} /> : items.value}</>
           )}
 
-          {slots.default?.()}
+          {content}
 
-          {props.operate && (
+          {props.operate && !isEmpty && (
             <ProOperate
               class={`${props.clsName}-operate`}
               {...omit(props.operate, "items", "itemState", "onReset", "onSubmit", "onContinue")}
@@ -335,7 +348,7 @@ export const ProForm = defineComponent<ProFormProps>({
             />
           )}
 
-          {slots.end?.()}
+          {end}
         </Form>
       );
     };

@@ -25,6 +25,7 @@
 .pro-layout {
   /*section高度*/
   --pro-secion-hei: calc(100vh - var(--pro-header-hei) - var(--pro-divide-ver-hei));
+  --pro-section-hei: calc(100vh - var(--pro-header-hei) - var(--pro-divide-ver-hei));
   /*左侧菜单高度*/
   --pro-left-menu-hei: calc(var(--pro-secion-hei) - var(--pro-menu-start-hei) - var(--pro-menu-end-hei));
 }
@@ -148,6 +149,12 @@
 
 .pro-form .pro-form-operate button:not(:first-child) {
   margin-left: 12px;
+}
+
+/*tip*/
+.pro-form .pro-form-item .pro-tip-dom {
+  align-self: center;
+  margin-left: 6px;
 }
 
 /********************************** pro-search-form ***********************************/
@@ -299,4 +306,18 @@
   left: 0;
   z-index: 1;
   background-color: white;
+}
+
+/********************************** pro-tip ***********************************/
+.pro-tip-dom {
+  display: inline-block;
+  width: 14px;
+  height: 14px;
+  line-height: 14px;
+  border-radius: 50%;
+  background-color: #606266;
+  color: white;
+  font-size: 10px;
+  text-align: center;
+  cursor: default;
 }

@@ -3,6 +3,14 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# 0.5.38
+
+- 新增 ProTip 组件
+- ProFormItem label 新增 tip 提示配置
+- ProOperate items 新增 tip 提示配置
+- ProTable operate element 方法参数换为 item 重写后的对象
+- ProForm class 新增 empty 标记
+
 # 0.5.37
 
 - ProPage class 新增 has-header has-footer 标记

@@ -14,7 +14,7 @@ export interface IOpeItem {
   loading?: boolean | (() => boolean);
   //
   extraProps?: object | (() => Record<string, any>);
-  onClick?: (value: string | number | boolean) => void;
+  onClick?: (item: IOpeItem) => void;
   element?: (
     item?: Omit<IOpeItem, "show" | "disabled" | "opeProps" | "element"> & { disabled?: boolean },
   ) => VNode | null;
@@ -22,6 +22,9 @@ export interface IOpeItem {
   sort?: number; //排序
   per?: string; //权限字符串
   perSuffix?: string; //权限字符串后缀
+  //
+  tip?: string | VNode; //tooltip提示
+  tipProps?: Record<string, any>; //tooltip配置
 }
 
 const proOperateProps = () => ({
@@ -73,11 +76,12 @@ export const ProOperate = defineComponent<ProOperateProps>({
     });
 
     const handleItemClick = (item: IOpeItem) => {
-      item.onClick?.(item.value);
+      item.onClick?.(item);
     };
 
     const getComp = useGetCompByKey();
     const Comp = props.elementKey ? getComp(props.elementKey) : undefined;
+    const Tooltip = getComp(ElementKeys.TooltipKey);
 
     return () => {
       return (
@@ -100,11 +104,20 @@ export const ProOperate = defineComponent<ProOperateProps>({
             }
             // 优先级3：公共组件
             if (Comp) {
-              return (
+              const dom = (
                 <Comp disabled={disabled} loading={loading} onClick={() => handleItemClick(item)} {...extraProps}>
                   {label}
                 </Comp>
               );
+              if (item.tip && Tooltip) {
+                return (
+                  <Tooltip placement={"top"} {...item.tipProps} v-slots={{ content: () => item.tip }}>
+                    {dom}
+                  </Tooltip>
+                );
+              }
+
+              return dom;
             }
             // 优先级4：默认
             return (

@@ -13,10 +13,12 @@ export const ElementKeys = {
   DescriptionsItemKey: "ProDescriptionsItem$",
   PaginationKey: "Pagination$", //Pagination
   PopoverKey: "Popover$", //Popover
+  TooltipKey: "Tooltip$", //Tooltip
   CheckboxKey: "Checkbox$", //Checkbox
   MenusKey: "Menus$",
   ModalKey: "Modal$", //Modal
   ScrollKey: "Scroll$",
+  PageKey: "Page$",
   FormKey: "Form$", //Form
   FormItemKey: "FormItem$", //FormItem
   TableKey: "Table$", //Table
@@ -28,6 +30,7 @@ export const ElementKeys = {
   ProTableKey: "ProTable$", //ProTable
   ProCurdKey: "ProCurd$", //ProCurd
   ProListKey: "ProList$", //ProCurd
+  ProPageKey: "ProPage$",
 };
 
 /**

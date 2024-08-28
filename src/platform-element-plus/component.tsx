@@ -36,6 +36,7 @@ import {
   IOperateItem,
   TColumn,
   ElementKeys,
+  ProTip,
 } from "@vue-start/pro";
 
 import { ProPreview } from "@vue-start/media";
@@ -134,8 +135,9 @@ export const initComp = (app: App) => {
   app.component("pro-modal-curd", ProModalCurd);
   app.component("pro-curd-list", ProCurdList);
   app.component("pro-typography", ProTypography);
-  //element-plus
-  app.component("pro-loading", ProLoading);
+  app.component("pro-tip", ProTip),
+    //element-plus
+    app.component("pro-loading", ProLoading);
   app.component("pro-modal", ProModal);
   app.component("pro-pagination", ProPagination);
   app.component("pro-popover", ProPopover);

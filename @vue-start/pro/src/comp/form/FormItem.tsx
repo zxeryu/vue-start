@@ -5,6 +5,7 @@ import { useProFormList } from "./FormList";
 import { get, isBoolean, keys, map, omit, set } from "lodash";
 import { convertPathToList } from "../../util";
 import { useProConfig } from "../../core";
+import { ProTip } from "../Tip";
 
 export interface FormItemProps {
   name?: string | number | (string | number)[];
@@ -15,6 +16,9 @@ const proFormItemProps = () => ({
   fieldProps: { type: Object },
   showProps: { type: Object },
   slots: { type: Object },
+  //
+  tip: { type: [String, Object] },
+  tipProps: { type: Object },
 });
 
 export type ProFormItemProps = Partial<ExtractPropTypes<ReturnType<typeof proFormItemProps>>> & Record<string, any>;
@@ -115,7 +119,15 @@ export const createFormItemCompFn = <T extends FormItemProps>(
               {...omit(props, ...invalidKeys, "name", "rules")}
               name={path}
               rules={rules.value}
-              v-slots={props.slots}>
+              v-slots={{
+                label: () => (
+                  <>
+                    {props.label}
+                    {props.tip && <ProTip content={props.tip} title={props.tip} {...props.tipProps} />}
+                  </>
+                ),
+                ...props.slots,
+              }}>
               {readonly.value ? renderShow() : renderInput()}
             </FormItem>
           );
