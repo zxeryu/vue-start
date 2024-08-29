@@ -26,6 +26,7 @@ export interface IOpeItem {
   tip?: string | VNode; //tooltip提示
   tipProps?: Record<string, any>; //tooltip配置
 }
+//！！！！ 这块修改后，得同步CudList tableOperateItems
 
 const proOperateProps = () => ({
   /**

@@ -64,6 +64,8 @@ export const ProCurdList = defineComponent<ProCurdListProps>({
             "sort",
             "per",
             "perSuffix",
+            "tip",
+            "tipProps",
           ),
           value: operate.action,
         };
