@@ -41,13 +41,15 @@ const createApiList = (
       const allPath = `${basePath || ""}${path}`;
       const api = {
         name: apiName,
-        path: replace(allPath, new RegExp("{", "g"), "${"),
+        path: replace(allPath, new RegExp("{", "g"), "${extra."),
         method: methodType,
         tag: get(methodDesc, ["tags", 0]),
         summary: get(methodDesc, "summary") || get(methodDesc, "operationId"),
         query: filter(methodDesc.parameters, (item) => {
           return (isValidParamName(item.name) && item.in === "query") || item.in === "path";
         }),
+        //兼容open-api 3.0
+        needBody: !!methodDesc.requestBody,
       };
 
       apiList.push(api);
@@ -56,37 +58,56 @@ const createApiList = (
   return apiList;
 };
 
-const dealKeywords = (name: string) => {
-  if (name === "var") {
-    return `${name}$`;
-  }
-  return name;
-};
-
 const SChar = "`";
 
-const generateApiCode = (api: Record<string, any>) => {
-  const isBody = api.method === "post" || api.method === "put";
-  //params
-  const query = map(api.query, (item) => `${dealKeywords(item.name)}//${replace(item.description, /\n/g, "")}\n`);
-  const params = isBody ? [...query, "body"] : query;
-  const paramStr = size(params) > 0 ? `{${join(params, ",")}}` : ``;
-  //query
-  const qs = map(
-    filter(api.query, (item) => item.in === "query"),
-    (item) => dealKeywords(item.name),
+const generateDesc = (list: Record<string, any>[]) => {
+  let str = "";
+  const query = map(
+    filter(list, (item) => item.in === "query"),
+    (item) => ` ${item.name}, //${replace(item.description, /\n/g, "")}`,
   );
-  const queryStr = size(qs) > 0 ? `params: { ${join(qs, ",")} }` : ``;
+  if (size(query) > 0) {
+    str += `
+query:{
+${join(query, "\n")}
+}`;
+  }
+  const path = map(
+    filter(list, (item) => item.in === "path"),
+    (item) => ` ${item.name}, //${replace(item.description, /\n/g, "")}`,
+  );
+  if (size(path) > 0) {
+    str += `
+path:{
+${join(path, "\n")}
+}`;
+  }
+  return str;
+};
+
+const generateApiCode = (api: Record<string, any>) => {
+  const isBody = api.method === "post" || api.method === "put" || api.needBody;
+  //params
+  const params = ["...extra"];
+  if (isBody) {
+    params.unshift("body");
+  }
+  const paramStr = size(params) > 0 ? `{${join(params, ",")}}` : ``;
   //data
-  const dataStr = isBody ? `data: body` : ``;
+  const dataStr = isBody ? "data: body" : "";
+
+  //参数说明
+  const desc = generateDesc(api.query);
 
   return `
-// ${api.summary}  
+/**
+* ${api.summary}${desc}
+*/
 export const ${api.name} = createRequestActor('${api.name}',(${paramStr})=>{
   return {
     method: '${api.method}',
     url: ${SChar}${api.path}${SChar},
-    ${queryStr}${queryStr ? "," : ""}${dataStr}
+    params: extra,${dataStr}
   }
 });
   `;
