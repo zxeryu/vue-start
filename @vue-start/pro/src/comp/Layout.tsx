@@ -111,6 +111,14 @@ export const ProLayout = defineComponent({
       return null;
     });
 
+    //compose模式 是否存在左侧菜单
+    const hasLeftMenu = computed(() => {
+      if (currentTop.value && currentTop.value.children && size(currentTop.value.children) > 0) {
+        return true;
+      }
+      return false;
+    });
+
     //当前路由对应的menu
     const activeKey = computed(() => {
       if (props.findActiveKey) {
@@ -207,7 +215,11 @@ export const ProLayout = defineComponent({
       }
 
       return (
-        <main {...pickAttrs} class={`${props.clsName} ${props.clsName}-${props.layout}`}>
+        <main
+          {...pickAttrs}
+          class={`${props.clsName} ${props.clsName}-${props.layout} ${
+            hasLeftMenu.value ? "left-menu" : "no-left-menu"
+          }`}>
           <Header
             class={`${props.clsName}-header`}
             v-slots={{
@@ -230,9 +242,7 @@ export const ProLayout = defineComponent({
             }}
           />
           <div class={`${props.clsName}-structure`}>
-            {currentTop.value &&
-              size(currentTop.value.children) > 0 &&
-              renderLeftMenu({ ...menuProps, options: currentTop.value.children })}
+            {hasLeftMenu.value && renderLeftMenu({ ...menuProps, options: currentTop.value!.children })}
             {section}
           </div>
         </main>
