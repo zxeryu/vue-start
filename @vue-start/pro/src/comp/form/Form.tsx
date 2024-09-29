@@ -318,7 +318,7 @@ export const ProForm = defineComponent<ProFormProps>({
 
       const cls = [props.clsName];
       //空，无自组件
-      const isEmpty = size(items.value) <= 0 && !isValidNode(start) && !isValidNode(content) && !isValidNode(end);
+      const isEmpty = size(items.value) <= 0 && !isValidNode(start) && !isValidNode(content);
       if (isEmpty) {
         cls.push("is-empty");
       }
