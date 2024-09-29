@@ -79,6 +79,7 @@ export default defineConfig(({ mode }) => {
               "querystring",
               "dayjs",
               "prettier",
+              "polished",
               //
               "@vue-start/antd-pro",
               "@vue-start/chart",
