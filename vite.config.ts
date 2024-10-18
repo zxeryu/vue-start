@@ -84,6 +84,7 @@ export default defineConfig(({ mode }) => {
               "@vue-start/antd-pro",
               "@vue-start/chart",
               "@vue-start/config",
+              "@vue-start/css",
               "@vue-start/element-pro",
               "@vue-start/hooks",
               "@vue-start/map",
