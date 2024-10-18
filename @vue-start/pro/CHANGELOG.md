@@ -6,6 +6,7 @@ See [Conventional Commits](https://conventionalcommits.org) for commit guideline
 # 0.5.40
 
 - 新增 theme 模式
+- Layout css 变量位置由:root 迁移到.pro-layout
 
 # 0.5.39
 
