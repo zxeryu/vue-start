@@ -1,6 +1,7 @@
 import { isValidInRules, TConvert, TRules } from "./base";
 import {
   assign,
+  filter,
   find,
   findIndex,
   forEach,
@@ -182,8 +183,9 @@ export const findTreeItem = (
 };
 
 /**
+ * 根据数组（value）逐级查找
  * @param data
- * @param value
+ * @param value []
  * @param fieldNames
  */
 export const findTreeItem2 = (
@@ -257,6 +259,27 @@ export const treeToMap = (
 };
 
 /************************************** common *******************************************/
+
+/**
+ * list 或 tree 数据过滤
+ * @param data
+ * @param verify
+ * @param fieldNames
+ */
+export const filterCollection = (
+  data: TData[],
+  verify: (item: TData) => boolean,
+  fieldNames: { children: string } | undefined = { children: "children" },
+): TData[] => {
+  const reList = map(data, (item) => {
+    const children = item[fieldNames.children];
+    if (children && size(children) > 0) {
+      return { ...item, [fieldNames.children]: filterCollection(children, verify, fieldNames) };
+    }
+    return item;
+  });
+  return filter(reList, (item) => verify(item));
+};
 
 /**
  * list 或 tree 数据转换
