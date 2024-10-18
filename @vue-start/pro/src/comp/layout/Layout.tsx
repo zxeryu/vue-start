@@ -1,10 +1,10 @@
 import { computed, defineComponent, PropType, ref } from "vue";
 import { findTreeItem, getMenuTopNameMap, useResizeObserver, convertCollection } from "@vue-start/hooks";
 import { findLast, get, map, omit, pick, size } from "lodash";
-import { filterSlotsByPrefix } from "../util";
-import { ElementKeys, useGetCompByKey } from "./comp";
-import { TreeOption } from "../types";
-import { useProRouter } from "../core";
+import { filterSlotsByPrefix } from "../../util";
+import { ElementKeys, useGetCompByKey } from "../comp";
+import { TreeOption } from "../../types";
+import { useProRouter } from "../../core";
 
 const Header = defineComponent((_, { slots }) => {
   const menuWrapperRef = ref();

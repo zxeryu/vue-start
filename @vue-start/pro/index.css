@@ -1,16 +1,11 @@
 :root {
-  /***************layout****************/
+  /****************** reset layout ***************/
   /*header高度*/
-  --pro-header-hei: 60px;
+  --pro-header-hei: 0px;
   /*header与内容间隔*/
-  --pro-divide-ver-hei: 2px;
-  /*面包屑高度*/
-  --pro-bread-hei: 0px;
-  /*菜单宽度变量：合并/展开会重新赋值；媒体查询重新赋值*/
-  --pro-left-menu-wid: 220px;
-  /*左侧菜单start,end插槽高度*/
-  --pro-menu-start-hei: 0px;
-  --pro-menu-end-hei: 0px;
+  --pro-divide-ver-hei: 0px;
+  /*section高度*/
+  --pro-secion-hei: 100vh;
   /*page*/
   --pro-page-header-hei: 40px;
   --pro-page-footer-hei: 46px;
@@ -23,6 +18,18 @@
 /********************************** pro-layout ***********************************/
 
 .pro-layout {
+  /*header高度*/
+  --pro-header-hei: 60px;
+  /*header与内容间隔*/
+  --pro-divide-ver-hei: 2px;
+  /*面包屑高度*/
+  --pro-bread-hei: 0px;
+  /*菜单宽度变量：合并/展开会重新赋值；媒体查询重新赋值*/
+  --pro-left-menu-wid: 220px;
+  /*左侧菜单start,end插槽高度*/
+  --pro-menu-start-hei: 0px;
+  --pro-menu-end-hei: 0px;
+
   /*section高度*/
   --pro-secion-hei: calc(100vh - var(--pro-header-hei) - var(--pro-divide-ver-hei));
   --pro-section-hei: calc(100vh - var(--pro-header-hei) - var(--pro-divide-ver-hei));

@@ -2,8 +2,6 @@
   --header-hei: 60px;
   --divide-vertical-hei: 10px;
   /*--pro-left-menu-hei: calc(100vh - 30px - 30px);*/
-  --pro-menu-start-hei: 30px;
-  --pro-menu-end-hei: 30px;
 }
 
 html body {
@@ -16,6 +14,11 @@ blockquote {
 }
 
 /* pro */
+
+.pro-layout {
+  --pro-menu-start-hei: 30px;
+  --pro-menu-end-hei: 30px;
+}
 
 .pro-layout .pro-layout-header {
   background-color: white;
