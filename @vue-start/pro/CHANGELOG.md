@@ -3,6 +3,14 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# 0.5.40
+
+- 新增 theme 模式
+
+# 0.5.39
+
+- bug 修复；
+
 # 0.5.38
 
 - 新增 ProTip 组件
