@@ -1,11 +1,9 @@
 import { defineComponent, ref } from "vue";
 import { RouterView } from "vue-router";
-import { findTreeItem, useEffect } from "@vue-start/hooks";
+import { useEffect } from "@vue-start/hooks";
 import { ProLayout, useProRouter } from "@vue-start/pro";
-import { find } from "lodash";
 import { HeaderLeft, HeaderRight } from "@/layout/Header";
 import { css } from "@emotion/css";
-import { routes } from "@/router/routes";
 import { menus } from "@/common/menus";
 import { useConfigStore } from "@/store/StoreCurrent";
 
@@ -30,28 +28,6 @@ export const BasicLayout = defineComponent(() => {
       router.replace({ name: "OverviewIndexMd" });
     }
   }, []);
-
-  const findCurrentTopName = (route: any, menuTopMap: any) => {
-    const list = findTreeItem(routes, (item) => item.name === route.name).list;
-    if (list) {
-      const index = find(list, (item) => {
-        //根据当前项目的规则制定
-        return item.path === "index" || item.path === "base";
-      });
-      if (index) return menuTopMap[index.name];
-    }
-  };
-
-  const findActiveKey = (route: any) => {
-    const list = findTreeItem(routes, (item) => item.name === route.name).list;
-    if (list) {
-      const index = find(list, (item) => {
-        //根据当前项目的规则制定
-        return item.path === "index" || item.path === "base";
-      });
-      if (index) return index.name;
-    }
-  };
 
   const collapseRef = ref(false);
 
@@ -96,10 +72,8 @@ export const BasicLayout = defineComponent(() => {
           },
         })}
         layout={config.layout as any}
-        menus={menus}
+        menus={menus as any}
         fieldNames={{ value: "name", label: "title", children: "children" }}
-        findCurrentTopName={findCurrentTopName}
-        findActiveKey={findActiveKey}
         menuProps={{
           class: collapseRef.value ? "pro-layout-menus mini" : "pro-layout-menus",
           collapse: collapseRef.value, //el
