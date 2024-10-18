@@ -7,6 +7,7 @@ See [Conventional Commits](https://conventionalcommits.org) for commit guideline
 
 - 新增 theme 模式
 - Layout css 变量位置由:root 迁移到.pro-layout
+- Layout menu 新增 hide 模式
 
 # 0.5.39
 
