@@ -167,8 +167,8 @@ export const ProModule = defineComponent<ProModuleProps>({
     const dispatch = (action: TActionState) => {
       const prev = state[action.type];
       const data = isFunction(action.payload) ? action.payload(prev) : action.payload;
-      //如果要更新的属性值是 object ，执行覆盖操作
-      if (isObject(prev)) {
+      //如果要更新的属性值是 object，非 arr ，执行覆盖操作
+      if (!isArray(prev) && isObject(prev)) {
         setReactiveValue(state[action.type], data);
         return;
       }
