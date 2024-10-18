@@ -1,5 +1,9 @@
 # Change Log
 
+# 0.2.30
+
+- 新增集合过滤方法 filterCollection
+
 # 0.2.29
 
 - 新增 isSameNum，判断两数是否相等，特殊处理："" null undefined 相互比较返回 true；字符串和数字会转换成字符串比较；
