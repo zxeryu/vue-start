@@ -1,5 +1,9 @@
 # Change Log
 
+# 0.2.29
+
+- ProDropdown
+
 # 0.2.28
 
 - 注册 ProTip、ProPage、Tooltip
