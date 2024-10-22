@@ -48,6 +48,7 @@ import {
 } from "./form";
 import { ProTable as Table, ProTableOperateItem } from "./table";
 import { ProUploader, ProModal as Modal, ProLoading, ProMenus, ProModal, ProPagination, ProPopover } from "./comp";
+import { ProDropdown } from "./comp/Dropdown";
 
 export * from "./form";
 export * from "./table";
@@ -127,6 +128,7 @@ export const elementMap = {
   [ElementKeys.TableKey]: Table,
   [ElementKeys.TableOperateKey]: ProTableOperateItem,
   [ElementKeys.UploaderKey]: ProUploader,
+  [ElementKeys.DropdownKey]: ProDropdown,
   //pro
   [ElementKeys.ProFormKey]: ProForm,
   [ElementKeys.ProSearchFormKey]: ProSearchForm,
