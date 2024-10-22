@@ -1,16 +1,24 @@
-import { computed, defineComponent, PropType, ref } from "vue";
+import { computed, defineComponent, ExtractPropTypes, PropType, provide, ref } from "vue";
 import {
   findTreeItem,
   getMenuTopNameMap,
   useResizeObserver,
   convertCollection,
   filterCollection,
+  treeToMap,
+  useWatch,
+  useEffect,
+  jsonToStr,
+  strToJson,
 } from "@vue-start/hooks";
 import { find, findLast, get, map, omit, pick, size } from "lodash";
 import { filterSlotsByPrefix } from "../../util";
 import { ElementKeys, useGetCompByKey } from "../comp";
 import { TreeOption } from "../../types";
 import { useProRouter } from "../../core";
+import { IProLayoutProvide, ProLayoutKey, TLayoutMenu, TLayoutType } from "./ctx";
+import { LayoutTabs, ProLayoutTabsProps } from "./Tabs";
+import { ProRouterView } from "./RouterView";
 
 const Header = defineComponent((_, { slots }) => {
   const menuWrapperRef = ref();
@@ -39,13 +47,6 @@ const Header = defineComponent((_, { slots }) => {
   };
 });
 
-export type TLayoutMenu = {
-  value: string;
-  label: string;
-  hide: boolean;
-  [k: string]: any;
-};
-
 const layoutProps = () => ({
   /**
    * class名称
@@ -56,13 +57,25 @@ const layoutProps = () => ({
    * horizontal:  左右
    * compose：     菜单第一级在header中，子级在左侧菜单
    */
-  layout: { type: String as PropType<"vertical" | "horizontal" | "horizontal-v" | "compose">, default: "compose" },
+  layout: { type: String as PropType<TLayoutType>, default: "compose" },
   //获取当前路由对应的第一级menu name，匹配不到topName的时候会调用
   findCurrentTopName: { type: Function },
   //获取当前路由对应的menu对象，匹配不到activeKey的时候调用
   findActiveKey: { type: Function },
   //转换name，有些name是自定义的，可以用此方法拓展
   convertName: { type: Function },
+  //tabs相关配置
+  tabs: {
+    type: Object as PropType<
+      ProLayoutTabsProps & {
+        sessionKey?: string; //同步到session中的key
+        clearWhileUnmount?: boolean; //卸载组件的时候是否清空
+      }
+    >,
+    default: undefined,
+  },
+  //horizontal、horizontal-v、compose 模式下，左侧菜单收起状态
+  collapse: { type: Boolean },
   /**************************** menu相关 *******************************/
   menus: { type: Array as PropType<TLayoutMenu[]> },
   fieldNames: {
@@ -79,17 +92,21 @@ const layoutProps = () => ({
   menuProps: { type: Object },
 });
 
-export const ProLayout = defineComponent({
+export type ProLayoutProps = Partial<ExtractPropTypes<ReturnType<typeof layoutProps>>>;
+
+export const ProLayout = defineComponent<ProLayoutProps>({
   inheritAttrs: false,
   props: {
     ...layoutProps(),
-  },
+  } as any,
   setup: (props, { slots, attrs }) => {
     const getComp = useGetCompByKey();
     const Menus = getComp(ElementKeys.MenusKey);
     const Scroll = getComp(ElementKeys.ScrollKey) || "div";
 
     const { router, route } = useProRouter();
+
+    const routerRef = ref();
 
     //菜单转换
     const reMenus = computed(() =>
@@ -117,6 +134,10 @@ export const ProLayout = defineComponent({
     //所有菜单 第一级 映射关系
     const menuTopMap = computed(() => getMenuTopNameMap(reMenus.value));
     const showMenuTopMap = computed(() => getMenuTopNameMap(showMenus.value));
+    //所有菜单record
+    const menuMap = computed(() => {
+      return treeToMap(reMenus.value, (item) => omit(item, "children"));
+    });
 
     //当前定位的第一级路由名称
     const currentTopName = computed(() => {
@@ -174,6 +195,78 @@ export const ProLayout = defineComponent({
       onMenuItemClick(target as any);
     };
 
+    /************************** tabs *********************************/
+    const getSessionKey = () => {
+      let sessionKey = props.tabs?.sessionKey;
+      if (sessionKey === undefined) {
+        sessionKey = "pro-layout-tabs";
+      }
+      return sessionKey;
+    };
+    const initTabs = () => {
+      const sessionKey = getSessionKey();
+      let list: TLayoutMenu[] = [];
+      if (sessionKey) {
+        const str = window.sessionStorage.getItem(sessionKey);
+        const vs = str ? strToJson(str) : [];
+        list = map(vs, (v) => get(menuMap.value, v));
+      }
+      if (size(list) <= 0 && size(showMenus.value) > 0) {
+        list = [showMenus.value[0] as TLayoutMenu];
+      }
+      return list;
+    };
+
+    const tabs = ref<TLayoutMenu[]>(initTabs());
+
+    const showTabs = computed(() => !!props.tabs);
+
+    const isHideClose = (item: TLayoutMenu) => {
+      if (item.value === showMenus.value[0]?.value) {
+        return true;
+      }
+      return false;
+    };
+
+    //同步到session
+    useWatch(() => {
+      const sessionKey = getSessionKey();
+      if (!sessionKey) return;
+
+      const vs = map(tabs.value, (item) => item.value);
+
+      window.sessionStorage.setItem(sessionKey, jsonToStr(vs));
+    }, tabs);
+
+    const getClearWhileUnmount = () => {
+      const clearWhileUnmount = props.tabs?.clearWhileUnmount;
+      if (clearWhileUnmount === undefined) {
+        return true;
+      }
+      return clearWhileUnmount;
+    };
+
+    //卸载清空session数据项
+    useEffect(() => {
+      return () => {
+        const sessionKey = getSessionKey();
+        if (sessionKey && getClearWhileUnmount()) {
+          window.sessionStorage.removeItem(sessionKey);
+        }
+      };
+    }, []);
+
+    provide<IProLayoutProvide>(ProLayoutKey, {
+      menus: reMenus as any,
+      menuMap: menuMap as any,
+      tabs: tabs as any,
+      refresh: () => {
+        routerRef.value?.refresh();
+      },
+    });
+
+    /************************** render *********************************/
+
     const headerSlots = filterSlotsByPrefix(slots, "header");
     const menuSlots = filterSlotsByPrefix(slots, "menu");
 
@@ -192,7 +285,13 @@ export const ProLayout = defineComponent({
 
     return () => {
       if (!Menus) return null;
-      const pickAttrs = pick(attrs, "class");
+
+      const cls = [`${props.clsName} ${props.clsName}-${props.layout}`];
+
+      //
+      if (showTabs.value) {
+        cls.push("has-tabs");
+      }
 
       const menuProps = {
         class: `${props.clsName}-menus`,
@@ -203,12 +302,31 @@ export const ProLayout = defineComponent({
         ...props.menuProps,
       };
 
+      const leftMenuProps = {
+        collapse: props.collapse,
+        ...menuProps,
+      };
+
       //内容区
-      const section = <div class={`${props.clsName}-section`}>{slots.default?.()}</div>;
+      const section = (
+        <>
+          {showTabs.value && (
+            <LayoutTabs
+              isHideClose={isHideClose}
+              convertName={props.convertName}
+              {...omit(props.tabs, "sessionKey", "clearWhileUnmount")}
+            />
+          )}
+          <div class={`${props.clsName}-section`}>
+            {slots.default?.()}
+            <ProRouterView ref={routerRef} />
+          </div>
+        </>
+      );
 
       if (props.layout === "vertical") {
         return (
-          <main {...pickAttrs} class={`${props.clsName} ${props.clsName}-${props.layout}`}>
+          <main {...attrs} class={cls}>
             <Header
               class={`${props.clsName}-header`}
               v-slots={{
@@ -223,9 +341,11 @@ export const ProLayout = defineComponent({
           </main>
         );
       } else if (props.layout === "horizontal") {
+        cls.push("has-left-menu");
+        if (props.collapse) cls.push("mini");
         return (
-          <main {...pickAttrs} class={`${props.clsName} ${props.clsName}-${props.layout}`}>
-            {renderLeftMenu(menuProps)}
+          <main {...attrs} class={cls}>
+            {renderLeftMenu(leftMenuProps)}
             <div class={`${props.clsName}-structure`}>
               <Header class={`${props.clsName}-header`} v-slots={headerSlots} />
               {section}
@@ -233,23 +353,24 @@ export const ProLayout = defineComponent({
           </main>
         );
       } else if (props.layout === "horizontal-v") {
+        cls.push("has-left-menu");
+        if (props.collapse) cls.push("mini");
         return (
-          <main {...pickAttrs} class={`${props.clsName} ${props.clsName}-${props.layout}`}>
+          <main {...attrs} class={cls}>
             <Header class={`${props.clsName}-header`} v-slots={headerSlots} />
             <div class={`${props.clsName}-structure`}>
-              {renderLeftMenu(menuProps)}
-              {section}
+              {renderLeftMenu(leftMenuProps)}
+              <div class={`${props.clsName}-right`}>{section}</div>
             </div>
           </main>
         );
       }
 
+      if (hasLeftMenu.value) cls.push("has-left-menu");
+      if (props.collapse) cls.push("mini");
+
       return (
-        <main
-          {...pickAttrs}
-          class={`${props.clsName} ${props.clsName}-${props.layout} ${
-            hasLeftMenu.value ? "left-menu" : "no-left-menu"
-          }`}>
+        <main {...attrs} class={cls}>
           <Header
             class={`${props.clsName}-header`}
             v-slots={{
@@ -272,8 +393,8 @@ export const ProLayout = defineComponent({
             }}
           />
           <div class={`${props.clsName}-structure`}>
-            {hasLeftMenu.value && renderLeftMenu({ ...menuProps, options: currentTop.value!.children })}
-            {section}
+            {hasLeftMenu.value && renderLeftMenu({ ...leftMenuProps, options: currentTop.value!.children })}
+            <div class={`${props.clsName}-right`}>{section}</div>
           </div>
         </main>
       );

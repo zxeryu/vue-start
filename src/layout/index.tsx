@@ -1,5 +1,4 @@
 import { defineComponent, ref } from "vue";
-import { RouterView } from "vue-router";
 import { useEffect } from "@vue-start/hooks";
 import { ProLayout, useProRouter } from "@vue-start/pro";
 import { HeaderLeft, HeaderRight } from "@/layout/Header";
@@ -72,13 +71,10 @@ export const BasicLayout = defineComponent(() => {
           },
         })}
         layout={config.layout as any}
+        tabs={{}}
         menus={menus as any}
         fieldNames={{ value: "name", label: "title", children: "children" }}
-        menuProps={{
-          class: collapseRef.value ? "pro-layout-menus mini" : "pro-layout-menus",
-          collapse: collapseRef.value, //el
-          inlineCollapsed: collapseRef.value, //ant
-        }}
+        collapse={collapseRef.value}
         v-slots={{
           "header-start": () => <HeaderLeft />,
           "header-end": () => (
@@ -91,6 +87,12 @@ export const BasicLayout = defineComponent(() => {
                 options={layoutOptions}
                 onChange={handleLayoutChange}
               />
+              <div
+                onClick={() => {
+                  router.push("/ttt");
+                }}>
+                tt
+              </div>
             </>
           ),
           "menu-start": () => <div class={css({ lineHeight: "30px" })}>start</div>,
@@ -99,9 +101,8 @@ export const BasicLayout = defineComponent(() => {
               {collapseRef.value ? "展开" : "合并"}
             </div>
           ),
-        }}>
-        <RouterView />
-      </ProLayout>
+        }}
+      />
     );
   };
 });

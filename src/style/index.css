@@ -16,6 +16,7 @@ blockquote {
 /* pro */
 
 .pro-layout {
+  --pro-header-hei: 48px;
   --pro-menu-start-hei: 30px;
   --pro-menu-end-hei: 30px;
 }
@@ -26,6 +27,10 @@ blockquote {
 
 .pro-layout .pro-layout-menus-wrapper {
   background-color: white;
+}
+
+.pro-layout .pro-header-menus-wrapper .el-menu-item{
+  line-height: var(--pro-header-hei);
 }
 
 /*样式一*/

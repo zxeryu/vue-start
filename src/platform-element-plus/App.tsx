@@ -42,17 +42,13 @@ export const App = defineComponent(() => {
       forEach(get(v, "light"), (sc, si) => {
         if (["3", "5", "7", "8", "9"].indexOf(si) > -1) {
           colors[`--el-color-${k}-light-${si}`] = sc;
+          colors[`--pro-color-${k}-light-${si}`] = sc;
         }
       });
       colors[`--el-color-${k}-dark-2`] = get(v, ["dark", "2"]);
     });
 
-    const nameMap = {
-      radius: "radius",
-      fontSize: "size",
-      lineHeight: "line-height",
-      shadow: "shadow",
-    };
+    const nameMap = { radius: "radius", fontSize: "size", lineHeight: "line-height", shadow: "shadow" };
 
     const obj: Record<string, any> = {};
 

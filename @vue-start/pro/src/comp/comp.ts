@@ -25,6 +25,7 @@ export const ElementKeys = {
   TableOperateKey: "TableOperate$", //Table operate item
   UploaderKey: "Uploader$", //Uploader
   EmptyKey: "Empty$",
+  DropdownKey: "Dropdown$",
   //pro
   ProFormKey: "ProForm$", //ProForm
   ProSearchFormKey: "ProSearchForm$", //ProSearchForm
