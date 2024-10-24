@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# 0.5.41
+
+- 更新主题渐变色计算方法
+- Layout tabs bug 修复（tabs 切换参数丢失、hide 页面缓存更新、layout 初始化 tab）
+- Layout tabs 拖动钩子 onDragRegister
+
 # 0.5.40
 
 - 新增 theme 模式
