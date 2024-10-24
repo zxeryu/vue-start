@@ -1,6 +1,6 @@
 import { defineComponent, inject, PropType, provide, reactive } from "vue";
 import { Global } from "@vue-start/css";
-import { darken, lighten } from "polished";
+import { mix } from "polished";
 import { reduce } from "lodash";
 
 export const ThemeKey = Symbol("logon-user");
@@ -46,8 +46,8 @@ export interface IThemeToken {
   spacing?: number;
 }
 
-const darker = (color: string, i: number) => darken(i / 20, color);
-const lighter = (color: string, i: number) => lighten(i / 30, color);
+const darker = (color: string, i: number) => mix(i / 10, "#000000", color);
+const lighter = (color: string, i: number) => mix(i / 10, "#ffffff", color);
 
 export const ThemeToken: IThemeToken = {
   color: {
