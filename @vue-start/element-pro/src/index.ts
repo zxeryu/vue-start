@@ -47,8 +47,16 @@ import {
   ProFormCascader,
 } from "./form";
 import { ProTable as Table, ProTableOperateItem } from "./table";
-import { ProUploader, ProModal as Modal, ProLoading, ProMenus, ProModal, ProPagination, ProPopover } from "./comp";
-import { ProDropdown } from "./comp/Dropdown";
+import {
+  ProUploader,
+  ProModal as Modal,
+  ProLoading,
+  ProMenus,
+  ProModal,
+  ProPagination,
+  ProPopover,
+  ProDropdown,
+} from "./comp";
 
 export * from "./form";
 export * from "./table";
