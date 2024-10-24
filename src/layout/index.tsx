@@ -73,7 +73,7 @@ export const BasicLayout = defineComponent(() => {
         layout={config.layout as any}
         tabs={{}}
         menus={menus as any}
-        fieldNames={{ value: "name", label: "title", children: "children" }}
+        fieldNames={{ value: "name", label: "title", hide: "hide", children: "children" }}
         collapse={collapseRef.value}
         v-slots={{
           "header-start": () => <HeaderLeft />,
@@ -87,12 +87,6 @@ export const BasicLayout = defineComponent(() => {
                 options={layoutOptions}
                 onChange={handleLayoutChange}
               />
-              <div
-                onClick={() => {
-                  router.push("/ttt");
-                }}>
-                tt
-              </div>
             </>
           ),
           "menu-start": () => <div class={css({ lineHeight: "30px" })}>start</div>,

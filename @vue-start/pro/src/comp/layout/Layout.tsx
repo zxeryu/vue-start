@@ -10,13 +10,14 @@ import {
   useEffect,
   jsonToStr,
   strToJson,
+  findFirstValidMenu,
 } from "@vue-start/hooks";
 import { find, findLast, get, map, omit, pick, size } from "lodash";
 import { filterSlotsByPrefix } from "../../util";
 import { ElementKeys, useGetCompByKey } from "../comp";
 import { TreeOption } from "../../types";
 import { useProRouter } from "../../core";
-import { IProLayoutProvide, ProLayoutKey, TLayoutMenu, TLayoutType } from "./ctx";
+import { IProLayoutProvide, ProLayoutKey, TLayoutMenu, TLayoutTabMenu, TLayoutType } from "./ctx";
 import { LayoutTabs, ProLayoutTabsProps } from "./Tabs";
 import { ProRouterView } from "./RouterView";
 
@@ -203,26 +204,34 @@ export const ProLayout = defineComponent<ProLayoutProps>({
       }
       return sessionKey;
     };
+
+    //第一个有效菜单
+    const firstValidMenu = findFirstValidMenu(showMenus.value, (item) => {
+      return !item.children || size(item.children) <= 0;
+    }) as TLayoutMenu;
+
     const initTabs = () => {
       const sessionKey = getSessionKey();
-      let list: TLayoutMenu[] = [];
+      let list: TLayoutTabMenu[] = [];
       if (sessionKey) {
         const str = window.sessionStorage.getItem(sessionKey);
         const vs = str ? strToJson(str) : [];
-        list = map(vs, (v) => get(menuMap.value, v));
+        list = map(vs, (item) => {
+          return { ...get(menuMap.value, item.name), query: item.query };
+        });
       }
-      if (size(list) <= 0 && size(showMenus.value) > 0) {
-        list = [showMenus.value[0] as TLayoutMenu];
+      if (size(list) <= 0 && firstValidMenu) {
+        list = [firstValidMenu];
       }
       return list;
     };
 
-    const tabs = ref<TLayoutMenu[]>(initTabs());
+    const tabs = ref<TLayoutTabMenu[]>(initTabs());
 
     const showTabs = computed(() => !!props.tabs);
 
     const isHideClose = (item: TLayoutMenu) => {
-      if (item.value === showMenus.value[0]?.value) {
+      if (item.value === firstValidMenu?.value) {
         return true;
       }
       return false;
@@ -233,7 +242,7 @@ export const ProLayout = defineComponent<ProLayoutProps>({
       const sessionKey = getSessionKey();
       if (!sessionKey) return;
 
-      const vs = map(tabs.value, (item) => item.value);
+      const vs = map(tabs.value, (item) => ({ name: item.value, query: item.query }));
 
       window.sessionStorage.setItem(sessionKey, jsonToStr(vs));
     }, tabs);

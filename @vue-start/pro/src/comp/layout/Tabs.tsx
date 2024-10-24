@@ -1,7 +1,7 @@
 import { computed, defineComponent, ExtractPropTypes, PropType, reactive, ref, Teleport } from "vue";
 import { useProRouter } from "../../core";
-import { TLayoutMenu, useProLayout } from "./ctx";
-import { useEffect, useUpdateKey } from "@vue-start/hooks";
+import { TLayoutMenu, TLayoutTabMenu, useProLayout } from "./ctx";
+import { useEffect, useUpdateKey, jsonToStr } from "@vue-start/hooks";
 import { ElementKeys, useGetCompByKey } from "../comp";
 import { filter, find, get, map, findIndex } from "lodash";
 
@@ -26,9 +26,6 @@ export const LayoutTabs = defineComponent<ProLayoutTabsProps>({
     const { router, route } = useProRouter();
 
     const { menuMap, tabs, refresh } = useProLayout();
-
-    const domRef = ref();
-    const [domKey, updateDomKey] = useUpdateKey();
 
     const state = reactive<{
       ctxMenuPos: { x: number; y: number } | null;
@@ -55,28 +52,55 @@ export const LayoutTabs = defineComponent<ProLayoutTabsProps>({
     //路由监听
     useEffect(() => {
       //当前路由未找到对应的菜单
-      if (!menu.value) {
+      const curMenu: TLayoutTabMenu = menu.value;
+      if (!curMenu) {
         return;
       }
 
       //查找当前tab
-      let target: TLayoutMenu | undefined = find(tabs.value, (item) => item.value === menu.value.value);
+      let target: TLayoutTabMenu | undefined = find(tabs.value, (item) => item.value === curMenu.value);
       //当前tabs不存在
       if (!target) {
+        //如果是hide路由，记录query
+        const newMenu = curMenu.hide ? { ...curMenu, query: route.query } : curMenu;
         //添加当前菜单
-        tabs.value = [...tabs.value, menu.value];
+        tabs.value = [...tabs.value, newMenu];
+      } else {
+        //如果是hide路由，
+        if (curMenu.hide) {
+          const targetStr = jsonToStr(target.query!) || "{}";
+          const curStr = jsonToStr(curMenu.query!) || "{}";
+          //query如果不一样
+          if (targetStr !== curStr) {
+            const newMenu = { ...curMenu, query: route.query };
+            tabs.value = map(
+              map(tabs.value, (item) => {
+                //替换当前menu对象（更新query）
+                if (item.value === curMenu.value) return newMenu;
+                return item;
+              }),
+            );
+            //refresh操作，主要解决 添加、编辑、详情 是同一个路由的更新问题
+            handleItemRefresh(newMenu);
+          }
+        }
       }
     }, route);
 
     /************************* 菜单点击事件 **********************/
 
     //
-    const handleItemClick = (item: TLayoutMenu) => {
+    const handleItemClick = (item: TLayoutTabMenu) => {
+      //hide 路由
+      if (item.hide) {
+        router.push({ name: item.value, query: item.query });
+        return;
+      }
       router.openMenu(item);
     };
 
     //关闭指定menu
-    const handleItemClose = (item: TLayoutMenu) => {
+    const handleItemClose = (item: TLayoutTabMenu) => {
       //隐藏close的不响应
       if (isHideClose(item)) {
         return;
@@ -95,7 +119,7 @@ export const LayoutTabs = defineComponent<ProLayoutTabsProps>({
     };
 
     //关闭指定menu外的其他menu
-    const handleItemCloseOther = (item: TLayoutMenu) => {
+    const handleItemCloseOther = (item: TLayoutTabMenu) => {
       //如果当前选中的非当前tab，先切换
       if (item.value !== menu.value?.value) {
         handleItemClick(menu.value);
@@ -123,12 +147,12 @@ export const LayoutTabs = defineComponent<ProLayoutTabsProps>({
     };
 
     //刷新
-    const handleItemRefresh = (item: TLayoutMenu) => {
+    const handleItemRefresh = (item: TLayoutTabMenu) => {
       refresh(item);
     };
 
     //右键菜单
-    const handleCtxMenu = (e: any, item: TLayoutMenu) => {
+    const handleCtxMenu = (e: any, item: TLayoutTabMenu) => {
       e.preventDefault();
       const target = e.target;
       if (!target) return;
@@ -148,6 +172,9 @@ export const LayoutTabs = defineComponent<ProLayoutTabsProps>({
     };
 
     /******************************** 拖动 ****************************/
+    const domRef = ref();
+    const [domKey, updateDomKey] = useUpdateKey();
+
 
     /******************************** 弹出菜单 ****************************/
     const dropRef = ref();

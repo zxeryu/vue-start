@@ -96,4 +96,15 @@ export const menus = [
     name: "Module",
     children: [{ title: "list", name: "QuotaList" }],
   },
+  {
+    title: "test",
+    name: "TestIndex",
+    children: [
+      {
+        title: "test",
+        name: "TestDetail",
+        hide: true,
+      },
+    ],
+  },
 ];
