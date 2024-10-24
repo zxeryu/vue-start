@@ -5,6 +5,8 @@ import { HeaderLeft, HeaderRight } from "@/layout/Header";
 import { css } from "@emotion/css";
 import { menus } from "@/common/menus";
 import { useConfigStore } from "@/store/StoreCurrent";
+// @ts-ignore
+import Sortable from "sortablejs";
 
 export const BasicLayout = defineComponent(() => {
   const { router } = useProRouter();
@@ -62,6 +64,23 @@ export const BasicLayout = defineComponent(() => {
     },
   };
 
+  let sortable: any;
+
+  const onDragRegister = ({ dom, dataIdAttr, onDragEnd }: any) => {
+    if (sortable) {
+      sortable.destroy();
+      sortable = null;
+    }
+    sortable = Sortable.create(dom, {
+      animation: 300,
+      dataIdAttr,
+      disabled: false,
+      onEnd: () => {
+        onDragEnd(sortable.toArray());
+      },
+    });
+  };
+
   return () => {
     return (
       <ProLayout
@@ -71,7 +90,9 @@ export const BasicLayout = defineComponent(() => {
           },
         })}
         layout={config.layout as any}
-        tabs={{}}
+        tabs={{
+          onDragRegister,
+        }}
         menus={menus as any}
         fieldNames={{ value: "name", label: "title", hide: "hide", children: "children" }}
         collapse={collapseRef.value}

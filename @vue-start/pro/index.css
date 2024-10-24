@@ -205,11 +205,6 @@
   color: var(--pro-color-text-regular);
 }
 
-.pro-layout-tabs-root .place {
-  min-width: var(--pro-spacing-2);
-  height: 100%;
-}
-
 .pro-layout-tabs-item {
   cursor: pointer;
   padding: 4px 12px;

@@ -31,6 +31,7 @@
     "lodash": "^4.17.20",
     "polished": "^4.3.1",
     "rxjs": "^7.3.0",
+    "sortablejs": "^1.15.3",
     "vue": "3.2.47",
     "vue-router": "^4.2.5",
     "x-data-spreadsheet": "^1.1.9",

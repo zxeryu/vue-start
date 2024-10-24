@@ -1,9 +1,9 @@
-import { computed, defineComponent, ExtractPropTypes, PropType, reactive, ref, Teleport } from "vue";
+import { computed, defineComponent, ExtractPropTypes, PropType, reactive, Ref, ref, Teleport } from "vue";
 import { useProRouter } from "../../core";
 import { TLayoutMenu, TLayoutTabMenu, useProLayout } from "./ctx";
 import { useEffect, useUpdateKey, jsonToStr } from "@vue-start/hooks";
 import { ElementKeys, useGetCompByKey } from "../comp";
-import { filter, find, get, map, findIndex } from "lodash";
+import { filter, find, get, map, findIndex, reduce } from "lodash";
 
 const tabsProps = () => ({
   //是否隐藏关闭
@@ -14,6 +14,12 @@ const tabsProps = () => ({
   covertMenuItem: { type: Function },
   //item项重写
   itemLabel: { type: Function },
+  //拖动钩子
+  onDragRegister: {
+    type: Function as PropType<
+      (params: { dom: HTMLDivElement; dataIdAttr: string; onDragEnd: (tabIds: string[]) => void }) => void
+    >,
+  },
 });
 
 export type ProLayoutTabsProps = Partial<ExtractPropTypes<ReturnType<typeof tabsProps>>>;
@@ -175,6 +181,18 @@ export const LayoutTabs = defineComponent<ProLayoutTabsProps>({
     const domRef = ref();
     const [domKey, updateDomKey] = useUpdateKey();
 
+    const onDragEnd = (tabIds: string[]) => {
+      const tabsMap = reduce(tabs.value, (pair, item) => ({ ...pair, [item.value]: item }), {});
+      tabs.value = map(tabIds, (item) => get(tabsMap, item));
+      updateDomKey();
+    };
+
+    useEffect(() => {
+      if (!domRef.value) return;
+      if (!props.onDragRegister) return;
+
+      props.onDragRegister({ dom: domRef.value, dataIdAttr: "data-url", onDragEnd });
+    }, [domRef]);
 
     /******************************** 弹出菜单 ****************************/
     const dropRef = ref();
@@ -239,7 +257,6 @@ export const LayoutTabs = defineComponent<ProLayoutTabsProps>({
         <>
           <RComp class={"pro-layout-tabs"}>
             <div class={"pro-layout-tabs-root"} ref={domRef} key={domKey.value}>
-              <div class={"place place-start"} />
               {map(tabs.value, (item) => {
                 const isHide = isHideClose(item);
                 const isActive = item.value === menu.value?.value;
@@ -247,6 +264,7 @@ export const LayoutTabs = defineComponent<ProLayoutTabsProps>({
                 return (
                   <div
                     class={["pro-layout-tabs-item", isActive ? "active" : ""]}
+                    data-url={item.value}
                     onClick={() => handleItemClick(item)}
                     // @ts-ignore
                     oncontextmenu={(e) => handleCtxMenu(e, item)}>
@@ -267,7 +285,6 @@ export const LayoutTabs = defineComponent<ProLayoutTabsProps>({
                   </div>
                 );
               })}
-              <div class={"place place-end"} />
             </div>
           </RComp>
           {state.ctxMenuItem && state.ctxMenuPos && (
