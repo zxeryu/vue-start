@@ -75,7 +75,7 @@ export const LayoutTabs = defineComponent<ProLayoutTabsProps>({
         //如果是hide路由，
         if (curMenu.hide) {
           const targetStr = jsonToStr(target.query!) || "{}";
-          const curStr = jsonToStr(curMenu.query!) || "{}";
+          const curStr = jsonToStr(route.query!) || "{}";
           //query如果不一样
           if (targetStr !== curStr) {
             const newMenu = { ...curMenu, query: route.query };
