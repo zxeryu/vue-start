@@ -3,6 +3,13 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# 0.5.42
+
+- fix：Layout tabs 子页面 query 判断 bug
+- perf：show 组件添加 render 重写方法、添加 class
+- perf：refresh 当前路由方法提取到 layout provide 中
+- feat：page 新增 layoutTabsBackMode 属性，开启后，在 layout 中的 page showBack 设置为 false
+
 # 0.5.41
 
 - 更新主题渐变色计算方法
