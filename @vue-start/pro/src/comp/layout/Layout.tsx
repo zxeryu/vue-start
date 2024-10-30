@@ -12,7 +12,7 @@ import {
   strToJson,
   findFirstValidMenu,
 } from "@vue-start/hooks";
-import { find, findLast, get, map, omit, pick, size } from "lodash";
+import { filter, find, findLast, get, map, omit, pick, size } from "lodash";
 import { filterSlotsByPrefix } from "../../util";
 import { ElementKeys, useGetCompByKey } from "../comp";
 import { TreeOption } from "../../types";
@@ -63,8 +63,8 @@ const layoutProps = () => ({
   findCurrentTopName: { type: Function },
   //获取当前路由对应的menu对象，匹配不到activeKey的时候调用
   findActiveKey: { type: Function },
-  //转换name，有些name是自定义的，可以用此方法拓展
-  convertName: { type: Function },
+  convertName: { type: Function }, //route to menu
+  convertValue: { type: Function }, //menu to route
   //tabs相关配置
   tabs: {
     type: Object as PropType<
@@ -140,12 +140,28 @@ export const ProLayout = defineComponent<ProLayoutProps>({
       return treeToMap(reMenus.value, (item) => omit(item, "children"));
     });
 
+    /************************** 菜单、路由转换 *********************************/
+
+    const convertName: IProLayoutProvide["convertName"] = (route) => {
+      if (props.convertName) {
+        return props.convertName({ menuTopMap: menuTopMap.value });
+      }
+      return route.name as string;
+    };
+
+    const convertValue: IProLayoutProvide["convertValue"] = (menu) => {
+      if (props.convertValue) {
+        return props.convertValue({});
+      }
+      return menu.value;
+    };
+
     //当前定位的第一级路由名称
     const currentTopName = computed(() => {
       if (props.findCurrentTopName) {
         return props.findCurrentTopName(route, menuTopMap.value);
       }
-      const name = props.convertName?.(route) || route.name;
+      const name = convertName(route);
       return menuTopMap.value[name];
     });
 
@@ -170,7 +186,7 @@ export const ProLayout = defineComponent<ProLayoutProps>({
       if (props.findActiveKey) {
         return props.findActiveKey(route, menuTopMap.value);
       }
-      const name = props.convertName?.(route) || route.name;
+      const name = convertName(route);
       //如果当前路由是可展示的菜单，直接返回
       if (showMenuTopMap.value[name]) {
         return name;
@@ -242,6 +258,12 @@ export const ProLayout = defineComponent<ProLayoutProps>({
       return false;
     };
 
+    const closeTab: IProLayoutProvide["closeTab"] = (value) => {
+      tabs.value = filter(tabs.value, (item) => {
+        return item.value !== value;
+      });
+    };
+
     //同步到session
     useWatch(() => {
       const sessionKey = getSessionKey();
@@ -282,10 +304,15 @@ export const ProLayout = defineComponent<ProLayoutProps>({
     };
 
     provide<IProLayoutProvide>(ProLayoutKey, {
+      convertName,
+      convertValue,
+      //
       menus: reMenus as any,
       menuMap: menuMap as any,
       tabs: tabs as any,
       showTabs: showTabs as any,
+      closeTab,
+      //
       refreshRef: refreshRef as any,
       refresh,
     });
@@ -336,11 +363,7 @@ export const ProLayout = defineComponent<ProLayoutProps>({
       const section = (
         <>
           {showTabs.value && (
-            <LayoutTabs
-              isHideClose={isHideClose}
-              convertName={props.convertName}
-              {...omit(props.tabs, "sessionKey", "clearWhileUnmount")}
-            />
+            <LayoutTabs isHideClose={isHideClose} {...omit(props.tabs, "sessionKey", "clearWhileUnmount")} />
           )}
           <div class={`${props.clsName}-section`}>
             {slots.default?.()}

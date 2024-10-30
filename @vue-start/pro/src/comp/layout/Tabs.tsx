@@ -8,8 +8,6 @@ import { filter, find, get, map, findIndex, reduce } from "lodash";
 const tabsProps = () => ({
   //是否隐藏关闭
   isHideClose: { type: Function as PropType<(item: TLayoutMenu) => boolean> },
-  //转换name，有些name是自定义的，可以用此方法拓展
-  convertName: { type: Function },
   //重写menu项
   covertMenuItem: { type: Function },
   //item项重写
@@ -31,7 +29,7 @@ export const LayoutTabs = defineComponent<ProLayoutTabsProps>({
   setup: (props) => {
     const { router, route } = useProRouter();
 
-    const { menuMap, tabs, refresh } = useProLayout();
+    const { menuMap, tabs, refresh, convertName } = useProLayout();
 
     const state = reactive<{
       ctxMenuPos: { x: number; y: number } | null;
@@ -51,7 +49,7 @@ export const LayoutTabs = defineComponent<ProLayoutTabsProps>({
 
     //当前路由对应的菜单
     const menu = computed(() => {
-      const name = props.convertName?.(route) || route.name;
+      const name = convertName(route);
       return get(menuMap.value, name!);
     });
 

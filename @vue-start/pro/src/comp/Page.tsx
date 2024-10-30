@@ -62,6 +62,8 @@ const proPageProps = () => ({
   as: { type: String },
   //开启的话，在layout tabs模式下，不展示showBack
   layoutTabsBackMode: { type: Boolean },
+  //作为子页面（在layout中无对应的菜单）
+  sub: { type: Boolean },
 });
 
 export type ProPageProps = Partial<ExtractPropTypes<ReturnType<typeof proPageProps>>> & PageHeaderProps;
@@ -75,7 +77,12 @@ export const ProPage = defineComponent<ProPageProps>({
     const layoutProvide = useProLayout();
 
     const showBack = computed(() => {
+      //不开启
       if (!props.layoutTabsBackMode) {
+        return props.showBack;
+      }
+      //非路由页面（子页面）
+      if (props.sub) {
         return props.showBack;
       }
       //不在layout中
@@ -115,6 +122,7 @@ export const ProPage = defineComponent<ProPageProps>({
       const hasFooter = !props.loading && isValidNode(footer);
 
       const cls = ["pro-page"];
+      if (props.sub) cls.push("pro-page-sub");
       if (props.fillMode) cls.push("pro-page-fill");
       if (hasHeader) cls.push("has-header");
       if (hasFooter) cls.push("has-footer");

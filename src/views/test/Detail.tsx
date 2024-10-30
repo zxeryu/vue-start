@@ -1,7 +1,10 @@
 import { defineComponent, reactive, ref } from "vue";
 import { css } from "@emotion/css";
+import { useProRouter } from "@vue-start/pro";
 
 export default defineComponent(() => {
+  const { router } = useProRouter();
+
   const state = reactive({
     detail: false,
   });
@@ -11,6 +14,12 @@ export default defineComponent(() => {
       <>
         <pro-page showBack title={"Detail"} subTitle={"sub title"}>
           Detail
+          <div
+            onClick={() => {
+              router.back();
+            }}>
+            返回（tabs模式下 关闭 tab）
+          </div>
           <div
             onClick={() => {
               state.detail = !state.detail;
@@ -24,8 +33,8 @@ export default defineComponent(() => {
               css({
                 backgroundColor: "pink",
               }),
-              "pro-page-sub",
             ]}
+            sub
             showBack
             title={"啦啦啦啦啦"}
             onBackClick={() => {
