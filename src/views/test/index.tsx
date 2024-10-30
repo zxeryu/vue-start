@@ -39,6 +39,9 @@ export default defineComponent(() => {
         }}>
         Test
         <div onClick={() => router.push({ name: "TestDetail" })}>to detail</div>
+        <div onClick={() => router.push({ name: "TestDetail", query: { id: "1234", title: "1245" } })}>
+          to detail with query
+        </div>
         <div onClick={handleOpeFill}>{state.fillMode ? "不固定" : "固定"} header footer</div>
         <div onClick={handleOpeFooter}>{state.showFooter ? "关闭" : "打开"}footer</div>
         <div

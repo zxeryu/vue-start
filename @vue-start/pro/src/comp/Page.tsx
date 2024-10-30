@@ -1,8 +1,9 @@
-import { defineComponent, ExtractPropTypes, PropType, VNode } from "vue";
+import { computed, defineComponent, ExtractPropTypes, PropType, VNode } from "vue";
 import { keys, omit, pick } from "lodash";
 import { ElementKeys, useGetCompByKey } from "./comp";
 import { useRouter } from "vue-router";
 import { isValidNode } from "../core";
+import { useProLayout } from "./layout/ctx";
 
 const proPageHeaderProps = () => ({
   title: { type: String },
@@ -59,6 +60,8 @@ const proPageProps = () => ({
   fillMode: { type: Boolean, default: true },
   //根作为什么元素渲染
   as: { type: String },
+  //开启的话，在layout tabs模式下，不展示showBack
+  layoutTabsBackMode: { type: Boolean },
 });
 
 export type ProPageProps = Partial<ExtractPropTypes<ReturnType<typeof proPageProps>>> & PageHeaderProps;
@@ -69,6 +72,20 @@ export const ProPage = defineComponent<ProPageProps>({
     ...proPageProps(),
   },
   setup: (props, { slots }) => {
+    const layoutProvide = useProLayout();
+
+    const showBack = computed(() => {
+      if (!props.layoutTabsBackMode) {
+        return props.showBack;
+      }
+      //不在layout中
+      if (!layoutProvide) {
+        return props.showBack;
+      }
+      //不展示showBack
+      return false;
+    });
+
     const getComp = useGetCompByKey();
     const Loading = getComp(ElementKeys.LoadingKey);
     const RComp = props.as || getComp(ElementKeys.ScrollKey) || "div";
@@ -84,7 +101,7 @@ export const ProPage = defineComponent<ProPageProps>({
       );
     };
 
-    const headerKeys = keys(PageHeader.props);
+    const headerKeys = keys(PageHeader.props).filter((item) => item !== "showBack");
 
     return () => {
       const hasHeader = props.title || slots.title || props.subTitle || slots.subTitle || slots.extra;
@@ -100,7 +117,13 @@ export const ProPage = defineComponent<ProPageProps>({
       return (
         <RComp class={cls}>
           {slots.start?.()}
-          {hasHeader && <PageHeader {...pick(props, headerKeys)} v-slots={omit(slots, "start", "default", "footer")} />}
+          {hasHeader && (
+            <PageHeader
+              {...pick(props, headerKeys)}
+              showBack={showBack.value}
+              v-slots={omit(slots, "start", "default", "footer")}
+            />
+          )}
 
           <div class={"pro-page-content"}>{props.loading ? renderLoading() : slots.default?.()}</div>
 

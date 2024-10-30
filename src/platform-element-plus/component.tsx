@@ -96,6 +96,7 @@ ProSearchForm.props = {
 
 ProPage.props = {
   ...ProPage.props,
+  layoutTabsBackMode: { type: Boolean, default: true },
   renderBackIcon: {
     type: Function,
     default: () => (
