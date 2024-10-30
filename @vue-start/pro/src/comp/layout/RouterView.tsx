@@ -1,20 +1,34 @@
-import { computed, defineComponent, KeepAlive, ref } from "vue";
+import { computed, defineComponent, ExtractPropTypes, KeepAlive, ref } from "vue";
 import { RouterView } from "vue-router";
 import { useProLayout } from "./ctx";
 import { filter, map } from "lodash";
 import { useProRouter } from "../../core";
 
-export const ProRouterView = defineComponent({
-  props: {} as any,
-  setup: (props, { expose }) => {
-    const { tabs } = useProLayout();
+const routerViewProps = () => ({
+  //自定义的value转换为路由name
+  convertValue: { type: Function },
+  //非tabs模式下，includes
+  includes: { type: Array },
+});
+
+export type ProRouterViewProps = Partial<ExtractPropTypes<ReturnType<typeof routerViewProps>>>;
+
+export const ProRouterView = defineComponent<ProRouterViewProps>({
+  props: {
+    ...routerViewProps(),
+  } as any,
+  setup: (props) => {
+    const { tabs, refreshRef, showTabs } = useProLayout();
     const { route } = useProRouter();
 
-    const refreshRef = ref(false);
-
     const include = computed(() => {
+      if (!showTabs.value) {
+        return props.includes || [];
+      }
       const list = map(tabs.value, (item) => {
-        //todo:: 特殊 value 转化为路由 name 处理
+        if (props.convertValue) {
+          return props.convertValue(item);
+        }
         return item.value;
       });
       if (refreshRef.value) {
@@ -22,15 +36,6 @@ export const ProRouterView = defineComponent({
       }
       return list;
     });
-
-    const refresh = () => {
-      refreshRef.value = true;
-      setTimeout(() => {
-        refreshRef.value = false;
-      }, 0);
-    };
-
-    expose({ refresh });
 
     return () => {
       return (

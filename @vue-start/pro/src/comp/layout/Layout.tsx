@@ -19,7 +19,7 @@ import { TreeOption } from "../../types";
 import { useProRouter } from "../../core";
 import { IProLayoutProvide, ProLayoutKey, TLayoutMenu, TLayoutTabMenu, TLayoutType } from "./ctx";
 import { LayoutTabs, ProLayoutTabsProps } from "./Tabs";
-import { ProRouterView } from "./RouterView";
+import { ProRouterView, ProRouterViewProps } from "./RouterView";
 
 const Header = defineComponent((_, { slots }) => {
   const menuWrapperRef = ref();
@@ -77,6 +77,8 @@ const layoutProps = () => ({
   },
   //horizontal、horizontal-v、compose 模式下，左侧菜单收起状态
   collapse: { type: Boolean },
+  //router配置
+  routeOpts: { type: Object as PropType<ProRouterViewProps>, default: undefined },
   /**************************** menu相关 *******************************/
   menus: { type: Array as PropType<TLayoutMenu[]> },
   fieldNames: {
@@ -106,8 +108,6 @@ export const ProLayout = defineComponent<ProLayoutProps>({
     const Scroll = getComp(ElementKeys.ScrollKey) || "div";
 
     const { router, route } = useProRouter();
-
-    const routerRef = ref();
 
     //菜单转换
     const reMenus = computed(() =>
@@ -197,6 +197,8 @@ export const ProLayout = defineComponent<ProLayoutProps>({
     };
 
     /************************** tabs *********************************/
+    const showTabs = computed(() => !!props.tabs);
+
     const getSessionKey = () => {
       let sessionKey = props.tabs?.sessionKey;
       if (sessionKey === undefined) {
@@ -211,6 +213,11 @@ export const ProLayout = defineComponent<ProLayoutProps>({
     }) as TLayoutMenu;
 
     const initTabs = () => {
+      //未开启 tabs
+      if (!showTabs.value) {
+        return [];
+      }
+
       const sessionKey = getSessionKey();
       let list: TLayoutTabMenu[] = [];
       if (sessionKey) {
@@ -227,8 +234,6 @@ export const ProLayout = defineComponent<ProLayoutProps>({
     };
 
     const tabs = ref<TLayoutTabMenu[]>(initTabs());
-
-    const showTabs = computed(() => !!props.tabs);
 
     const isHideClose = (item: TLayoutMenu) => {
       if (item.value === firstValidMenu?.value) {
@@ -265,13 +270,24 @@ export const ProLayout = defineComponent<ProLayoutProps>({
       };
     }, []);
 
+    /************************** 刷新当前路由 *********************************/
+
+    const refreshRef = ref(false);
+
+    const refresh = () => {
+      refreshRef.value = true;
+      setTimeout(() => {
+        refreshRef.value = false;
+      }, 0);
+    };
+
     provide<IProLayoutProvide>(ProLayoutKey, {
       menus: reMenus as any,
       menuMap: menuMap as any,
       tabs: tabs as any,
-      refresh: () => {
-        routerRef.value?.refresh();
-      },
+      showTabs: showTabs as any,
+      refreshRef: refreshRef as any,
+      refresh,
     });
 
     /************************** render *********************************/
@@ -328,7 +344,7 @@ export const ProLayout = defineComponent<ProLayoutProps>({
           )}
           <div class={`${props.clsName}-section`}>
             {slots.default?.()}
-            <ProRouterView ref={routerRef} />
+            {slots.routerView ? slots.routerView() : <ProRouterView {...props.routeOpts} />}
           </div>
         </>
       );

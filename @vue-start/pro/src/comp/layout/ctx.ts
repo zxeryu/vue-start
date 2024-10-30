@@ -1,5 +1,5 @@
 import { inject } from "vue";
-import { Ref } from "@vue/reactivity";
+import { Ref, UnwrapRef } from "@vue/reactivity";
 
 export const ProLayoutKey = Symbol("pro-layout");
 
@@ -19,7 +19,9 @@ export interface IProLayoutProvide {
   menus: Ref<TLayoutMenu[]>;
   menuMap: Ref<Record<string, TLayoutMenu>>;
   tabs: Ref<TLayoutTabMenu[]>;
+  showTabs: Ref<boolean>;
   //刷新菜单
+  refreshRef: Ref<UnwrapRef<boolean>>;
   refresh: (item?: TLayoutMenu) => void;
 }
 
