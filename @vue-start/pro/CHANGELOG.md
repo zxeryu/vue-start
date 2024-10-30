@@ -3,6 +3,11 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# 0.5.44
+
+- feat：Page 新增 sub 属性， 返回按钮展示状态添加 sub 判断
+- feat：useProRouter 中 router 的 back 方法在 tabs 模式下，会关闭当前 tab 并且返回
+
 # 0.5.42
 
 - fix：Layout tabs 子页面 query 判断 bug
