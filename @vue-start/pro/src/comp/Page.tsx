@@ -82,6 +82,11 @@ export const ProPage = defineComponent<ProPageProps>({
       if (!layoutProvide) {
         return props.showBack;
       }
+      const { showTabs } = layoutProvide;
+      //未开启tabs
+      if (!showTabs.value) {
+        return props.showBack;
+      }
       //不展示showBack
       return false;
     });
