@@ -243,7 +243,7 @@
 .pro-layout-tabs-menus {
   position: fixed;
   background-color: pink;
-  transform: translate(-50%,0);
+  transform: translate(-50%, 0);
 }
 
 /********************************** pro-typography ***********************************/
@@ -323,15 +323,23 @@
   flex-grow: 1;
 }
 
+.pro-table-toolbar-column .pro-table-toolbar-column-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
 /* element-plus */
 .pro-table .pro-table-toolbar .pro-table-toolbar-start .el-form-item {
   margin-bottom: 0px;
 }
 
-.pro-table-toolbar-column .pro-table-toolbar-column-header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
+.pro-table .el-table__header .pro-single .el-checkbox {
+  display: none;
+}
+
+.pro-table .pro-single .el-checkbox__inner {
+  border-radius: 50%;
 }
 
 /********************************** pro-page ***********************************/

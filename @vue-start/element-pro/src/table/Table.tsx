@@ -1,7 +1,7 @@
 import { computed, defineComponent, ExtractPropTypes, PropType, ref, nextTick, reactive } from "vue";
 import { ElTable, ElTableColumn, ElButton, TableProps } from "element-plus";
 import { TableColumnCtx } from "../../types";
-import { find, forEach, get, isFunction, map, omit, pick, reduce, size } from "lodash";
+import { find, forEach, get, isFunction, last, map, omit, pick, reduce, size } from "lodash";
 import { createExpose, TColumns } from "@vue-start/pro";
 import { createLoadingId, ProLoading } from "../comp";
 import { getNameMapByMergeOpts, TTableMergeOpts, useEffect, isSame } from "@vue-start/hooks";
@@ -141,6 +141,9 @@ export const ProTable = defineComponent<ProTableProps>({
 
     /***************************** rowSelection ********************************/
 
+    //是否展示选择
+    const isSelection = computed(() => !!props.rowSelection);
+
     //是否是多选
     const isMulti = computed(() => {
       const rs = props.rowSelection;
@@ -148,21 +151,31 @@ export const ProTable = defineComponent<ProTableProps>({
       return !rs.type || rs.type === "multi";
     });
 
-    //单个选择监听
-    const handleCurrentChange = (currentRow: any) => {
-      const ids = currentRow ? [getRowId(currentRow)] : [];
+    let prevSelectedKeys: string[] = [];
 
-      //如果值相等，无需更新
-      if (isSame(props.selectedRowKeys, ids, { sort: true })) {
-        return;
-      }
-
-      props.rowSelection!.onChange?.(ids, currentRow ? [currentRow] : []);
-      emit("update:selectedRowKeys", ids);
-    };
     //多选监听
     const handleSelectionChange = (rows: any[]) => {
       const ids = map(rows, (item) => getRowId(item));
+
+      //单选
+      if (isSelection.value && !isMulti.value) {
+        if (size(ids) <= 0 && size(prevSelectedKeys) > 0) {
+          //取消场景
+          const data = props.dataSource || props.data;
+          const target = find(data, (item) => getRowId(item) === prevSelectedKeys[0]);
+          if (target) {
+            tableRef.value?.toggleRowSelection(target, true);
+          }
+          return;
+        } else if (size(ids) > 1) {
+          //选择其他场景
+          const targetId = last(ids);
+          forEach(rows, (item) => {
+            tableRef.value?.toggleRowSelection(item, getRowId(item) === targetId);
+          });
+          return;
+        }
+      }
 
       //如果值相等，无需更新
       if (isSame(props.selectedRowKeys, ids, { sort: true })) {
@@ -177,19 +190,17 @@ export const ProTable = defineComponent<ProTableProps>({
       const rs = props.rowSelection;
       if (!rs) return undefined;
 
-      if (isMulti.value) {
-        return { onSelectionChange: handleSelectionChange };
-      }
-      //单选
-      return { highlightCurrentRow: true, onCurrentChange: handleCurrentChange };
+      return { onSelectionChange: handleSelectionChange };
     });
 
     //根据 props.selectedRowKeys 选择
     useEffect(() => {
+      prevSelectedKeys = props.selectedRowKeys!;
+
       const data = props.dataSource || props.data;
 
       //选择操作
-      if (isMulti.value) {
+      if (isSelection.value) {
         //多选模式，有变化时候执行
 
         const selectedRowKeys = props.selectedRowKeys;
@@ -232,16 +243,6 @@ export const ProTable = defineComponent<ProTableProps>({
             });
           });
         }
-      } else {
-        //单选模式，直接执行
-        const key = props.selectedRowKeys?.[0];
-        let target: any = null;
-        if (key) {
-          target = find(data, (item) => getRowId(item) === key);
-        }
-        nextTick(() => {
-          tableRef.value?.setCurrentRow(target);
-        });
       }
     }, [() => props.selectedRowKeys, () => props.dataSource, () => props.data]);
 
@@ -282,9 +283,10 @@ export const ProTable = defineComponent<ProTableProps>({
           v-slots={pick(slots, "append", "empty")}>
           {slots.start?.()}
 
-          {isMulti.value && (
+          {isSelection.value && (
             <ElTableColumn
               type={"selection"}
+              className={isMulti.value ? "pro-multi" : "pro-single"}
               {...(omit(props.rowSelection?.column, "slots") as any)}
               v-slots={props.rowSelection?.column?.slots}
             />
