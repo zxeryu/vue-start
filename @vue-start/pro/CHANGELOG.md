@@ -3,6 +3,10 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# 0.5.45
+
+- feat: ProWatermark 水印组件，ProLayout 中通过 watermark 属性配置；
+
 # 0.5.44
 
 - feat：Page 新增 sub 属性， 返回按钮展示状态添加 sub 判断
