@@ -144,7 +144,7 @@ export const ProLayout = defineComponent<ProLayoutProps>({
 
     const convertName: IProLayoutProvide["convertName"] = (route) => {
       if (props.convertName) {
-        return props.convertName({ menuTopMap: menuTopMap.value });
+        return props.convertName(route, { menuTopMap: menuTopMap.value });
       }
       return route.name as string;
     };
