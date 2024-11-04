@@ -20,6 +20,7 @@ import { useProRouter } from "../../core";
 import { IProLayoutProvide, ProLayoutKey, TLayoutMenu, TLayoutTabMenu, TLayoutType } from "./ctx";
 import { LayoutTabs, ProLayoutTabsProps } from "./Tabs";
 import { ProRouterView, ProRouterViewProps } from "./RouterView";
+import { ProWatermark, ProWatermarkProps } from "../Watermark";
 
 const Header = defineComponent((_, { slots }) => {
   const menuWrapperRef = ref();
@@ -79,6 +80,8 @@ const layoutProps = () => ({
   collapse: { type: Boolean },
   //router配置
   routeOpts: { type: Object as PropType<ProRouterViewProps>, default: undefined },
+  //Watermark
+  watermark: { type: Object as PropType<ProWatermarkProps>, default: undefined },
   /**************************** menu相关 *******************************/
   menus: { type: Array as PropType<TLayoutMenu[]> },
   fieldNames: {
@@ -368,6 +371,7 @@ export const ProLayout = defineComponent<ProLayoutProps>({
           <div class={`${props.clsName}-section`}>
             {slots.default?.()}
             {slots.routerView ? slots.routerView() : <ProRouterView {...props.routeOpts} />}
+            {props.watermark && <ProWatermark {...props.watermark} />}
           </div>
         </>
       );

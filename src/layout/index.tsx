@@ -96,6 +96,7 @@ export const BasicLayout = defineComponent(() => {
         menus={menus as any}
         fieldNames={{ value: "name", label: "title", hide: "hide", children: "children" }}
         collapse={collapseRef.value}
+        watermark={{}}
         v-slots={{
           "header-start": () => <HeaderLeft />,
           "header-end": () => (

@@ -10,5 +10,6 @@ export * from "./show";
 export * from "./layout";
 export * from "./Uploader";
 export * from "./Tip";
+export * from "./Watermark";
 
 export * from "./comp";
