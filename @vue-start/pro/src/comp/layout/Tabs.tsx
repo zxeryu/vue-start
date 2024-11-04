@@ -126,13 +126,13 @@ export const LayoutTabs = defineComponent<ProLayoutTabsProps>({
     const handleItemCloseOther = (item: TLayoutTabMenu) => {
       //如果当前选中的非当前tab，先切换
       if (item.value !== menu.value?.value) {
-        handleItemClick(menu.value);
+        handleItemClick(item);
       }
       tabs.value = filter(tabs.value, (i) => {
         //保留当前
         if (i.value === item.value) return true;
         //保留禁用close的
-        return isHideClose(item);
+        return isHideClose(i);
       });
     };
 
