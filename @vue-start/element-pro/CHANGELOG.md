@@ -3,6 +3,7 @@
 # 0.2.31
 
 - perf: 使用 selection 模式实现单选方案；
+- feat: ProDrawer
 
 # 0.2.29
 
