@@ -1,5 +1,5 @@
 export * from "./Loading";
-export * from "./Modal";
+export * from "./Feedback";
 export * from "./Pagination";
 export * from "./Popover";
 export * from "./Checkbox";

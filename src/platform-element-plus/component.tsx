@@ -5,6 +5,7 @@ import {
   ProLoading,
   ProFormItem,
   ProModal,
+  ProDrawer,
   ProPagination,
   ProPopover,
   ProCheckbox,
@@ -110,9 +111,16 @@ ProPage.props = {
   },
 };
 
+ProModal.props = {
+  ...ProModal.props,
+  // top: { type: String, default: "5vh" },
+  scrollProps: { type: Object, default: { maxHeight: "70vh" } },
+};
+
 export const elementMap = {
   ...elementMapOrigin,
   [ElementKeys.ScrollKey]: ElScrollbar,
+  [ElementKeys.ProOperateKey]: ProOperate,
   ProPage,
   ProTypography,
 };
@@ -140,6 +148,7 @@ export const initComp = (app: App) => {
     //element-plus
     app.component("pro-loading", ProLoading);
   app.component("pro-modal", ProModal);
+  app.component("pro-drawer", ProDrawer);
   app.component("pro-pagination", ProPagination);
   app.component("pro-popover", ProPopover);
   app.component("pro-checkbox", ProCheckbox);

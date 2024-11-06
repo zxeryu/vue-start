@@ -33,6 +33,7 @@ export const ElementKeys = {
   ProCurdKey: "ProCurd$", //ProCurd
   ProListKey: "ProList$", //ProCurd
   ProPageKey: "ProPage$",
+  ProOperateKey: "ProOperate$",
 };
 
 /**

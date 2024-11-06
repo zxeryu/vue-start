@@ -18,6 +18,7 @@ import {
   ProShowTree,
   ProPage,
   ProTip,
+  ProOperate,
 } from "@vue-start/pro";
 import {
   ElForm,
@@ -29,6 +30,7 @@ import {
   ElDescriptionsItem,
   ElCheckbox,
   ElTooltip,
+  ElScrollbar,
 } from "element-plus";
 import {
   FormMethods,
@@ -137,6 +139,7 @@ export const elementMap = {
   [ElementKeys.TableOperateKey]: ProTableOperateItem,
   [ElementKeys.UploaderKey]: ProUploader,
   [ElementKeys.DropdownKey]: ProDropdown,
+  [ElementKeys.ScrollKey]: ElScrollbar,
   //pro
   [ElementKeys.ProFormKey]: ProForm,
   [ElementKeys.ProSearchFormKey]: ProSearchForm,
@@ -144,6 +147,7 @@ export const elementMap = {
   [ElementKeys.ProCurdKey]: ProCurd,
   [ElementKeys.ProListKey]: ProList,
   [ElementKeys.ProPageKey]: ProPage,
+  [ElementKeys.ProOperateKey]: ProOperate,
   //show
   text: ProShowText,
   digit: ProShowDigit,

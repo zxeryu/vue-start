@@ -456,5 +456,45 @@
   z-index: 10000000;
   width: 100vw;
   height: 100vh;
+}
 
+/********************************** pro-modal ***********************************/
+.pro-modal {
+}
+
+.pro-modal .el-dialog__header {
+  padding: 16px;
+}
+
+.pro-modal .el-dialog__body {
+  padding: 0px;
+}
+
+.pro-modal .pro-modal-scroll {
+  padding: 0 16px;
+}
+
+.pro-modal .el-dialog__footer {
+  padding: 16px;
+}
+
+/********************************** pro-drawer ***********************************/
+.pro-drawer {
+}
+
+.pro-drawer .el-drawer__header {
+  margin-bottom: 0px;
+  padding: 16px;
+}
+
+.pro-drawer .el-drawer__body {
+  padding: 0px;
+}
+
+.pro-drawer .pro-drawer-scroll {
+  padding: 0 16px;
+}
+
+.pro-drawer .el-drawer__footer {
+  padding: 16px;
 }

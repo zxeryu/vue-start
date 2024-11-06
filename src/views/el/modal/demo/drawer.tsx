@@ -1,8 +1,8 @@
 /*---
-title: 基础使用
+title: ProDrawer
 ---*/
 
-import { defineComponent, reactive } from "vue";
+import { defineComponent, reactive, ref } from "vue";
 
 export default defineComponent(() => {
   const state = reactive({
@@ -28,11 +28,11 @@ export default defineComponent(() => {
   return () => {
     return (
       <>
-        <pro-operate items={[{ value: "value", label: "open modal", onClick: handleClick }]} />
-        <pro-modal v-model:visible={state.visible} title={"modal"} confirmLoading={state.loading} onOk={handleOk}>
+        <pro-operate items={[{ value: "value", label: "open drawer", onClick: handleClick }]} />
+        <pro-drawer v-model:visible={state.visible} title={"drawer"} confirmLoading={state.loading} onOk={handleOk}>
           <div>content</div>
           <div onClick={setLoading}>set loading</div>
-        </pro-modal>
+        </pro-drawer>
       </>
     );
   };
