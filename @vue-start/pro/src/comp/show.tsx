@@ -128,6 +128,7 @@ export const ProShowTree = defineComponent({
     ...baseProps,
     value: { type: [String, Number, Array] },
     splitStr: { type: String, default: "/" },
+    splitStr2: { type: String, default: "," }, //多选的情况
     //
     treeData: Array as PropType<Record<string, any>>, //ant
     data: Array as PropType<Record<string, any>>, //el
@@ -135,6 +136,8 @@ export const ProShowTree = defineComponent({
     //
     fieldNames: Object, //ant
     props: Object, //el
+    //
+    multiple: { type: Boolean },
   },
   setup: (props, { attrs }) => {
     const optionsMap = computed(() => {
@@ -152,7 +155,7 @@ export const ProShowTree = defineComponent({
       if (isArray(props.value)) {
         v = join(
           map(props.value, (item) => get(optionsMap.value, item, item)),
-          props.splitStr,
+          props.multiple ? props.splitStr2 : props.splitStr,
         );
       } else {
         v = get(optionsMap.value, props.value!, props.value);
