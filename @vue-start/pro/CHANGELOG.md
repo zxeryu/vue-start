@@ -6,6 +6,7 @@ See [Conventional Commits](https://conventionalcommits.org) for commit guideline
 # 0.5.45
 
 - feat: ProWatermark 水印组件，ProLayout 中通过 watermark 属性配置；
+- fix: ProShowTree 展示兼容多选的情况；
 
 # 0.5.44
 
