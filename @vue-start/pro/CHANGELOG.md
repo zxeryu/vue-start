@@ -7,6 +7,7 @@ See [Conventional Commits](https://conventionalcommits.org) for commit guideline
 
 - feat: ProWatermark 水印组件，ProLayout 中通过 watermark 属性配置；
 - fix: ProShowTree 展示兼容多选的情况；
+- fix: meta 模式 bug 修复，支持 useMeta 直接使用；
 
 # 0.5.44
 
