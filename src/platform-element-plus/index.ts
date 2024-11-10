@@ -30,7 +30,7 @@ import { startsWith } from "lodash";
 //request
 const urlInterceptor = (request: AxiosInterceptorManager<AxiosRequestConfig>) => {
   request.use((requestConfig) => {
-    if (startsWith(requestConfig.url, "/user")) {
+    if (startsWith(requestConfig.url, "/user") || startsWith(requestConfig.url, "/sys")) {
       requestConfig.url = `http://localhost:7070${requestConfig.url}`;
     }
     return requestConfig;

@@ -166,8 +166,6 @@ export const ProConfig = defineComponent<ProConfigProps>({
     //全局注册meta Map
     const registerMetaMap = reduce(props.registerMetas, (pair, item) => ({ ...pair, [item.actorName]: item }), {});
 
-    useMetaRegister(registerMetaMap, registerActorMap);
-
     const { dispatchRequest: dispatchRequestOrigin } = useRequestProvide();
 
     //发送接口
@@ -178,6 +176,9 @@ export const ProConfig = defineComponent<ProConfigProps>({
       }
       return dispatchRequestOrigin(registerItem.actor, params, extra);
     };
+
+    //meta订阅
+    useMetaRegister(registerMetaMap, registerActorMap);
 
     provide(ProConfigKey, {
       elementMap: props.elementMap,

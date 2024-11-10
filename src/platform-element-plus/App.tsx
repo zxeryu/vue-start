@@ -1,5 +1,5 @@
 import { defineComponent } from "vue";
-import { FormRulePrefixMap, ITheme, ProConfig, ProTheme } from "@vue-start/pro";
+import { FormRulePrefixMap, ITheme, ProConfig, ProTheme, TMeta } from "@vue-start/pro";
 import { elementMap, formElementMap } from "./component";
 import { RouterView } from "vue-router";
 import { convertRouter } from "@/router";
@@ -7,6 +7,7 @@ import { proStore } from "@/store/StoreCurrent";
 import { ElMessage } from "element-plus";
 import { Global, createAtom } from "@vue-start/css";
 import { forEach, get } from "lodash";
+import { IRequestActor } from "../../@vue-start/request";
 
 const showMsg = (opts: any) => {
   ElMessage({ type: opts.type, message: opts.message });
@@ -70,20 +71,41 @@ export const App = defineComponent(() => {
     return { ...colors, ...obj, ...spacing };
   };
 
+  const registerActors: { actor: IRequestActor }[] = [
+    {
+      actor: {
+        name: "dict",
+        requestConfig: { method: "get", url: `/sys-dict` },
+      },
+    },
+  ];
+
+  const registerMetas: TMeta[] = [
+    {
+      actorName: "dict",
+      storeName: (params) => `dict-${params!.type}`,
+      convertData: (data) => {
+        return data.data;
+      },
+    },
+  ];
+
   return () => {
     return (
-      <ProTheme createCssVar={createCssVar}>
-        <ProConfig
-          elementMap={elementMap}
-          formElementMap={formElementMap}
-          formExtraMap={{ rulePrefixMap: FormRulePrefixMap }}
-          registerStores={[proStore]}
-          convertRouter={convertRouter}
-          showMsg={showMsg}>
+      <ProConfig
+        elementMap={elementMap}
+        formElementMap={formElementMap}
+        formExtraMap={{ rulePrefixMap: FormRulePrefixMap }}
+        registerStores={[proStore]}
+        registerActors={registerActors}
+        registerMetas={registerMetas}
+        convertRouter={convertRouter}
+        showMsg={showMsg}>
+        <ProTheme createCssVar={createCssVar}>
           <Global styles={clsObj} />
           <RouterView />
-        </ProConfig>
-      </ProTheme>
+        </ProTheme>
+      </ProConfig>
     );
   };
 });

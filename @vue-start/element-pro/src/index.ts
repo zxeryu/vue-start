@@ -31,6 +31,7 @@ import {
   ElCheckbox,
   ElTooltip,
   ElScrollbar,
+  ElEmpty,
 } from "element-plus";
 import {
   FormMethods,
@@ -49,16 +50,7 @@ import {
   ProFormCascader,
 } from "./form";
 import { ProTable as Table, ProTableOperateItem } from "./table";
-import {
-  ProUploader,
-  ProModal as Modal,
-  ProLoading,
-  ProMenus,
-  ProModal,
-  ProPagination,
-  ProPopover,
-  ProDropdown,
-} from "./comp";
+import { ProUploader, ProLoading, ProMenus, ProModal, ProPagination, ProPopover, ProDropdown, ProDrawer } from "./comp";
 
 export * from "./form";
 export * from "./table";
@@ -103,7 +95,7 @@ ProCurdForm.props = {
 };
 
 ProCurdModal.props = {
-  ...Modal.props,
+  ...ProModal.props,
   ...ProCurdModal.props,
 };
 
@@ -129,6 +121,7 @@ export const elementMap = {
   [ElementKeys.DescriptionsItemKey]: ElDescriptionsItem,
   [ElementKeys.MenusKey]: ProMenus,
   [ElementKeys.ModalKey]: ProModal,
+  [ElementKeys.DrawerKey]: ProDrawer,
   [ElementKeys.PaginationKey]: ProPagination,
   [ElementKeys.PopoverKey]: ProPopover,
   [ElementKeys.TooltipKey]: ElTooltip,
@@ -140,6 +133,7 @@ export const elementMap = {
   [ElementKeys.UploaderKey]: ProUploader,
   [ElementKeys.DropdownKey]: ProDropdown,
   [ElementKeys.ScrollKey]: ElScrollbar,
+  [ElementKeys.EmptyKey]: ElEmpty,
   //pro
   [ElementKeys.ProFormKey]: ProForm,
   [ElementKeys.ProSearchFormKey]: ProSearchForm,

@@ -17,6 +17,7 @@ export const ElementKeys = {
   CheckboxKey: "Checkbox$", //Checkbox
   MenusKey: "Menus$",
   ModalKey: "Modal$", //Modal
+  DrawerKey: "Drawer$",
   ScrollKey: "Scroll$",
   PageKey: "Page$",
   FormKey: "Form$", //Form

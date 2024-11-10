@@ -1,8 +1,19 @@
 import { defineComponent, reactive } from "vue";
 import { css } from "@emotion/css";
-import { ProTypography, ProShowText, ProShowDigit, ProShowOptions, ProShowTree, ProShowDate } from "@vue-start/pro";
+import {
+  ProTypography,
+  ProShowText,
+  ProShowDigit,
+  ProShowOptions,
+  ProShowTree,
+  ProShowDate,
+  useMeta,
+  useReadStore,
+  useDispatchStore,
+} from "@vue-start/pro";
 import dayjs from "dayjs";
 import { useRouter } from "vue-router";
+import { proStore } from "@/store/StoreCurrent";
 
 export default defineComponent(() => {
   const router = useRouter();
@@ -20,7 +31,18 @@ export default defineComponent(() => {
     state.showFooter = !state.showFooter;
   };
 
+  //meta
+  const industry = useMeta("dict", { type: "industry" });
+  const type2 = useMeta("dict", { type: "type" });
+
+  //store
+  const pro = useReadStore(proStore.key);
+  const dispatchStore = useDispatchStore();
+
   return () => {
+    console.log("meta industry===", industry.value);
+    console.log("meta type===", type2.value);
+    console.log("store pro===", pro.value);
     return (
       <pro-page
         // loading
@@ -44,6 +66,12 @@ export default defineComponent(() => {
         </div>
         <div onClick={handleOpeFill}>{state.fillMode ? "不固定" : "固定"} header footer</div>
         <div onClick={handleOpeFooter}>{state.showFooter ? "关闭" : "打开"}footer</div>
+        <div
+          onClick={() => {
+            dispatchStore(proStore.key, (prev: any) => ({ ...prev, bbb: new Date().valueOf() }));
+          }}>
+          更新store pro
+        </div>
         <div
           class={css({
             width: 300,

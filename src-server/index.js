@@ -14,10 +14,12 @@ const setResult = (data, msg) => {
   };
 };
 
+/****************************** 用户 *********************************/
+
 apiRouters.get("/user/list", (req, res) => {
   const query = req.query;
   return res.json({
-    data: user.list(query.page, query.pageSize,query.name,query.gender),
+    data: user.list(query.page, query.pageSize, query.name, query.gender),
     msg: "用户列表",
   });
 });
@@ -43,6 +45,13 @@ apiRouters.delete("/user/del", (req, res) => {
 apiRouters.get("/user/detail", (req, res) => {
   const query = req.query;
   return res.json(setResult(user.detail(query.id), "用户详情"));
+});
+
+/****************************** 字典 *********************************/
+apiRouters.get("/sys-dict", (req, res) => {
+  const query = req.query;
+  const data = [1, 2, 3].map((i) => ({ value: `${query.type}-v-${i}`, label: `${query.type}-label-${i}` }));
+  return res.json(setResult(data, ""));
 });
 
 app.use(bodyParser.urlencoded({ extended: false }));
