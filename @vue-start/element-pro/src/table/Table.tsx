@@ -153,8 +153,13 @@ export const ProTable = defineComponent<ProTableProps>({
 
     let prevSelectedKeys: string[] = [];
 
+    //主动赋值是否完成
+    let methodOpeFinish = false;
+
     //多选监听
     const handleSelectionChange = (rows: any[]) => {
+      if (!methodOpeFinish) return;
+
       const ids = map(rows, (item) => getRowId(item));
 
       //单选
@@ -193,12 +198,14 @@ export const ProTable = defineComponent<ProTableProps>({
       return { onSelectionChange: handleSelectionChange };
     });
 
+    //主动赋值
     //根据 props.selectedRowKeys 选择
     useEffect(() => {
+      methodOpeFinish = false;
+
       prevSelectedKeys = props.selectedRowKeys!;
 
       const data = props.dataSource || props.data;
-
       //选择操作
       if (isSelection.value) {
         //多选模式，有变化时候执行
@@ -241,8 +248,13 @@ export const ProTable = defineComponent<ProTableProps>({
                 tableRef.value?.toggleRowSelection(item, !!propKeyMap[id]);
               }
             });
+            methodOpeFinish = true;
           });
+        } else {
+          methodOpeFinish = true;
         }
+      } else {
+        methodOpeFinish = true;
       }
     }, [() => props.selectedRowKeys, () => props.dataSource, () => props.data]);
 
