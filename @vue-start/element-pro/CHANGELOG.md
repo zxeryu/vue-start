@@ -1,5 +1,9 @@
 # Change Log
 
+# 0.2.32
+
+- fix: ProModal cancel 事件
+
 # 0.2.31
 
 - fix: Table selection 赋值期间不相应操作；

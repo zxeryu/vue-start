@@ -38,10 +38,12 @@ export const ProModal = defineComponent<ProModalProps>({
     const handleUpdate = (v: boolean) => {
       emit("update:modelValue", v);
       emit("update:visible", v);
+      if(!v){
+        emit("cancel");
+      }
     };
 
     const handleCancel = () => {
-      emit("cancel");
       handleUpdate(false);
     };
 
@@ -120,10 +122,12 @@ export const ProDrawer = defineComponent<ProDrawerProps>({
     const handleUpdate = (v: boolean) => {
       emit("update:modelValue", v);
       emit("update:visible", v);
+      if(!v){
+        emit("cancel");
+      }
     };
 
     const handleCancel = () => {
-      emit("cancel");
       handleUpdate(false);
     };
 
