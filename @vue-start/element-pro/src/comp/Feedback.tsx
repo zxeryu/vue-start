@@ -22,7 +22,6 @@ const proModalProps = () => ({
 export type ProModalProps = Partial<ExtractPropTypes<ReturnType<typeof proModalProps>>> & DialogProps;
 
 export const ProModal = defineComponent<ProModalProps>({
-  inheritAttrs: false,
   props: {
     ...ElDialog.props,
     //覆盖原始值，默认true
