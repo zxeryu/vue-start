@@ -2,6 +2,7 @@ import { defineComponent, inject, PropType, provide, reactive } from "vue";
 import { Global } from "@vue-start/css";
 import { mix } from "polished";
 import { reduce } from "lodash";
+import { setReactiveValue, useUpdateKey, useWatch } from "@vue-start/hooks";
 
 export const ThemeKey = Symbol("logon-user");
 
@@ -30,7 +31,11 @@ export interface ITheme {
   shadow: TSubType & { inner: string };
 }
 
-export const useTheme = (): ITheme => inject(ThemeKey) as ITheme;
+export interface IThemeProvide {
+  theme: ITheme;
+}
+
+export const useTheme = (): IThemeProvide => inject(ThemeKey) as IThemeProvide;
 
 export interface IThemeToken {
   color?: {
@@ -122,6 +127,8 @@ export const ProTheme = defineComponent({
     ...proThemeProps(),
   },
   setup: (props, { slots }) => {
+    const [cssKey, updateCssKey] = useUpdateKey();
+
     const initTheme = () => {
       if (props.theme) {
         return props.theme;
@@ -131,13 +138,28 @@ export const ProTheme = defineComponent({
 
     const theme = reactive({ ...initTheme() });
 
-    provide(ThemeKey, theme);
+    useWatch(
+      () => {
+        setReactiveValue(theme, initTheme());
+      },
+      () => props.themeToken,
+    );
+
+    useWatch(
+      () => {
+        updateCssKey();
+      },
+      theme,
+      { deep: true },
+    );
+
+    provide(ThemeKey, { theme });
 
     return () => {
       if (props.global) {
         return (
           <>
-            {props.createCssVar && <Global styles={{ ":root": props.createCssVar(theme as any) }} />}
+            {props.createCssVar && <Global key={cssKey.value} styles={{ ":root": props.createCssVar(theme as any) }} />}
 
             {slots.default?.()}
           </>
