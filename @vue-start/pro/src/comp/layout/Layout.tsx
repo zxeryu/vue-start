@@ -95,7 +95,8 @@ const layoutProps = () => ({
   //MenuItem点击事件
   onMenuItemClick: { type: Function },
   //menu参数
-  menuProps: { type: Object },
+  menuProps: { type: Object }, //compose模式下-为左侧菜单Props
+  topMenuProps: { type: Object }, //compose模式下-为顶部菜单Props
 });
 
 export type ProLayoutProps = Partial<ExtractPropTypes<ReturnType<typeof layoutProps>>>;
@@ -435,6 +436,7 @@ export const ProLayout = defineComponent<ProLayoutProps>({
                     mode={"horizontal"}
                     options={map(showMenus.value, (item) => omit(item, "children"))}
                     activeKey={currentTopName.value}
+                    {...props.topMenuProps}
                     {...pick(props, "convertSubMenuProps", "convertMenuItemProps")}
                     onMenuItemClick={handleComposeTopMenuClick}
                     v-slots={menuSlots}
@@ -445,7 +447,8 @@ export const ProLayout = defineComponent<ProLayoutProps>({
             }}
           />
           <div class={`${props.clsName}-structure`}>
-            {hasLeftMenu.value && renderLeftMenu({ ...leftMenuProps, options: currentTop.value!.children })}
+            {hasLeftMenu.value &&
+              renderLeftMenu({ ...leftMenuProps, options: currentTop.value!.children, key: currentTop.value!.value })}
             <div class={`${props.clsName}-right`}>{section}</div>
           </div>
         </main>
