@@ -320,11 +320,11 @@ export const ProTable = defineComponent<ProTableProps>({
     });
 
     useResizeObserver(toolbarStartDomRef, () => {
-      toolbarStartValidRef.value = !!toolbarStartDomRef.value.innerText;
+      toolbarStartValidRef.value = !!toolbarStartDomRef.value.innerHTML;
     });
 
-    useResizeObserver(toolbarExtraDomRef, () => {
-      toolbarExtraValidRef.value = !!toolbarExtraDomRef.value.innerText;
+    useResizeObserver(toolbarExtraDomRef, (entries) => {
+      toolbarExtraValidRef.value = !!toolbarExtraDomRef.value.innerHTML;
     });
 
     const toolbarValidClass = computed(() => {
@@ -342,9 +342,13 @@ export const ProTable = defineComponent<ProTableProps>({
         <ColumnSetting {...props.toolbar?.columnSetting} v-slots={columnSettingSlots} />
       ) : null;
 
+      const cls = [props.clsName];
+      if (toolbarStartValidRef.value || toolbarExtraValidRef.value) {
+        cls.push("has-header");
+      }
       return (
         <div
-          class={props.clsName}
+          class={cls}
           style={`--pro-table-toolbar-hei: ${toolbarHeiRef.value}px`}
           {...(pick(attrs, "class") as any)}>
           <div ref={toolbarRef} class={`${props.clsName}-toolbar ${toolbarValidClass.value}`}>
