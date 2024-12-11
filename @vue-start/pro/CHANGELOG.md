@@ -3,6 +3,11 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# 0.5.46
+
+- perf: ProLayout 左侧菜单添加 key；
+- perf: ProTable class 新增 pro-table.has-header；
+
 # 0.5.45
 
 - feat: ProWatermark 水印组件，ProLayout 中通过 watermark 属性配置；
