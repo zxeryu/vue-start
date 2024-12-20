@@ -1,7 +1,7 @@
 import { computed, defineComponent, ExtractPropTypes, PropType, ref, nextTick, reactive } from "vue";
 import { ElTable, ElTableColumn, ElButton, TableProps } from "element-plus";
 import { TableColumnCtx } from "../../types";
-import { find, forEach, get, isFunction, last, map, omit, pick, reduce, size } from "lodash";
+import { filter, find, forEach, get, isArray, isFunction, last, map, omit, pick, reduce, size, slice } from "lodash";
 import { createExpose, TColumns } from "@vue-start/pro";
 import { createLoadingId, ProLoading } from "../comp";
 import { getNameMapByMergeOpts, TTableMergeOpts, useEffect, isSame } from "@vue-start/hooks";
@@ -102,12 +102,20 @@ const proTableProps = () => ({
   /**
    * 选择
    */
-  selectedRowKeys: { type: Array as PropType<string[]> },
+  selectedRowKeys: { type: [Array as PropType<string[]>, String as PropType<string>] },
   rowSelection: {
     type: Object as PropType<{
       type?: "single" | "multi"; //默认multi
       column?: ProTableColumnProps & { slots?: Record<string, any> };
       onChange?: (selectedRowKeys: string[], selectedRows: Record<string, any>[]) => void;
+      /**
+       * 分页选择模式，type="multi" 模式下生效。
+       * 与当前页无关；可累计选择；
+       * 缺点：
+       *  1、如果初始化绑定的数据中存在数据源中不存在的数据，table中操作清空不了，需要外部处理（如："清空"按钮）；
+       *  2、onChange中没有rows
+       */
+      pagination?: boolean;
     }>,
     default: undefined,
   },
@@ -126,6 +134,12 @@ export const ProTable = defineComponent<ProTableProps>({
     const id = createLoadingId("table");
 
     expose(createExpose(TableMethods, tableRef));
+
+    const dataSource = computed(() => props.dataSource || props.data || []);
+
+    const dataKeyMap = computed<Record<string, boolean>>(() => {
+      return reduce(dataSource.value, (pair, item) => ({ ...pair, [getRowId(item)]: true }), {});
+    });
 
     //获取record id
     const getRowId = (record: any) => {
@@ -151,6 +165,17 @@ export const ProTable = defineComponent<ProTableProps>({
       return !rs.type || rs.type === "multi";
     });
 
+    const propRowKeys = computed(() => {
+      const keys = props.selectedRowKeys;
+      if (isArray(keys)) return keys;
+      if (keys) return [keys];
+      return [];
+    });
+
+    const propKeyMap = computed<Record<string, boolean>>(() => {
+      return reduce(propRowKeys.value, (pair, item) => ({ ...pair, [item]: true }), {});
+    });
+
     let prevSelectedKeys: string[] = [];
 
     //主动赋值是否完成
@@ -166,7 +191,7 @@ export const ProTable = defineComponent<ProTableProps>({
       if (isSelection.value && !isMulti.value) {
         if (size(ids) <= 0 && size(prevSelectedKeys) > 0) {
           //取消场景
-          const data = props.dataSource || props.data;
+          const data = dataSource.value;
           const target = find(data, (item) => getRowId(item) === prevSelectedKeys[0]);
           if (target) {
             tableRef.value?.toggleRowSelection(target, true);
@@ -183,7 +208,28 @@ export const ProTable = defineComponent<ProTableProps>({
       }
 
       //如果值相等，无需更新
-      if (isSame(props.selectedRowKeys, ids, { sort: true })) {
+      if (isSame(propRowKeys.value, ids, { sort: true })) {
+        return;
+      }
+
+      //单选
+      if(!isMulti.value){
+        const id = get(ids, 0);
+        props.rowSelection!.onChange?.(id, get(rows, 0));
+        emit("update:selectedRowKeys", id);
+        return;
+      }
+
+      //分页模式
+      if (props.rowSelection?.pagination) {
+        //清除 已选择集合中 包含 dataSource.value 中的项
+        const reIds = filter(propRowKeys.value, (key) => {
+          return !dataKeyMap.value[key];
+        });
+        reIds.push(...ids);
+
+        props.rowSelection!.onChange?.(reIds, []);
+        emit("update:selectedRowKeys", reIds);
         return;
       }
 
@@ -203,20 +249,11 @@ export const ProTable = defineComponent<ProTableProps>({
     useEffect(() => {
       methodOpeFinish = false;
 
-      prevSelectedKeys = props.selectedRowKeys!;
+      prevSelectedKeys = propRowKeys.value;
 
-      const data = props.dataSource || props.data;
+      const data = dataSource.value;
       //选择操作
       if (isSelection.value) {
-        //多选模式，有变化时候执行
-
-        const selectedRowKeys = props.selectedRowKeys;
-        const propKeyMap: Record<string, boolean | undefined> = reduce(
-          selectedRowKeys,
-          (pair, item) => ({ ...pair, [item]: true }),
-          {},
-        );
-        //
         const selectedRows = tableRef.value?.getSelectionRows();
         const curKeyMap: Record<string, boolean | undefined> = reduce(
           selectedRows,
@@ -224,39 +261,19 @@ export const ProTable = defineComponent<ProTableProps>({
           {},
         );
 
-        //是否操作
-        let isOpe = false;
-        //len不等
-        if (size(selectedRowKeys) !== size(selectedRows)) {
-          isOpe = true;
-        } else if (size(selectedRowKeys) !== 0) {
-          //相等 非0
-          for (let i = 0; i < selectedRowKeys!.length; i++) {
-            const key = selectedRowKeys![i];
-            //有值不匹配
-            if (!curKeyMap[key]) {
-              isOpe = true;
-              break;
+        nextTick(() => {
+          forEach(data, (item) => {
+            const id = getRowId(item);
+            if (propKeyMap.value[id] !== curKeyMap[id]) {
+              tableRef.value?.toggleRowSelection(item, !!propKeyMap.value[id]);
             }
-          }
-        }
-        if (isOpe) {
-          nextTick(() => {
-            forEach(data, (item) => {
-              const id = getRowId(item);
-              if (propKeyMap[id] !== curKeyMap[id]) {
-                tableRef.value?.toggleRowSelection(item, !!propKeyMap[id]);
-              }
-            });
-            methodOpeFinish = true;
           });
-        } else {
           methodOpeFinish = true;
-        }
+        });
       } else {
         methodOpeFinish = true;
       }
-    }, [() => props.selectedRowKeys, () => props.dataSource, () => props.data]);
+    }, [propRowKeys, dataSource]);
 
     /***************************** 行/列合并 ********************************/
 
@@ -289,7 +306,7 @@ export const ProTable = defineComponent<ProTableProps>({
           // @ts-ignore
           id={id}
           {...omit(props, "columns", "dataSource", "data", "loading", "spanMethod")}
-          data={props.dataSource || props.data}
+          data={dataSource.value}
           spanMethod={spanMethod.value}
           {...rowSelection.value}
           v-slots={pick(slots, "append", "empty")}>

@@ -1,19 +1,17 @@
 /*---
-title: 选择-多选
-desc: v-model:selectedRowKeys 暂时只支持 element-plus
+title: 选择-单选
 ---*/
 
 import { computed, defineComponent, reactive } from "vue";
-import { columns, dataSource } from "@/common/columns";
 import { useUpdateKey, useWatch } from "@vue-start/hooks";
+import { columns, dataSource } from "@/common/columns";
 
 export default defineComponent(() => {
   const [tableKey, updateTableKey] = useUpdateKey();
 
-  const state = reactive<{ tab: string; enable: string; selectedRowKeys: string[] }>({
-    tab: "1",
+  const state = reactive<{ enable: string; selectedRowKeys: string }>({
     enable: "enable",
-    selectedRowKeys: [],
+    selectedRowKeys: "1",
   });
 
   const disableOptions = [
@@ -27,7 +25,7 @@ export default defineComponent(() => {
 
   const rowSelection = computed(() => {
     return {
-      type: "multi",
+      type: "single",
       column: {
         selectable: state.enable === "disable" ? () => false : undefined,
       },

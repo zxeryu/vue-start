@@ -8,6 +8,7 @@ import Group from "./demo/group";
 import Header from "./demo/header";
 import Merge from "./demo/merge";
 import Selection from "./demo/selection";
+import Selection2 from "./demo/selection2";
 
 export default defineComponent(() => {
   return () => {
@@ -21,6 +22,7 @@ export default defineComponent(() => {
         <Header />
         <Merge />
         <Selection />
+        <Selection2 />
       </>
     );
   };
