@@ -3,6 +3,10 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# 0.5.48
+
+- perf: ProLayout 非 tabs 模式下 keep-live 规则支持；
+
 # 0.5.46
 
 - perf: ProLayout 左侧菜单添加 key；
