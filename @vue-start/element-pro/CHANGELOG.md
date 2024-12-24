@@ -1,5 +1,9 @@
 # Change Log
 
+# 0.2.33
+
+- perf: Table 多选支持 pagination（分页）模式；
+
 # 0.2.32
 
 - fix: ProModal cancel 事件
