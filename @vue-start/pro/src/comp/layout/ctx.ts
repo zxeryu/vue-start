@@ -23,6 +23,7 @@ export interface IProLayoutProvide {
   convertValue: (menu: TLayoutTabMenu) => string;
   //
   menus: Ref<TLayoutMenu[]>;
+  showMenus: Ref<TLayoutMenu[]>;
   menuMap: Ref<Record<string, TLayoutMenu>>;
   tabs: Ref<TLayoutTabMenu[]>;
   showTabs: Ref<boolean>;

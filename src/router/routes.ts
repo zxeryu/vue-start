@@ -119,6 +119,11 @@ export const routes = [
         path: "page",
         children: [
           {
+            name: "CurdDemoPageDetail",
+            path: "detail",
+            component: () => import("@/views/curd-demo/page/detail"),
+          },
+          {
             name: "CurdDemoPageIndex",
             path: "index",
             component: () => import("@/views/curd-demo/page/index"),

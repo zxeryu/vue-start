@@ -88,7 +88,11 @@ export const menus = [
     children: [
       { title: "curd-basic", name: "CurdDemoBasicIndex" },
       { title: "curd-modal", name: "CurdDemoModalIndex" },
-      { title: "curd-page", name: "CurdDemoPageIndex" },
+      {
+        title: "curd-page",
+        name: "CurdDemoPageIndex",
+        children: [{ title: "curd-page-detail", name: "CurdDemoPageDetail", hide: true }],
+      },
     ],
   },
   {

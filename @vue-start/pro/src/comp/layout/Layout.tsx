@@ -155,7 +155,7 @@ export const ProLayout = defineComponent<ProLayoutProps>({
 
     const convertValue: IProLayoutProvide["convertValue"] = (menu) => {
       if (props.convertValue) {
-        return props.convertValue({});
+        return props.convertValue(menu);
       }
       return menu.value;
     };
@@ -312,6 +312,7 @@ export const ProLayout = defineComponent<ProLayoutProps>({
       convertValue,
       //
       menus: reMenus as any,
+      showMenus: showMenus as any,
       menuMap: menuMap as any,
       tabs: tabs as any,
       showTabs: showTabs as any,

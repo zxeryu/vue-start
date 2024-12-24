@@ -1,12 +1,13 @@
 import { computed, defineComponent, ExtractPropTypes, KeepAlive, PropType, ref } from "vue";
 import { RouterView } from "vue-router";
-import { useProLayout } from "./ctx";
+import { TLayoutMenu, useProLayout } from "./ctx";
 import { filter, map } from "lodash";
 import { useProRouter } from "../../core";
+import { findTreeItem } from "@vue-start/hooks";
 
 const routerViewProps = () => ({
-  //非tabs模式下，includes
-  includes: { type: Array as PropType<string[]> },
+  //includes
+  includes: { type: Array as PropType<string[]>, default: [] },
 });
 
 export type ProRouterViewProps = Partial<ExtractPropTypes<ReturnType<typeof routerViewProps>>>;
@@ -16,18 +17,28 @@ export const ProRouterView = defineComponent<ProRouterViewProps>({
     ...routerViewProps(),
   } as any,
   setup: (props) => {
-    const { tabs, refreshRef, showTabs, convertValue } = useProLayout();
-    const { route } = useProRouter();
+    const { menus, tabs, refreshRef, showTabs, convertName, convertValue } = useProLayout();
+    const { router, route } = useProRouter();
 
-    const include = computed(() => {
+    const include = computed<string[]>(() => {
+      //***************** 非tabs模式 *************
       if (!showTabs.value) {
-        return props.includes || [];
+        //菜单树
+        const { parentList } = findTreeItem(menus.value, (item) => item.value === convertName(route), undefined, []);
+        //有效菜单集合
+        const validList = filter(parentList, (item) => {
+          const routeName = convertValue(item as TLayoutMenu);
+          return router.hasRoute(routeName);
+        });
+        return [...props.includes!, ...map(validList, (item) => item.value)];
       }
-      const list = map(tabs.value, (item) => convertValue(item));
+      //****************** tabs模式 ****************
+      let list = map(tabs.value, (item) => convertValue(item));
       if (refreshRef.value) {
-        return filter(list, (item) => item !== route.name);
+        //在 KeepLive 中删除需要刷新的路由name
+        list = filter(list, (item) => item !== route.name);
       }
-      return list;
+      return [...props.includes!, ...list];
     });
 
     return () => {
