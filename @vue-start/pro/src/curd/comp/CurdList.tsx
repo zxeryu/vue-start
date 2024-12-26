@@ -171,7 +171,7 @@ export const ProCurdListConnect = defineComponent(() => {
   };
 });
 
-export const CurdListPage = defineComponent({
+export const ProCurdListPage = defineComponent({
   props: {
     ...ProPage.props,
   },
