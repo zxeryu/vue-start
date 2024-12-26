@@ -49,6 +49,9 @@
   --pro-spacing-7: 28px;
   --pro-spacing-8: 32px;
   --pro-spacing-9: 36px;
+
+  /* 变量声明 - 不报错 */
+  --pro-table-toolbar-hei: 0px;
 }
 
 /********************************** pro-layout ***********************************/
@@ -345,13 +348,21 @@
 /********************************** pro-page ***********************************/
 
 .pro-page {
-  --pro-page-header-hei: 40px;
-  --pro-page-footer-hei: 46px;
+  --pro-page-header-hei: 0px;
+  --pro-page-footer-hei: 0px;
 
   height: var(--pro-secion-hei);
   max-height: var(--pro-secion-hei);
   overflow-y: auto;
   box-sizing: border-box;
+}
+
+.pro-page.has-header {
+  --pro-page-header-hei: 40px;
+}
+
+.pro-page.has-footer {
+  --pro-page-footer-hei: 46px;
 }
 
 .pro-page-sub {
@@ -431,6 +442,44 @@
   left: 0;
   z-index: 1;
   background-color: white;
+}
+
+/********************************** curd-list ***********************************/
+.pro-page.curd-list {
+}
+
+.pro-page.curd-list .pro-page-content {
+  box-sizing: border-box;
+  height: calc(100% - var(--pro-page-header-hei));
+}
+
+.pro-page.curd-list .pro-curd-list {
+  height: 100%;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.pro-page.curd-list .pro-curd-list .curd-list-grow {
+  flex-grow: 1;
+}
+
+.pro-page.curd-list .pro-curd-list .pro-table {
+  overflow: hidden;
+}
+
+.pro-page.curd-list .pro-curd-list .pro-table .el-table {
+  height: calc(100% - var(--pro-table-toolbar-hei));
+}
+
+.pro-page.curd-list .pro-curd-list.has-pagination .pro-list-pagination {
+  height: var(--pro-page-footer-hei);
+  min-height: var(--pro-page-footer-hei);
+}
+
+.pro-curd-list .pro-list-pagination {
+  display: flex;
 }
 
 /********************************** pro-tip ***********************************/

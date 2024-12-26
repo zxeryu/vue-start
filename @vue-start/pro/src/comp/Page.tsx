@@ -1,9 +1,8 @@
 import { computed, defineComponent, ExtractPropTypes, PropType, VNode } from "vue";
 import { keys, omit, pick } from "lodash";
 import { ElementKeys, useGetCompByKey } from "./comp";
-import { useRouter } from "vue-router";
-import { isValidNode } from "../core";
-import { useProLayout } from "./layout/ctx";
+import { isValidNode, useProRouter } from "../core";
+import { useProLayout } from "./layout";
 
 const proPageHeaderProps = () => ({
   title: { type: String },
@@ -23,7 +22,7 @@ export const PageHeader = defineComponent({
     ...proPageHeaderProps(),
   },
   setup: (props, { slots }) => {
-    const router = useRouter();
+    const { router } = useProRouter();
 
     const handleOnBackClick = () => {
       if (props.onBackClick) {

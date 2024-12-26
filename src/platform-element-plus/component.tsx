@@ -38,6 +38,7 @@ import {
   TColumn,
   ElementKeys,
   ProTip,
+  CurdListPage,
 } from "@vue-start/pro";
 
 import { ProPreview } from "@vue-start/media";
@@ -111,6 +112,11 @@ ProPage.props = {
   },
 };
 
+CurdListPage.props = {
+  ...CurdListPage.props,
+  as: { type: String, default: "div" },
+};
+
 ProModal.props = {
   ...ProModal.props,
   // top: { type: String, default: "5vh" },
@@ -143,6 +149,7 @@ export const initComp = (app: App) => {
   app.component("pro-curd", ProCurd);
   app.component("pro-modal-curd", ProModalCurd);
   app.component("pro-curd-list", ProCurdList);
+  app.component("pro-curd-list-page", CurdListPage);
   app.component("pro-typography", ProTypography);
   app.component("pro-tip", ProTip),
     //element-plus

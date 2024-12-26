@@ -1,10 +1,8 @@
-import { defineComponent, Fragment } from "vue";
+import { defineComponent } from "vue";
 import { columns } from "@/common/columns";
 import { CurdAction, ModalCurdOpe, ProCurdModalFormConnect } from "@vue-start/pro";
 import { userAdd, userDel, userDetail, userEdit, userList } from "@/clients/client";
 import { IRequestActor } from "@vue-start/request";
-import { css } from "@emotion/css";
-import { CurdListPage } from "@/component/curd-list-page";
 
 export default defineComponent(() => {
   const operates = [
@@ -53,11 +51,11 @@ export default defineComponent(() => {
         listProps={{
           addConfig: { inTable: true },
           tableProps: {
-            column: { minWidth: 160 },
+            // column: { minWidth: 160 },
           },
         }}>
         <ModalCurdOpe />
-        <CurdListPage />
+        <pro-curd-list-page title={'curd demo'}/>
         <ProCurdModalFormConnect />
       </pro-curd>
     );
