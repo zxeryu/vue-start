@@ -29,7 +29,7 @@ export const ModalCurdOpe = defineComponent<ModalCurdProps>({
   } as any,
   setup: (props) => {
     const { dispatch, sendRequest } = useProModule();
-    const { rowKey, curdState, listProps, getOperate, refreshList } = useProCurd();
+    const { rowKey, curdState, listProps, getOperate, refreshList, defaultAddRecord } = useProCurd();
 
     const pageState = listProps?.value?.pageState;
 
@@ -58,7 +58,7 @@ export const ModalCurdOpe = defineComponent<ModalCurdProps>({
 
         dispatch({
           type: "detailData",
-          payload: props.defaultAddRecord || {},
+          payload: props.defaultAddRecord || defaultAddRecord?.value || {},
         });
       } else if (subAction === CurdSubAction.SUCCESS) {
         //添加成功
@@ -71,7 +71,7 @@ export const ModalCurdOpe = defineComponent<ModalCurdProps>({
         if (curdState.addAction === CurdAddAction.CONTINUE) {
           dispatch({
             type: "detailData",
-            payload: props.defaultAddRecord || {},
+            payload: props.defaultAddRecord || defaultAddRecord?.value || {},
           });
         } else {
           dispatch({ type: "mode", payload: undefined });

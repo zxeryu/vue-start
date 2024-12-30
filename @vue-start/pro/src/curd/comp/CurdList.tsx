@@ -53,21 +53,7 @@ export const ProCurdList = defineComponent<ProCurdListProps>({
       }),
       (operate: ICurdOperateOpts) => {
         const item = {
-          ...pick(
-            operate,
-            "label",
-            "show",
-            "disabled",
-            "loading",
-            "extraProps",
-            "onClick",
-            "element",
-            "sort",
-            "per",
-            "perSuffix",
-            "tip",
-            "tipProps",
-          ),
+          ...omit(operate, "action", "actor", "convertParams", "element"),
           value: operate.action,
         };
         if (!item.onClick) {
@@ -195,4 +181,11 @@ export const ProCurdListPage = defineComponent({
       );
     };
   },
+});
+
+export const ProCurdListPageConnect = defineComponent(() => {
+  const { pageProps } = useProCurd();
+  return () => {
+    return <ProCurdListPage {...omit(pageProps?.value, "slots")} v-slots={get(pageProps?.value, "slots")} />;
+  };
 });

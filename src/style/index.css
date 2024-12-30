@@ -42,8 +42,7 @@ blockquote {
 
 /*样式二*/
 .pro-page {
-  height: calc(var(--pro-secion-hei) - 10px);
-  max-height: calc(var(--pro-secion-hei) - 10px);
+  --pro-page-hei: calc(var(--pro-secion-hei) - 10px);
   /*margin:10px;*/
 }
 

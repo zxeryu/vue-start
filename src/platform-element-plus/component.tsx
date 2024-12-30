@@ -39,6 +39,7 @@ import {
   ElementKeys,
   ProTip,
   ProCurdListPage,
+  ProCurdModule,
 } from "@vue-start/pro";
 
 import { ProPreview } from "@vue-start/media";
@@ -73,7 +74,7 @@ ProTable.props = {
     type: Object,
     default: {
       DELETE: (record: Record<string, any>, item: IOperateItem) => {
-        ElMessageBox.confirm("确定删除当前数据吗？", "删除").then(() => {
+        ElMessageBox.confirm((item as any).title || "确定删除当前数据吗？", "删除").then(() => {
           item.onClick?.(record);
         });
       },
@@ -147,6 +148,7 @@ export const initComp = (app: App) => {
   app.component("pro-list", ProList);
   app.component("pro-operate", ProOperate);
   app.component("pro-curd", ProCurd);
+  app.component("pro-curd-module", ProCurdModule);
   app.component("pro-modal-curd", ProModalCurd);
   app.component("pro-curd-list", ProCurdList);
   app.component("pro-curd-list-page", ProCurdListPage);
