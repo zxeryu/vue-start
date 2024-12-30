@@ -6,6 +6,11 @@ See [Conventional Commits](https://conventionalcommits.org) for commit guideline
 # 0.5.48
 
 - perf: ProLayout 非 tabs 模式下 keep-live 规则支持；
+- feat: ProCurdListPage 组件；
+- feat: ProCurdPageFormConnect 组件（modal 模式拓展）；
+- feat: ProCurdModule 复合组件；
+- perf: ProCurd 新增 title 属性，支持 modal 模式弹出组件标题拼接；
+- perf: ProTable operate 项支持 routeOpts 路由跳转配置；
 
 # 0.5.46
 
