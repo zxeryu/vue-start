@@ -1,7 +1,7 @@
 import { computed, defineComponent, ExtractPropTypes, inject, PropType, provide, ref, toRef, VNode, Ref } from "vue";
 import { TColumn } from "../../types";
 import { filter, get, isBoolean, isFunction, keys, map, omit, pick, reduce, size, some } from "lodash";
-import { mergeState, proBaseProps, ProBaseProps, renderColumn, useProConfig } from "../../core";
+import { mergeState, proBaseProps, ProBaseProps, renderColumn, useProConfig, useProRouter } from "../../core";
 import { createExpose, filterSlotsByPrefix } from "../../util";
 import { IOpeItem, ProOperate, ProOperateProps } from "../Operate";
 import { ElementKeys } from "../comp";
@@ -61,6 +61,10 @@ export interface IOperateItem {
   //
   tip?: string | VNode | ((record: Record<string, any>) => string | VNode); //tooltip提示
   tipProps?: Record<string, any> | ((record: Record<string, any>) => Record<string, any>); //tooltip配置
+  //
+  title?: string; //modal title 或者 page(sub) title
+  //
+  routeOpts?: { name: string; query: string[] } | ((record: Record<string, any>) => Record<string, any>);
 }
 
 /**
@@ -142,6 +146,8 @@ export const ProTable = defineComponent<ProTableProps>({
 
     const elementMap = props.elementMap || elementMapP;
 
+    const { router } = useProRouter();
+
     const Table = get(elementMapP, ElementKeys.TableKey);
 
     /*********************************** 序号 **************************************/
@@ -166,6 +172,16 @@ export const ProTable = defineComponent<ProTableProps>({
       //拦截某个操作点击事件
       if (props.operateItemClickMap && props.operateItemClickMap[item.value]) {
         props.operateItemClickMap[item.value](record, item);
+        return;
+      }
+      //路由操作
+      const routeOpts = item.routeOpts;
+      if (routeOpts) {
+        if (isFunction(routeOpts)) {
+          router.push(routeOpts(record));
+        } else {
+          router.push({ name: routeOpts.name, query: pick(record, routeOpts.query) });
+        }
         return;
       }
       item.onClick?.(record);
@@ -347,10 +363,7 @@ export const ProTable = defineComponent<ProTableProps>({
         cls.push("has-header");
       }
       return (
-        <div
-          class={cls}
-          style={`--pro-table-toolbar-hei: ${toolbarHeiRef.value}px`}
-          {...(pick(attrs, "class") as any)}>
+        <div class={cls} style={`--pro-table-toolbar-hei: ${toolbarHeiRef.value}px`} {...(pick(attrs, "class") as any)}>
           <div ref={toolbarRef} class={`${props.clsName}-toolbar ${toolbarValidClass.value}`}>
             <div ref={toolbarStartDomRef} class={`${props.clsName}-toolbar-start`}>
               {slots.toolbar?.()}

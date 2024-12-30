@@ -1,12 +1,10 @@
 import { defineComponent } from "vue";
 import { columns } from "@/common/columns";
-import { CurdAction, useProRouter } from "@vue-start/pro";
+import { CurdAction } from "@vue-start/pro";
 import { userDel, userList } from "@/clients/client";
 import { IRequestActor } from "@vue-start/request";
 
 export default defineComponent(() => {
-  const { router } = useProRouter();
-
   const operates = [
     {
       action: CurdAction.LIST,
@@ -18,9 +16,8 @@ export default defineComponent(() => {
     },
     {
       action: CurdAction.DETAIL,
-      onClick: (record: Record<string, any>) => {
-        router.push({ name: "CurdDemoPageDetail", query: { id: record.id } });
-      },
+      // routeOpts: (record:Record<string, any>) => ({ name: "CurdDemoPageDetail", query: {id:record.id} }),
+      routeOpts: { name: "CurdDemoPageDetail", query: ["id"] },
     },
     {
       action: CurdAction.DELETE,

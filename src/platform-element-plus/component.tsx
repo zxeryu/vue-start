@@ -74,7 +74,7 @@ ProTable.props = {
     type: Object,
     default: {
       DELETE: (record: Record<string, any>, item: IOperateItem) => {
-        ElMessageBox.confirm((item as any).title || "确定删除当前数据吗？", "删除").then(() => {
+        ElMessageBox.confirm(item.title || "确定删除当前数据吗？", "删除").then(() => {
           item.onClick?.(record);
         });
       },

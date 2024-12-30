@@ -56,7 +56,6 @@ export interface ICurdOperateOpts extends Omit<IRequestOpts, "actor" | "action">
   action: ICurdAction; //类型，由当前程序赋值
   actor?: IRequestActor;
   tableOperate?: boolean; //是否加入Table operate
-  title?: string; //modal title 或者 page(sub) title
 }
 
 export type TCurdActionEvent = {
