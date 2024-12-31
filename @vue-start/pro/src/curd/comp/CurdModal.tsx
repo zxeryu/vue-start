@@ -36,6 +36,12 @@ export const ProCurdModal = defineComponent<ProCurdModalProps>({
       return false;
     });
 
+    const handleVisibleChange = (v: boolean) => {
+      if (!v) {
+        clearMode();
+      }
+    };
+
     const invalidKeys = keys(proCurdModalProps());
 
     const getComp = useGetCompByKey();
@@ -50,13 +56,13 @@ export const ProCurdModal = defineComponent<ProCurdModalProps>({
         <Modal
           class={"pro-curd-modal"}
           {...omit(props, invalidKeys)}
-          visible={some(props.validMode, (item) => item === mode)}
+          visible
           title={title.value}
           confirmLoading={curdState.operateLoading}
           maskClosable={mode === CurdAction.DETAIL}
           footer={curdState.detailLoading || mode === CurdAction.DETAIL ? false : undefined}
           {...props.overrideProps}
-          onCancel={clearMode}
+          onUpdate:modelValue={handleVisibleChange}
           v-slots={omit(slots, "default")}>
           {curdState.detailLoading && Loading ? (
             <Loading loading {...props.loadingOpts}>
