@@ -3,6 +3,11 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# 0.5.49
+
+- refactor: ProTheme 支持自模块使用；新增模式（暗黑）；
+- feat: 新增 ProAppConfigDrawer appConfig 设置组件；
+
 # 0.5.48
 
 - perf: ProLayout 非 tabs 模式下 keep-live 规则支持；
