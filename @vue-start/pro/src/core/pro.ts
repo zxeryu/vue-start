@@ -8,6 +8,7 @@ import { TRouter } from "./router";
 import { Router } from "vue-router";
 import { mergeStateToData, mergeStateToData2 } from "@vue-start/hooks";
 import { getColumnFormItemName } from "./core";
+import { AppConfig, TAppConfig } from "../theme/ctx";
 
 const proBasePropsFn = () => ({
   /**
@@ -104,6 +105,8 @@ export interface IProConfigProvide {
   showModal: (opts: Record<string, any>) => any;
   //notify
   showNotify: (opts: Record<string, any>) => any;
+  //默认AppConfig
+  appConfig: TAppConfig;
 }
 
 const proConfigProps = () => ({
@@ -126,6 +129,8 @@ const proConfigProps = () => ({
   showModal: { type: Function },
   //notify
   showNotify: { type: Function },
+  //
+  appConfig: { type: Object as PropType<TAppConfig>, default: AppConfig },
 });
 
 const ProConfigKey = Symbol("pro-config");
@@ -198,6 +203,8 @@ export const ProConfig = defineComponent<ProConfigProps>({
       showMsg: props.showMsg,
       showModal: props.showModal,
       showNotify: props.showNotify,
+      //
+      appConfig: props.appConfig,
     });
 
     return () => {

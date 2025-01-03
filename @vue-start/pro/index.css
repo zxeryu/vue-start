@@ -22,6 +22,11 @@
   --pro-color-border: #dcdfe6;
   --pro-color-border-light: #e4e7ed;
   --pro-color-bg: #ffffff;
+  --pro-color-bg-light: #f8f8f8;
+  --pro-color-mode: #ffffff;
+  --pro-color-mode-rgb: 255, 255, 255;
+  --pro-color-mode-reverse: #000000;
+  --pro-color-mode-reverse-rgb: 0, 0, 0;
   --pro-radius: 4px;
   --pro-radius-lg: 8px;
   --pro-radius-md: 4px;
@@ -96,7 +101,7 @@
   height: var(--pro-header-hei);
   display: flex;
   align-items: center;
-  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1);
+  box-shadow: 0 1px 3px 0 rgba(var(--pro-color-mode-reverse-rgb), 0.1);
   z-index: 9;
 }
 
@@ -134,6 +139,7 @@
   overflow: auto;
   position: relative;
   box-sizing: border-box;
+  background-color: var(--pro-color-bg-light);
 }
 
 /*vertical*/
@@ -194,7 +200,6 @@
 
 .pro-layout .pro-layout-tabs {
   height: var(--pro-tabs-hei);
-  background-color: white;
   width: calc(100vw - var(--pro-left-menu-wid));
 }
 
@@ -383,7 +388,7 @@
   bottom: 0;
   left: 0;
   z-index: 9;
-  background-color: white;
+  background-color: var(--pro-color-bg-light);
 }
 
 .pro-page-header {
@@ -395,7 +400,6 @@
 
 .pro-page-header .pro-page-header-back {
   font-size: 16px;
-  color: black;
   cursor: pointer;
   padding-right: 8px;
 }
@@ -406,12 +410,11 @@
 
 .pro-page-header .pro-page-header-title {
   font-size: 16px;
-  color: black;
   margin-right: 12px;
 }
 
 .pro-page-header .pro-page-header-sub-title {
-  color: #00000073;
+  color: var(--pro-color-text-secondary);
 }
 
 .pro-page-header .pro-page-header-space {
@@ -443,7 +446,7 @@
   right: 0;
   left: 0;
   z-index: 1;
-  background-color: white;
+  background-color: var(--pro-color-bg-light);
 }
 
 .pro-page-fill .pro-page-footer {
@@ -452,7 +455,7 @@
   right: 0;
   left: 0;
   z-index: 1;
-  background-color: white;
+  background-color: var(--pro-color-bg-light);
 }
 
 /********************************** curd-list ***********************************/
@@ -556,4 +559,77 @@
 
 .pro-drawer .el-drawer__footer {
   padding: 16px;
+}
+
+/***************************** pro-app-config ***********************************/
+.pro-app-config_form .el-form-item {
+  margin-bottom: 8px;
+}
+
+.pro-app-config_form .el-form-item__label {
+  padding: 0 !important;
+}
+
+.pro-app-config_form_title .el-form-item__content {
+  justify-content: center;
+}
+
+.pro-app-config_form .el-form-item__content {
+  flex-direction: row-reverse;
+}
+
+.pro-app-config_form_layout {
+  width: 100%;
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 10px;
+}
+
+.pro-app-config_form_layout > div {
+  border-radius: 4px;
+  height: 80px;
+  background-color: rgba(var(--pro-color-mode-reverse-rgb), 0.04);
+  cursor: pointer;
+  position: relative;
+  box-sizing: border-box;
+}
+
+.pro-app-config_form_layout > div.selected {
+  border: 2px solid var(--pro-color-primary);
+}
+
+.pro-app-config_form_layout > div > div {
+  position: absolute;
+  background-color: rgba(var(--pro-color-mode-reverse-rgb), 0.4);
+}
+
+.pro-app-config_form_layout .top {
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 20%;
+  border-radius: 2px 2px 0 0;
+}
+
+.pro-app-config_form_layout .left {
+  top: 0;
+  left: 0;
+  bottom: 0;
+  width: 30%;
+  border-radius: 2px 0 0 2px;
+}
+
+.pro-app-config_form_layout > div:nth-child(1) .left {
+  top: 20% !important;
+  background-color: rgba(var(--pro-color-mode-reverse-rgb), 0.2) !important;
+}
+
+.pro-app-config_form_layout > div:nth-child(4) .left {
+  top: 20% !important;
+}
+
+.pro-app-config_btm {
+  display: flex;
+  justify-content: center;
+  padding: 16px 0;
 }

@@ -369,6 +369,17 @@ export const routes = [
         ],
       },
       {
+        name: "ElementTheme",
+        path: "theme",
+        children: [
+          {
+            name: "ElementThemeIndex",
+            path: "index",
+            component: () => import("@/views/element/theme/index"),
+          },
+        ],
+      },
+      {
         name: "ElementTypography",
         path: "typography",
         children: [

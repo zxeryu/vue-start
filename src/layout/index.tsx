@@ -1,28 +1,16 @@
-import { defineComponent, ref } from "vue";
+import { computed, defineComponent } from "vue";
 import { useEffect } from "@vue-start/hooks";
-import { ProLayout, useProRouter } from "@vue-start/pro";
+import { ProLayout, useAppConfig, useProRouter } from "@vue-start/pro";
 import { HeaderLeft, HeaderRight } from "@/layout/Header";
 import { css } from "@emotion/css";
 import { menus } from "@/common/menus";
-import { useConfigStore } from "@/store/StoreCurrent";
 // @ts-ignore
 import Sortable from "sortablejs";
 
 export const BasicLayout = defineComponent(() => {
   const { router } = useProRouter();
 
-  const [config, setConfig] = useConfigStore();
-
-  const layoutOptions = [
-    { label: "compose", value: "compose" },
-    { label: "vertical", value: "vertical" },
-    { label: "horizontal", value: "horizontal" },
-    { label: "horizontal-v", value: "horizontal-v" },
-  ];
-
-  const handleLayoutChange = (v: string) => {
-    setConfig({ layout: v });
-  };
+  const { appConfig, setAppConfig } = useAppConfig();
 
   useEffect(() => {
     if (location.pathname === "/") {
@@ -30,10 +18,8 @@ export const BasicLayout = defineComponent(() => {
     }
   }, []);
 
-  const collapseRef = ref(false);
-
   const handleCollapse = () => {
-    collapseRef.value = !collapseRef.value;
+    setAppConfig((prev) => ({ ...prev, isCollapse: !appConfig.isCollapse }));
   };
 
   // element-plus 中 collapse模式 使用
@@ -81,6 +67,23 @@ export const BasicLayout = defineComponent(() => {
     });
   };
 
+  const tabs = computed(() => {
+    if (appConfig.isTagsView) {
+      return {
+        key: appConfig.isTagsViewDrag,
+        onDragRegister: appConfig.isTagsViewDrag ? onDragRegister : undefined,
+      };
+    }
+    return undefined;
+  });
+
+  const watermark = computed(() => {
+    if (appConfig.isWatermark) {
+      return { str: "水印" };
+    }
+    return undefined;
+  });
+
   return () => {
     return (
       <ProLayout
@@ -89,32 +92,19 @@ export const BasicLayout = defineComponent(() => {
             borderBottom: "unset",
           },
         })}
-        layout={config.layout as any}
-        tabs={{
-          onDragRegister,
-        }}
+        layout={appConfig.layout as any}
+        tabs={tabs.value}
         menus={menus as any}
         fieldNames={{ value: "name", label: "title", hide: "hide", children: "children" }}
-        collapse={collapseRef.value}
-        watermark={{}}
+        collapse={appConfig.isCollapse}
+        watermark={watermark.value}
         v-slots={{
           "header-start": () => <HeaderLeft />,
-          "header-end": () => (
-            <>
-              <HeaderRight />
-              <pro-select
-                class={css({ width: 120, marginLeft: 16 })}
-                value={config.layout}
-                modelValue={config.layout}
-                options={layoutOptions}
-                onChange={handleLayoutChange}
-              />
-            </>
-          ),
+          "header-end": () => <HeaderRight />,
           "menu-start": () => <div class={css({ lineHeight: "30px" })}>start</div>,
           "menu-end": () => (
             <div class={css({ lineHeight: "30px", textAlign: "center" })} onClick={handleCollapse}>
-              {collapseRef.value ? "展开" : "合并"}
+              {appConfig.isCollapse ? "展开" : "合并"}
             </div>
           ),
         }}

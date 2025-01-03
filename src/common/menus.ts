@@ -51,6 +51,7 @@ export const menus = [
           { title: "List", name: "ElementListIndex" },
           { title: "Desc", name: "ElementDescIndex" },
           { title: "Page", name: "ElementPageIndex" },
+          { title: "Theme", name: "ElementThemeIndex" },
         ],
       },
       {
