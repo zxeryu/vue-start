@@ -1,6 +1,8 @@
 # Change Log
 
-# 0.2.33
+# 0.2.34
+
+- fix: form item 支持 color-picker
 
 - perf: Table 多选支持 pagination（分页）模式；
 
