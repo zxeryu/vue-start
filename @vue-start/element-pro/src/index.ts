@@ -48,6 +48,7 @@ import {
   ProFormRadio,
   ProFormSwitch,
   ProFormCascader,
+  ProFormColor,
 } from "./form";
 import { ProTable as Table, ProTableOperateItem } from "./table";
 import { ProUploader, ProLoading, ProMenus, ProModal, ProPagination, ProPopover, ProDropdown, ProDrawer } from "./comp";
@@ -166,4 +167,5 @@ export const formElementMap = {
   radio: ProFormRadio,
   switch: ProFormSwitch,
   cascader: ProFormCascader,
+  color: ProFormColor,
 };
