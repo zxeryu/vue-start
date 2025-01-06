@@ -1,7 +1,7 @@
 import { computed, defineComponent, ExtractPropTypes, inject, PropType, provide, ref, toRef, VNode, Ref } from "vue";
 import { TColumn } from "../../types";
 import { filter, get, isBoolean, isFunction, keys, map, omit, pick, reduce, size, some } from "lodash";
-import { mergeState, proBaseProps, ProBaseProps, renderColumn, useProConfig } from "../../core";
+import { mergeState, proBaseProps, ProBaseProps, renderColumn, useProConfig, useProRouter } from "../../core";
 import { createExpose, filterSlotsByPrefix } from "../../util";
 import { IOpeItem, ProOperate, ProOperateProps } from "../Operate";
 import { ElementKeys } from "../comp";
@@ -58,6 +58,13 @@ export interface IOperateItem {
   sort?: number;
   per?: string; //权限字符串
   perSuffix?: string; //权限字符串后缀
+  //
+  tip?: string | VNode | ((record: Record<string, any>) => string | VNode); //tooltip提示
+  tipProps?: Record<string, any> | ((record: Record<string, any>) => Record<string, any>); //tooltip配置
+  //
+  title?: string; //modal title 或者 page(sub) title
+  //
+  routeOpts?: { name: string; query: string[] } | ((record: Record<string, any>) => Record<string, any>);
 }
 
 /**
@@ -139,6 +146,8 @@ export const ProTable = defineComponent<ProTableProps>({
 
     const elementMap = props.elementMap || elementMapP;
 
+    const { router } = useProRouter();
+
     const Table = get(elementMapP, ElementKeys.TableKey);
 
     /*********************************** 序号 **************************************/
@@ -163,6 +172,16 @@ export const ProTable = defineComponent<ProTableProps>({
       //拦截某个操作点击事件
       if (props.operateItemClickMap && props.operateItemClickMap[item.value]) {
         props.operateItemClickMap[item.value](record, item);
+        return;
+      }
+      //路由操作
+      const routeOpts = item.routeOpts;
+      if (routeOpts) {
+        if (isFunction(routeOpts)) {
+          router.push(routeOpts(record));
+        } else {
+          router.push({ name: routeOpts.name, query: pick(record, routeOpts.query) });
+        }
         return;
       }
       item.onClick?.(record);
@@ -190,8 +209,10 @@ export const ProTable = defineComponent<ProTableProps>({
               disabled: isFunction(item.disabled) ? item.disabled(record) : item.disabled,
               loading: isFunction(item.loading) ? item.loading(record) : item.loading,
               extraProps: isFunction(item.extraProps) ? item.extraProps(record) : item.extraProps,
-              element: isFunction(item.element) ? () => item.element!(record, item) : item.element,
+              element: isFunction(item.element) ? (i) => item.element!(record, i) : item.element,
               onClick: () => handleOperateClick(record, item),
+              tip: isFunction(item.tip) ? item.tip(record) : item.tip,
+              tipProps: isFunction(item.tipProps) ? item.tipProps(record) : item.tipProps,
             } as IOpeItem;
           });
 
@@ -295,17 +316,31 @@ export const ProTable = defineComponent<ProTableProps>({
 
     /******************************** toolbar class *******************************/
 
+    const toolbarRef = ref();
+    const toolbarHeiRef = ref(0);
+
     const toolbarStartDomRef = ref(); //dom
     const toolbarStartValidRef = ref(false); //dom是否为空
     const toolbarExtraDomRef = ref();
     const toolbarExtraValidRef = ref(false);
 
-    useResizeObserver(toolbarStartDomRef, () => {
-      toolbarStartValidRef.value = !!toolbarStartDomRef.value.innerText;
+    //计算toolbar高度
+    useResizeObserver(toolbarRef, (entries) => {
+      const rect = get(entries, [0, "contentRect"]);
+      const styles = window.getComputedStyle(toolbarRef.value);
+      if (rect.height && styles) {
+        const mbs = styles.getPropertyValue("margin-bottom");
+        const mb = parseInt(mbs.replace("px", ""));
+        toolbarHeiRef.value = rect.height + mb;
+      }
     });
 
-    useResizeObserver(toolbarExtraDomRef, () => {
-      toolbarExtraValidRef.value = !!toolbarExtraDomRef.value.innerText;
+    useResizeObserver(toolbarStartDomRef, () => {
+      toolbarStartValidRef.value = !!toolbarStartDomRef.value.innerHTML;
+    });
+
+    useResizeObserver(toolbarExtraDomRef, (entries) => {
+      toolbarExtraValidRef.value = !!toolbarExtraDomRef.value.innerHTML;
     });
 
     const toolbarValidClass = computed(() => {
@@ -323,9 +358,13 @@ export const ProTable = defineComponent<ProTableProps>({
         <ColumnSetting {...props.toolbar?.columnSetting} v-slots={columnSettingSlots} />
       ) : null;
 
+      const cls = [props.clsName];
+      if (toolbarStartValidRef.value || toolbarExtraValidRef.value) {
+        cls.push("has-header");
+      }
       return (
-        <div class={props.clsName} {...(pick(attrs, "class") as any)}>
-          <div class={`${props.clsName}-toolbar ${toolbarValidClass.value}`}>
+        <div class={cls} style={`--pro-table-toolbar-hei: ${toolbarHeiRef.value}px`} {...(pick(attrs, "class") as any)}>
+          <div ref={toolbarRef} class={`${props.clsName}-toolbar ${toolbarValidClass.value}`}>
             <div ref={toolbarStartDomRef} class={`${props.clsName}-toolbar-start`}>
               {slots.toolbar?.()}
             </div>

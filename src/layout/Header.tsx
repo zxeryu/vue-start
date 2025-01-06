@@ -4,6 +4,7 @@ import { css } from "@emotion/css";
 import { getPlatform, PlatformOptions, setPlatform } from "@/common/platform";
 import { columnStr } from "@/common/columns";
 import { useEffect } from "@vue-start/hooks";
+import { ProAppConfigDrawer } from "@vue-start/pro";
 import { useChengState } from "@/store/StoreCurrent";
 
 const DemoDataModal = defineComponent(() => {
@@ -57,6 +58,23 @@ const Platform = defineComponent(() => {
   };
 });
 
+const ConfigSet = defineComponent(() => {
+  const state = reactive({ visible: false });
+
+  const handleClick = () => (state.visible = true);
+
+  const onCancel = () => (state.visible = false);
+
+  return () => {
+    return (
+      <>
+        <pro-button onClick={handleClick}>设置</pro-button>
+        {state.visible && <ProAppConfigDrawer visible onCancel={onCancel} />}
+      </>
+    );
+  };
+});
+
 export const HeaderLeft = defineComponent(() => {
   const { VITE_APP_TITLE } = useConfig();
   return () => {
@@ -83,6 +101,7 @@ export const HeaderRight = defineComponent(() => {
         <DemoDataModal />
         <div class={css({ width: 16 })} />
         <Platform />
+        <ConfigSet />
       </>
     );
   };

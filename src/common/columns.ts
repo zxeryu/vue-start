@@ -44,6 +44,7 @@ export const columns = [
     dataIndex: "name",
     formItemProps: {
       required: true,
+      tip: "这是name",
     },
     formFieldProps: {
       showWordLimit: true,
@@ -59,6 +60,8 @@ export const columns = [
     valueType: "digit",
     formItemProps: {
       rules: [{ required: true }],
+      tip: "这是一个区间，自定义了placement:right",
+      tipProps: { placement: "right" },
     },
     formFieldProps: {},
   },

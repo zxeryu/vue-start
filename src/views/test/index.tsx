@@ -1,25 +1,77 @@
-import { defineComponent } from "vue";
+import { defineComponent, reactive } from "vue";
 import { css } from "@emotion/css";
-import { ProTypography, ProShowText, ProShowDigit, ProShowOptions, ProShowTree, ProShowDate } from "@vue-start/pro";
+import {
+  ProTypography,
+  ProShowText,
+  ProShowDigit,
+  ProShowOptions,
+  ProShowTree,
+  ProShowDate,
+  useMeta,
+  useReadStore,
+  useDispatchStore,
+} from "@vue-start/pro";
 import dayjs from "dayjs";
 import { useRouter } from "vue-router";
+import { proStore } from "@/store/StoreCurrent";
 
 export default defineComponent(() => {
   const router = useRouter();
 
+  const state = reactive({
+    fillMode: true,
+    showFooter: true,
+  });
+
+  const handleOpeFill = () => {
+    state.fillMode = !state.fillMode;
+  };
+
+  const handleOpeFooter = () => {
+    state.showFooter = !state.showFooter;
+  };
+
+  //meta
+  const industry = useMeta("dict", { type: "industry" });
+  const type2 = useMeta("dict", { type: "type" });
+
+  //store
+  const pro = useReadStore(proStore.key);
+  const dispatchStore = useDispatchStore();
+
   return () => {
+    console.log("meta industry===", industry.value);
+    console.log("meta type===", type2.value);
+    console.log("store pro===", pro.value);
     return (
       <pro-page
-
+        // loading
+        fillMode={state.fillMode}
         title={"这是一个标题"}
         subTitle={"这是一个副标题"}
         // fillMode={false}
         v-slots={{
           extra: () => <div>extra</div>,
-          footer: () => <>底部内容</>,
+          footer: () => {
+            if (!state.showFooter) {
+              return null;
+            }
+            return <>底部内容</>;
+          },
         }}>
         Test
         <div onClick={() => router.push({ name: "TestDetail" })}>to detail</div>
+        <div onClick={() => router.push({ name: "TestDetail", query: { id: "1234", title: "1245" } })}>
+          to detail with query
+        </div>
+        <div onClick={handleOpeFill}>{state.fillMode ? "不固定" : "固定"} header footer</div>
+        <div onClick={handleOpeFooter}>{state.showFooter ? "关闭" : "打开"}footer</div>
+        <div
+          onClick={() => {
+            dispatchStore(proStore.key, (prev: any) => ({ ...prev, bbb: new Date().valueOf() }));
+          }}>
+          更新store pro
+        </div>
         <div
           class={css({
             width: 300,

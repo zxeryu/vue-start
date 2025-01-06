@@ -8,6 +8,7 @@ import { TRouter } from "./router";
 import { Router } from "vue-router";
 import { mergeStateToData, mergeStateToData2 } from "@vue-start/hooks";
 import { getColumnFormItemName } from "./core";
+import { AppConfig, TAppConfig } from "../theme/ctx";
 
 const proBasePropsFn = () => ({
   /**
@@ -104,6 +105,8 @@ export interface IProConfigProvide {
   showModal: (opts: Record<string, any>) => any;
   //notify
   showNotify: (opts: Record<string, any>) => any;
+  //默认AppConfig
+  appConfig: TAppConfig;
 }
 
 const proConfigProps = () => ({
@@ -121,11 +124,13 @@ const proConfigProps = () => ({
   //表达式工具集
   expressionMethods: { type: Object as PropType<{ [key: string]: (...params: any[]) => any }> },
   //message toast
-  showMsg: { type: Object },
+  showMsg: { type: Function },
   //modal message-box
-  showModal: { type: Object },
+  showModal: { type: Function },
   //notify
-  showNotify: { type: Object },
+  showNotify: { type: Function },
+  //
+  appConfig: { type: Object as PropType<TAppConfig>, default: AppConfig },
 });
 
 const ProConfigKey = Symbol("pro-config");
@@ -166,8 +171,6 @@ export const ProConfig = defineComponent<ProConfigProps>({
     //全局注册meta Map
     const registerMetaMap = reduce(props.registerMetas, (pair, item) => ({ ...pair, [item.actorName]: item }), {});
 
-    useMetaRegister(registerMetaMap, registerActorMap);
-
     const { dispatchRequest: dispatchRequestOrigin } = useRequestProvide();
 
     //发送接口
@@ -178,6 +181,9 @@ export const ProConfig = defineComponent<ProConfigProps>({
       }
       return dispatchRequestOrigin(registerItem.actor, params, extra);
     };
+
+    //meta订阅
+    useMetaRegister(registerMetaMap, registerActorMap);
 
     provide(ProConfigKey, {
       elementMap: props.elementMap,
@@ -197,6 +203,8 @@ export const ProConfig = defineComponent<ProConfigProps>({
       showMsg: props.showMsg,
       showModal: props.showModal,
       showNotify: props.showNotify,
+      //
+      appConfig: props.appConfig,
     });
 
     return () => {

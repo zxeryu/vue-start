@@ -16,6 +16,9 @@ import {
   ProShowDate,
   ProShowOptions,
   ProShowTree,
+  ProPage,
+  ProTip,
+  ProOperate,
 } from "@vue-start/pro";
 import {
   ElForm,
@@ -26,6 +29,9 @@ import {
   ElButton,
   ElDescriptionsItem,
   ElCheckbox,
+  ElTooltip,
+  ElScrollbar,
+  ElEmpty,
 } from "element-plus";
 import {
   FormMethods,
@@ -42,9 +48,10 @@ import {
   ProFormRadio,
   ProFormSwitch,
   ProFormCascader,
+  ProFormColor,
 } from "./form";
 import { ProTable as Table, ProTableOperateItem } from "./table";
-import { ProUploader, ProModal as Modal, ProLoading, ProMenus, ProModal, ProPagination, ProPopover } from "./comp";
+import { ProUploader, ProLoading, ProMenus, ProModal, ProPagination, ProPopover, ProDropdown, ProDrawer } from "./comp";
 
 export * from "./form";
 export * from "./table";
@@ -89,7 +96,7 @@ ProCurdForm.props = {
 };
 
 ProCurdModal.props = {
-  ...Modal.props,
+  ...ProModal.props,
   ...ProCurdModal.props,
 };
 
@@ -97,6 +104,12 @@ ProUploaderText.props = {
   ...ProUploader.props,
   ...ProUploaderText.props,
   modelValue: String,
+};
+
+ProTip.props = {
+  ...ElTooltip.props,
+  ...ProTip.props,
+  placement: { type: String, default: "top-start" },
 };
 
 export const elementMap = {
@@ -109,20 +122,27 @@ export const elementMap = {
   [ElementKeys.DescriptionsItemKey]: ElDescriptionsItem,
   [ElementKeys.MenusKey]: ProMenus,
   [ElementKeys.ModalKey]: ProModal,
+  [ElementKeys.DrawerKey]: ProDrawer,
   [ElementKeys.PaginationKey]: ProPagination,
   [ElementKeys.PopoverKey]: ProPopover,
+  [ElementKeys.TooltipKey]: ElTooltip,
   [ElementKeys.CheckboxKey]: ElCheckbox,
   [ElementKeys.FormKey]: Form,
   [ElementKeys.FormItemKey]: ProFormItem,
   [ElementKeys.TableKey]: Table,
   [ElementKeys.TableOperateKey]: ProTableOperateItem,
   [ElementKeys.UploaderKey]: ProUploader,
+  [ElementKeys.DropdownKey]: ProDropdown,
+  [ElementKeys.ScrollKey]: ElScrollbar,
+  [ElementKeys.EmptyKey]: ElEmpty,
   //pro
   [ElementKeys.ProFormKey]: ProForm,
   [ElementKeys.ProSearchFormKey]: ProSearchForm,
   [ElementKeys.ProTableKey]: ProTable,
   [ElementKeys.ProCurdKey]: ProCurd,
   [ElementKeys.ProListKey]: ProList,
+  [ElementKeys.ProPageKey]: ProPage,
+  [ElementKeys.ProOperateKey]: ProOperate,
   //show
   text: ProShowText,
   digit: ProShowDigit,
@@ -147,4 +167,5 @@ export const formElementMap = {
   radio: ProFormRadio,
   switch: ProFormSwitch,
   cascader: ProFormCascader,
+  color: ProFormColor,
 };

@@ -5,6 +5,7 @@ import { useProFormList } from "./FormList";
 import { get, isBoolean, keys, map, omit, set } from "lodash";
 import { convertPathToList } from "../../util";
 import { useProConfig } from "../../core";
+import { ProTip } from "../Tip";
 
 export interface FormItemProps {
   name?: string | number | (string | number)[];
@@ -15,6 +16,9 @@ const proFormItemProps = () => ({
   fieldProps: { type: Object },
   showProps: { type: Object },
   slots: { type: Object },
+  //
+  tip: { type: [String, Object] },
+  tipProps: { type: Object },
 });
 
 export type ProFormItemProps = Partial<ExtractPropTypes<ReturnType<typeof proFormItemProps>>> & Record<string, any>;
@@ -32,7 +36,7 @@ export const createFormItemCompFn = <T extends FormItemProps>(
       },
       setup: (props, { slots }) => {
         const { formExtraMap, elementMap } = useProConfig();
-        const { formState, readonlyState, disableState, readonly: formReadonly } = useProForm();
+        const { formState, readonlyState, disableState, readonly: formReadonly, userOpe } = useProForm();
         const formListCtx = useProFormList();
 
         //优先级 props.readonly > readonlyState > formContext.readonly
@@ -73,6 +77,8 @@ export const createFormItemCompFn = <T extends FormItemProps>(
         const path = formListCtx?.pathList ? [...formListCtx.pathList, ...nameList] : nameList;
 
         const setValue = (v: any) => {
+          //标记用户操作过
+          userOpe.value = true;
           set(formState, path, v);
         };
 
@@ -113,7 +119,15 @@ export const createFormItemCompFn = <T extends FormItemProps>(
               {...omit(props, ...invalidKeys, "name", "rules")}
               name={path}
               rules={rules.value}
-              v-slots={props.slots}>
+              v-slots={{
+                label: () => (
+                  <>
+                    {props.label}
+                    {props.tip && <ProTip content={props.tip} title={props.tip} {...props.tipProps} />}
+                  </>
+                ),
+                ...props.slots,
+              }}>
               {readonly.value ? renderShow() : renderInput()}
             </FormItem>
           );

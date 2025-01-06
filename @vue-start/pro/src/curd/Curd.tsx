@@ -11,9 +11,10 @@ import {
   useModuleEvent,
   useProConfig,
   useProModule,
+  useProRouter,
 } from "../core";
-import { filter, get, keys, map, omit, pick, reduce, sortBy } from "lodash";
-import { TActionEvent, TColumn, TColumns } from "../types";
+import { filter, get, isString, keys, map, omit, pick, reduce, sortBy } from "lodash";
+import { TActionEvent, TColumns } from "../types";
 import { UnwrapNestedRefs } from "@vue/reactivity";
 import {
   CurdAction,
@@ -23,9 +24,11 @@ import {
   ICurdCurrentMode,
   ICurdSubAction,
   provideProCurd,
+  useProCurd,
 } from "./ctx";
-import { IOperateItem } from "../comp";
+import { IOperateItem, useProLayout } from "../comp";
 import { IRequestActor } from "@vue-start/request";
+import { findTreeItem } from "@vue-start/hooks";
 
 export interface IListData extends Record<string, any> {
   total: number;
@@ -79,11 +82,19 @@ const proCurdProps = () => ({
   convertOperate: {
     type: Function as PropType<(operate: ICurdOperateOpts, origin: ICurdOperateOpts) => ICurdOperateOpts>,
   },
+  //添加对象-默认属性
+  defaultAddRecord: { type: Object as PropType<Record<string, any>> },
+  //模块名称
+  title: { type: String },
+  useMenuName: { type: Boolean }, //使用菜单名称
   /************************* 子组件props *******************************/
   listProps: { type: Object as PropType<Record<string, any>> },
   formProps: { type: Object as PropType<Record<string, any>> },
   descProps: { type: Object as PropType<Record<string, any>> },
   modalProps: { type: Object as PropType<Record<string, any>> },
+  //
+  pageProps: { type: Object as PropType<Record<string, any>> },
+  subPageProps: { type: Object as PropType<Record<string, any>> },
 });
 
 type CurdProps = Partial<ExtractPropTypes<ReturnType<typeof proCurdProps>>> & ProBaseProps;
@@ -91,14 +102,30 @@ type CurdProps = Partial<ExtractPropTypes<ReturnType<typeof proCurdProps>>> & Pr
 export const CurdMethods = ["sendCurdEvent", "refreshList", "sendEvent", "sendRequest"];
 
 const Curd = defineComponent<CurdProps>({
+  inheritAttrs: false,
   props: {
     ...proBaseProps,
     ...(proCurdProps() as any),
   },
   setup: (props, { slots, expose }) => {
+    const layoutProvide = useProLayout();
+
+    const { route } = useProRouter();
+
     const { elementMap, state, sendEvent, sendRequest } = useProModule() as Omit<IProModuleProvide, "state"> & {
       state: ICurdState;
     };
+
+    const title = computed(() => {
+      if (props.title) return props.title;
+
+      if (props.useMenuName && layoutProvide) {
+        const { menus, convertName } = layoutProvide;
+        const { target } = findTreeItem(menus.value, (item) => item.value === convertName(route));
+        return target?.label || "";
+      }
+      return "";
+    });
 
     /**
      * columns columnState 合并
@@ -201,10 +228,15 @@ const Curd = defineComponent<CurdProps>({
       return get(operateMap, action);
     };
 
+    const defaultAddRecord = computed(() => props.defaultAddRecord);
+
     const listProps = computed(() => props.listProps);
     const formProps = computed(() => props.formProps);
     const descProps = computed(() => props.descProps);
     const modalProps = computed(() => props.modalProps);
+    //
+    const pageProps = computed(() => props.pageProps);
+    const subPageProps = computed(() => props.subPageProps);
 
     provideProCurd({
       columns: columns as any,
@@ -226,10 +258,16 @@ const Curd = defineComponent<CurdProps>({
       //
       refreshList: handleSearch,
       //
+      defaultAddRecord: defaultAddRecord as any,
+      //
+      title: title.value,
+      //
       listProps: listProps as any,
       formProps: formProps as any,
       descProps: descProps as any,
       modalProps: modalProps as any,
+      pageProps: pageProps as any,
+      subPageProps: subPageProps as any,
     });
 
     expose({ sendCurdEvent, refreshList: handleSearch });
@@ -339,3 +377,38 @@ export const ProCurd = defineComponent<ProCurdProps>({
     };
   },
 });
+
+//公共方法、属性
+export const useCurdCommon = () => {
+  const { dispatch } = useProModule();
+  const { curdState, getOperate, title } = useProCurd();
+
+  const clearMode = () => {
+    dispatch({ type: "mode", payload: undefined });
+    dispatch({ type: "detailData", payload: {} });
+    dispatch({ type: "detailLoading", payload: false });
+    dispatch({ type: "addAction", payload: undefined });
+  };
+
+  const operate = computed(() => {
+    const mode = curdState.mode;
+    if (!mode) return undefined;
+    return getOperate(mode);
+  });
+
+  const opeTitle = computed<string>(() => {
+    const o = operate.value;
+    if (!o) return "";
+    //operate item 自定义
+    if (o.title) return o.title;
+
+    const label = o.label || "";
+    //根据curd title 拼接
+    if (title && isString(label)) {
+      return `${title}-${label}`;
+    }
+    return label as string;
+  });
+
+  return { clearMode, operate, opeTitle };
+};

@@ -1,10 +1,11 @@
 import { App } from "@vue/runtime-core";
-import { ElButton, ElInputNumber, ElMessageBox, ElIcon, ElTree, ElInput, ElSwitch } from "element-plus";
+import { ElButton, ElInputNumber, ElMessageBox, ElIcon,ElScrollbar, ElTree, ElInput, ElSwitch } from "element-plus";
 import { ArrowLeftBold } from "@element-plus/icons-vue";
 import {
   ProLoading,
   ProFormItem,
   ProModal,
+  ProDrawer,
   ProPagination,
   ProPopover,
   ProCheckbox,
@@ -35,6 +36,10 @@ import {
   ColumnSetting,
   IOperateItem,
   TColumn,
+  ElementKeys,
+  ProTip,
+  ProCurdListPage,
+  ProCurdModule,
 } from "@vue-start/pro";
 
 import { ProPreview } from "@vue-start/media";
@@ -69,7 +74,7 @@ ProTable.props = {
     type: Object,
     default: {
       DELETE: (record: Record<string, any>, item: IOperateItem) => {
-        ElMessageBox.confirm("确定删除当前数据吗？", "删除").then(() => {
+        ElMessageBox.confirm(item.title || "确定删除当前数据吗？", "删除").then(() => {
           item.onClick?.(record);
         });
       },
@@ -94,6 +99,7 @@ ProSearchForm.props = {
 
 ProPage.props = {
   ...ProPage.props,
+  layoutTabsBackMode: { type: Boolean, default: true },
   renderBackIcon: {
     type: Function,
     default: () => (
@@ -107,8 +113,21 @@ ProPage.props = {
   },
 };
 
+ProCurdListPage.props = {
+  ...ProCurdListPage.props,
+  as: { type: String, default: "div" },
+};
+
+ProModal.props = {
+  ...ProModal.props,
+  // top: { type: String, default: "5vh" },
+  scrollProps: { type: Object, default: { maxHeight: "70vh" } },
+};
+
 export const elementMap = {
   ...elementMapOrigin,
+  [ElementKeys.ScrollKey]: ElScrollbar,
+  [ElementKeys.ProOperateKey]: ProOperate,
   ProPage,
   ProTypography,
   Tree$: ElTree,
@@ -135,12 +154,16 @@ export const initComp = (app: App) => {
   app.component("pro-list", ProList);
   app.component("pro-operate", ProOperate);
   app.component("pro-curd", ProCurd);
+  app.component("pro-curd-module", ProCurdModule);
   app.component("pro-modal-curd", ProModalCurd);
   app.component("pro-curd-list", ProCurdList);
+  app.component("pro-curd-list-page", ProCurdListPage);
   app.component("pro-typography", ProTypography);
-  //element-plus
-  app.component("pro-loading", ProLoading);
+  app.component("pro-tip", ProTip),
+    //element-plus
+    app.component("pro-loading", ProLoading);
   app.component("pro-modal", ProModal);
+  app.component("pro-drawer", ProDrawer);
   app.component("pro-pagination", ProPagination);
   app.component("pro-popover", ProPopover);
   app.component("pro-checkbox", ProCheckbox);

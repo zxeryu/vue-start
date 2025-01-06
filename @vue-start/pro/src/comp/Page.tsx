@@ -1,7 +1,8 @@
-import { defineComponent, ExtractPropTypes, PropType, VNode } from "vue";
+import { computed, defineComponent, ExtractPropTypes, PropType, VNode } from "vue";
 import { keys, omit, pick } from "lodash";
 import { ElementKeys, useGetCompByKey } from "./comp";
-import { useRouter } from "vue-router";
+import { isValidNode, useProRouter } from "../core";
+import { useProLayout } from "./layout";
 
 const proPageHeaderProps = () => ({
   title: { type: String },
@@ -16,12 +17,12 @@ const proPageHeaderProps = () => ({
 
 export type PageHeaderProps = Partial<ExtractPropTypes<ReturnType<typeof proPageHeaderProps>>>;
 
-const PageHeader = defineComponent({
+export const PageHeader = defineComponent({
   props: {
     ...proPageHeaderProps(),
   },
   setup: (props, { slots }) => {
-    const router = useRouter();
+    const { router } = useProRouter();
 
     const handleOnBackClick = () => {
       if (props.onBackClick) {
@@ -56,6 +57,12 @@ const proPageProps = () => ({
   loadingOpts: Object,
   //是否启用填充模式，即："pro-page-content"高度铺满"pro-page"中除header、footer的其他高度
   fillMode: { type: Boolean, default: true },
+  //根作为什么元素渲染
+  as: { type: String },
+  //开启的话，在layout tabs模式下，不展示showBack
+  layoutTabsBackMode: { type: Boolean },
+  //作为子页面（在layout中无对应的菜单）
+  sub: { type: Boolean },
 });
 
 export type ProPageProps = Partial<ExtractPropTypes<ReturnType<typeof proPageProps>>> & PageHeaderProps;
@@ -66,32 +73,74 @@ export const ProPage = defineComponent<ProPageProps>({
     ...proPageProps(),
   },
   setup: (props, { slots }) => {
+    const layoutProvide = useProLayout();
+
+    const showBack = computed(() => {
+      //不开启
+      if (!props.layoutTabsBackMode) {
+        return props.showBack;
+      }
+      //非路由页面（子页面）
+      if (props.sub) {
+        return props.showBack;
+      }
+      //不在layout中
+      if (!layoutProvide) {
+        return props.showBack;
+      }
+      const { showTabs } = layoutProvide;
+      //未开启tabs
+      if (!showTabs.value) {
+        return props.showBack;
+      }
+      //不展示showBack
+      return false;
+    });
+
     const getComp = useGetCompByKey();
     const Loading = getComp(ElementKeys.LoadingKey);
+    const RComp = props.as || getComp(ElementKeys.ScrollKey) || "div";
 
-    const headerKeys = keys(PageHeader.props);
+    const renderLoading = () => {
+      if (!Loading) {
+        return null;
+      }
+      return (
+        <Loading loading {...props.loadingOpts}>
+          <div class={"pro-loading-dom"} />
+        </Loading>
+      );
+    };
+
+    const headerKeys = keys(PageHeader.props).filter((item) => item !== "showBack");
 
     return () => {
       const hasHeader = props.title || slots.title || props.subTitle || slots.subTitle || slots.extra;
-      const hasFooter = !!slots.footer;
+
+      const footer = slots.footer?.();
+      const hasFooter = !props.loading && isValidNode(footer);
+
+      const cls = ["pro-page"];
+      if (props.sub) cls.push("pro-page-sub");
+      if (props.fillMode) cls.push("pro-page-fill");
+      if (hasHeader) cls.push("has-header");
+      if (hasFooter) cls.push("has-footer");
 
       return (
-        <div class={`pro-page ${props.fillMode ? "pro-page-fill" : ""}`}>
+        <RComp class={cls}>
           {slots.start?.()}
-          {hasHeader && <PageHeader {...pick(props, headerKeys)} v-slots={omit(slots, "start", "default", "footer")} />}
-          <div class={"pro-page-content"}>
-            {props.loading ? (
-              Loading ? (
-                <Loading loading {...props.loadingOpts}>
-                  <div class={"pro-loading-dom"} />
-                </Loading>
-              ) : null
-            ) : (
-              slots.default?.()
-            )}
-          </div>
-          {!props.loading && hasFooter && <div class={"pro-page-footer"}>{slots.footer?.()}</div>}
-        </div>
+          {hasHeader && (
+            <PageHeader
+              {...pick(props, headerKeys)}
+              showBack={showBack.value}
+              v-slots={omit(slots, "start", "default", "footer")}
+            />
+          )}
+
+          <div class={"pro-page-content"}>{props.loading ? renderLoading() : slots.default?.()}</div>
+
+          {hasFooter && <div class={"pro-page-footer"}>{footer}</div>}
+        </RComp>
       );
     };
   },
