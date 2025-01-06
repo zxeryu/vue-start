@@ -24,7 +24,7 @@
   "bugs": {
     "url": "https://github.com/zxeryu/vue-start/issues"
   },
-  "dependencies": {
-    "echarts": "^5.4.2"
+  "peerDependencies": {
+    "echarts": "*"
   }
 }
