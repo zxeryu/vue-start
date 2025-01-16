@@ -63,6 +63,9 @@ const proThemeProps = () => ({
    * 将生成的ITheme对象映射成 css 变量
    */
   createCssVar: { type: Function as PropType<(t: ITheme, mode: string) => Record<string, string | number>> },
+  //默认themeToken
+  lightThemeToken: { type: Object as PropType<IThemeToken>, default: ThemeToken },
+  darkThemeToken: { type: Object as PropType<IThemeToken>, default: DarkThemeToken },
 });
 
 export const ProTheme = defineComponent({
@@ -88,7 +91,7 @@ export const ProTheme = defineComponent({
           ...tt,
           color: { ...tt?.color, primary: tt?.color?.primary || appConfig.primary },
         },
-        mode.value === "dark" ? DarkThemeToken : ThemeToken,
+        mode.value === "dark" ? props.darkThemeToken : props.lightThemeToken,
       );
     };
 
