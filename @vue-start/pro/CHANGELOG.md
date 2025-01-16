@@ -3,6 +3,11 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# 0.5.51
+
+- fix: 左侧菜单收起 css 类精确，由.pro-layout.mini 改为 .pro-layout.has-left-menu.mini
+- fix: ProTheme 新增 lightThemeToken、darkThemeToken，支持 ThemeToken 自定义
+
 # 0.5.50
 
 - fix: ProCurdModule ref 穿透；
