@@ -89,7 +89,7 @@
   --pro-left-menu-wid: 220px;
 }
 
-.pro-layout.mini {
+.pro-layout.has-left-menu.mini {
   --pro-left-menu-wid: 64px;
 }
 
