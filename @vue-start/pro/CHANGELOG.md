@@ -7,6 +7,8 @@ See [Conventional Commits](https://conventionalcommits.org) for commit guideline
 
 - fix: 左侧菜单收起 css 类精确，由.pro-layout.mini 改为 .pro-layout.has-left-menu.mini
 - fix: ProTheme 新增 lightThemeToken、darkThemeToken，支持 ThemeToken 自定义
+- fix: FormItem label 插槽重写 bug 修复；
+- fix: ProLayout routeOpts（ProRouterView 组件） 支持 tagsCache 配置；ProLayout menus 项新增 keep 配置（加入 keep-live 缓存）；
 
 # 0.5.50
 
