@@ -98,6 +98,9 @@ export const BasicLayout = defineComponent(() => {
         fieldNames={{ value: "name", label: "title", hide: "hide", children: "children" }}
         collapse={appConfig.isCollapse}
         watermark={watermark.value}
+        routeOpts={{
+          // tagsCache: false,
+        }}
         v-slots={{
           "header-start": () => <HeaderLeft />,
           "header-end": () => <HeaderRight />,
