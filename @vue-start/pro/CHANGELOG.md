@@ -3,6 +3,10 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# 0.5.52
+
+- fix: ProTable header 有效性 css。通过 table css 取： pro-table.has-header .pro-table-toolbar；通过直接属性取：pro-table-toolbar-valid；
+
 # 0.5.51
 
 - fix: 左侧菜单收起 css 类精确，由.pro-layout.mini 改为 .pro-layout.has-left-menu.mini
