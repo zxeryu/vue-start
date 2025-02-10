@@ -1,7 +1,15 @@
 import { computed, defineComponent, ExtractPropTypes, inject, PropType, provide, ref, toRef, VNode, Ref } from "vue";
 import { TColumn } from "../../types";
 import { filter, get, isBoolean, isFunction, keys, map, omit, pick, reduce, size, some } from "lodash";
-import { mergeState, proBaseProps, ProBaseProps, renderColumn, useProConfig, useProRouter } from "../../core";
+import {
+  isValidNode,
+  mergeState,
+  proBaseProps,
+  ProBaseProps,
+  renderColumn,
+  useProConfig,
+  useProRouter,
+} from "../../core";
 import { createExpose, filterSlotsByPrefix } from "../../util";
 import { IOpeItem, ProOperate, ProOperateProps } from "../Operate";
 import { ElementKeys } from "../comp";
@@ -319,11 +327,6 @@ export const ProTable = defineComponent<ProTableProps>({
     const toolbarRef = ref();
     const toolbarHeiRef = ref(0);
 
-    const toolbarStartDomRef = ref(); //dom
-    const toolbarStartValidRef = ref(false); //dom是否为空
-    const toolbarExtraDomRef = ref();
-    const toolbarExtraValidRef = ref(false);
-
     //计算toolbar高度
     useResizeObserver(toolbarRef, (entries) => {
       const rect = get(entries, [0, "contentRect"]);
@@ -333,19 +336,6 @@ export const ProTable = defineComponent<ProTableProps>({
         const mb = parseInt(mbs.replace("px", ""));
         toolbarHeiRef.value = rect.height + mb;
       }
-    });
-
-    useResizeObserver(toolbarStartDomRef, () => {
-      toolbarStartValidRef.value = !!toolbarStartDomRef.value.innerHTML;
-    });
-
-    useResizeObserver(toolbarExtraDomRef, (entries) => {
-      toolbarExtraValidRef.value = !!toolbarExtraDomRef.value.innerHTML;
-    });
-
-    const toolbarValidClass = computed(() => {
-      if (toolbarExtraValidRef.value || toolbarStartValidRef.value) return `${props.clsName}-toolbar-valid`;
-      return "";
     });
 
     const invalidKeys = keys(proTableProps());
@@ -358,19 +348,21 @@ export const ProTable = defineComponent<ProTableProps>({
         <ColumnSetting {...props.toolbar?.columnSetting} v-slots={columnSettingSlots} />
       ) : null;
 
+      const tb = slots.toolbar?.();
+      const tbExtra = slots.toolbarExtra?.([columnSettingNode]);
+
       const cls = [props.clsName];
-      if (toolbarStartValidRef.value || toolbarExtraValidRef.value) {
+      let oldCls = "";
+      if (isValidNode(tb) || isValidNode(tbExtra) || isColumnSetting.value) {
         cls.push("has-header");
+        oldCls = `${props.clsName}-toolbar-valid`;
       }
+
       return (
         <div class={cls} style={`--pro-table-toolbar-hei: ${toolbarHeiRef.value}px`} {...(pick(attrs, "class") as any)}>
-          <div ref={toolbarRef} class={`${props.clsName}-toolbar ${toolbarValidClass.value}`}>
-            <div ref={toolbarStartDomRef} class={`${props.clsName}-toolbar-start`}>
-              {slots.toolbar?.()}
-            </div>
-            <div ref={toolbarExtraDomRef} class={`${props.clsName}-toolbar-extra`}>
-              {slots.toolbarExtra ? slots.toolbarExtra([columnSettingNode]) : <>{columnSettingNode}</>}
-            </div>
+          <div ref={toolbarRef} class={`${props.clsName}-toolbar ${oldCls}`}>
+            <div class={`${props.clsName}-toolbar-start`}>{tb}</div>
+            <div class={`${props.clsName}-toolbar-extra`}>{tbExtra || columnSettingNode}</div>
           </div>
           <Table
             ref={tableRef}
