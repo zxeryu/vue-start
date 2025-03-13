@@ -1,5 +1,5 @@
 export * from "./Loading";
-export * from "./Modal";
+export * from "./Feedback";
 export * from "./Pagination";
 export * from "./Popover";
 export * from "./Checkbox";
@@ -10,3 +10,4 @@ export * from "./Menus";
 export * from "./Uploader";
 export * from "./input";
 export * from "./Tree";
+export * from "./Dropdown";

@@ -24,11 +24,18 @@ export interface IProCurdProvide {
   getOperate: (action: ICurdAction) => ICurdOperateOpts | undefined;
   //刷新列表
   refreshList: (extra?: Record<string, any>) => void;
+  //
+  defaultAddRecord?: ComputedRef<Record<string, any> | undefined>;
+  //模块名称
+  title?: string;
   /******************子组件参数*******************/
   listProps?: ComputedRef<Record<string, any> | undefined>;
   formProps?: ComputedRef<Record<string, any> | undefined>;
   descProps?: ComputedRef<Record<string, any> | undefined>;
   modalProps?: ComputedRef<Record<string, any> | undefined>;
+  //
+  pageProps?: ComputedRef<Record<string, any> | undefined>; //ProCurdListPage 组件参数
+  subPageProps?: ComputedRef<Record<string, any> | undefined>; //ProCurdPage组件参数
 }
 
 export const useProCurd = <T extends IProCurdProvide>(): T => inject(ProCurdKey) as T;

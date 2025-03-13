@@ -51,6 +51,7 @@ export const menus = [
           { title: "List", name: "ElementListIndex" },
           { title: "Desc", name: "ElementDescIndex" },
           { title: "Page", name: "ElementPageIndex" },
+          { title: "Theme", name: "ElementThemeIndex" },
         ],
       },
       {
@@ -83,8 +84,32 @@ export const menus = [
   },
   { title: "css", name: "CssIndex" },
   {
+    title: "curd",
+    name: "CurdDemo",
+    children: [
+      { title: "curd-basic", name: "CurdDemoBasicIndex" },
+      { title: "curd-module", name: "CurdDemoModalIndex" },
+      {
+        title: "curd-page",
+        name: "CurdDemoPageIndex",
+        children: [{ title: "curd-page-detail", name: "CurdDemoPageDetail", hide: true }],
+      },
+    ],
+  },
+  {
     title: "module",
     name: "Module",
     children: [{ title: "list", name: "QuotaList" }],
+  },
+  {
+    title: "test",
+    name: "TestIndex",
+    children: [
+      {
+        title: "test",
+        name: "TestDetail",
+        hide: true,
+      },
+    ],
   },
 ];

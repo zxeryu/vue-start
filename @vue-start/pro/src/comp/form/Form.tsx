@@ -5,6 +5,7 @@ import { convertCollection, useRuleState } from "@vue-start/hooks";
 import { get, keys, map, omit, size, debounce, filter } from "lodash";
 import {
   getColumnFormItemName,
+  isValidNode,
   mergeState,
   proBaseProps,
   ProBaseProps,
@@ -30,6 +31,10 @@ interface IProFormProvide extends IProFormProvideExtra {
   formElementMap?: TElementMap;
   //
   columns: Ref<TColumns>;
+  //记录用户是否操作
+  userOpe: Ref<boolean>;
+  //记录正在进行的异步任务，比如：上传
+  asyncNum: Ref<number>;
 }
 
 export const useProForm = (): IProFormProvide => inject(ProFormKey) as IProFormProvide;
@@ -115,7 +120,11 @@ const proFormProps = () => ({
 export type ProFormProps = Partial<ExtractPropTypes<ReturnType<typeof proFormProps>>> &
   ProBaseProps &
   Omit<ProGridProps, "items"> & {
-    onFinish?: (showValues?: Record<string, any>, values?: Record<string, any>) => void;
+    onFinish?: (
+      showValues?: Record<string, any>,
+      values?: Record<string, any>,
+      opts?: Pick<IProFormProvide, "userOpe" | "asyncNum">,
+    ) => void;
     onFinishFailed?: (errs: any) => void;
   };
 
@@ -150,6 +159,11 @@ export const ProForm = defineComponent<ProFormProps>({
       return list;
     });
 
+    //
+    const userOpe = ref(false);
+    //
+    const asyncNum = ref(0);
+
     /*************** finish **************/
     const emitFinish = (...e: any[]) => {
       // @ts-ignore
@@ -157,7 +171,7 @@ export const ProForm = defineComponent<ProFormProps>({
       if (flag === true) {
         return;
       }
-      emit("finish", ...e);
+      emit("finish", ...e, { userOpe, asyncNum });
     };
 
     const dOpts = props.debounceSubmit;
@@ -175,7 +189,13 @@ export const ProForm = defineComponent<ProFormProps>({
     };
 
     const formRef = ref();
-    expose(createExpose(props.formMethods || [], formRef));
+    expose({
+      //form 原始方法
+      ...createExpose(props.formMethods || [], formRef),
+      //
+      userOpe,
+      asyncNum,
+    });
 
     provideProForm({
       formState,
@@ -191,6 +211,9 @@ export const ProForm = defineComponent<ProFormProps>({
       columns: columns as any,
       //
       formRef,
+      //
+      userOpe: userOpe as any,
+      asyncNum: asyncNum as any,
       //
       ...props.provideExtra,
     });
@@ -288,23 +311,35 @@ export const ProForm = defineComponent<ProFormProps>({
       if (!Form) {
         return null;
       }
+
+      const start = slots.start?.();
+      const content = slots.default?.();
+      const end = slots.end?.();
+
+      const cls = [props.clsName];
+      //空，无自组件
+      const isEmpty = size(items.value) <= 0 && !isValidNode(start) && !isValidNode(content);
+      if (isEmpty) {
+        cls.push("is-empty");
+      }
+
       return (
         <Form
           ref={formRef}
-          class={props.clsName}
+          class={cls}
           {...omit(attrs, "onFinish")}
           {...omit(props, ...invalidKeys, ...gridKeys, "onFinish", "operate")}
           model={formState}
           onFinish={handleFinish}>
-          {slots.start?.()}
+          {start}
 
           {formElementMap && size(columns.value) > 0 && (
             <>{props.row ? <ProGrid row={props.row} col={props.col} items={items.value as any} /> : items.value}</>
           )}
 
-          {slots.default?.()}
+          {content}
 
-          {props.operate && (
+          {props.operate && !isEmpty && (
             <ProOperate
               class={`${props.clsName}-operate`}
               {...omit(props.operate, "items", "itemState", "onReset", "onSubmit", "onContinue")}
@@ -313,7 +348,7 @@ export const ProForm = defineComponent<ProFormProps>({
             />
           )}
 
-          {slots.end?.()}
+          {end}
         </Form>
       );
     };

@@ -25,6 +25,20 @@ import { isPathHasParent, isValidPath, restorePath } from "@vue-start/hooks";
 import { css } from "@emotion/css";
 
 /**
+ *  渲染后的插槽是否是有效的vnode
+ */
+export const isValidNode = (vns?: VNode[]) => {
+  if (!vns) {
+    return false;
+  }
+  //注释节点，vue3中使用注释组件标记逻辑组件返回null/undefined的情况
+  if (vns?.[0]?.type?.toString() === "Symbol(Comment)") {
+    return false;
+  }
+  return true;
+};
+
+/**
  * 获取Column的valueType，默认"text"
  * @param column
  */

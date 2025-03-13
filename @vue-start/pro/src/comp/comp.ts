@@ -13,20 +13,28 @@ export const ElementKeys = {
   DescriptionsItemKey: "ProDescriptionsItem$",
   PaginationKey: "Pagination$", //Pagination
   PopoverKey: "Popover$", //Popover
+  TooltipKey: "Tooltip$", //Tooltip
   CheckboxKey: "Checkbox$", //Checkbox
   MenusKey: "Menus$",
   ModalKey: "Modal$", //Modal
+  DrawerKey: "Drawer$",
+  ScrollKey: "Scroll$",
+  PageKey: "Page$",
   FormKey: "Form$", //Form
   FormItemKey: "FormItem$", //FormItem
   TableKey: "Table$", //Table
   TableOperateKey: "TableOperate$", //Table operate item
   UploaderKey: "Uploader$", //Uploader
+  EmptyKey: "Empty$",
+  DropdownKey: "Dropdown$",
   //pro
   ProFormKey: "ProForm$", //ProForm
   ProSearchFormKey: "ProSearchForm$", //ProSearchForm
   ProTableKey: "ProTable$", //ProTable
   ProCurdKey: "ProCurd$", //ProCurd
   ProListKey: "ProList$", //ProCurd
+  ProPageKey: "ProPage$",
+  ProOperateKey: "ProOperate$",
 };
 
 /**

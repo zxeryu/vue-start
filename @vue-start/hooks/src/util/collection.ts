@@ -1,6 +1,7 @@
 import { isValidInRules, TConvert, TRules } from "./base";
 import {
   assign,
+  filter,
   find,
   findIndex,
   forEach,
@@ -182,6 +183,33 @@ export const findTreeItem = (
 };
 
 /**
+ * 根据数组（value）逐级查找
+ * @param data
+ * @param value []
+ * @param fieldNames
+ */
+export const findTreeItem2 = (
+  data: TData[],
+  value: (string | number)[],
+  fieldNames: { children: string; value: string } | undefined = { children: "children", value: "value" },
+): TFindTarget => {
+  const target: TFindTarget = {
+    parentList: [],
+  };
+  let temp: TData[] | undefined = data;
+  forEach(value, (v) => {
+    const current = find(temp, (i) => i[fieldNames.value] === v);
+    if (current && size(current[fieldNames.children]) > 0) {
+      temp = current[fieldNames.children];
+    }
+    target.parentList!.push(current!);
+  });
+  target.target = last(target.parentList);
+  target.list = temp;
+  return target;
+};
+
+/**
  * tree数据转化为Map对象
  * @param data
  * @param convert
@@ -231,6 +259,27 @@ export const treeToMap = (
 };
 
 /************************************** common *******************************************/
+
+/**
+ * list 或 tree 数据过滤
+ * @param data
+ * @param verify
+ * @param fieldNames
+ */
+export const filterCollection = (
+  data: TData[],
+  verify: (item: TData) => boolean,
+  fieldNames: { children: string } | undefined = { children: "children" },
+): TData[] => {
+  const reList = map(data, (item) => {
+    const children = item[fieldNames.children];
+    if (children && size(children) > 0) {
+      return { ...item, [fieldNames.children]: filterCollection(children, verify, fieldNames) };
+    }
+    return item;
+  });
+  return filter(reList, (item) => verify(item));
+};
 
 /**
  * list 或 tree 数据转换
@@ -389,28 +438,85 @@ export const assignStateToData = (
 export type TName = string | string[];
 
 export type TTableMergeOpts = {
+  columns?: string[]; //表头
+  /**
+   * 行
+   */
   rowNames?: TName[];
+  //行合并补充，取值时候使用。如：只需要标记id，后续所有的合并只根据id-rowspan来就行
+  extra?: Record<string, TName | boolean>;
   /**
    * 列合并标记与行不同，为了解决多个不相邻的列合并情况，需要分组标记。
+   * 如果表头columns存在，如果存在不连续的情况，需要重写colNames，
    */
   colNames?: string[][];
-  //行合并补充
-  extra?: Record<string, TName | boolean>;
+  colMergeFlag?: (record: TData) => boolean; //当前record是否需要列合并
 };
-
+/**
+ * 根据name从record中获取值
+ * name值为string   => v
+ * name值为string[] => v-v1-v2...
+ * @param record
+ * @param name
+ */
 export const getRecordValueByName = (record: TData, name: TName): string => {
   if (!name) return "";
+  //string 单个属性
   if (isString(name)) {
     return get(record, name);
   }
+  //string[] 多个属性
   const values = map(name, (n) => get(record, n));
   return join(values, "-");
 };
-
+/**
+ * 获取name值
+ * @param name
+ */
 export const getNameStr = (name: TName): string => {
   if (!name) return "";
   if (isString(name)) return name;
   return join(name, "-");
+};
+
+/**
+ * 根据columns 和 colNames 生成有效的 colNames
+ * @param columns
+ * @param colNames
+ */
+const createColNames = (columns: string[], colNames: Array<string[]>): Array<string[]> => {
+  //标记colNames
+  const nameMap: Record<string, number> = {};
+  forEach(colNames, (list, index) => {
+    forEach(list, (item) => {
+      nameMap[item] = index;
+    });
+  });
+
+  const nextNames: Array<string[]> = [];
+  let tmpArr: string[] | undefined = undefined;
+  let tmpIndex: number | undefined = undefined;
+  forEach(columns, (item) => {
+    //标记值
+    const currentIndex = nameMap[item];
+    //中断：未标记、标记值不匹配
+    if (currentIndex === undefined || (tmpIndex !== undefined && tmpIndex !== currentIndex)) {
+      //若tmpArr长度大于1，保存
+      if (tmpArr && size(tmpArr) > 1) {
+        nextNames.push(tmpArr);
+      }
+      tmpArr = undefined;
+      tmpIndex = undefined;
+      return;
+    }
+    if (tmpArr === undefined) {
+      tmpArr = [];
+    }
+    //添加当前item
+    tmpArr.push(item);
+    tmpIndex = currentIndex;
+  });
+  return nextNames;
 };
 
 export const signTableMerge = (data: TData[], opts: TTableMergeOpts) => {
@@ -435,8 +541,17 @@ export const signTableMerge = (data: TData[], opts: TTableMergeOpts) => {
       record[spanName] = 0; //当前赋值0
     });
 
+    //当前record不需要列合并
+    if (opts.colMergeFlag && !opts.colMergeFlag(record)) {
+      return;
+    }
+    //重写colNames
+    let colNames = opts.colNames;
+    if (opts.columns && opts.colNames) {
+      colNames = createColNames(opts.columns, opts.colNames);
+    }
     //标记列合并
-    forEach(opts.colNames, (names) => {
+    forEach(colNames, (names) => {
       //1列不存在合并的情况
       if (size(names) <= 1) return;
 

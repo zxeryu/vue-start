@@ -9,6 +9,8 @@ const baseProps = {
   value: { type: [String, Number] },
   showProps: { type: Object as PropType<ProTypographyProps> },
   convert: { type: Function as PropType<TConvert> },
+  //重写dom
+  render: { type: Function, default: undefined },
 };
 
 export const ProShowText = defineComponent({
@@ -53,7 +55,18 @@ export const ProShowDigit = defineComponent({
     });
 
     return () => {
-      return <ProShowText {...pick(attrs, "style", "class")} value={v.value} showProps={props.showProps} />;
+      if (props.render) {
+        return props.render({ value: v.value, props });
+      }
+      return (
+        <ProShowText
+          // @ts-ignore
+          class={"pro-show-digit"}
+          {...pick(attrs, "style", "class")}
+          value={v.value}
+          showProps={props.showProps}
+        />
+      );
     };
   },
 });
@@ -91,8 +104,13 @@ export const ProShowOptions = defineComponent({
     });
 
     return () => {
+      if (props.render) {
+        return props.render({ color: color.value, value: v.value, props });
+      }
       return (
         <ProShowText
+          // @ts-ignore
+          class={"pro-show-options"}
           {...pick(attrs, "style", "class")}
           style={`color:${color.value || ""}`}
           value={v.value}
@@ -110,6 +128,7 @@ export const ProShowTree = defineComponent({
     ...baseProps,
     value: { type: [String, Number, Array] },
     splitStr: { type: String, default: "/" },
+    splitStr2: { type: String, default: "," }, //多选的情况
     //
     treeData: Array as PropType<Record<string, any>>, //ant
     data: Array as PropType<Record<string, any>>, //el
@@ -117,6 +136,8 @@ export const ProShowTree = defineComponent({
     //
     fieldNames: Object, //ant
     props: Object, //el
+    //
+    multiple: { type: Boolean },
   },
   setup: (props, { attrs }) => {
     const optionsMap = computed(() => {
@@ -134,7 +155,7 @@ export const ProShowTree = defineComponent({
       if (isArray(props.value)) {
         v = join(
           map(props.value, (item) => get(optionsMap.value, item, item)),
-          props.splitStr,
+          props.multiple ? props.splitStr2 : props.splitStr,
         );
       } else {
         v = get(optionsMap.value, props.value!, props.value);
@@ -143,7 +164,18 @@ export const ProShowTree = defineComponent({
     });
 
     return () => {
-      return <ProShowText {...pick(attrs, "style", "class")} value={v.value} showProps={props.showProps} />;
+      if (props.render) {
+        return props.render({ value: v.value, props });
+      }
+      return (
+        <ProShowText
+          // @ts-ignore
+          class={"pro-show-tree"}
+          {...pick(attrs, "style", "class")}
+          value={v.value}
+          showProps={props.showProps}
+        />
+      );
     };
   },
 });
@@ -179,7 +211,18 @@ export const ProShowDate = defineComponent({
     });
 
     return () => {
-      return <ProShowText {...pick(attrs, "style", "class")} value={v.value} showProps={props.showProps} />;
+      if (props.render) {
+        return props.render({ value: v.value, props });
+      }
+      return (
+        <ProShowText
+          // @ts-ignore
+          class={"pro-show-date"}
+          {...pick(attrs, "style", "class")}
+          value={v.value}
+          showProps={props.showProps}
+        />
+      );
     };
   },
 });

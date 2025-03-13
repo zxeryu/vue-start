@@ -1,10 +1,10 @@
-import { computed, defineComponent, PropType, ref } from "vue";
-import { ElTable, ElTableColumn, ElButton } from "element-plus";
+import { computed, defineComponent, ExtractPropTypes, PropType, ref, nextTick, reactive } from "vue";
+import { ElTable, ElTableColumn, ElButton, TableProps } from "element-plus";
 import { TableColumnCtx } from "../../types";
-import { get, map, omit, pick, size } from "lodash";
-import { createExpose } from "@vue-start/pro";
+import { filter, find, forEach, get, isArray, isFunction, last, map, omit, pick, reduce, size, slice } from "lodash";
+import { createExpose, TColumns } from "@vue-start/pro";
 import { createLoadingId, ProLoading } from "../comp";
-import { getNameMapByMergeOpts, signTableMerge, TTableMergeOpts } from "@vue-start/hooks";
+import { getNameMapByMergeOpts, TTableMergeOpts, useEffect, isSame } from "@vue-start/hooks";
 
 export type ProTableColumnProps = TableColumnCtx<any>;
 
@@ -91,23 +91,191 @@ export const TableMethods = [
   "setScrollLeft",
 ];
 
-export const ProTable = defineComponent({
+const proTableProps = () => ({
+  columns: { type: Array as PropType<TColumns> },
+  dataSource: { type: Array },
+  loading: { type: Boolean },
+  /**
+   * 行、列合并配置
+   */
+  mergeOpts: { type: Object as PropType<TTableMergeOpts> },
+  /**
+   * 选择
+   */
+  selectedRowKeys: { type: [Array as PropType<string[]>, String as PropType<string>] },
+  rowSelection: {
+    type: Object as PropType<{
+      type?: "single" | "multi"; //默认multi
+      column?: ProTableColumnProps & { slots?: Record<string, any> };
+      onChange?: (selectedRowKeys: string[], selectedRows: Record<string, any>[]) => void;
+      /**
+       * 分页选择模式，type="multi" 模式下生效。
+       * 与当前页无关；可累计选择；
+       * 缺点：
+       *  1、如果初始化绑定的数据中存在数据源中不存在的数据，table中操作清空不了，需要外部处理（如："清空"按钮）；
+       *  2、onChange中没有rows
+       */
+      pagination?: boolean;
+    }>,
+    default: undefined,
+  },
+});
+
+export type ProTableProps = Partial<ExtractPropTypes<ReturnType<typeof proTableProps>>> & TableProps<any>;
+
+export const ProTable = defineComponent<ProTableProps>({
   props: {
     ...ElTable.props,
-    columns: { type: Array },
-    dataSource: { type: Array },
-    loading: { type: Boolean },
-    /**
-     * 行、列合并配置
-     */
-    mergeOpts: { type: Object as PropType<TTableMergeOpts> },
+    ...proTableProps(),
   },
-  setup: (props, { slots, expose }) => {
+  setup: (props, { slots, expose, emit }) => {
     const tableRef = ref();
 
     const id = createLoadingId("table");
 
     expose(createExpose(TableMethods, tableRef));
+
+    const dataSource = computed(() => props.dataSource || props.data || []);
+
+    const dataKeyMap = computed<Record<string, boolean>>(() => {
+      return reduce(dataSource.value, (pair, item) => ({ ...pair, [getRowId(item)]: true }), {});
+    });
+
+    //获取record id
+    const getRowId = (record: any) => {
+      const rowKey = props.rowKey;
+      if (isFunction(rowKey)) {
+        return rowKey(record);
+      }
+      if (rowKey) {
+        return record[rowKey];
+      }
+      return record.id;
+    };
+
+    /***************************** rowSelection ********************************/
+
+    //是否展示选择
+    const isSelection = computed(() => !!props.rowSelection);
+
+    //是否是多选
+    const isMulti = computed(() => {
+      const rs = props.rowSelection;
+      if (!rs) return false;
+      return !rs.type || rs.type === "multi";
+    });
+
+    const propRowKeys = computed(() => {
+      const keys = props.selectedRowKeys;
+      if (isArray(keys)) return keys;
+      if (keys) return [keys];
+      return [];
+    });
+
+    const propKeyMap = computed<Record<string, boolean>>(() => {
+      return reduce(propRowKeys.value, (pair, item) => ({ ...pair, [item]: true }), {});
+    });
+
+    let prevSelectedKeys: string[] = [];
+
+    //主动赋值是否完成
+    let methodOpeFinish = false;
+
+    //多选监听
+    const handleSelectionChange = (rows: any[]) => {
+      if (!methodOpeFinish) return;
+
+      const ids = map(rows, (item) => getRowId(item));
+
+      //单选
+      if (isSelection.value && !isMulti.value) {
+        if (size(ids) <= 0 && size(prevSelectedKeys) > 0) {
+          //取消场景
+          const data = dataSource.value;
+          const target = find(data, (item) => getRowId(item) === prevSelectedKeys[0]);
+          if (target) {
+            tableRef.value?.toggleRowSelection(target, true);
+          }
+          return;
+        } else if (size(ids) > 1) {
+          //选择其他场景
+          const targetId = last(ids);
+          forEach(rows, (item) => {
+            tableRef.value?.toggleRowSelection(item, getRowId(item) === targetId);
+          });
+          return;
+        }
+      }
+
+      //如果值相等，无需更新
+      if (isSame(propRowKeys.value, ids, { sort: true })) {
+        return;
+      }
+
+      //单选
+      if(!isMulti.value){
+        const id = get(ids, 0);
+        props.rowSelection!.onChange?.(id, get(rows, 0));
+        emit("update:selectedRowKeys", id);
+        return;
+      }
+
+      //分页模式
+      if (props.rowSelection?.pagination) {
+        //清除 已选择集合中 包含 dataSource.value 中的项
+        const reIds = filter(propRowKeys.value, (key) => {
+          return !dataKeyMap.value[key];
+        });
+        reIds.push(...ids);
+
+        props.rowSelection!.onChange?.(reIds, []);
+        emit("update:selectedRowKeys", reIds);
+        return;
+      }
+
+      props.rowSelection!.onChange?.(ids, rows);
+      emit("update:selectedRowKeys", ids);
+    };
+
+    const rowSelection = computed(() => {
+      const rs = props.rowSelection;
+      if (!rs) return undefined;
+
+      return { onSelectionChange: handleSelectionChange };
+    });
+
+    //主动赋值
+    //根据 props.selectedRowKeys 选择
+    useEffect(() => {
+      methodOpeFinish = false;
+
+      prevSelectedKeys = propRowKeys.value;
+
+      const data = dataSource.value;
+      //选择操作
+      if (isSelection.value) {
+        const selectedRows = tableRef.value?.getSelectionRows();
+        const curKeyMap: Record<string, boolean | undefined> = reduce(
+          selectedRows,
+          (pair, item) => ({ ...pair, [getRowId(item)]: true }),
+          {},
+        );
+
+        nextTick(() => {
+          forEach(data, (item) => {
+            const id = getRowId(item);
+            if (propKeyMap.value[id] !== curKeyMap[id]) {
+              tableRef.value?.toggleRowSelection(item, !!propKeyMap.value[id]);
+            }
+          });
+          methodOpeFinish = true;
+        });
+      } else {
+        methodOpeFinish = true;
+      }
+    }, [propRowKeys, dataSource]);
+
+    /***************************** 行/列合并 ********************************/
 
     const createSpanMethod = () => {
       if (props.spanMethod) return props.spanMethod;
@@ -127,7 +295,9 @@ export const ProTable = defineComponent({
       }
       return props.spanMethod;
     };
-    const spanMethod = createSpanMethod();
+    const spanMethod = computed(() => {
+      return createSpanMethod();
+    });
 
     return () => {
       return (
@@ -136,10 +306,21 @@ export const ProTable = defineComponent({
           // @ts-ignore
           id={id}
           {...omit(props, "columns", "dataSource", "data", "loading", "spanMethod")}
-          data={props.dataSource || props.data}
-          spanMethod={spanMethod}
+          data={dataSource.value}
+          spanMethod={spanMethod.value}
+          {...rowSelection.value}
           v-slots={pick(slots, "append", "empty")}>
           {slots.start?.()}
+
+          {isSelection.value && (
+            <ElTableColumn
+              type={"selection"}
+              className={isMulti.value ? "pro-multi" : "pro-single"}
+              {...(omit(props.rowSelection?.column, "slots") as any)}
+              v-slots={props.rowSelection?.column?.slots}
+            />
+          )}
+
           {map(props.columns, (item) => (
             <ProTableColumn key={item.dataIndex} {...item} v-slots={slots} />
           ))}

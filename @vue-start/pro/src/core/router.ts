@@ -2,6 +2,7 @@ import { RouteLocationNormalizedLoaded, Router, useRoute, useRouter, parseQuery,
 import { useProConfig } from "./pro";
 import { size } from "lodash";
 import { findFirstValidMenu } from "@vue-start/hooks";
+import { useProLayout } from "../comp";
 
 export type TOpenMenu = (menu: any) => void;
 
@@ -51,6 +52,8 @@ export const useProRouter = (): {
   const originRouter = useRouter();
   const route = useRoute();
 
+  const layoutProvide = useProLayout();
+
   const openMenu = (menu: any) => {
     if (!menu) return;
     if (size(menu.children) > 0) {
@@ -62,7 +65,21 @@ export const useProRouter = (): {
     }
     originRouter.push({ name: menu.value });
   };
-  const reRouter = { ...originRouter, openMenu, ...RouterMethods };
+
+  const back = () => {
+    if (layoutProvide) {
+      const { showTabs, convertName, closeTab } = layoutProvide;
+      if (showTabs.value) {
+        //路由对应的菜单
+        const name = convertName(route);
+        //关闭当前tab
+        closeTab(name);
+      }
+    }
+    originRouter.back();
+  };
+
+  const reRouter = { ...originRouter, openMenu, back, ...RouterMethods };
 
   const router = convertRouter ? convertRouter(reRouter) : reRouter;
 

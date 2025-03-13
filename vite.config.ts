@@ -81,10 +81,12 @@ export default defineConfig(({ mode }) => {
               "express",
               "dayjs",
               "prettier",
+              "polished",
               //
               "@vue-start/antd-pro",
               "@vue-start/chart",
               "@vue-start/config",
+              "@vue-start/css",
               "@vue-start/element-pro",
               "@vue-start/hooks",
               "@vue-start/map",

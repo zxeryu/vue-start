@@ -36,18 +36,20 @@ export type TColumn = {
 
 ### 属性
 
-| 名称              | 类型                     | 说明                                           | 默认值    |
-| ----------------- | ------------------------ | ---------------------------------------------- | --------- |
-| `clsName`         | `string`                 | class name                                     | pro-table |
-| `columns`         | `TColumns`               | 通用项配置                                     | --        |
-| `columnState`     | `object`                 | 通用项拓展                                     | --        |
-| `elementMap`      | `object`                 | 展示组件集                                     | --        |
-| `formElementMap`  | `object`                 | 录入组件集                                     | --        |
-| `column`          | `TTableColumn`           | 公共 table column 配置                         | --        |
-| `columnEmptyText` | `string`                 | 默认空字符串                                   | --        |
-| `serialNumber`    | `boolean` `TTableColumn` | 是否展示序号，为对象的时候为 table column 配置 | --        |
-| `paginationState` | `TPageState`             | 计算分页，用于序号展示                         | --        |
-| `operate`         | `ITableOperate`          | 操作栏配置                                     | --        |
+| 名称              | 类型                     | 说明                                             | 默认值    |
+| ----------------- | ------------------------ | ------------------------------------------------ | --------- |
+| `clsName`         | `string`                 | class name                                       | pro-table |
+| `columns`         | `TColumns`               | 通用项配置                                       | --        |
+| `columnState`     | `object`                 | 通用项拓展                                       | --        |
+| `elementMap`      | `object`                 | 展示组件集                                       | --        |
+| `formElementMap`  | `object`                 | 录入组件集                                       | --        |
+| `column`          | `TTableColumn`           | 公共 table column 配置                           | --        |
+| `columnEmptyText` | `string`                 | 默认空字符串                                     | --        |
+| `serialNumber`    | `boolean` `TTableColumn` | 是否展示序号，为对象的时候为 table column 配置   | --        |
+| `paginationState` | `TPageState`             | 计算分页，用于序号展示                           | --        |
+| `operate`         | `ITableOperate`          | 操作栏配置                                       | --        |
+| `selectedRowKeys` | `string[]`               | 选择行 id 集合,使用方式：v-model:selectedRowKeys | --        |
+| `rowSelection`    | `ITableRowSelection`     | 操作栏配置                                       | --        |
 
 ```ts
 export type TPageState = { page?: number; pageSize?: number };
@@ -79,6 +81,16 @@ export interface ITableOperate {
   //ProOperate 组件的属性
   clsName?: ProOperateProps["clsName"];
   elementKey?: ProOperateProps["elementKey"];
+}
+
+/**
+ * 选择项配置
+ */
+export interface ITableRowSelection {
+  type?: "single" | "multi"; //默认multi
+  column?: ProTableColumnProps & { slots?: Record<string, any> }; //Table-column属性
+  //变化监听，selection-change 和 current-change事件都会响应
+  onChange?: (selectedRowKeys: string[], selectedRows: Record<string, any>[]) => void;
 }
 ```
 

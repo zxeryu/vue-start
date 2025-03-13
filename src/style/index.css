@@ -2,12 +2,11 @@
   --header-hei: 60px;
   --divide-vertical-hei: 10px;
   /*--pro-left-menu-hei: calc(100vh - 30px - 30px);*/
-  --pro-menu-start-hei: 30px;
-  --pro-menu-end-hei: 30px;
 }
 
 html body {
   font-size: 14px;
+  background-color: var(--pro-color-bg);
 }
 
 blockquote {
@@ -16,91 +15,42 @@ blockquote {
 
 /* pro */
 
-.pro-page {
-  padding: 0px 80px;
+.pro-layout {
+  --pro-header-hei: 48px;
+  --pro-menu-start-hei: 30px;
+  --pro-menu-end-hei: 30px;
 }
 
-.pro-page .pro-page-header{
-  /*background-color: white;*/
+.pro-layout .pro-layout-header {
 }
-.pro-page .pro-page-footer{
-  /*background-color: white;*/
+
+.pro-layout .pro-layout-menus-wrapper {
+}
+
+.pro-layout .pro-header-menus-wrapper .el-menu-item{
+  line-height: var(--pro-header-hei);
+}
+
+/*样式一*/
+/*.pro-page {*/
+/*  height: calc(var(--pro-secion-hei) - 20px);*/
+/*  max-height: calc(var(--pro-secion-hei) - 20px);*/
+/*  margin:10px;*/
+/*}*/
+
+/*样式二*/
+.pro-page {
+  --pro-page-hei: calc(var(--pro-secion-hei) - 10px);
+  /*margin:10px;*/
+}
+
+.pro-page .pro-page-content {
+  margin: 0px 10px;
+  padding-top: 10px;
 }
 
 /********************************** html ***********************************/
-h1,
-h2,
-h3,
-h4,
-h5,
-h6,
-.h1,
-.h2,
-.h3,
-.h4,
-.h5,
-.h6 {
-  font-family: inherit;
-  font-weight: 500;
-  line-height: 1.1;
-  color: inherit;
-}
-
-h1,
-.h1,
-h2,
-.h2,
-h3,
-.h3 {
-  margin-top: 20px;
-  margin-bottom: 10px;
-}
-h4,
-.h4,
-h5,
-.h5,
-h6,
-.h6 {
-  margin-top: 10px;
-  margin-bottom: 10px;
-}
-
-h1,
-.h1 {
-  font-size: 36px;
-}
-h2,
-.h2 {
-  font-size: 30px;
-}
-h3,
-.h3 {
-  font-size: 24px;
-}
-h4,
-.h4 {
-  font-size: 18px;
-}
-h5,
-.h5 {
-  font-size: 14px;
-}
-h6,
-.h6 {
-  font-size: 12px;
-}
-
-p {
-  margin: 0 0 10px;
-}
-
-ul,
-ol {
-  list-style: none;
-}
-
 .markdown {
-  color: #000000d9;
   font-size: 14px;
   line-height: 2;
 }

@@ -1,6 +1,6 @@
 {
   "name": "@vue-start/chart",
-  "version": "0.0.6",
+  "version": "0.0.7",
   "description": "> TODO: description",
   "author": "zx <zxpstudy@163.com>",
   "homepage": "https://github.com/zxeryu/vue-start#readme",
@@ -24,7 +24,7 @@
   "bugs": {
     "url": "https://github.com/zxeryu/vue-start/issues"
   },
-  "dependencies": {
-    "echarts": "^5.4.2"
+  "peerDependencies": {
+    "echarts": "*"
   }
 }

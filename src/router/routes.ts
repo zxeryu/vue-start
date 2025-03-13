@@ -89,6 +89,50 @@ export const routes = [
     ],
   },
   {
+    name: "CurdDemo",
+    path: "curd-demo",
+    children: [
+      {
+        name: "CurdDemoBasic",
+        path: "basic",
+        children: [
+          {
+            name: "CurdDemoBasicIndex",
+            path: "index",
+            component: () => import("@/views/curd-demo/basic/index"),
+          },
+        ],
+      },
+      {
+        name: "CurdDemoModal",
+        path: "modal",
+        children: [
+          {
+            name: "CurdDemoModalIndex",
+            path: "index",
+            component: () => import("@/views/curd-demo/modal/index"),
+          },
+        ],
+      },
+      {
+        name: "CurdDemoPage",
+        path: "page",
+        children: [
+          {
+            name: "CurdDemoPageDetail",
+            path: "detail",
+            component: () => import("@/views/curd-demo/page/detail"),
+          },
+          {
+            name: "CurdDemoPageIndex",
+            path: "index",
+            component: () => import("@/views/curd-demo/page/index"),
+          },
+        ],
+      },
+    ],
+  },
+  {
     name: "Devkit",
     path: "devkit",
     children: [
@@ -321,6 +365,17 @@ export const routes = [
             name: "ElementTableIndex",
             path: "index",
             component: () => import("@/views/element/table/index"),
+          },
+        ],
+      },
+      {
+        name: "ElementTheme",
+        path: "theme",
+        children: [
+          {
+            name: "ElementThemeIndex",
+            path: "index",
+            component: () => import("@/views/element/theme/index"),
           },
         ],
       },

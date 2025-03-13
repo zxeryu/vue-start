@@ -4,6 +4,7 @@ import {
   PaginationSlotProps,
   ProList as ProListOrigin,
   ProListProps,
+  ProPage,
   SearchSlotProps,
   TPageState,
   useGetCompByKey,
@@ -52,19 +53,7 @@ export const ProCurdList = defineComponent<ProCurdListProps>({
       }),
       (operate: ICurdOperateOpts) => {
         const item = {
-          ...pick(
-            operate,
-            "label",
-            "show",
-            "disabled",
-            "loading",
-            "extraProps",
-            "onClick",
-            "element",
-            "sort",
-            "per",
-            "perSuffix",
-          ),
+          ...omit(operate, "action", "actor", "convertParams", "element"),
           value: operate.action,
         };
         if (!item.onClick) {
@@ -106,6 +95,11 @@ export const ProCurdList = defineComponent<ProCurdListProps>({
       return { total: curdState.listData?.total, ...(props.paginationProps as any) };
     });
 
+    const hasPagination = computed<boolean>(() => {
+      if (props.paginationProps === false) return false;
+      return !!curdState.listData?.total;
+    });
+
     const invalidKeys = keys(curdListProps());
 
     const getComp = useGetCompByKey();
@@ -114,9 +108,13 @@ export const ProCurdList = defineComponent<ProCurdListProps>({
     return () => {
       if (!ProList) return null;
 
+      const cls = ["pro-curd-list"];
+      if (hasPagination.value) {
+        cls.push("has-pagination");
+      }
       return (
         <ProList
-          class={"pro-curd-list"}
+          class={cls}
           {...omit(props, ...invalidKeys, "searchProps", "tableProps", "paginationProps")}
           searchProps={searchProps.value}
           tableProps={tableProps.value}
@@ -156,5 +154,39 @@ export const ProCurdListConnect = defineComponent(() => {
   const { listProps } = useProCurd();
   return () => {
     return <ProCurdList {...omit(listProps?.value, "slots")} v-slots={get(listProps?.value, "slots")} />;
+  };
+});
+
+export const ProCurdListPage = defineComponent({
+  props: {
+    ...ProPage.props,
+    as: { type: String, default: "div" },
+  },
+  setup: (props, { slots }) => {
+    const { listProps } = useProCurd();
+
+    const getComp = useGetCompByKey();
+    const ProPage = getComp(ElementKeys.ProPageKey);
+
+    return () => {
+      return (
+        <ProPage class={"curd-list has-footer"} {...props} v-slots={slots}>
+          <ProCurdList
+            {...omit(listProps!.value, "slots")}
+            v-slots={{
+              divide2: () => <div class={"curd-list-grow"} />,
+              ...get(listProps?.value, "slots"),
+            }}
+          />
+        </ProPage>
+      );
+    };
+  },
+});
+
+export const ProCurdListPageConnect = defineComponent(() => {
+  const { pageProps } = useProCurd();
+  return () => {
+    return <ProCurdListPage {...omit(pageProps?.value, "slots")} v-slots={get(pageProps?.value, "slots")} />;
   };
 });

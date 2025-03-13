@@ -1,6 +1,6 @@
 import { useMapPlugin } from "../Plugin";
 import { get, isBoolean, isFunction, split } from "lodash";
-import { ref, Ref, UnwrapNestedRefs, UnwrapRef, WatchSource } from "vue";
+import { ref, Ref, shallowRef, UnwrapNestedRefs, UnwrapRef, WatchSource, ShallowRef } from "vue";
 import { useEffect, useState, useWatch } from "@vue-start/hooks";
 
 export interface IUseMapApiOptions {
@@ -18,6 +18,7 @@ export interface IUseMapApiResult {
   data: UnwrapNestedRefs<any>;
   requesting: Ref<UnwrapRef<boolean>>;
   request: (opts?: Record<string, any>, params?: any[]) => void;
+  targetRef: ShallowRef<any>;
 }
 
 /**
@@ -33,6 +34,7 @@ export const useMapApi = (api: string, options: IUseMapApiOptions): IUseMapApiRe
   //当前请求对象
   let task: { opts?: Record<string, any>; params?: any[] } | null = null;
 
+  const targetRef = shallowRef<any>();
   const [data, setData] = useState<Record<string, any>>();
   const requesting = ref<boolean>(isBoolean(options.initEmit) ? options.initEmit : false);
 
@@ -60,6 +62,8 @@ export const useMapApi = (api: string, options: IUseMapApiOptions): IUseMapApiRe
 
     //当前 api 对象
     const apiTarget = createTarget();
+    //插件对象赋值
+    targetRef.value = apiTarget;
     if (!apiTarget) return;
     //当前方法
     if (!isFunction(apiTarget[methodName])) return;
@@ -82,6 +86,8 @@ export const useMapApi = (api: string, options: IUseMapApiOptions): IUseMapApiRe
       task = null;
       requesting.value = false;
     });
+
+    return apiTarget;
   };
 
   useMapPlugin([plugin], () => {
@@ -92,7 +98,7 @@ export const useMapApi = (api: string, options: IUseMapApiOptions): IUseMapApiRe
   const request = (opts?: Record<string, any>, params?: any[]) => {
     task = { opts: opts || options.opts, params: getParams(params) };
     if (!pluginLoaded) return;
-    executeTask();
+    return executeTask();
   };
 
   //初始化请求
@@ -104,5 +110,5 @@ export const useMapApi = (api: string, options: IUseMapApiOptions): IUseMapApiRe
 
   useWatch(() => request(), options.deps || []);
 
-  return { data, request, requesting };
+  return { data, request, requesting, targetRef };
 };

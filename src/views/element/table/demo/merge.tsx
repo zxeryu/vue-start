@@ -3,7 +3,7 @@ title: 行、列合并
 ---*/
 
 import { defineComponent } from "vue";
-import { getNameMapByMergeOpts } from "@vue-start/hooks";
+import { getNameMapByMergeOpts, TTableMergeOpts } from "@vue-start/hooks";
 
 export default defineComponent(() => {
   const list = [
@@ -12,10 +12,12 @@ export default defineComponent(() => {
     { year: 2021, month: 1, day: "02", "A-1": 1, "A-2": 2, "A-3": 3, "A-total": 6 },
     { year: 2021, month: 1, day: "03", "A-1": 1, "A-2": 2, "A-3": 3, "A-total": 6 },
     { year: 2021, month: 2, day: "01", "A-1": 1, "A-2": 2, "A-3": 3, "A-total": 6 },
-    { year: "--", month: "--", day: "--", "A-1": "A2", "A-2": "A2", "A-3": "A", "A-total": 6 },
+    { year: "--", month: "--", day: "--", "A-1": "A2", "A-2": "A2", "A-3": "A2", "A-total": 6 },
   ];
 
-  const mergeOpts = {
+  const mergeOpts: TTableMergeOpts = {
+    //当columns会改变的时候使用
+    columns: ["year", "month", "day", "A-1", "A-2", "A-3", "A-total"],
     rowNames: ["year", ["year", "month"]],
     colNames: [
       ["year", "month", "day"],
@@ -24,6 +26,10 @@ export default defineComponent(() => {
     //行合并展示取值补充
     extra: {
       "A-total": ["year", "month"],
+    },
+    //标记列合并record
+    colMergeFlag: (record) => {
+      return record.year === '--';
     },
   };
 

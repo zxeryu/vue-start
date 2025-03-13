@@ -1,8 +1,8 @@
-import { computed, defineComponent, ExtractPropTypes, PropType, ref } from "vue";
-import { ElUpload, UploadFiles, UploadFile, UploadRawFile, UploadProps, useFormItem } from "element-plus";
-import { createExposeObj, TFile } from "@vue-start/pro";
-import { filter, isArray, isNumber, keys, map, omit, size } from "lodash";
-import { isValidFileType, convertFileSize, useWatch } from "@vue-start/hooks";
+import { computed, defineComponent, ExtractPropTypes, PropType, ref, VNode } from "vue";
+import { ElUpload, UploadFiles, UploadFile, UploadRawFile, UploadProps, useFormItem, ElLoading } from "element-plus";
+import { createExposeObj, TFile, useProConfig } from "@vue-start/pro";
+import { filter, isArray, isBoolean, isNumber, keys, map, omit, size } from "lodash";
+import { isValidFileType, convertFileSize, useWatch, useEffect } from "@vue-start/hooks";
 
 const uploadProps = () => ({
   //支持Form使用
@@ -24,6 +24,10 @@ const uploadProps = () => ({
   onStart: Function as PropType<(file: any) => void>,
   //重写
   beforeUpload: { type: Function },
+  //上传过程中 全局loading
+  globalLoading: { type: [Boolean, Object], default: undefined },
+  //
+  renderDom: { type: Function as PropType<() => VNode>, default: undefined },
 });
 
 export type ProUploadProps = Partial<ExtractPropTypes<ReturnType<typeof uploadProps>>> & Omit<UploadProps, "fileList">;
@@ -36,6 +40,8 @@ export const ProUploader = defineComponent<ProUploadProps>({
     ...uploadProps(),
   } as any,
   setup: (props, { slots, expose, emit }) => {
+    const { showMsg } = useProConfig();
+
     const uploadRef = ref();
     expose(createExposeObj(uploadRef, UploadMethods));
 
@@ -77,6 +83,40 @@ export const ProUploader = defineComponent<ProUploadProps>({
       () => props.modelValue,
     );
 
+    /*********************** globalLoading ********************************/
+    let loadingInstance: undefined | { close: () => void };
+    const showLoading = () => {
+      if (props.globalLoading) {
+        loadingInstance = ElLoading.service({
+          lock: true,
+          text: "正在上传文件，请稍后...",
+          ...(isBoolean(props.globalLoading) ? {} : props.globalLoading),
+        });
+      }
+    };
+    const hideLoading = () => {
+      if (props.globalLoading) {
+        loadingInstance?.close();
+      }
+    };
+
+    //组件卸载，关闭loading
+    useEffect(() => {
+      return () => {
+        hideLoading();
+      };
+    }, []);
+
+    /*********************** 回调 ********************************/
+
+    const onMsg = (type: string, msg: string) => {
+      if (props.onErrorMsg) {
+        props.onErrorMsg(type, msg);
+        return;
+      }
+      showMsg({ type: "error", message: msg });
+    };
+
     const handleBeforeUpload = (file: UploadRawFile) => {
       if (props.beforeUpload) {
         return props.beforeUpload(file);
@@ -84,31 +124,51 @@ export const ProUploader = defineComponent<ProUploadProps>({
       //类型校验
       if (props.accept) {
         if (!isValidFileType(props.accept, file.name)) {
-          // @ts-ignore
-          props.onErrorMsg?.("FileTypeError", `请上传正确格式（${props.accept.replace(/,/g, "，")}）的文件`);
+          onMsg("FileTypeError", `请上传正确格式（${props.accept.replace(/,/g, "，")}）的文件`);
           return false;
         }
       }
       //大小校验
       if (isNumber(file.size)) {
         if (file.size <= 0) {
-          // @ts-ignore
-          props.onErrorMsg?.("FileSizeError-Zero", `上传文件内容不能为空`);
+          onMsg("FileSizeError-Zero", `上传文件内容不能为空`);
           return false;
         }
         if (isNumber(props.maxSize) && file.size > props.maxSize) {
-          // @ts-ignore
-          props.onErrorMsg?.("FileSizeError-MaxSize", `请上传小于${convertFileSize(props.maxSize)}的文件`);
+          onMsg("FileSizeError-MaxSize", `请上传小于${convertFileSize(props.maxSize)}的文件`);
           return false;
         }
       }
 
       // @ts-ignore
       props.onStart?.(file);
+      showLoading();
 
       return true;
     };
 
+    const handleSuccess = (response: any, uploadFile: UploadFile, uploadFiles: UploadFiles) => {
+      props.onSuccess?.(response, uploadFile, uploadFiles);
+      updateModelValue();
+      hideLoading();
+    };
+
+    const handleError = (error: Error, uploadFile: UploadFile, uploadFiles: UploadFiles) => {
+      props.onError?.(error, uploadFile, uploadFiles);
+      hideLoading();
+      onMsg("UploadError", "上传失败");
+    };
+
+    const handleRemove = (uploadFile: UploadFile, uploadFiles: UploadFiles) => {
+      fileList.value = filter(fileList.value, (item) => {
+        if (uploadFile.uid === item.uid && uploadFile.name === item.name) return false;
+        return true;
+      });
+      props.onRemove?.(uploadFile, uploadFiles);
+      updateModelValue();
+    };
+
+    //是否展示触发dom
     const showDefault = computed(() => {
       if (!isNumber(props.limit)) return true;
       return props.limit > size(fileList.value);
@@ -123,24 +183,13 @@ export const ProUploader = defineComponent<ProUploadProps>({
           <ElUpload
             ref={uploadRef}
             v-model:fileList={fileList.value}
-            {...omit(props, "fileList", "onSuccess", "onRemove", "beforeUpload", ...customKeys)}
+            {...omit(props, "fileList", "onSuccess", "onError", "onRemove", "beforeUpload", ...customKeys)}
             beforeUpload={handleBeforeUpload}
-            onSuccess={(response: any, uploadFile: UploadFile, uploadFiles: UploadFiles) => {
-              // @ts-ignore
-              props.onSuccess?.(response, uploadFile, uploadFiles);
-              updateModelValue();
-            }}
-            onRemove={(uploadFile: UploadFile, uploadFiles: UploadFiles) => {
-              fileList.value = filter(fileList.value, (item) => {
-                if (uploadFile.uid === item.uid && uploadFile.name === item.name) return false;
-                return true;
-              });
-              // @ts-ignore
-              props.onRemove?.(uploadFile, uploadFiles);
-              updateModelValue();
-            }}
+            onSuccess={handleSuccess}
+            onError={handleError}
+            onRemove={handleRemove}
             v-slots={omit(slots, "default")}>
-            {showDefault.value && slots.default?.()}
+            {showDefault.value && <>{slots.default?.() || props.renderDom?.()}</>}
           </ElUpload>
           {slots.end?.()}
         </div>
