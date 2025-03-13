@@ -85,8 +85,8 @@ const layoutProps = () => ({
   /**************************** menu相关 *******************************/
   menus: { type: Array as PropType<TLayoutMenu[]> },
   fieldNames: {
-    type: Object as PropType<{ children: string; value: string; label: string; hide?: string }>,
-    default: { children: "children", value: "value", label: "label", hide: "hide" },
+    type: Object as PropType<{ children: string; value: string; label: string; hide?: string; keep?: string }>,
+    default: { children: "children", value: "value", label: "label", hide: "hide", keep: "keep" },
   },
   //SubMenu props 转换
   convertSubMenuProps: { type: Function },
@@ -121,11 +121,13 @@ export const ProLayout = defineComponent<ProLayoutProps>({
           const valueKey = props.fieldNames?.value || "value";
           const labelKey = props.fieldNames?.label || "label";
           const hideKey = props.fieldNames?.hide || "hide";
+          const keepKey = props.fieldNames?.keep || "keep";
           return {
-            ...omit(item, valueKey, labelKey, hideKey),
+            ...omit(item, valueKey, labelKey, hideKey, keepKey),
             value: get(item, valueKey),
             label: get(item, labelKey),
             hide: get(item, hideKey),
+            keep: get(item, keepKey),
           };
         },
         { children: props.fieldNames?.children || "children", childrenName: "children" },

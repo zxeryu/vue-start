@@ -8,6 +8,7 @@ export type TLayoutMenu = {
   value: string;
   label: string;
   hide: boolean;
+  keep: boolean; // keep-live 缓存
   [k: string]: any;
 };
 

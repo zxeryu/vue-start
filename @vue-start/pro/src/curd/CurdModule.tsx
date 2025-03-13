@@ -1,9 +1,10 @@
-import { defineComponent, ExtractPropTypes, PropType } from "vue";
+import { defineComponent, ExtractPropTypes, PropType, ref } from "vue";
 import { ElementKeys, useGetCompByKey } from "../comp";
-import { ProCurd, ProCurdProps } from "./Curd";
+import { CurdMethods, ProCurd, ProCurdProps } from "./Curd";
 import { keys, omit } from "lodash";
 import { ProCurdListConnect, ProCurdListPageConnect, ProCurdModalFormConnect, ProCurdPageConnect } from "./comp";
 import { ModalCurdOpe } from "./ModalCurd";
+import { createExpose } from "../util";
 
 const proCurdModuleProps = () => ({
   listType: { type: String as PropType<"page" | "list" | "none">, default: "page" },
@@ -17,7 +18,11 @@ export const ProCurdModule = defineComponent<ProCurdModuleProps>({
     ...ProCurd.props,
     ...proCurdModuleProps(),
   },
-  setup: (props, { slots }) => {
+  setup: (props, { slots, expose }) => {
+    const curdRef = ref();
+
+    expose(createExpose(CurdMethods, curdRef));
+
     const getComp = useGetCompByKey();
     const Curd = getComp(ElementKeys.ProCurdKey);
 
@@ -28,7 +33,7 @@ export const ProCurdModule = defineComponent<ProCurdModuleProps>({
       const modalType = props.modalType;
 
       return (
-        <Curd {...omit(props, invalidKeys)}>
+        <Curd ref={curdRef} {...omit(props, invalidKeys)}>
           {listType === "page" && <ProCurdListPageConnect />}
           {listType === "list" && <ProCurdListConnect />}
 

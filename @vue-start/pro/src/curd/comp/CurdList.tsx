@@ -160,6 +160,7 @@ export const ProCurdListConnect = defineComponent(() => {
 export const ProCurdListPage = defineComponent({
   props: {
     ...ProPage.props,
+    as: { type: String, default: "div" },
   },
   setup: (props, { slots }) => {
     const { listProps } = useProCurd();

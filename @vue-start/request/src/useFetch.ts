@@ -1,5 +1,5 @@
 import { IRequestActor, isDoneRequestActor, isFailedRequestActor } from "./createRequest";
-import { generateId, useEffect, useState, useWatch } from "@vue-start/hooks";
+import { generateId, useEffect, useSafeActivated, useState, useWatch } from "@vue-start/hooks";
 import { isReactive, ref, Ref, toRaw, UnwrapNestedRefs, UnwrapRef, WatchSource } from "vue";
 import { isBoolean, isFunction } from "lodash";
 import { useRequestProvide } from "./provide";
@@ -16,6 +16,8 @@ export interface IUseFetchOptions<TRequestActor extends IRequestActor> {
   onFinish?: () => void;
   //组件卸载是否cancel request
   cancelWhileUnmount?: boolean;
+  //keep-live 下 onActivated 回调中执行请求
+  activeEmit?: boolean;
 }
 
 export interface IUseFetchResult<TRequestActor extends IRequestActor> {
@@ -103,6 +105,13 @@ export const useFetch = <TRequestActor extends IRequestActor>(
   }, []);
 
   useWatch(() => request(), options.deps ? options.deps : []);
+
+  //onActivated 中执行 如果onMounted执行了，则不会触发
+  useSafeActivated(() => {
+    if (options?.activeEmit) {
+      request();
+    }
+  });
 
   return {
     data,

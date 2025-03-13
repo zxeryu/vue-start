@@ -112,6 +112,15 @@ export const createFormItemCompFn = <T extends FormItemProps>(
           );
         };
 
+        const renderLabel = () => {
+          return (
+            <>
+              {props.label}
+              {props.tip && <ProTip content={props.tip} title={props.tip} {...props.tipProps} />}
+            </>
+          );
+        };
+
         return () => {
           return (
             <FormItem
@@ -120,12 +129,7 @@ export const createFormItemCompFn = <T extends FormItemProps>(
               name={path}
               rules={rules.value}
               v-slots={{
-                label: () => (
-                  <>
-                    {props.label}
-                    {props.tip && <ProTip content={props.tip} title={props.tip} {...props.tipProps} />}
-                  </>
-                ),
+                label: props.label || props.tip ? renderLabel : undefined,
                 ...props.slots,
               }}>
               {readonly.value ? renderShow() : renderInput()}
