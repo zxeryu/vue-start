@@ -1,0 +1,30 @@
+{
+  "name": "@vue-start-dev/cheng",
+  "version": "0.0.0",
+  "description": "> TODO: description",
+  "author": "zx <zxpstudy@163.com>",
+  "homepage": "https://github.com/zxeryu/vue-start#readme",
+  "license": "MIT",
+  "files": [
+    "dist/"
+  ],
+  "types": "dist/index.d.ts",
+  "main": "dist/index.js",
+  "module": "dist/index.es.js",
+  "publishConfig": {
+    "access": "public"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/zxeryu/vue-start.git"
+  },
+  "scripts": {
+    "build": "node ../../tool/build.js"
+  },
+  "bugs": {
+    "url": "https://github.com/zxeryu/vue-start/issues"
+  },
+  "peerDependencies": {
+    "lodash": ">= 4.x"
+  }
+}

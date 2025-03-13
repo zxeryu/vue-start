@@ -3,7 +3,7 @@ import { ElementKeys, useGetCompByKey } from "@vue-start/pro";
 import { useCheng } from "./Cheng";
 import { Elements } from "./comp/Elements";
 import { DataTree } from "./comp/DataTree";
-import { ElementSet } from "./comp/ElementSet";
+import { ElementSet } from "./set";
 
 const Header = defineComponent({
   props: {} as any,

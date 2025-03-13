@@ -65,3 +65,40 @@
   color: #666;
 }
 
+.set-arr-item {
+  display: flex;
+  align-items: center;
+}
+
+/********设置项-数组*********/
+.set-arr {
+}
+.set-arr > * + * {
+  margin-top: 10px;
+}
+
+.set-arr-item > * + * {
+  margin-left: 12px;
+}
+
+/******************** modal *************************/
+.cheng-modal {
+}
+
+.cheng-modal-header {
+  display: flex;
+  align-items: center;
+}
+
+.cheng-modal-header .title {
+  font-size: 18px;
+}
+
+.cheng-modal-header .actions {
+  display: flex;
+  margin-left: 16px;
+}
+
+.cheng-modal-header .actions > * + * {
+  margin-left: 12px;
+}

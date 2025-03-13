@@ -105,6 +105,9 @@ export default defineConfig(({ mode }) => {
               "@amap/amap-jsapi-loader",
               //persist
               "localforage",
+              //express
+              "express",
+              "body-parser"
             ],
           },
         }

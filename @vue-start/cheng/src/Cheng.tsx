@@ -18,11 +18,17 @@ export interface IChengState {
   tab?: TTab;
 }
 
+export interface ISetOpts {
+  clsNames: string[];
+}
+
 export interface IChengProvide {
   groupElements: (IElement | IElementGroup)[];
   //基础组件
   elements: IElement[];
   elementsMap: Record<string, IElement>;
+  //设置相关的配置
+  setOpts: ISetOpts;
   //当前操作的Page
   pageRef: Ref<IPage | undefined>;
   //当前Page中的Element
@@ -44,6 +50,8 @@ const chengProps = () => ({
   onClose: { type: Function as PropType<IChengProvide["onClose"]> },
   //组件描述
   groupElements: { type: Array as PropType<(IElement | IElementGroup)[]> },
+  //
+  setOpts: { type: Object as PropType<ISetOpts> },
 });
 
 export type MapProps = Partial<ExtractPropTypes<ReturnType<typeof chengProps>>>;
@@ -68,6 +76,7 @@ export const ProCheng = defineComponent<MapProps>({
       groupElements: groupElements!,
       elements,
       elementsMap,
+      setOpts: props.setOpts! || {},
       pageRef: pageRef,
       elementRef: elementRef,
       chengState,
