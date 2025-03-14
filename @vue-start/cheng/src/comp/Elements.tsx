@@ -1,5 +1,5 @@
 import { defineComponent } from "vue";
-import { useCheng } from "../Cheng";
+import { useCheng } from "../ctx";
 import { isArray, map } from "lodash";
 import { IElement } from "../types";
 import { ElementKeys, IElementConfig, useGetCompByKey } from "@vue-start/pro";
@@ -35,7 +35,7 @@ export const Elements = defineComponent<{
       if (!Button) return null;
 
       return (
-        <div class={"cheng-elements"}>
+        <div class={"pro-cheng-elements"}>
           {map(groupElements, (item: IElement) => {
             if ((item as any).title) {
               return <div class={"group"}>{(item as any).title}</div>;

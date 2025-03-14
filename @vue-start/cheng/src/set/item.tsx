@@ -1,6 +1,6 @@
 import { defineComponent, PropType, ref, VNode } from "vue";
 import { ISetPropGroup, ISetPropItem } from "../types";
-import { useCheng } from "../Cheng";
+import { useCheng } from "../ctx";
 import { get, isArray, map, set, size } from "lodash";
 import { useEffect, useUpdateKey } from "@vue-start/hooks";
 import { ElementKeys, useGetCompByKey } from "@vue-start/pro";

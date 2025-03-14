@@ -1,5 +1,5 @@
-import { defineComponent } from "vue";
-import { Overview, ProCheng } from "@vue-start/cheng";
+import { defineComponent, Teleport } from "vue";
+import { ProCheng } from "@vue-start/cheng";
 import { useChengState } from "@/store/StoreCurrent";
 import { Basics, Feedbacks, FormInputs, Layouts } from "../common/el";
 import { createAtom } from "@vue-start/css";
@@ -23,15 +23,9 @@ export const ChengOpe = defineComponent(() => {
 
   return () => {
     return (
-      <ProCheng
-        show={chengState.show}
-        groupElements={elements as any}
-        setOpts={{ clsNames }}
-        onClose={() => {
-          setChengState({ ...chengState, show: false });
-        }}>
-        <Overview />
-      </ProCheng>
+      <Teleport to={"body"}>
+        <ProCheng groupElements={elements as any} setOpts={{ clsNames }} />
+      </Teleport>
     );
   };
 });

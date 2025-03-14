@@ -1,6 +1,6 @@
 import { defineComponent } from "vue";
 import { ISetPropItem } from "../types";
-import { useCheng } from "../Cheng";
+import { useCheng } from "../ctx";
 import { ItemSet } from "./item";
 
 export const ClassSet = defineComponent({

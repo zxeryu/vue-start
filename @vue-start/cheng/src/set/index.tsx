@@ -1,5 +1,5 @@
 import { computed, defineComponent, reactive } from "vue";
-import { useCheng } from "../Cheng";
+import { useCheng } from "../ctx";
 import { useWatch } from "@vue-start/hooks";
 import { useGetCompByKey } from "@vue-start/pro";
 import { map } from "lodash";

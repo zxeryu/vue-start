@@ -1,57 +1,22 @@
-import {
-  defineComponent,
-  ExtractPropTypes,
-  inject,
-  PropType,
-  provide,
-  reactive,
-  ref,
-  Ref,
-  UnwrapNestedRefs,
-} from "vue";
-import { IElement, IElementGroup, IPage, TTab } from "./types";
+import { computed, defineComponent, ExtractPropTypes, PropType, provide, reactive, ref } from "vue";
+import { IElement, IElementGroup, IPage } from "./types";
 import { filter, reduce } from "lodash";
 import configData from "./comp/config.json";
 import { IElementConfig } from "../../pro";
-
-export interface IChengState {
-  tab?: TTab;
-}
-
-export interface ISetOpts {
-  clsNames: string[];
-}
-
-export interface IChengProvide {
-  groupElements: (IElement | IElementGroup)[];
-  //基础组件
-  elements: IElement[];
-  elementsMap: Record<string, IElement>;
-  //设置相关的配置
-  setOpts: ISetOpts;
-  //当前操作的Page
-  pageRef: Ref<IPage | undefined>;
-  //当前Page中的Element
-  elementRef: Ref<IElementConfig | undefined>;
-  //
-  chengState: UnwrapNestedRefs<IChengState>;
-  //
-  onClose: () => void;
-}
-
-const ProChengKey = Symbol("cheng");
-
-export const useCheng = () => inject(ProChengKey) as IChengProvide;
+import { IChengProvide, IChengState, ISetOpts, ProChengKey } from "./ctx";
+import { Header } from "./header";
+import { Elements } from "./comp/Elements";
+import { Ope } from "./ope";
+import { ElementSet } from "./set";
+import { DataTree } from "./comp/DataTree";
 
 const chengProps = () => ({
-  //是否展示
-  show: { type: Boolean },
-  //关闭回掉
-  onClose: { type: Function as PropType<IChengProvide["onClose"]> },
   //组件描述
   groupElements: { type: Array as PropType<(IElement | IElementGroup)[]> },
   //
   setOpts: { type: Object as PropType<ISetOpts> },
+  //模式 basic | screen
+  mode: { type: String, default: "basic" },
 });
 
 export type MapProps = Partial<ExtractPropTypes<ReturnType<typeof chengProps>>>;
@@ -61,7 +26,11 @@ export const ProCheng = defineComponent<MapProps>({
     ...chengProps(),
   } as any,
   setup: (props, { slots }) => {
-    const chengState = reactive<IChengState>({});
+    const chengState = reactive<IChengState>({
+      showElements: true,
+      showTree: true,
+      showSet: true,
+    });
     const pageRef = ref<IPage>({
       path: "",
       configData: configData as any,
@@ -80,14 +49,28 @@ export const ProCheng = defineComponent<MapProps>({
       pageRef: pageRef,
       elementRef: elementRef,
       chengState,
-      onClose: props.onClose!,
+    });
+
+    const cls = computed(() => {
+      const arr = ["pro-cheng", props.mode];
+      if (chengState.showElements) arr.push("has-elements");
+      if (chengState.showTree) arr.push("has-tree");
+      if (chengState.showSet) arr.push("has-set");
+      return arr;
     });
 
     return () => {
-      if (!props.show) {
-        return null;
-      }
-      return <>{slots.default?.()}</>;
+      return (
+        <div class={cls.value}>
+          <Header />
+          <div class={"pro-cheng-layout"}>
+            {chengState.showElements && <Elements />}
+            {chengState.showTree && <DataTree />}
+            <Ope />
+            {chengState.showSet && <ElementSet />}
+          </div>
+        </div>
+      );
     };
   },
 });

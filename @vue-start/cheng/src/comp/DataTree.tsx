@@ -1,5 +1,5 @@
 import { computed, defineComponent } from "vue";
-import { useCheng } from "../Cheng";
+import { useCheng } from "../ctx";
 import { IElementConfig, useGetCompByKey } from "@vue-start/pro";
 import { isArray } from "lodash";
 import { findTreeItem } from "@vue-start/hooks";
@@ -18,13 +18,12 @@ export const DataTree = defineComponent((props, { slots }) => {
     elementRef.value = node as IElementConfig;
   };
 
-
   const getComp = useGetCompByKey();
   const Tree = getComp("Tree$");
 
   return () => {
     return (
-      <div>
+      <div class={"pro-cheng-tree"}>
         <Tree
           data={treeData.value}
           props={{ label: "elementType", children: "children" }}
