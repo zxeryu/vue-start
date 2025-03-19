@@ -120,6 +120,10 @@ export const toUrl = (actor: IRequestActor, baseUrl = "") => {
  */
 export const completeUrl = (url: string, prefix: string) => {
   if (!prefix) return url;
+
+  //完成链接，不需要补全
+  if (startsWith(url, "http")) return url;
+
   let rePrefix = "";
   if (startsWith(prefix, "http")) {
     //http 开头
