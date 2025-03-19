@@ -30,7 +30,9 @@ export const download = (actor: IRequestActor | string, options: TDownloadOption
 
   //默认为 blob
   requestConfig.responseType = "blob";
-  requestConfig.method = "GET";
+  if (!requestConfig.method) {
+    requestConfig.method = "GET";
+  }
 
   const reRequestConfig = options.convertConfig?.(requestConfig) || requestConfig;
 
