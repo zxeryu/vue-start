@@ -6,6 +6,7 @@ See [Conventional Commits](https://conventionalcommits.org) for commit guideline
 # 0.2.10
 
 - fix: download 方法 method 错误设置为"GET"问题修复；
+- fix: completeUrl 针对完整域名拼接错误修复；
 
 # 0.2.9
 
