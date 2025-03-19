@@ -3,6 +3,10 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# 0.2.10
+
+- fix: download 方法 method 错误设置为"GET"问题修复；
+
 # 0.2.9
 
 - perf: useFetch 新增 activeEmit，keep-live 模式下 active 触发请求
