@@ -30,23 +30,26 @@ export const Elements = defineComponent<{
 
     const getComp = useGetCompByKey();
     const Button = getComp(ElementKeys.ButtonKey);
+    const Scroll = getComp(ElementKeys.ScrollKey);
 
     return () => {
       if (!Button) return null;
 
       return (
-        <div class={"pro-cheng-elements"}>
-          {map(groupElements, (item: IElement) => {
-            if ((item as any).title) {
-              return <div class={"group"}>{(item as any).title}</div>;
-            }
-            return (
-              <Button class={"item"} onClick={() => handleClick(item)}>
-                {item.name}
-              </Button>
-            );
-          })}
-        </div>
+        <Scroll class={"pro-cheng-elements"}>
+          <div class={"pro-cheng-elements-wrap"}>
+            {map(groupElements, (item: IElement) => {
+              if ((item as any).title) {
+                return <div class={"group"}>{(item as any).title}</div>;
+              }
+              return (
+                <div class={"item"} onClick={() => handleClick(item)}>
+                  {item.name}
+                </div>
+              );
+            })}
+          </div>
+        </Scroll>
       );
     };
   },

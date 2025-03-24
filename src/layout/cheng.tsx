@@ -24,7 +24,7 @@ export const ChengOpe = defineComponent(() => {
   return () => {
     return (
       <Teleport to={"body"}>
-        <ProCheng groupElements={elements as any} setOpts={{ clsNames }} />
+        <ProCheng class={"screen"} groupElements={elements as any} setOpts={{ clsNames }} />
       </Teleport>
     );
   };

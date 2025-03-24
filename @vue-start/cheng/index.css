@@ -1,5 +1,6 @@
 .pro-cheng {
   --cheng-header-hei: 48px;
+  --cheng-footer-hei: 48px;
   --cheng-elements-wid: 0px;
   --cheng-tree-wid: 0px;
   --cheng-set-wid: 0px;
@@ -30,7 +31,7 @@
 }
 
 .pro-cheng .pro-cheng-layout {
-  height: calc(100vh - var(--cheng-header-hei));
+  height: calc(100vh - var(--cheng-header-hei) - var(--cheng-footer-hei));
   display: flex;
 }
 
@@ -70,19 +71,28 @@
 /********* elements *********/
 .pro-cheng-elements {
 }
+.pro-cheng-elements-wrap {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 8px;
+  padding: 0 8px;
+}
 
 .pro-cheng-elements .group {
+  grid-column: span 2;
   line-height: 30px;
 }
 
 .pro-cheng-elements .item {
-  margin-left: unset;
   padding: unset;
-  min-width: calc(50% - 4px);
-  margin-right: 4px;
-  margin-bottom: 4px;
+  min-width: calc(50% - 20px);
   font-size: 12px;
   color: #aaa;
+  border: 1px solid rgba(0, 0, 0, 0.16);
+  border-radius: 4px;
+  line-height: 24px;
+  text-align: center;
+  cursor: pointer;
 }
 
 /********* pro-cheng-screen *********/
