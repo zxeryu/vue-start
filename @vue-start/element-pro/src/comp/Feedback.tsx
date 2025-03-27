@@ -39,6 +39,7 @@ export const ProModal = defineComponent<ProModalProps>({
       emit("update:visible", v);
       if(!v){
         emit("cancel");
+        emit("closed");
       }
     };
 
