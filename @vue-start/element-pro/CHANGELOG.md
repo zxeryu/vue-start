@@ -1,5 +1,9 @@
 # Change Log
 
+# 0.2.35
+
+- fix: modal closed 事件；
+
 # 0.2.34
 
 - fix: form item 支持 color-picker
