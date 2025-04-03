@@ -104,8 +104,35 @@
 }
 
 .pro-cheng-screen {
-  width: 3840px;
-  height: 2160px;
+  width: 1920px;
+  height: 1080px;
+  position: relative;
+  background-color: rgba(0, 0, 0, 0.2);
+}
+
+.pro-cheng-screen .atom {
+  position: absolute;
+}
+
+.pro-cheng-screen .atom.enable:hover {
+  box-shadow: 0 0 0 2px var(--pro-color-primary);
+}
+
+.pro-cheng.screen .ruler {
+  position: absolute;
+  pointer-events: none;
+}
+
+.pro-cheng.screen .top-ruler {
+  height: 20px;
+  top: 0;
+  left: 0;
+}
+
+.pro-cheng.screen .left-ruler {
+  width: 20px;
+  top: 0;
+  left: 0;
 }
 
 /*********************************** origin ***********************************/
