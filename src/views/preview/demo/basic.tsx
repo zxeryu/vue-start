@@ -38,6 +38,7 @@ export default defineComponent(() => {
     "test.xlsx",
     "test.pdf",
     "test.doc",
+    "test.csv",
   ];
 
   const currentRef = ref();

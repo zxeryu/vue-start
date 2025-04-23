@@ -4,6 +4,7 @@ import { utils, read } from "xlsx";
 import Spreadsheet from "x-data-spreadsheet";
 import { useEffect, useResizeObserver } from "@vue-start/hooks";
 import { get } from "lodash";
+import { isValidType } from "../utils";
 
 /*! xlsxspread.js (C) SheetJS LLC -- https://sheetjs.com/ */
 /* eslint-env browser */
@@ -133,6 +134,7 @@ export const Excel = defineComponent({
   props: {
     data: Object,
     spreadsheetOptions: Object,
+    name: String,
   },
   setup: (props, { expose }) => {
     const domRef = ref();
@@ -160,10 +162,42 @@ export const Excel = defineComponent({
       } catch (e) {}
     };
 
+    const renderCsvContent = (csvText = "") => {
+      const rows = csvText.split("\n").filter((row) => row.trim() !== "");
+      const sheetData = { rows: [] };
+
+      rows.forEach((row, rowIndex) => {
+        const cells = row.split(",").map((cell) => cell.trim().replace(/^"|"$/g, ""));
+        sheetData.rows[rowIndex] = { cells: {} };
+
+        cells.forEach((cell, colIndex) => {
+          sheetData.rows[rowIndex].cells[colIndex] = { text: cell };
+        });
+      });
+
+      const excelData = { name: "sheet", rows: sheetData.rows };
+
+      new Spreadsheet(domRef.value, {
+        mode: "read",
+        showContextmenu: false,
+        view: {
+          width: () => domRectRef.value?.width,
+          height: () => domRectRef.value?.height,
+        },
+        ...props.spreadsheetOptions,
+      }).loadData(excelData);
+    };
+
     useEffect(() => {
       if (!props.data || !domRef.value || !domRectRef.value?.width) return;
 
-      if (props.data instanceof ArrayBuffer) {
+      if (isValidType([".csv"], props.name)) {
+        const reader = new FileReader();
+        reader.onload = (e) => {
+          renderCsvContent(e.target.result);
+        };
+        reader.readAsText(props.data, "UTF-8");
+      } else if (props.data instanceof ArrayBuffer) {
         renderContent(props.data);
       } else if (props.data instanceof Blob) {
         const reader = new FileReader();

@@ -1,5 +1,4 @@
 import { computed, defineComponent, ExtractPropTypes, PropType, reactive, ref } from "vue";
-import { endsWith, some, toLower } from "lodash";
 import { IRequestActor, download as downloadOrigin, TDownloadOptions } from "@vue-start/request";
 import { useEffect } from "@vue-start/hooks";
 import { AxiosResponse } from "axios";
@@ -7,22 +6,7 @@ import { Image } from "./Image";
 import { Word } from "./Word";
 import { Excel } from "./Excel";
 import { Pdf } from "./Pdf";
-
-const ImageType = [".png", ".jpg", ".jpeg", ".gif", ".webp", ".jfif", ".bmp", ".ico"];
-const ExcelType = [".xls", ".xlsx"];
-const WordType = [".docx"];
-const PdfType = [".pdf"];
-
-const isValidType = (types: string[], name: string) => {
-  if (!name) return false;
-  const lowerName = toLower(name);
-  return some(types, (item) => endsWith(lowerName, item));
-};
-
-export const isImageType = (name: string) => isValidType(ImageType, name);
-export const isExcelType = (name: string) => isValidType(ExcelType, name);
-export const isWordType = (name: string) => isValidType(WordType, name);
-export const isPdfType = (name: string) => isValidType(PdfType, name);
+import { isExcelType, isImageType, isPdfType, isWordType } from "../utils";
 
 const previewProps = () => ({
   //文件名称 或 `.${fileType}`
@@ -175,7 +159,13 @@ export const ProPreview = defineComponent<ProPreviewProps>({
                     <Word ref={wordRef} class={"pro-preview-word"} data={originRes!.data} {...props.subProps} />
                   )}
                   {isExcelType(props.name!) && (
-                    <Excel ref={excelRef} class={"pro-preview-excel"} data={originRes!.data} {...props.subProps} />
+                    <Excel
+                      ref={excelRef}
+                      class={"pro-preview-excel"}
+                      data={originRes!.data}
+                      name={props.name}
+                      {...props.subProps}
+                    />
                   )}
                   {isPdfType(props.name!) && (
                     <Pdf ref={pdfRef} class={"pro-preview-pdf"} data={originRes!.data} {...props.subProps} />
