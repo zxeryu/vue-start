@@ -17,6 +17,7 @@ const proModalProps = () => ({
   maskClosable: { type: [Object, Boolean], default: undefined },
   //
   scrollProps: { type: Object },
+  useScroll: { type: Boolean, default: false }, //内容使用scroll组件
 });
 
 export type ProModalProps = Partial<ExtractPropTypes<ReturnType<typeof proModalProps>>> & DialogProps;
@@ -37,7 +38,7 @@ export const ProModal = defineComponent<ProModalProps>({
     const handleUpdate = (v: boolean) => {
       emit("update:modelValue", v);
       emit("update:visible", v);
-      if(!v){
+      if (!v) {
         emit("cancel");
         emit("closed");
       }
@@ -71,9 +72,12 @@ export const ProModal = defineComponent<ProModalProps>({
     const invalidKeys = keys(proModalProps());
 
     return () => {
+      const cls = [props.clsName];
+      if (props.useScroll) cls.push("scroll");
+
       return (
         <ElDialog
-          class={props.clsName}
+          class={cls}
           ref={originRef}
           {...omit(props, ...invalidKeys)}
           closeOnClickModal={isBoolean(props.maskClosable) ? props.maskClosable : props.closeOnClickModal}
@@ -82,11 +86,16 @@ export const ProModal = defineComponent<ProModalProps>({
           v-slots={{
             footer: props.footer === false ? undefined : () => <Operate items={items.value} />,
             ...slots,
-            default: () => (
-              <Scroll class={`${props.clsName}-scroll`} {...props.scrollProps}>
-                {slots.default?.()}
-              </Scroll>
-            ),
+            default: () => {
+              if (props.useScroll) {
+                return (
+                  <Scroll class={`${props.clsName}-scroll`} {...props.scrollProps}>
+                    {slots.default?.()}
+                  </Scroll>
+                );
+              }
+              return slots.default?.();
+            },
           }}
         />
       );
@@ -103,6 +112,7 @@ const proDrawerProps = () => ({
   confirmLoading: Boolean,
   //
   scrollProps: { type: Object },
+  useScroll: { type: Boolean, default: false }, //内容使用scroll组件
 });
 
 export type ProDrawerProps = Partial<ExtractPropTypes<ReturnType<typeof proDrawerProps>>> & DrawerProps;
@@ -122,7 +132,7 @@ export const ProDrawer = defineComponent<ProDrawerProps>({
     const handleUpdate = (v: boolean) => {
       emit("update:modelValue", v);
       emit("update:visible", v);
-      if(!v){
+      if (!v) {
         emit("cancel");
       }
     };
@@ -155,9 +165,11 @@ export const ProDrawer = defineComponent<ProDrawerProps>({
     const invalidKeys = keys(proModalProps());
 
     return () => {
+      const cls = [props.clsName];
+      if (props.useScroll) cls.push("scroll");
       return (
         <ElDrawer
-          class={props.clsName}
+          class={cls}
           ref={originRef}
           {...omit(props, invalidKeys)}
           modelValue={props.visible || props.modelValue}
@@ -165,11 +177,16 @@ export const ProDrawer = defineComponent<ProDrawerProps>({
           v-slots={{
             footer: props.footer === false ? undefined : () => <Operate items={items.value} />,
             ...slots,
-            default: () => (
-              <Scroll class={`${props.clsName}-scroll`} {...props.scrollProps}>
-                {slots.default?.()}
-              </Scroll>
-            ),
+            default: () => {
+              if (props.useScroll) {
+                return (
+                  <Scroll class={`${props.clsName}-scroll`} {...props.scrollProps}>
+                    {slots.default?.()}
+                  </Scroll>
+                );
+              }
+              return slots.default?.();
+            },
           }}
         />
       );

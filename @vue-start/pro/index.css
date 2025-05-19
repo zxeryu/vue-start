@@ -529,7 +529,11 @@
 }
 
 .pro-modal .el-dialog__body {
-  padding: 0px;
+  padding: 0 16px;
+}
+
+.pro-modal.scroll .el-dialog__body {
+  padding: 0;
 }
 
 .pro-modal .pro-modal-scroll {
@@ -550,7 +554,11 @@
 }
 
 .pro-drawer .el-drawer__body {
-  padding: 0px;
+  padding: 0 16px;
+}
+
+.pro-drawer.scroll .el-drawer__body {
+  padding: 0;
 }
 
 .pro-drawer .pro-drawer-scroll {
