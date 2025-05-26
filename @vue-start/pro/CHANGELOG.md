@@ -3,16 +3,10 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
-## [0.5.54](https://github.com/zxeryu/vue-start/compare/@vue-start/pro@0.5.53...@vue-start/pro@0.5.54) (2025-05-26)
 
+# 0.5.54
 
-### Bug Fixes
-
-* **pro:** curd operate ([9c4dbbe](https://github.com/zxeryu/vue-start/commit/9c4dbbe6b24a67aa84325c60999dbae780c3f304))
-
-
-
-
+- fix: curd operate element参数传递；
 
 # 0.5.52
 
