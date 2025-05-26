@@ -53,7 +53,7 @@ export const ProCurdList = defineComponent<ProCurdListProps>({
       }),
       (operate: ICurdOperateOpts) => {
         const item = {
-          ...omit(operate, "action", "actor", "convertParams", "element"),
+          ...omit(operate, "action", "actor", "convertParams"),
           value: operate.action,
         };
         if (!item.onClick) {
