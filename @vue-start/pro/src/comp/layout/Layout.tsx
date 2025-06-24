@@ -230,9 +230,11 @@ export const ProLayout = defineComponent<ProLayoutProps>({
     };
 
     //第一个有效菜单
-    const firstValidMenu = findFirstValidMenu(showMenus.value, (item) => {
-      return !item.children || size(item.children) <= 0;
-    }) as TLayoutMenu;
+    const firstValidMenu =
+      props.tabs?.findFirstMenu?.(showMenus.value) ||
+      (findFirstValidMenu(showMenus.value, (item) => {
+        return !item.children || size(item.children) <= 0;
+      }) as TLayoutMenu);
 
     const initTabs = () => {
       //未开启 tabs

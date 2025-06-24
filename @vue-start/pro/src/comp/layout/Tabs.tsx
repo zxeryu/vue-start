@@ -18,6 +18,8 @@ const tabsProps = () => ({
       (params: { dom: HTMLDivElement; dataIdAttr: string; onDragEnd: (tabIds: string[]) => void }) => void
     >,
   },
+  //找到第一个menu
+  findFirstMenu: { type: Function },
 });
 
 export type ProLayoutTabsProps = Partial<ExtractPropTypes<ReturnType<typeof tabsProps>>>;
