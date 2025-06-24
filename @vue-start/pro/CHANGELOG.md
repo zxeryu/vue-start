@@ -3,10 +3,13 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# 0.5.55
+
+- fix: ProLayout tabs 支持 findFirstMenu 自定义；
 
 # 0.5.54
 
-- fix: curd operate element参数传递；
+- fix: curd operate element 参数传递；
 
 # 0.5.52
 
