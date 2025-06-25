@@ -20,6 +20,8 @@ const tabsProps = () => ({
   },
   //找到第一个menu
   findFirstMenu: { type: Function },
+  //tab item 点击监听
+  onItemClick: { type: Function },
 });
 
 export type ProLayoutTabsProps = Partial<ExtractPropTypes<ReturnType<typeof tabsProps>>>;
@@ -55,53 +57,82 @@ export const LayoutTabs = defineComponent<ProLayoutTabsProps>({
       return get(menuMap.value, name!);
     });
 
-    //路由监听
-    useEffect(() => {
-      //当前路由未找到对应的菜单
-      const curMenu: TLayoutTabMenu = menu.value;
-      if (!curMenu) {
-        return;
-      }
+    //路由切换（包含初始化）监听
+    useEffect(
+      (cur: string, pre: string) => {
 
-      //查找当前tab
-      let target: TLayoutTabMenu | undefined = find(tabs.value, (item) => item.value === curMenu.value);
-      //当前tabs不存在
-      if (!target) {
-        //如果是hide路由，记录query
-        const newMenu = curMenu.hide ? { ...curMenu, query: route.query } : curMenu;
-        //添加当前菜单
-        tabs.value = [...tabs.value, newMenu];
-      } else {
-        //如果是hide路由，
-        if (curMenu.hide) {
-          const targetStr = jsonToStr(target.query!) || "{}";
-          const curStr = jsonToStr(route.query!) || "{}";
-          //query如果不一样
-          if (targetStr !== curStr) {
-            const newMenu = { ...curMenu, query: route.query };
-            tabs.value = map(
-              map(tabs.value, (item) => {
-                //替换当前menu对象（更新query）
-                if (item.value === curMenu.value) return newMenu;
-                return item;
-              }),
-            );
+        //当前路由未找到对应的菜单
+        const curMenu: TLayoutTabMenu = menu.value;
+        if (!curMenu) return;
+
+        //查找当前tab
+        let target: TLayoutTabMenu | undefined = find(tabs.value, (item) => item.value === curMenu.value);
+        //当前tabs不存在
+        if (!target) {
+          //添加当前菜单
+          tabs.value = [...tabs.value, { ...curMenu, query: route.query }];
+          return;
+        }
+
+        const targetStr = jsonToStr(target.query!) || "{}";
+        const curStr = jsonToStr(route.query!) || "{}";
+        //query如果不一样，更新query
+        if (targetStr !== curStr) {
+          const newMenu = { ...curMenu, query: route.query };
+          tabs.value = map(
+            map(tabs.value, (item) => {
+              //替换当前menu对象（更新query）
+              if (item.value === curMenu.value) return newMenu;
+              return item;
+            }),
+          );
+          // 非当前页面 query replace 情况
+          if (cur !== pre) {
             //refresh操作，主要解决 添加、编辑、详情 是同一个路由的更新问题
             handleItemRefresh(newMenu);
           }
         }
-      }
-    }, route);
+      },
+      () => route.name,
+    );
+
+    // 只处理当前路由 query 变化
+    useEffect(
+      (cur, pre) => {
+        const curName = cur?.[0];
+        const preName = pre?.[0];
+        if (curName !== preName) return;
+
+        //当前路由未找到对应的菜单
+        const curMenu: TLayoutTabMenu = menu.value;
+        if (!curMenu) return;
+
+        //更新 query
+        tabs.value = map(
+          map(tabs.value, (item) => {
+            //替换当前menu对象（更新query）
+            if (item.value === curMenu.value) return { ...curMenu, query: route.query };
+            return item;
+          }),
+        );
+      },
+      [() => route.name, () => route.query],
+    );
 
     /************************* 菜单点击事件 **********************/
 
     //
     const handleItemClick = (item: TLayoutTabMenu) => {
-      //hide 路由
-      if (item.hide) {
+      if (props.onItemClick) {
+        props.onItemClick(item);
+        return;
+      }
+      //如果是普通路由，跳转
+      if (router.hasRoute(item.value)) {
         router.push({ name: item.value, query: item.query });
         return;
       }
+      //复用路由（会丢失query）
       router.openMenu(item);
     };
 
