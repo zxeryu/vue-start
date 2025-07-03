@@ -25,6 +25,7 @@ export interface IProLayoutProvide {
   //
   menus: Ref<TLayoutMenu[]>;
   showMenus: Ref<TLayoutMenu[]>;
+  repeatRouteMap: Ref<Record<string, true>>;
   menuMap: Ref<Record<string, TLayoutMenu>>;
   tabs: Ref<TLayoutTabMenu[]>;
   showTabs: Ref<boolean>;

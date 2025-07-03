@@ -12,16 +12,22 @@ import {
   useDispatchStore,
 } from "@vue-start/pro";
 import dayjs from "dayjs";
-import { useRouter } from "vue-router";
+import { useRoute, useRouter } from "vue-router";
 import { proStore } from "@/store/StoreCurrent";
 
 export default defineComponent(() => {
   const router = useRouter();
+  const route = useRoute();
 
   const state = reactive({
     fillMode: true,
     showFooter: true,
+    ttt: "",
   });
+
+  setTimeout(() => {
+    state.ttt = route.query.id as string;
+  }, 1000);
 
   const handleOpeFill = () => {
     state.fillMode = !state.fillMode;
@@ -59,7 +65,7 @@ export default defineComponent(() => {
             return <>底部内容</>;
           },
         }}>
-        Test
+        Test{state.ttt}
         <div onClick={() => router.push({ name: "TestDetail" })}>to detail</div>
         <div onClick={() => router.push({ name: "TestDetail", query: { id: "1234", title: "1245" } })}>
           to detail with query

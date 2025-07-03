@@ -19,7 +19,7 @@ export const ProRouterView = defineComponent<ProRouterViewProps>({
     ...routerViewProps(),
   } as any,
   setup: (props) => {
-    const { menus, tabs, refreshRef, showTabs, convertName, convertValue } = useProLayout();
+    const { menus, repeatRouteMap, tabs, refreshRef, showTabs, convertName, convertValue } = useProLayout();
     const { router, route } = useProRouter();
 
     //所有开启缓存的路由名称
@@ -57,7 +57,7 @@ export const ProRouterView = defineComponent<ProRouterViewProps>({
         cacheTabs = filter(tabs.value, (tab) => tab.keep);
       }
       //name list
-      let list = map(cacheTabs, (item) => convertValue(item));
+      let list = map(cacheTabs, (item) => item.value);
 
       if (refreshRef.value) {
         //在 KeepLive 中删除需要刷新的路由name
@@ -66,15 +66,45 @@ export const ProRouterView = defineComponent<ProRouterViewProps>({
       return [...props.includes!, ...list];
     });
 
+    const compCache = new Map();
+
+    // 从缓存中获取组件
+    const getComp = (Component: any, name: any) => {
+      if (!compCache.has(name)) {
+        // 缓存操作
+        compCache.set(name, {
+          ...Component,
+          type: { ...Component.type, name: convertName(route) },
+        });
+      }
+      return compCache.get(name);
+    };
+
     return () => {
       return (
         <RouterView
           v-slots={{
             default: ({ Component, route }: any) => {
-              if (Component && Component.type && !Component.type.name && route.name) {
-                Component.type.name = route.name;
+              let ReComponent;
+              //必须是叶子路由
+              if (route.name) {
+                if (repeatRouteMap.value[route.name]) {
+                  // 一个路由 对 多个菜单
+                  if (Component && Component.type && !Component.type.name) {
+                    // 复制组件
+                    ReComponent = getComp(Component, convertName(route));
+                  }
+                } else if (Component && Component.type && !Component.type.name) {
+                  // 设置 name （由于defineComponent却省name，所以在这里赋值）
+                  Component.type.name = route.name;
+                }
               }
-              return <KeepAlive include={include.value}>{refreshRef.value ? null : <Component />}</KeepAlive>;
+              return (
+                <KeepAlive include={include.value}>
+                  {/*  <></> 会引起强制刷新，导致keep-live失效！！！ */}
+                  {refreshRef.value ? null : ReComponent ? <ReComponent /> : <Component />}
+                </KeepAlive>
+              );
             },
           }}
         />

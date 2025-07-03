@@ -26,6 +26,19 @@ export const convertRouter: IProConfigProvide["convertRouter"] = (router) => {
     ...router,
     //菜单点击 根据菜单不同的类型 不同处理 （外链等）
     openMenu: (item: any) => {
+      const name = item.value;
+
+      // name带参数
+      if (name.indexOf("?") > 0) {
+        const paramIndex = name.indexOf("?");
+        const routeName = name.substring(0, paramIndex);
+        const to = router.resolve({ name: routeName });
+
+        router.push(to.fullPath + name.substring(paramIndex));
+
+        return;
+      }
+
       if (size(item.children) > 0) {
         const first = findFirstValidMenu(item.children, (item) => !item.children || size(item.children) <= 0);
         if (first) {

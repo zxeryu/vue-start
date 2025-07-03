@@ -103,7 +103,7 @@ export const menus = [
   },
   {
     title: "test",
-    name: "TestIndex",
+    name: "TestIndex?id=2",
     children: [
       {
         title: "test",
@@ -111,5 +111,9 @@ export const menus = [
         hide: true,
       },
     ],
+  },
+  {
+    title: "test2",
+    name: "TestIndex?id=1",
   },
 ];

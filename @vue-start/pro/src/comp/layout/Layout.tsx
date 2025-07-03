@@ -12,7 +12,7 @@ import {
   strToJson,
   findFirstValidMenu,
 } from "@vue-start/hooks";
-import { filter, find, findLast, get, map, omit, pick, size } from "lodash";
+import { filter, find, findLast, get, map, omit, pick, size, countBy, pickBy, keys, reduce } from "lodash";
 import { filterSlotsByPrefix } from "../../util";
 import { ElementKeys, useGetCompByKey } from "../comp";
 import { TreeOption } from "../../types";
@@ -147,19 +147,43 @@ export const ProLayout = defineComponent<ProLayoutProps>({
     });
 
     /************************** 菜单、路由转换 *********************************/
-
-    const convertName: IProLayoutProvide["convertName"] = (route) => {
-      if (props.convertName) {
-        return props.convertName(route, { menuTopMap: menuTopMap.value });
-      }
-      return route.name as string;
-    };
-
+    //菜单value 转 路由name
     const convertValue: IProLayoutProvide["convertValue"] = (menu) => {
       if (props.convertValue) {
         return props.convertValue(menu);
       }
+      // 处理 name 中携带"？"的情况
+      const index = menu.value.indexOf("?");
+      if (index > 0) {
+        return menu.value.substring(0, index);
+      }
       return menu.value;
+    };
+
+    //重复路由集（一个路由对应多个菜单，即：菜单value中携带"?"）
+    const repeatRouteMap = computed<Record<string, true>>(() => {
+      const list = keys(
+        pickBy(
+          countBy(menuMap.value, (item) => convertValue(item)),
+          (v) => v > 1,
+        ),
+      );
+      return reduce(list, (pair, item) => ({ ...pair, [item]: true }), {});
+    });
+
+    // 路由name 转 菜单value
+    const convertName: IProLayoutProvide["convertName"] = (route) => {
+      if (props.convertName) {
+        return props.convertName(route, { menuTopMap: menuTopMap.value });
+      }
+
+      // 处理重复路由，即：name 中携带"?"的情况
+      if (route.name && repeatRouteMap.value[route.name as string]) {
+        const index = route.fullPath.indexOf("?");
+        return (route.name as string) + route.fullPath.substring(index);
+      }
+
+      return route.name as string;
     };
 
     //当前定位的第一级路由名称
@@ -317,6 +341,7 @@ export const ProLayout = defineComponent<ProLayoutProps>({
       //
       menus: reMenus as any,
       showMenus: showMenus as any,
+      repeatRouteMap: repeatRouteMap as any,
       menuMap: menuMap as any,
       tabs: tabs as any,
       showTabs: showTabs as any,

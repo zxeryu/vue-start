@@ -33,7 +33,7 @@ export const LayoutTabs = defineComponent<ProLayoutTabsProps>({
   setup: (props) => {
     const { router, route } = useProRouter();
 
-    const { menuMap, tabs, refresh, convertName } = useProLayout();
+    const { repeatRouteMap, menuMap, tabs, refresh, convertName } = useProLayout();
 
     const state = reactive<{
       ctxMenuPos: { x: number; y: number } | null;
@@ -57,41 +57,50 @@ export const LayoutTabs = defineComponent<ProLayoutTabsProps>({
       return get(menuMap.value, name!);
     });
 
+    const dealRoute = ({ queryUpdateCb }: { queryUpdateCb?: (newMenu: TLayoutTabMenu) => void }) => {
+      //当前路由未找到对应的菜单
+      const curMenu: TLayoutTabMenu = menu.value;
+
+      if (!curMenu) return;
+
+      //查找当前tab
+      let target: TLayoutTabMenu | undefined = find(tabs.value, (item) => item.value === curMenu.value);
+      //当前tabs不存在
+      if (!target) {
+        //添加当前菜单
+        tabs.value = [...tabs.value, { ...curMenu, query: route.query }];
+        return;
+      }
+
+      const targetStr = jsonToStr(target.query!) || "{}";
+      const curStr = jsonToStr(route.query!) || "{}";
+      //query如果不一样，更新query
+      if (targetStr !== curStr) {
+        const newMenu = { ...curMenu, query: route.query };
+        tabs.value = map(
+          map(tabs.value, (item) => {
+            //替换当前menu对象（更新query）
+            if (item.value === curMenu.value) return newMenu;
+            return item;
+          }),
+        );
+        // query更新回调
+        queryUpdateCb?.(newMenu);
+      }
+    };
+
     //路由切换（包含初始化）监听
     useEffect(
       (cur: string, pre: string) => {
-
-        //当前路由未找到对应的菜单
-        const curMenu: TLayoutTabMenu = menu.value;
-        if (!curMenu) return;
-
-        //查找当前tab
-        let target: TLayoutTabMenu | undefined = find(tabs.value, (item) => item.value === curMenu.value);
-        //当前tabs不存在
-        if (!target) {
-          //添加当前菜单
-          tabs.value = [...tabs.value, { ...curMenu, query: route.query }];
-          return;
-        }
-
-        const targetStr = jsonToStr(target.query!) || "{}";
-        const curStr = jsonToStr(route.query!) || "{}";
-        //query如果不一样，更新query
-        if (targetStr !== curStr) {
-          const newMenu = { ...curMenu, query: route.query };
-          tabs.value = map(
-            map(tabs.value, (item) => {
-              //替换当前menu对象（更新query）
-              if (item.value === curMenu.value) return newMenu;
-              return item;
-            }),
-          );
+        dealRoute({
           // 非当前页面 query replace 情况
-          if (cur !== pre) {
-            //refresh操作，主要解决 添加、编辑、详情 是同一个路由的更新问题
-            handleItemRefresh(newMenu);
-          }
-        }
+          queryUpdateCb: (newMenu) => {
+            if (cur !== pre) {
+              //refresh操作，主要解决 添加、编辑、详情 是同一个路由的更新问题
+              handleItemRefresh(newMenu);
+            }
+          },
+        });
       },
       () => route.name,
     );
@@ -102,6 +111,12 @@ export const LayoutTabs = defineComponent<ProLayoutTabsProps>({
         const curName = cur?.[0];
         const preName = pre?.[0];
         if (curName !== preName) return;
+
+        // 当前页面query变化 一个路由对应多个menu的情况
+        if (repeatRouteMap.value[curName]) {
+          dealRoute({});
+          return;
+        }
 
         //当前路由未找到对应的菜单
         const curMenu: TLayoutTabMenu = menu.value;
