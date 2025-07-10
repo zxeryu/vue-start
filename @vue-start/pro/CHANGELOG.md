@@ -3,6 +3,14 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# 0.5.58
+
+- fix: ant-design-vue ProCurdModal 关闭 bug 修复；
+
+# 0.5.57
+
+- perf: keep-live 模式优化；
+
 # 0.5.56
 
 - perf: ProLayout tabs 所有（理论上）菜单保留 query 状态；
