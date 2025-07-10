@@ -63,6 +63,7 @@ export const ProCurdModal = defineComponent<ProCurdModalProps>({
           footer={curdState.detailLoading || mode === CurdAction.DETAIL ? false : undefined}
           {...props.overrideProps}
           onUpdate:modelValue={handleVisibleChange}
+          onUpdate:visible={handleVisibleChange}
           v-slots={omit(slots, "default")}>
           {curdState.detailLoading && Loading ? (
             <Loading loading {...props.loadingOpts}>
