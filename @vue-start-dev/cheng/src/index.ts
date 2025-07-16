@@ -24,11 +24,11 @@ export const start = () => {
   const cwd = process.cwd();
   const config = loadConfig(cwd);
 
-  const runtimeConfig: TRuntimeConfig = { ...config, argv: drop(process.argv, 3) };
+  const runtimeConfig: TRuntimeConfig = { ...config, argv: drop(process.argv, 3), cwd };
 
   const action = process.argv[2];
 
   if (action === "server") {
-    createServer(runtimeConfig)
+    createServer(runtimeConfig);
   }
 };

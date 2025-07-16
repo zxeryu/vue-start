@@ -9,13 +9,15 @@ type TModuleItem = {
 export type TStartConfig = {
   cheng?: {
     server?: TServer;
-    list?: TModuleItem;
+    dirs?: TModuleItem[];
+    files?: TModuleItem[];
   };
 };
 
 export type TRuntimeConfig = TStartConfig & {
   argv: string[];
-}
+  cwd: string;
+};
 
 declare global {
   var config: TRuntimeConfig;

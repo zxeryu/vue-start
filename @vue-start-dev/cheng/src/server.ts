@@ -1,6 +1,6 @@
 import express from "express";
 import bodyParser from "body-parser";
-import { dataRouter } from "./api/data";
+import { router as fileRouter } from "./api/file";
 import { TRuntimeConfig } from "./type";
 
 export const createServer = (config: TRuntimeConfig) => {
@@ -12,7 +12,7 @@ export const createServer = (config: TRuntimeConfig) => {
   app.use(bodyParser.json());
 
   //文件读写接口
-  app.use("/api", dataRouter);
+  app.use("/api", fileRouter);
 
   //允许跨域
   app.use((req, res, next) => {
@@ -33,5 +33,4 @@ export const createServer = (config: TRuntimeConfig) => {
   app.listen(port, () => {
     console.log(`Cheng Server is running on port ${port}`);
   });
-
 };

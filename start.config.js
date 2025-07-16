@@ -80,5 +80,7 @@ module.exports = {
     server: {
       port: 5175,
     },
+    dirs: [{ path: ["src", "pro", "module2"] }],
+    files: [{ path: ["src", "pro", "module", "quota", "list"] }],
   },
 };

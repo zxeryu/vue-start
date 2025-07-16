@@ -1,26 +1,20 @@
-import { Response } from "express";
-
 export interface IResult {
   code?: number;
   msg?: string;
   data?: object;
 }
 
+export enum StatusEnum {
+  SUCCESS = 0,
+  FAIL = 1,
+}
+
 /**
- * 创建接口返回数据，统一格式
+ * 统一返回结构体
  * @param code
  * @param msg
  * @param data
  */
-export const createResult = ({ code = 0, msg = "", data = {} }: IResult): IResult => {
+export const responseWrap = <T>(data: T, code = 0, msg = 'ok') => {
   return { code, msg, data };
-};
-
-/**
- * 接口发送json数据
- * @param res
- * @param result
- */
-export const resJson = (res: Response, result: IResult) => {
-  res.json(createResult(result));
 };
