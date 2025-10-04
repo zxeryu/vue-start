@@ -18,6 +18,10 @@ const proColumnSetting = () => ({
   onColumnSelectChange: { type: Function as PropType<(selectIds: Array<string | number>) => void> },
   //render dom
   renderDom: { type: Function as PropType<() => VNode>, default: () => "列设置" },
+  // all title
+  allTitle: { type: String, default: "列展示" },
+  // reset title
+  resetTitle: { type: String, default: "重置" },
 });
 
 export type ProColumnSettingProps = Partial<ExtractPropTypes<ReturnType<typeof proColumnSetting>>>;
@@ -150,9 +154,9 @@ export const ColumnSetting = defineComponent<ProColumnSettingProps>({
                     checked={allValue.value.checked}
                     indeterminate={allValue.value.indeterminate}
                     onChange={handleAllChecked}>
-                    列展示
+                    {props.allTitle}
                   </Checkbox>
-                  <a onClick={handleReset}>重置</a>
+                  <a onClick={handleReset}>{props.resetTitle}</a>
                 </div>
                 <div key={listKey.value} class={`${props.clsName}-list`}>
                   {map(originColumns.value, (item) => {
