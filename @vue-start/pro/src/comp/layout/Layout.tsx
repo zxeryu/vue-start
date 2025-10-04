@@ -37,8 +37,13 @@ const Header = defineComponent((_, { slots }) => {
         {slots.start?.()}
 
         {slots.menus && (
-          <div ref={menuWrapperRef} class={"pro-header-menus-wrapper"}>
-            {slots.menus(menuWrapperWidth.value)}
+          <div
+            ref={menuWrapperRef}
+            class={"pro-header-menus-wrapper"}
+            style={{
+              "--pro-header-menus-wrapper-wid": menuWrapperWidth.value + "px",
+            }}>
+            {slots.menus()}
           </div>
         )}
         {slots.default?.()}
@@ -413,9 +418,8 @@ export const ProLayout = defineComponent<ProLayoutProps>({
             <Header
               class={`${props.clsName}-header`}
               v-slots={{
-                menus: (width: number) => {
-                  if (!width) return null;
-                  return <Menus style={`width:${width}px`} mode={"horizontal"} {...menuProps} v-slots={menuSlots} />;
+                menus: () => {
+                  return <Menus mode={"horizontal"} {...menuProps} v-slots={menuSlots} />;
                 },
                 ...headerSlots,
               }}
@@ -457,11 +461,9 @@ export const ProLayout = defineComponent<ProLayoutProps>({
           <Header
             class={`${props.clsName}-header`}
             v-slots={{
-              menus: (width: number) => {
-                if (!width) return null;
+              menus: () => {
                 return (
                   <Menus
-                    style={`width:${width}px`}
                     class={`${props.clsName}-menus`}
                     mode={"horizontal"}
                     options={map(showMenus.value, (item) => omit(item, "children"))}

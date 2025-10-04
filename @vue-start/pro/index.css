@@ -118,6 +118,7 @@
   left: 0;
   /* ant-design-vue */
   border-bottom: unset;
+  width: var(--pro-header-menus-wrapper-wid);
 }
 
 /*左侧菜单*/
