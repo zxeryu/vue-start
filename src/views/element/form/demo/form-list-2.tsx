@@ -47,7 +47,7 @@ export default defineComponent(() => {
               //如果gender选择man，禁用age
               const gender = get(formState, [...pathList, "gender"]);
               return (
-                <pro-form-item label={"age"} name={item.dataIndex} rules={[{ required: true }]}>
+                <pro-form-item label={"age"} name={[...pathList, item.dataIndex]} rules={[{ required: true }]}>
                   <pro-input-number v-model={record[item.dataIndex]} disabled={gender === "man"} />
                 </pro-form-item>
               );

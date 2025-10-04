@@ -12,7 +12,7 @@ const start = () => {
     throw new Error("没有找到启动文件");
   }
 
-  spawn.sync("vite dev", {
+  spawn.sync("yarn vite dev", {
     stdio: "inherit",
     shell: true,
     env: {
