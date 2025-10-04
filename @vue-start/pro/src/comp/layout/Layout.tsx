@@ -408,6 +408,7 @@ export const ProLayout = defineComponent<ProLayoutProps>({
             {slots.default?.()}
             {slots.routerView ? slots.routerView() : <ProRouterView {...props.routeOpts} />}
             {props.watermark && <ProWatermark {...props.watermark} />}
+            {slots.end?.()}
           </div>
         </>
       );
