@@ -1,4 +1,5 @@
 :root {
+  --pro-interval: 16px;
   /****************** reset layout ***************/
   /*section高度*/
   --pro-secion-hei: 100vh;
@@ -70,6 +71,8 @@
   --pro-bread-hei: 0px;
   /*tabs高度*/
   --pro-tabs-hei: 0px;
+  /* breadcrumb高度 */
+  --pro-breadcrumb-hei: 0px;
   /*菜单宽度变量：合并/展开会重新赋值；媒体查询重新赋值*/
   --pro-left-menu-wid: 0px;
   /*左侧菜单start,end插槽高度*/
@@ -77,8 +80,12 @@
   --pro-menu-end-hei: 0px;
 
   /*section高度*/
-  --pro-secion-hei: calc(100vh - var(--pro-header-hei) - var(--pro-divide-ver-hei) - var(--pro-tabs-hei));
-  --pro-section-hei: calc(100vh - var(--pro-header-hei) - var(--pro-divide-ver-hei) - var(--pro-tabs-hei));
+  --pro-secion-hei: calc(
+    100vh - var(--pro-header-hei) - var(--pro-divide-ver-hei) - var(--pro-tabs-hei) - var(--pro-breadcrumb-hei)
+  );
+  --pro-section-hei: calc(
+    100vh - var(--pro-header-hei) - var(--pro-divide-ver-hei) - var(--pro-tabs-hei) - var(--pro-breadcrumb-hei)
+  );
   /*左侧菜单高度*/
   --pro-left-menu-hei: calc(
     100vh - var(--pro-header-hei) - var(--pro-divide-ver-hei) - var(--pro-menu-start-hei) - var(--pro-menu-end-hei)
@@ -95,6 +102,10 @@
 
 .pro-layout.has-tabs {
   --pro-tabs-hei: 34px;
+}
+
+.pro-layout.has-breadcrumb {
+  --pro-breadcrumb-hei: 34px;
 }
 
 .pro-layout .pro-layout-header {
@@ -253,6 +264,31 @@
   position: fixed;
   background-color: pink;
   transform: translate(-50%, 0);
+}
+
+/*layout-breadcrumb*/
+.pro-layout-breadcrumb {
+  height: var(--pro-breadcrumb-hei);
+  display: flex;
+  align-items: center;
+  padding-left: var(--pro-interval);
+  font-size: 14px;
+}
+
+.pro-layout-breadcrumb .breadcrumb-item {
+}
+
+.pro-layout-breadcrumb .breadcrumb-item.a {
+  font-weight: bold;
+  cursor: pointer;
+}
+
+.pro-layout-breadcrumb .breadcrumb-item.a:hover {
+  color: var(--pro-color-primary);
+}
+
+.pro-layout-breadcrumb .breadcrumb-separator {
+  margin: 0 8px;
 }
 
 /********************************** pro-typography ***********************************/

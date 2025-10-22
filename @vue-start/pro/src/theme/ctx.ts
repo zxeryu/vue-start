@@ -104,6 +104,8 @@ export const AppConfig = {
   isTagsViewCache: true,
   isTagsViewDrag: true,
   //
+  isBreadcrumb: false, //展示面包屑
+  //
   isCollapse: false, //左侧菜单 最小化/展开
   isShowLogo: true,
   isGray: false,

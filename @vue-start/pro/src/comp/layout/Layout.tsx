@@ -21,6 +21,7 @@ import { IProLayoutProvide, ProLayoutKey, TLayoutMenu, TLayoutTabMenu, TLayoutTy
 import { LayoutTabs, ProLayoutTabsProps } from "./Tabs";
 import { ProRouterView, ProRouterViewProps } from "./RouterView";
 import { ProWatermark, ProWatermarkProps } from "../Watermark";
+import { LayoutBreadcrumb, LayoutBreadcrumbProps } from "./Breadcrumb";
 
 const Header = defineComponent((_, { slots }) => {
   const menuWrapperRef = ref();
@@ -81,6 +82,8 @@ const layoutProps = () => ({
     >,
     default: undefined,
   },
+  // breadcrumb相关配置
+  breadcrumb: { type: Object as PropType<LayoutBreadcrumbProps> },
   //horizontal、horizontal-v、compose 模式下，左侧菜单收起状态
   collapse: { type: Boolean },
   //router配置
@@ -329,6 +332,10 @@ export const ProLayout = defineComponent<ProLayoutProps>({
       };
     }, []);
 
+    /************************** breadcrumb *********************************/
+
+    const showBreadcrumb = computed(() => !!props.breadcrumb);
+
     /************************** 刷新当前路由 *********************************/
 
     const refreshRef = ref(false);
@@ -383,6 +390,9 @@ export const ProLayout = defineComponent<ProLayoutProps>({
       if (showTabs.value) {
         cls.push("has-tabs");
       }
+      if (showBreadcrumb.value) {
+        cls.push("has-breadcrumb");
+      }
 
       const menuProps = {
         class: `${props.clsName}-menus`,
@@ -404,6 +414,8 @@ export const ProLayout = defineComponent<ProLayoutProps>({
           {showTabs.value && (
             <LayoutTabs isHideClose={isHideClose} {...omit(props.tabs, "sessionKey", "clearWhileUnmount")} />
           )}
+          {showBreadcrumb.value && <LayoutBreadcrumb {...props.breadcrumb} />}
+          {slots.connect?.()}
           <div class={`${props.clsName}-section`}>
             {slots.default?.()}
             {slots.routerView ? slots.routerView() : <ProRouterView {...props.routeOpts} />}
