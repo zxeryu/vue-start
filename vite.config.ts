@@ -80,6 +80,7 @@ export default defineConfig(({ mode }) => {
               "dayjs",
               "prettier",
               "polished",
+              "js-base64",
               //
               "@vue-start/antd-pro",
               "@vue-start/chart",

@@ -1,4 +1,5 @@
 import htmlPlugin from "vite-plugin-html-config";
+import {encode} from "js-base64";
 
 const stringify = (o: object): string => {
   const kvs: string[] = [];
@@ -19,7 +20,7 @@ export const createHtml = (env) => {
     metas: [
       {
         name: "devkit:config",
-        content: stringify(env),
+        content: encode(stringify(env)),
       },
     ],
   });
