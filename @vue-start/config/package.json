@@ -25,6 +25,7 @@
     "url": "https://github.com/zxeryu/vue-start/issues"
   },
   "peerDependencies": {
-    "vue": ">= 3.x"
+    "vue": ">= 3.x",
+    "js-base64": "*"
   }
 }
