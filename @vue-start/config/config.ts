@@ -40,8 +40,8 @@ export const getConfig = (): TConfig => {
 
 const storeKey = "$config";
 
-export const createConfig = () => (app: App) => {
-  const config = getConfig();
+export const createConfig = (c?: TConfig) => (app: App) => {
+  const config = c || getConfig();
   app.provide<TConfig>(storeKey, config);
 };
 
