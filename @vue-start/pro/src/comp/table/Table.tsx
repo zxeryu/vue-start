@@ -1,15 +1,19 @@
-import { computed, defineComponent, ExtractPropTypes, inject, PropType, provide, ref, toRef, VNode, Ref } from "vue";
+import {
+  computed,
+  defineComponent,
+  ExtractPropTypes,
+  inject,
+  PropType,
+  provide,
+  ref,
+  toRef,
+  VNode,
+  Ref,
+  nextTick,
+} from "vue";
 import { TColumn } from "../../types";
 import { filter, get, isBoolean, isFunction, keys, map, omit, pick, reduce, size, some } from "lodash";
-import {
-  isValidNode,
-  mergeState,
-  proBaseProps,
-  ProBaseProps,
-  renderColumn,
-  useProConfig,
-  useProRouter,
-} from "../../core";
+import { mergeState, proBaseProps, ProBaseProps, renderColumn, useProConfig, useProRouter } from "../../core";
 import { createExpose, filterSlotsByPrefix } from "../../util";
 import { IOpeItem, ProOperate, ProOperateProps } from "../Operate";
 import { ElementKeys } from "../comp";
@@ -326,16 +330,21 @@ export const ProTable = defineComponent<ProTableProps>({
 
     const toolbarRef = ref();
     const toolbarHeiRef = ref(0);
+    const toolbarAllHeiRef = ref(0);
 
     //计算toolbar高度
     useResizeObserver(toolbarRef, (entries) => {
       const rect = get(entries, [0, "contentRect"]);
-      const styles = window.getComputedStyle(toolbarRef.value);
-      if (rect.height && styles) {
-        const mbs = styles.getPropertyValue("margin-bottom");
-        const mb = parseInt(mbs.replace("px", ""));
-        toolbarHeiRef.value = rect.height + mb;
-      }
+      toolbarHeiRef.value = rect.height;
+
+      nextTick(() => {
+        const styles = window.getComputedStyle(toolbarRef.value);
+        if (styles) {
+          const marginTop = parseFloat(styles.marginTop) || 0;
+          const marginBottom = parseFloat(styles.marginBottom) || 0;
+          toolbarAllHeiRef.value = toolbarHeiRef.value + marginTop + marginBottom;
+        }
+      });
     });
 
     const invalidKeys = keys(proTableProps());
@@ -353,13 +362,16 @@ export const ProTable = defineComponent<ProTableProps>({
 
       const cls = [props.clsName];
       let oldCls = "";
-      if (isValidNode(tb) || isValidNode(tbExtra) || isColumnSetting.value) {
+      if (toolbarHeiRef.value > 0) {
         cls.push("has-header");
         oldCls = `${props.clsName}-toolbar-valid`;
       }
 
       return (
-        <div class={cls} style={`--pro-table-toolbar-hei: ${toolbarHeiRef.value}px`} {...(pick(attrs, "class") as any)}>
+        <div
+          class={cls}
+          style={`--pro-table-toolbar-hei: ${toolbarAllHeiRef.value}px`}
+          {...(pick(attrs, "class") as any)}>
           <div ref={toolbarRef} class={`${props.clsName}-toolbar ${oldCls}`}>
             <div class={`${props.clsName}-toolbar-start`}>{tb}</div>
             <div class={`${props.clsName}-toolbar-extra`}>{tbExtra || columnSettingNode}</div>

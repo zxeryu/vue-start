@@ -125,7 +125,7 @@ export const ProFormList = defineComponent<ProFormListProps>({
       const rowKey = getColumnFormItemName(item);
       //插槽优先
       if (rowKey && slots[rowKey]) {
-        return slots[rowKey]!({item, formState, pathList});
+        return slots[rowKey]!({ item, formState, pathList });
       }
       return renderInputColumn(elementMap, formElementMap, item)!;
     };
@@ -167,7 +167,7 @@ export const ProFormList = defineComponent<ProFormListProps>({
 
                   {renderItems(pathList, item)}
 
-                  {slots.default?.()}
+                  {slots.default?.({ state: formState, path, index })}
                   {!readonly.value && (
                     <>
                       <div class={"pro-form-list-item-add"} onClick={handleAdd}>
@@ -187,6 +187,7 @@ export const ProFormList = defineComponent<ProFormListProps>({
               {slots.add?.() || props.renderAdd?.()}
             </div>
           )}
+          {slots.end?.()}
         </FormItem>
       );
     };
