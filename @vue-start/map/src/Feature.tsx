@@ -50,7 +50,7 @@ export const useMapControlConnect = (feature: any) => {
     mapRef.value.addControl(feature);
     return () => {
       try {
-        mapRef.value.removeControl(feature)
+        mapRef.value.removeControl(feature);
       } catch (e) {
         console.error(e);
       }
@@ -96,11 +96,24 @@ export const useShowConnect = (feature: any, showRef: ToRef<boolean>) => {
  * @param optsRef
  */
 export const useFeatureOptMethods = (feature: any, optsRef: ToRef<any>) => {
-  useEffect(() => {
+  const execute = (k: string, v: any) => {
+    const method = "set" + upperFirst(k);
+    if (feature[method] && isFunction(feature[method])) {
+      feature[method](v);
+    } else {
+      // 类似于 setzIndex
+      const method2 = "set" + k;
+      if (feature[method2] && isFunction(feature[method2])) {
+        feature[method2](v);
+      }
+    }
+  };
+
+  useEffect((_, pre) => {
     forEach(optsRef.value, (v, k) => {
-      const methodName = "set" + upperFirst(k);
-      if (feature[methodName] && isFunction(feature[methodName])) {
-        feature[methodName](v);
+      const preV = pre?.[k];
+      if (preV !== v) {
+        execute(k, v);
       }
     });
   }, optsRef);
