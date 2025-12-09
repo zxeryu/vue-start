@@ -44,7 +44,7 @@ export const ProUploaderText = defineComponent<Record<string, any>>({
               [fieldNames.name]: item.name,
               [fieldNames.size || "size"]: item.size,
             };
-            return props.convertItem?.(item) || nextItem;
+            return props.convertItem?.(item, props.fieldNames) || nextItem;
           }),
         );
       }
