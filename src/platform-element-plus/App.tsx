@@ -1,5 +1,5 @@
 import { defineComponent } from "vue";
-import { FormRulePrefixMap, ProConfig, ProTheme, TMeta } from "@vue-start/pro";
+import { FormRulePrefixMap, ProConfig, ProTheme, TMeta, useAppConfig } from "@vue-start/pro";
 import { elementMap, formElementMap } from "./component";
 import { RouterView } from "vue-router";
 import { convertRouter } from "@/router";
@@ -14,6 +14,8 @@ const showMsg = (opts: any) => {
 };
 
 export const App = defineComponent(() => {
+  const { appConfig } = useAppConfig();
+
   const { clsObj } = createAtom();
 
   const registerActors: { actor: IRequestActor }[] = [
@@ -38,6 +40,7 @@ export const App = defineComponent(() => {
   return () => {
     return (
       <ProConfig
+        appConfig={appConfig}
         elementMap={elementMap}
         formElementMap={formElementMap}
         formExtraMap={{ rulePrefixMap: FormRulePrefixMap }}

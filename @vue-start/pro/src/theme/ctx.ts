@@ -111,6 +111,8 @@ export const AppConfig = {
   isGray: false,
   isInvert: false,
   isWatermark: true, //水印
+  //
+  locale: "zh",//默认中文
 };
 
 export type TAppConfig = typeof AppConfig;

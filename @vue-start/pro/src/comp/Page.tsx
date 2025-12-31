@@ -1,7 +1,7 @@
 import { computed, defineComponent, ExtractPropTypes, PropType, VNode } from "vue";
 import { keys, omit, pick } from "lodash";
 import { ElementKeys, useGetCompByKey } from "./comp";
-import { isValidNode, useProRouter } from "../core";
+import { isValidNode, useProConfig, useProRouter } from "../core";
 import { useProLayout } from "./layout";
 
 const proPageHeaderProps = () => ({
@@ -12,7 +12,7 @@ const proPageHeaderProps = () => ({
   hideWhileNoHistory: { type: Boolean, default: true },
   onBackClick: { type: Function },
   //render dom
-  renderBackIcon: { type: Function as PropType<() => VNode>, default: () => "返回" },
+  renderBackIcon: { type: Function as PropType<() => VNode> },
 });
 
 export type PageHeaderProps = Partial<ExtractPropTypes<ReturnType<typeof proPageHeaderProps>>>;
@@ -22,6 +22,7 @@ export const PageHeader = defineComponent({
     ...proPageHeaderProps(),
   },
   setup: (props, { slots }) => {
+    const { t } = useProConfig();
     const { router } = useProRouter();
 
     const handleOnBackClick = () => {
@@ -32,6 +33,8 @@ export const PageHeader = defineComponent({
       router.back();
     };
 
+    const renderBackIcon = () => t.value("back");
+
     return () => {
       const isShowBackHis =
         (props.hideWhileNoHistory && window.history?.state?.back) || props.hideWhileNoHistory === false;
@@ -39,7 +42,7 @@ export const PageHeader = defineComponent({
         <div class={"pro-page-header"}>
           {props.showBack && isShowBackHis && (
             <div class={"pro-page-header-back"} onClick={handleOnBackClick}>
-              {slots.backIcon ? slots.backIcon() : props.renderBackIcon?.()}
+              {slots.backIcon ? slots.backIcon() : props.renderBackIcon?.() || renderBackIcon()}
             </div>
           )}
           <div class={"pro-page-header-title"}>{slots.title ? slots.title() : props.title}</div>

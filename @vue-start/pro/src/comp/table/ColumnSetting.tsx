@@ -4,6 +4,7 @@ import { filter, get, isObject, map, omit, reduce, some, every, forEach, has } f
 import { TTableColumn, useProTable } from "./Table";
 import { useEffect, useUpdateKey, useWatch } from "@vue-start/hooks";
 import { getSignValue as getSignValueOrigin } from "../../util";
+import { useProConfig } from "../../core";
 
 const proColumnSetting = () => ({
   /**
@@ -17,11 +18,11 @@ const proColumnSetting = () => ({
   //select改变监听
   onColumnSelectChange: { type: Function as PropType<(selectIds: Array<string | number>) => void> },
   //render dom
-  renderDom: { type: Function as PropType<() => VNode>, default: () => "列设置" },
+  renderDom: { type: Function as PropType<() => VNode> },
   // all title
-  allTitle: { type: String, default: "列展示" },
+  allTitle: { type: String },
   // reset title
-  resetTitle: { type: String, default: "重置" },
+  resetTitle: { type: String },
 });
 
 export type ProColumnSettingProps = Partial<ExtractPropTypes<ReturnType<typeof proColumnSetting>>>;
@@ -31,6 +32,7 @@ export const ColumnSetting = defineComponent<ProColumnSettingProps>({
     ...proColumnSetting(),
   } as any,
   setup: (props, { slots }) => {
+    const { t } = useProConfig();
     const getComp = useGetCompByKey();
     const Popover = getComp(ElementKeys.PopoverKey);
     const Checkbox = getComp(ElementKeys.CheckboxKey);
@@ -137,6 +139,8 @@ export const ColumnSetting = defineComponent<ProColumnSettingProps>({
       }
     };
 
+    const renderDom = () => t.value("columnSettings");
+
     return () => {
       if (!Popover) {
         return null;
@@ -154,9 +158,9 @@ export const ColumnSetting = defineComponent<ProColumnSettingProps>({
                     checked={allValue.value.checked}
                     indeterminate={allValue.value.indeterminate}
                     onChange={handleAllChecked}>
-                    {props.allTitle}
+                    {props.allTitle || t.value("columnDisplay")}
                   </Checkbox>
-                  <a onClick={handleReset}>{props.resetTitle}</a>
+                  <a onClick={handleReset}>{props.resetTitle || t.value("reset")}</a>
                 </div>
                 <div key={listKey.value} class={`${props.clsName}-list`}>
                   {map(originColumns.value, (item) => {
@@ -178,7 +182,7 @@ export const ColumnSetting = defineComponent<ProColumnSettingProps>({
             ),
             ...omit(slots, "default"),
           }}>
-          {slots.default?.() || props.renderDom?.()}
+          {slots.default?.() || props.renderDom?.() || renderDom()}
         </Popover>
       );
     };

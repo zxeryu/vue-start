@@ -1,5 +1,5 @@
 import { computed, defineComponent, ExtractPropTypes, PropType, reactive, Ref, ref, Teleport } from "vue";
-import { useProRouter } from "../../core";
+import { useProConfig, useProRouter } from "../../core";
 import { TLayoutMenu, TLayoutTabMenu, useProLayout } from "./ctx";
 import { useEffect, useUpdateKey, jsonToStr } from "@vue-start/hooks";
 import { ElementKeys, useGetCompByKey } from "../comp";
@@ -31,6 +31,7 @@ export const LayoutTabs = defineComponent<ProLayoutTabsProps>({
     ...tabsProps(),
   } as any,
   setup: (props) => {
+    const { t } = useProConfig();
     const { router, route } = useProRouter();
 
     const { repeatRouteMap, menuMap, tabs, refresh, convertName } = useProLayout();
@@ -273,15 +274,15 @@ export const LayoutTabs = defineComponent<ProLayoutTabsProps>({
     const options = computed(() => {
       const list = [];
       if (menu.value?.value === state.ctxMenuItem?.value) {
-        list.push({ label: "刷新", value: "refresh" });
+        list.push({ label: t.value("refresh"), value: "refresh" });
       }
       if (!isHideClose(state.ctxMenuItem!)) {
-        list.push({ label: "关闭", value: "close" });
+        list.push({ label: t.value("close"), value: "close" });
       }
       list.push(
         ...[
-          { label: "关闭其他", value: "close-other" },
-          { label: "全部关闭", value: "close-all" },
+          { label: t.value("closeOthers"), value: "close-other" },
+          { label: t.value("closeAll"), value: "close-all" },
         ],
       );
       return map(list, (item) => {

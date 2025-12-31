@@ -136,7 +136,7 @@ export const ProForm = defineComponent<ProFormProps>({
     ...omit(ProGrid.props, "items"),
   } as any,
   setup: (props, { slots, emit, expose, attrs }) => {
-    const { elementMap: elementMapP, formElementMap: formElementMapP } = useProConfig();
+    const { elementMap: elementMapP, formElementMap: formElementMapP, t } = useProConfig();
 
     const elementMap = props.elementMap || elementMapP;
     const formElementMap = props.formElementMap || formElementMapP;
@@ -223,10 +223,12 @@ export const ProForm = defineComponent<ProFormProps>({
 
     /************************************** operate 按钮 ******************************************/
 
-    const defaultOpeItems = [
-      { value: FormAction.RESET, label: "重置" },
-      { value: FormAction.SUBMIT, label: "提交", extraProps: { type: "primary" } },
-    ];
+    const defaultOpeItems = computed(() => {
+      return [
+        { value: FormAction.RESET, label: t.value("reset") },
+        { value: FormAction.SUBMIT, label: t.value("submit"), extraProps: { type: "primary" } },
+      ];
+    });
 
     const handleReset = () => {
       //如果注册了onReset方法，优先执行onReset
@@ -258,7 +260,7 @@ export const ProForm = defineComponent<ProFormProps>({
     //默认处理 reset submit方法
     const operateItems = computed(() => {
       const operate = props.operate;
-      const items: IOpeItem[] = operate?.items || defaultOpeItems;
+      const items: IOpeItem[] = operate?.items || defaultOpeItems.value;
       return map(items, (item) => {
         //没有onClick
         if (!item.onClick && !get(operate?.itemState, [item.value, "onClick"])) {

@@ -290,7 +290,7 @@ export const ProCurd = defineComponent<ProCurdProps>({
     curdState: { type: Object as PropType<ICurdState> },
   },
   setup: (props, { slots, expose }) => {
-    const { elementMap, formElementMap } = useProConfig();
+    const { elementMap, formElementMap, t } = useProConfig();
 
     const moduleRef = ref();
     const curdRef = ref();
@@ -311,21 +311,21 @@ export const ProCurd = defineComponent<ProCurdProps>({
         convertData: (actor) => actor.res?.data,
         loadingName: "detailLoading",
         stateName: "detailData",
-        label: "详情",
+        label: t.value("details"),
       },
       [CurdAction.ADD]: {
         convertParams: (values, record) => ({ body: { ...record, ...values } }),
         loadingName: "operateLoading",
-        label: "添加",
+        label: t.value("add"),
       },
       [CurdAction.EDIT]: {
         convertParams: (values, record) => ({ body: { ...record, ...values } }),
         loadingName: "operateLoading",
-        label: "编辑",
+        label: t.value("edit"),
       },
       [CurdAction.DELETE]: {
         convertParams: (record, rowKey) => pick(record, rowKey),
-        label: "删除",
+        label: t.value("delete"),
       },
     };
 

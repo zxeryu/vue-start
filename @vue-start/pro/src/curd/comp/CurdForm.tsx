@@ -3,6 +3,7 @@ import { ElementKeys, FormAction, ProFormProps, useGetCompByKey } from "../../co
 import { CurdAction, CurdAddAction, CurdSubAction, useProCurd } from "../ctx";
 import { createExpose } from "../../util";
 import { get, omit } from "lodash";
+import { useProConfig } from "../../core";
 
 const proCurdFormProps = () => ({
   //标记名称 对应columns中的配置名称
@@ -16,6 +17,7 @@ export const ProCurdForm = defineComponent<ProCurdFormProps>({
     ...proCurdFormProps(),
   } as any,
   setup: (props, { slots, expose, attrs }) => {
+    const { t } = useProConfig();
     const { elementMap, formElementMap, curdState, formColumns, getSignColumns, sendCurdEvent } = useProCurd();
 
     const formRef = ref();
@@ -38,12 +40,19 @@ export const ProCurdForm = defineComponent<ProCurdFormProps>({
       formRef.value?.submit();
     };
 
-    const defaultOpeItems = [
-      { value: FormAction.RESET, label: "重置" },
-      { value: FormAction.SUBMIT, label: "提交", extraProps: { type: "primary" } },
-      //默认不展示
-      { value: FormAction.CONTINUE, label: "确定并继续", extraProps: { type: "primary" }, show: false },
-    ];
+    const defaultOpeItems = computed(() => {
+      return [
+        { value: FormAction.RESET, label: t.value("reset") },
+        { value: FormAction.SUBMIT, label: t.value("submit"), extraProps: { type: "primary" } },
+        //默认不展示
+        {
+          value: FormAction.CONTINUE,
+          label: t.value("confirmAndContinue"),
+          extraProps: { type: "primary" },
+          show: false,
+        },
+      ];
+    });
 
     const handleFinish = (values: Record<string, any>) => {
       if (attrs.onFinish) {
@@ -75,7 +84,7 @@ export const ProCurdForm = defineComponent<ProCurdFormProps>({
           operate={
             props.operate
               ? {
-                  items: defaultOpeItems,
+                  items: defaultOpeItems.value,
                   onSubmit: handleSubmit,
                   onContinue: handleContinue,
                   ...props.operate,

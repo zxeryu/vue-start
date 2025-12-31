@@ -35,7 +35,7 @@ export const createFormItemCompFn = <T extends FormItemProps>(
         ...proFormItemProps(),
       },
       setup: (props, { slots }) => {
-        const { formExtraMap, elementMap } = useProConfig();
+        const { formExtraMap, elementMap, t } = useProConfig();
         const { formState, readonlyState, disableState, readonly: formReadonly, userOpe } = useProForm();
         const formListCtx = useProFormList();
 
@@ -51,7 +51,7 @@ export const createFormItemCompFn = <T extends FormItemProps>(
 
         const combineRuleMessage = () => {
           const prefix = get(formExtraMap?.rulePrefixMap, valueType);
-          return `${prefix || "请输入"}${props.label || ""}`;
+          return `${prefix || t.value("pleaseEnter")}${props.label || ""}`;
         };
 
         //补充required message

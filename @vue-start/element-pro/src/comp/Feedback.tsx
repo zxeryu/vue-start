@@ -1,7 +1,7 @@
 import { computed, defineComponent, ExtractPropTypes, ref } from "vue";
 import { DialogProps, ElDialog, DrawerProps, ElDrawer } from "element-plus";
 import { isBoolean, keys, omit } from "lodash";
-import { createExposeObj, ElementKeys, useGetCompByKey } from "@vue-start/pro";
+import { createExposeObj, ElementKeys, useGetCompByKey, useProConfig } from "@vue-start/pro";
 
 const proModalProps = () => ({
   /**
@@ -9,8 +9,8 @@ const proModalProps = () => ({
    */
   clsName: { type: String, default: "pro-modal" },
   visible: { type: Boolean, default: false },
-  cancelText: { type: String, default: "取消" },
-  okText: { type: String, default: "确认" },
+  cancelText: { type: String },
+  okText: { type: String },
   confirmLoading: Boolean,
   footer: { type: Boolean, default: true },
   //兼容ant-v
@@ -31,6 +31,7 @@ export const ProModal = defineComponent<ProModalProps>({
     ...proModalProps(),
   },
   setup: (props, { slots, emit, expose }) => {
+    const { t } = useProConfig();
     const originRef = ref();
 
     expose(createExposeObj(originRef));
@@ -58,10 +59,10 @@ export const ProModal = defineComponent<ProModalProps>({
 
     const items = computed(() => {
       return [
-        { value: "cancel", label: props.cancelText, onClick: handleCancel },
+        { value: "cancel", label: t.value("cancel"), onClick: handleCancel },
         {
           value: "ok",
-          label: props.okText,
+          label: t.value("confirm"),
           loading: props.confirmLoading,
           extraProps: { type: "primary" },
           onClick: handleOk,
@@ -106,8 +107,8 @@ export const ProModal = defineComponent<ProModalProps>({
 const proDrawerProps = () => ({
   clsName: { type: String, default: "pro-drawer" },
   visible: { type: Boolean, default: false },
-  cancelText: { type: String, default: "取消" },
-  okText: { type: String, default: "确认" },
+  cancelText: { type: String },
+  okText: { type: String },
   footer: { type: Boolean, default: true },
   confirmLoading: Boolean,
   //
@@ -125,6 +126,7 @@ export const ProDrawer = defineComponent<ProDrawerProps>({
     destroyOnClose: { type: Boolean, default: true },
   },
   setup: (props, { slots, emit, expose }) => {
+    const { t } = useProConfig();
     const originRef = ref();
 
     expose(createExposeObj(originRef));
@@ -151,10 +153,10 @@ export const ProDrawer = defineComponent<ProDrawerProps>({
 
     const items = computed(() => {
       return [
-        { value: "cancel", label: props.cancelText, onClick: handleCancel },
+        { value: "cancel", label: t.value("cancel"), onClick: handleCancel },
         {
           value: "ok",
-          label: props.okText,
+          label: t.value("confirm"),
           loading: props.confirmLoading,
           extraProps: { type: "primary" },
           onClick: handleOk,

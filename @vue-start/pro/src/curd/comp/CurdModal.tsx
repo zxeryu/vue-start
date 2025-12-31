@@ -5,6 +5,7 @@ import { get, keys, omit, size, some } from "lodash";
 import { ProCurdForm } from "./CurdForm";
 import { filterSlotsByPrefix } from "../../util";
 import { useCurdCommon } from "../Curd";
+import { useProConfig } from "../../core";
 
 const proCurdModalProps = () => ({
   //只有指定mode才显示
@@ -130,8 +131,8 @@ const curdPageProps = () => ({
   validMode: { type: Array, default: [CurdAction.ADD, CurdAction.DETAIL, CurdAction.EDIT] },
   //
   operate: { type: Object as PropType<ProOperateProps> },
-  cancelText: { type: String, default: "取消" },
-  okText: { type: String, default: "确认" },
+  cancelText: { type: String },
+  okText: { type: String },
 });
 
 export const ProCurdPage = defineComponent({
@@ -144,6 +145,7 @@ export const ProCurdPage = defineComponent({
     ...curdPageProps(),
   },
   setup: (props, { emit, slots }) => {
+    const { t } = useProConfig();
     const { curdState } = useProCurd();
     const { clearMode, opeTitle } = useCurdCommon();
 
@@ -171,10 +173,10 @@ export const ProCurdPage = defineComponent({
       if (size(items) > 0) return items;
 
       return [
-        { value: "cancel", label: props.cancelText, onClick: clearMode },
+        { value: "cancel", label: t.value("cancel"), onClick: clearMode },
         {
           value: "ok",
-          label: props.okText,
+          label: t.value("confirm"),
           extraProps: { type: "primary" },
           loading: curdState.operateLoading,
           onClick: handleSubmit,

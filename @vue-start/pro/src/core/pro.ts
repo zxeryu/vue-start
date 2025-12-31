@@ -1,4 +1,4 @@
-import { App, defineComponent, ExtractPropTypes, inject, PropType, provide } from "vue";
+import { App, computed, ComputedRef, defineComponent, ExtractPropTypes, inject, PropType, provide } from "vue";
 import { TColumn, TColumns, TElementMap } from "../types";
 import { TRegisterStore, TRegisterStoreMap } from "./store";
 import { get, reduce } from "lodash";
@@ -9,6 +9,8 @@ import { Router } from "vue-router";
 import { mergeStateToData, mergeStateToData2 } from "@vue-start/hooks";
 import { getColumnFormItemName } from "./core";
 import { AppConfig, TAppConfig } from "../theme/ctx";
+import { zhLocale } from "../locale/zh";
+import { enLocale } from "../locale/en";
 
 const proBasePropsFn = () => ({
   /**
@@ -107,6 +109,9 @@ export interface IProConfigProvide {
   showNotify: (opts: Record<string, any>) => any;
   //默认AppConfig
   appConfig: TAppConfig;
+  //
+  localeConfig: ComputedRef<Record<string, string>>;
+  t: ComputedRef<(k: string) => string>;
 }
 
 const proConfigProps = () => ({
@@ -131,6 +136,8 @@ const proConfigProps = () => ({
   showNotify: { type: Function },
   //
   appConfig: { type: Object as PropType<TAppConfig>, default: AppConfig },
+  //国际化支持
+  localeConfig: { type: Object },
 });
 
 const ProConfigKey = Symbol("pro-config");
@@ -185,6 +192,20 @@ export const ProConfig = defineComponent<ProConfigProps>({
     //meta订阅
     useMetaRegister(registerMetaMap, registerActorMap);
 
+    //
+    const locale = computed(() => props.appConfig?.locale);
+
+    const localeConfig = computed(() => {
+      if (props.localeConfig) return props.localeConfig;
+      if (locale.value === "en") return enLocale;
+      return zhLocale;
+    });
+    const t = computed(() => {
+      return (k: string) => {
+        return get(localeConfig.value, k) || get(zhLocale, k);
+      };
+    });
+
     provide(ProConfigKey, {
       elementMap: props.elementMap,
       formElementMap: props.formElementMap,
@@ -205,6 +226,10 @@ export const ProConfig = defineComponent<ProConfigProps>({
       showNotify: props.showNotify,
       //
       appConfig: props.appConfig,
+      //
+      locale: locale,
+      localeConfig: localeConfig,
+      t,
     });
 
     return () => {

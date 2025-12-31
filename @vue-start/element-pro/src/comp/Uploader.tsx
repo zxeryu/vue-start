@@ -40,7 +40,7 @@ export const ProUploader = defineComponent<ProUploadProps>({
     ...uploadProps(),
   } as any,
   setup: (props, { slots, expose, emit }) => {
-    const { showMsg } = useProConfig();
+    const { showMsg, t } = useProConfig();
 
     const uploadRef = ref();
     expose(createExposeObj(uploadRef, UploadMethods));
@@ -89,7 +89,7 @@ export const ProUploader = defineComponent<ProUploadProps>({
       if (props.globalLoading) {
         loadingInstance = ElLoading.service({
           lock: true,
-          text: "正在上传文件，请稍后...",
+          text: t.value("uploadingWatting"),
           ...(isBoolean(props.globalLoading) ? {} : props.globalLoading),
         });
       }
@@ -109,7 +109,7 @@ export const ProUploader = defineComponent<ProUploadProps>({
 
     /*********************** 回调 ********************************/
 
-    const onMsg = (type: string, msg: string) => {
+    const onMsg = (type: string, msg: string, opts?: any) => {
       if (props.onErrorMsg) {
         props.onErrorMsg(type, msg);
         return;
@@ -124,7 +124,9 @@ export const ProUploader = defineComponent<ProUploadProps>({
       //类型校验
       if (props.accept) {
         if (!isValidFileType(props.accept, file.name)) {
-          onMsg("FileTypeError", `请上传正确格式（${props.accept.replace(/,/g, "，")}）的文件`);
+          onMsg("FileTypeError", `请上传正确格式（${props.accept.replace(/,/g, "，")}）的文件`, {
+            accept: props.accept.replace(/,/g, "，"),
+          });
           return false;
         }
       }
@@ -135,7 +137,9 @@ export const ProUploader = defineComponent<ProUploadProps>({
           return false;
         }
         if (isNumber(props.maxSize) && file.size > props.maxSize) {
-          onMsg("FileSizeError-MaxSize", `请上传小于${convertFileSize(props.maxSize)}的文件`);
+          onMsg("FileSizeError-MaxSize", `请上传小于${convertFileSize(props.maxSize)}的文件`, {
+            maxSize: convertFileSize(props.maxSize),
+          });
           return false;
         }
       }

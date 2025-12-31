@@ -154,7 +154,7 @@ export const ProTable = defineComponent<ProTableProps>({
     ...proTableProps(),
   } as any,
   setup: (props, { slots, expose, attrs }) => {
-    const { elementMap: elementMapP } = useProConfig();
+    const { elementMap: elementMapP, t } = useProConfig();
 
     const elementMap = props.elementMap || elementMapP;
 
@@ -165,7 +165,7 @@ export const ProTable = defineComponent<ProTableProps>({
     /*********************************** 序号 **************************************/
 
     const createNumberColumn = (): TTableColumn => ({
-      title: "序号",
+      title: t.value("serialNumber"),
       dataIndex: "serialNumber",
       width: 80,
       ...props.column,
@@ -209,7 +209,7 @@ export const ProTable = defineComponent<ProTableProps>({
       });
       return {
         ...props.column,
-        title: "操作",
+        title: t.value("operate"),
         dataIndex: "operate",
         fixed: "right",
         ...operate.column,

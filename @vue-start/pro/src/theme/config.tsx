@@ -82,6 +82,18 @@ export const ProAppConfigDrawer = defineComponent<ProAppConfigDrawerProps>({
       { title: "开启灰色模式", dataIndex: "isGray", valueType: "switch" },
       { title: "开启色弱模式", dataIndex: "isInvert", valueType: "switch" },
       { title: "开启水印", dataIndex: "isWatermark", valueType: "switch" },
+      //
+      {
+        title: "语言",
+        dataIndex: "locale",
+        valueType: "select",
+        formFieldProps: {
+          options: [
+            { label: "中文", value: "zh" },
+            { label: "英语", value: "en" },
+          ],
+        },
+      },
     ];
 
     const layoutList = [
