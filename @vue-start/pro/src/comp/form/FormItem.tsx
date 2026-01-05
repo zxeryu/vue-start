@@ -50,13 +50,13 @@ export const createFormItemCompFn = <T extends FormItemProps>(
         });
 
         const combineRuleMessage = () => {
-          const prefix = get(formExtraMap?.rulePrefixMap, valueType);
+          const prefix = get(formExtraMap!.value?.rulePrefixMap, valueType);
           return `${prefix || t.value("pleaseEnter")}${props.label || ""}`;
         };
 
         //补充required message
         const rules = computed(() => {
-          if (!formExtraMap?.rulePrefixMap) {
+          if (!formExtraMap!.value?.rulePrefixMap) {
             return props.rules;
           }
           if (props.required === true && !props.rules) {

@@ -40,30 +40,32 @@ export const ProCurdList = defineComponent<ProCurdListProps>({
       useProCurd();
 
     //从operates中提取table items
-    const tableOperateItems = map(
-      //详情、编辑、删除 或者 标记tableOperate为true 的operate item
-      filter(operates, (item) => {
-        const action = item.action;
-        return (
-          action === CurdAction.DETAIL ||
-          action === CurdAction.EDIT ||
-          action === CurdAction.DELETE ||
-          item.tableOperate
-        );
-      }),
-      (operate: ICurdOperateOpts) => {
-        const item = {
-          ...omit(operate, "action", "actor", "convertParams"),
-          value: operate.action,
-        };
-        if (!item.onClick) {
-          item.onClick = (record) => {
-            sendCurdEvent({ action: operate.action, type: CurdSubAction.EMIT, record });
+    const tableOperateItems = computed(() => {
+      return map(
+        //详情、编辑、删除 或者 标记tableOperate为true 的operate item
+        filter(operates.value, (item) => {
+          const action = item.action;
+          return (
+            action === CurdAction.DETAIL ||
+            action === CurdAction.EDIT ||
+            action === CurdAction.DELETE ||
+            item.tableOperate
+          );
+        }),
+        (operate: ICurdOperateOpts) => {
+          const item = {
+            ...omit(operate, "action", "actor", "convertParams"),
+            value: operate.action,
           };
-        }
-        return item;
-      },
-    );
+          if (!item.onClick) {
+            item.onClick = (record) => {
+              sendCurdEvent({ action: operate.action, type: CurdSubAction.EMIT, record });
+            };
+          }
+          return item;
+        },
+      );
+    });
 
     const handleSearch = (values: Record<string, any>) => {
       sendCurdEvent({ action: CurdAction.LIST, type: CurdSubAction.EMIT, values });
@@ -86,7 +88,7 @@ export const ProCurdList = defineComponent<ProCurdListProps>({
         loading: curdState.listLoading,
         dataSource: curdState.listData?.dataSource,
         ...omit(props.tableProps, "operate"),
-        operate: { items: tableOperateItems, ...props.tableProps?.operate },
+        operate: { items: tableOperateItems.value, ...props.tableProps?.operate },
       };
     });
 

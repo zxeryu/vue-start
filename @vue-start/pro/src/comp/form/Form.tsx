@@ -96,6 +96,7 @@ const proFormProps = () => ({
    * 操作按钮
    */
   operate: { type: Object as PropType<TProFormOperate> },
+  opeItems: { type: Function as PropType<() => IOpeItem[]> },
   submitLoading: { type: Boolean },
   /**
    * ref 默认中转方法
@@ -260,7 +261,7 @@ export const ProForm = defineComponent<ProFormProps>({
     //默认处理 reset submit方法
     const operateItems = computed(() => {
       const operate = props.operate;
-      const items: IOpeItem[] = operate?.items || defaultOpeItems.value;
+      const items: IOpeItem[] = operate?.items || props.opeItems?.() || defaultOpeItems.value;
       return map(items, (item) => {
         //没有onClick
         if (!item.onClick && !get(operate?.itemState, [item.value, "onClick"])) {

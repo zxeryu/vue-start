@@ -13,7 +13,7 @@ import {
   useProModule,
   useProRouter,
 } from "../core";
-import { filter, get, isString, keys, map, omit, pick, reduce, sortBy } from "lodash";
+import { filter, find, get, isString, keys, map, omit, pick, reduce, sortBy } from "lodash";
 import { TActionEvent, TColumns } from "../types";
 import { UnwrapNestedRefs } from "@vue/reactivity";
 import {
@@ -221,11 +221,11 @@ const Curd = defineComponent<CurdProps>({
       }
     });
 
-    const operateMap = reduce(props.operates, (pair, item) => ({ ...pair, [item.action]: item }), {});
+    const operates = computed(() => props.operates);
 
     //根据Action获取ICurdOperateOpts
     const getOperate = (action: ICurdAction): ICurdOperateOpts | undefined => {
-      return get(operateMap, action);
+      return find(props.operates, (item) => item.action === action);
     };
 
     const defaultAddRecord = computed(() => props.defaultAddRecord);
@@ -253,7 +253,7 @@ const Curd = defineComponent<CurdProps>({
       //
       sendCurdEvent,
       //
-      operates: props.operates!,
+      operates: operates as any,
       getOperate,
       //
       refreshList: handleSearch,
@@ -299,46 +299,50 @@ export const ProCurd = defineComponent<ProCurdProps>({
 
     /****************** 请求处理 **********************/
     //curd默认网络属性
-    const curdOperateOpts: Record<ICurdAction, Omit<ICurdOperateOpts, "actor" | "action">> = {
-      [CurdAction.LIST]: {
-        convertParams: (values) => values,
-        convertData: (actor) => actor.res?.data,
-        loadingName: "listLoading",
-        stateName: "listData",
-      },
-      [CurdAction.DETAIL]: {
-        convertParams: (record, rowKey) => pick(record, rowKey),
-        convertData: (actor) => actor.res?.data,
-        loadingName: "detailLoading",
-        stateName: "detailData",
-        label: t.value("details"),
-      },
-      [CurdAction.ADD]: {
-        convertParams: (values, record) => ({ body: { ...record, ...values } }),
-        loadingName: "operateLoading",
-        label: t.value("add"),
-      },
-      [CurdAction.EDIT]: {
-        convertParams: (values, record) => ({ body: { ...record, ...values } }),
-        loadingName: "operateLoading",
-        label: t.value("edit"),
-      },
-      [CurdAction.DELETE]: {
-        convertParams: (record, rowKey) => pick(record, rowKey),
-        label: t.value("delete"),
-      },
-    };
+    const curdOperateOpts = computed<Record<ICurdAction, Omit<ICurdOperateOpts, "actor" | "action">>>(() => {
+      return {
+        [CurdAction.LIST]: {
+          convertParams: (values) => values,
+          convertData: (actor) => actor.res?.data,
+          loadingName: "listLoading",
+          stateName: "listData",
+        },
+        [CurdAction.DETAIL]: {
+          convertParams: (record, rowKey) => pick(record, rowKey),
+          convertData: (actor) => actor.res?.data,
+          loadingName: "detailLoading",
+          stateName: "detailData",
+          label: t.value("details"),
+        },
+        [CurdAction.ADD]: {
+          convertParams: (values, record) => ({ body: { ...record, ...values } }),
+          loadingName: "operateLoading",
+          label: t.value("add"),
+        },
+        [CurdAction.EDIT]: {
+          convertParams: (values, record) => ({ body: { ...record, ...values } }),
+          loadingName: "operateLoading",
+          label: t.value("edit"),
+        },
+        [CurdAction.DELETE]: {
+          convertParams: (record, rowKey) => pick(record, rowKey),
+          label: t.value("delete"),
+        },
+      };
+    });
 
     /****************************** columns分类 *************************************/
 
-    const operates = map(props.operates, (item) => {
-      const curdOpts = get(curdOperateOpts, item.action!);
-      // @ts-ignore
-      const convertItem = props.convertOperate?.(item, curdOpts) || item;
-      return { ...curdOpts, ...convertItem };
+    const operates = computed(() => {
+      return map(props.operates, (item) => {
+        const curdOpts = get(curdOperateOpts.value, item.action!);
+        // @ts-ignore
+        const convertItem = props.convertOperate?.(item, curdOpts) || item;
+        return { ...curdOpts, ...convertItem };
+      });
     });
     //只取配置actor的项
-    const requests = filter(operates, (item) => item.actor);
+    const requests = computed(() => filter(operates.value, (item) => item.actor));
 
     const moduleKeys = keys(omit(ProModule.props, "state", "requests"));
 
@@ -364,12 +368,12 @@ export const ProCurd = defineComponent<ProCurdProps>({
           {...pick(props, moduleKeys)}
           elementMap={props.elementMap || elementMap}
           state={curdState}
-          requests={requests as any}>
+          requests={requests.value as any}>
           <Curd
             ref={curdRef}
             {...omit(props, ...moduleKeys, "curdState", "operates", "convertOperate")}
             formElementMap={props.formElementMap || formElementMap}
-            operates={operates}
+            operates={operates.value}
             v-slots={slots}
           />
         </ProModule>

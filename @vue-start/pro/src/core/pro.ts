@@ -77,7 +77,7 @@ export interface IProConfigProvide {
    */
   formElementMap?: TElementMap;
   // requirePrefixMap form item required 前缀字符串，如：请输入、请选择 等
-  formExtraMap?: TFormExtraMap;
+  formExtraMap?: ComputedRef<TFormExtraMap>;
   /**
    * 注册的全局状态
    */
@@ -192,6 +192,9 @@ export const ProConfig = defineComponent<ProConfigProps>({
     //meta订阅
     useMetaRegister(registerMetaMap, registerActorMap);
 
+    //Form
+    const formExtraMap = computed(() => props.formExtraMap);
+
     //
     const locale = computed(() => props.appConfig?.locale);
 
@@ -200,6 +203,7 @@ export const ProConfig = defineComponent<ProConfigProps>({
       if (locale.value === "en") return enLocale;
       return zhLocale;
     });
+
     const t = computed(() => {
       return (k: string) => {
         return get(localeConfig.value, k) || get(zhLocale, k);
@@ -209,7 +213,7 @@ export const ProConfig = defineComponent<ProConfigProps>({
     provide(ProConfigKey, {
       elementMap: props.elementMap,
       formElementMap: props.formElementMap,
-      formExtraMap: props.formExtraMap,
+      formExtraMap: formExtraMap,
       //
       registerStoreMap,
       //

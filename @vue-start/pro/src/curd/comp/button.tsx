@@ -1,4 +1,4 @@
-import { defineComponent } from "vue";
+import { computed, defineComponent } from "vue";
 import { ElementKeys, useGetCompByKey } from "../../comp";
 import { CurdAction, CurdSubAction, useProCurd } from "../ctx";
 import { isFunction } from "lodash";
@@ -11,12 +11,12 @@ export const AddButton = defineComponent({
   setup: (props, { slots }) => {
     const hasPer2 = useHasPer2();
     const { getOperate, sendCurdEvent } = useProCurd();
-    const addOperate = getOperate(CurdAction.ADD);
+    const operate = computed(() => getOperate(CurdAction.ADD));
 
     const handleClick = () => {
-      if (addOperate?.onClick) {
+      if (operate.value?.onClick) {
         // @ts-ignore
-        addOperate!.onClick();
+        operate.value.onClick();
         return;
       }
       sendCurdEvent({ action: CurdAction.ADD, type: CurdSubAction.EMIT });
@@ -26,6 +26,7 @@ export const AddButton = defineComponent({
     const Button = getComp(ElementKeys.ButtonKey);
 
     return () => {
+      const addOperate = operate.value;
       if (!addOperate) {
         return null;
       }
