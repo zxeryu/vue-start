@@ -23,6 +23,7 @@ export const ElementKeys = {
   FormKey: "Form$", //Form
   FormItemKey: "FormItem$", //FormItem
   TableKey: "Table$", //Table
+  TableV2Key: "TableV2$", //Table v2
   TableOperateKey: "TableOperate$", //Table operate item
   UploaderKey: "Uploader$", //Uploader
   EmptyKey: "Empty$",

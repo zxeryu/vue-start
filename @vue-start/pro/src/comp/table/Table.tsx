@@ -142,6 +142,8 @@ const proTableProps = () => ({
   mergeOpts: { type: Object as PropType<TTableMergeOpts> },
   //
   dataSource: { type: Array as PropType<Record<string, any>[]> },
+  // 启用虚拟Table
+  virtual: { type: Boolean },
 });
 
 export type ProTableProps = Partial<ExtractPropTypes<ReturnType<typeof proTableProps>>> &
@@ -160,7 +162,9 @@ export const ProTable = defineComponent<ProTableProps>({
 
     const { router } = useProRouter();
 
-    const Table = get(elementMapP, ElementKeys.TableKey);
+    const Table = props.virtual
+      ? get(elementMapP, ElementKeys.TableV2Key) || get(elementMapP, ElementKeys.TableKey)
+      : get(elementMapP, ElementKeys.TableKey);
 
     /*********************************** 序号 **************************************/
 
