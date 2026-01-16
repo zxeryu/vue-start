@@ -387,6 +387,11 @@
   margin-bottom: 0px;
 }
 
+/* element-plus 虚拟表格 */
+.el-table-v2.dynamic-hei .el-table-v2__row-cell {
+  min-height: var(--estimated-hei);
+}
+
 .pro-table .el-table__header .pro-single .el-checkbox {
   display: none;
 }
@@ -521,6 +526,18 @@
 
 .pro-page.curd-list .pro-curd-list .pro-table .el-table {
   height: calc(100% - var(--pro-table-toolbar-hei));
+}
+
+.pro-page.curd-list .pro-table-v2-wrapper {
+  height: calc(100% - var(--pro-table-toolbar-hei));
+}
+
+.pro-page.curd-list:has(.pro-table-v2-wrapper) .pro-table {
+  flex: 1;
+}
+
+.pro-page.curd-list:has(.pro-table-v2-wrapper) .curd-list-grow {
+  flex-grow: unset !important;
 }
 
 .pro-page.curd-list .pro-curd-list.has-pagination .pro-list-pagination {
