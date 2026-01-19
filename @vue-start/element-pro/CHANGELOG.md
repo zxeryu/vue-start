@@ -1,5 +1,9 @@
 # Change Log
 
+# 0.2.38
+
+- fix: ProTableV2 虚拟表格
+
 # 0.2.35
 
 - fix: modal closed 事件；

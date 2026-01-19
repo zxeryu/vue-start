@@ -3,9 +3,13 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# 0.5.67
+
+- fix: ProTable 支持虚拟表格，通过 virtual 字段配置；
+
 # 0.5.63
 
-- fix: ProUploaderText convertItem 方法参数添加fieldNames；
+- fix: ProUploaderText convertItem 方法参数添加 fieldNames；
 
 # 0.5.58
 
