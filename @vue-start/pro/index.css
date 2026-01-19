@@ -532,11 +532,11 @@
   height: calc(100% - var(--pro-table-toolbar-hei));
 }
 
-.pro-page.curd-list:has(.pro-table-v2-wrapper) .pro-table {
+.pro-page.curd-list .pro-curd-list.virtual .pro-table {
   flex: 1;
 }
 
-.pro-page.curd-list:has(.pro-table-v2-wrapper) .curd-list-grow {
+.pro-page.curd-list .pro-curd-list.virtual .curd-list-grow {
   flex-grow: unset !important;
 }
 

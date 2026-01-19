@@ -64,6 +64,10 @@ export type TColumn = {
 
   search?: boolean; //同extra中的search
 
+  //
+  width?: number;
+  minWidth?: number;
+
   //拓展属性
   extra?: {
     //DescriptionsItem props

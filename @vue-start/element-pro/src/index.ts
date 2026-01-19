@@ -50,7 +50,7 @@ import {
   ProFormCascader,
   ProFormColor,
 } from "./form";
-import { ProTable as Table, ProTableOperateItem } from "./table";
+import { ProTable as Table, ProTableOperateItem, ProTableV2 as TableV2 } from "./table";
 import { ProUploader, ProLoading, ProMenus, ProModal, ProPagination, ProPopover, ProDropdown, ProDrawer } from "./comp";
 
 export * from "./form";
@@ -130,6 +130,7 @@ export const elementMap = {
   [ElementKeys.FormKey]: Form,
   [ElementKeys.FormItemKey]: ProFormItem,
   [ElementKeys.TableKey]: Table,
+  [ElementKeys.TableV2Key]: TableV2,
   [ElementKeys.TableOperateKey]: ProTableOperateItem,
   [ElementKeys.UploaderKey]: ProUploader,
   [ElementKeys.DropdownKey]: ProDropdown,

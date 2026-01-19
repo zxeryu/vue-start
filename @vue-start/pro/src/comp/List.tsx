@@ -1,4 +1,4 @@
-import { defineComponent, ExtractPropTypes, PropType, reactive } from "vue";
+import { computed, defineComponent, ExtractPropTypes, PropType, reactive } from "vue";
 import { ElementKeys, useGetCompByKey } from "./comp";
 import { isBoolean, omit } from "lodash";
 import { filterSlotsByPrefix } from "../util";
@@ -92,6 +92,14 @@ export const ProList = defineComponent<ProListProps>({
     const tableSlots = filterSlotsByPrefix(slots, "table");
     const paginationSlots = filterSlotsByPrefix(slots, "pagination");
 
+    const cls = computed(() => {
+      const arr = [props.clsName];
+      if (props.tableProps?.virtual) {
+        arr.push("virtual");
+      }
+      return arr;
+    });
+
     return () => {
       const searchNode = slots.search ? (
         slots.search({ executeSearchWithResetPage, pageState })
@@ -109,7 +117,7 @@ export const ProList = defineComponent<ProListProps>({
       );
 
       return (
-        <div class={props.clsName}>
+        <div class={cls.value}>
           {slots.start?.() || props.start?.()}
 
           {!props.searchInTable && searchNode}
