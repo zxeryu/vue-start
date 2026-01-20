@@ -1,0 +1,99 @@
+/********************************** pro-form-list ***********************************/
+.pro-form-list .el-form-item__content {
+  display: unset !important;
+}
+
+.pro-form-list .el-form-item {
+  margin-bottom: 18px !important;
+}
+
+/********************************** pro-table ***********************************/
+/* table toolbar 中的form-item 样式 */
+.pro-table .pro-table-toolbar .pro-table-toolbar-start .el-form-item {
+  margin-bottom: 0px;
+}
+
+/*  虚拟表格 */
+.el-table-v2.dynamic-hei .el-table-v2__row-cell {
+  min-height: var(--estimated-hei);
+}
+
+.pro-table .el-table__header .pro-single .el-checkbox {
+  display: none;
+}
+
+/* 单选框样式 */
+.pro-table .pro-single .el-checkbox__inner {
+  border-radius: 50%;
+}
+
+/********************************** curd-list ***********************************/
+
+.pro-page.curd-list .pro-curd-list .pro-table .el-table {
+  height: calc(100% - var(--pro-table-toolbar-hei));
+}
+
+.pro-page.curd-list .pro-table-v2-wrapper {
+  height: calc(100% - var(--pro-table-toolbar-hei));
+}
+
+/********************************** pro-modal ***********************************/
+.pro-modal .el-dialog__header {
+  padding: 16px;
+}
+
+.pro-modal .el-dialog__body {
+  padding: 0 16px;
+}
+
+.pro-modal.scroll .el-dialog__body {
+  padding: 0;
+}
+
+.pro-modal .pro-modal-scroll {
+  padding: 0 16px;
+}
+
+.pro-modal .el-dialog__footer {
+  padding: 16px;
+}
+
+/********************************** pro-drawer ***********************************/
+
+.pro-drawer .el-drawer__header {
+  margin-bottom: 0px;
+  padding: 16px;
+}
+
+.pro-drawer .el-drawer__body {
+  padding: 0 16px;
+}
+
+.pro-drawer.scroll .el-drawer__body {
+  padding: 0;
+}
+
+.pro-drawer .pro-drawer-scroll {
+  padding: 0 16px;
+}
+
+.pro-drawer .el-drawer__footer {
+  padding: 16px;
+}
+
+/***************************** pro-app-config ***********************************/
+.pro-app-config_form .el-form-item {
+  margin-bottom: 8px;
+}
+
+.pro-app-config_form .el-form-item__label {
+  padding: 0 !important;
+}
+
+.pro-app-config_form_title .el-form-item__content {
+  justify-content: center;
+}
+
+.pro-app-config_form .el-form-item__content {
+  flex-direction: row-reverse;
+}
