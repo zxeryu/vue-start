@@ -3,6 +3,10 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# 0.5.68
+
+- fix: ProRouterView include 更新机制使用 nextTick 优化；
+
 # 0.5.67
 
 - fix: ProTable 支持虚拟表格，通过 virtual 字段配置；

@@ -1,9 +1,9 @@
-import { computed, defineComponent, ExtractPropTypes, KeepAlive, PropType, ref } from "vue";
+import { computed, defineComponent, ExtractPropTypes, KeepAlive, nextTick, PropType, ref } from "vue";
 import { RouterView } from "vue-router";
 import { TLayoutMenu, useProLayout } from "./ctx";
 import { filter, map, pickBy, identity, size, every, keys } from "lodash";
 import { useProRouter } from "../../core";
-import { findTreeItem, treeToMap } from "@vue-start/hooks";
+import { findTreeItem, treeToMap, useEffect } from "@vue-start/hooks";
 
 const routerViewProps = () => ({
   //includes 额外拓展
@@ -37,6 +37,8 @@ export const ProRouterView = defineComponent<ProRouterViewProps>({
       return pickBy(obj, identity);
     });
 
+    const includeRef = ref<string[]>([]);
+
     const include = computed<string[]>(() => {
       const menuIncludeKeys = keys(menuIncludes.value);
       //***************** 非tabs模式 *************
@@ -65,6 +67,12 @@ export const ProRouterView = defineComponent<ProRouterViewProps>({
       }
       return [...props.includes!, ...list];
     });
+
+    useEffect(() => {
+      nextTick(() => {
+        includeRef.value = include.value;
+      });
+    }, [include]);
 
     const compCache = new Map();
 
@@ -100,7 +108,7 @@ export const ProRouterView = defineComponent<ProRouterViewProps>({
                 }
               }
               return (
-                <KeepAlive include={include.value}>
+                <KeepAlive include={includeRef.value}>
                   {/*  <></> 会引起强制刷新，导致keep-live失效！！！ */}
                   {refreshRef.value ? null : ReComponent ? <ReComponent /> : <Component />}
                 </KeepAlive>
