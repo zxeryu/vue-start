@@ -1,10 +1,4 @@
 export const routes = [
-  { name: "Comp", path: "comp", component: () => import("@/views/Comp") },
-  {
-    name: "Compelement",
-    path: "compelement",
-    component: () => import("@/views/CompElement"),
-  },
   {
     name: "Chart",
     path: "chart",
@@ -15,6 +9,12 @@ export const routes = [
         component: () => import("@/views/chart/index"),
       },
     ],
+  },
+  { name: "Comp", path: "comp", component: () => import("@/views/Comp") },
+  {
+    name: "Compelement",
+    path: "compelement",
+    component: () => import("@/views/CompElement"),
   },
   {
     name: "Config",
@@ -165,6 +165,17 @@ export const routes = [
     path: "el",
     children: [
       {
+        name: "ElCascader",
+        path: "cascader",
+        children: [
+          {
+            name: "ElCascaderIndex",
+            path: "index",
+            component: () => import("@/views/el/cascader/index"),
+          },
+        ],
+      },
+      {
         name: "ElCheckbox",
         path: "checkbox",
         children: [
@@ -260,6 +271,17 @@ export const routes = [
             name: "ElTabsIndex",
             path: "index",
             component: () => import("@/views/el/tabs/index"),
+          },
+        ],
+      },
+      {
+        name: "ElTreeSelect",
+        path: "tree-select",
+        children: [
+          {
+            name: "ElTreeSelectIndex",
+            path: "index",
+            component: () => import("@/views/el/tree-select/index"),
           },
         ],
       },

@@ -11,6 +11,8 @@ import {
   ProCheckbox,
   ProRadio,
   ProSelect,
+  ProTreeSelect,
+  ProCascader,
   ProTabs,
   ProMenus,
   ProUploader,
@@ -163,6 +165,8 @@ export const initComp = (app: App) => {
   app.component("pro-checkbox", ProCheckbox);
   app.component("pro-radio", ProRadio);
   app.component("pro-select", ProSelect);
+  app.component("pro-tree-select", ProTreeSelect);
+  app.component("pro-cascader", ProCascader);
   app.component("pro-tabs", ProTabs);
   app.component("pro-menus", ProMenus);
   app.component("pro-uploader", ProUploader);

@@ -59,14 +59,24 @@ export type TColumn = {
 
   //下述各类render其实是对各类组件的兼容及拓展，如当desc中展示的内容与render不同时，可使用descRender
   descRender?: string | TRender; //desc
-  formReadRender?: string | TRender; //form readonly
+  formReadRender?: string | TRender; //form readonly`
   tableRender?: string | TRender; //table
+
+  /************ 标记 ************ */
 
   search?: boolean; //同extra中的search
 
-  //
+  /************ 表格列宽度 ************ */
   width?: number;
   minWidth?: number;
+
+  /************ column 补充 (columnState2)************ */
+  paths?: string | string[];
+
+  /************ form extra 数据补充 ************ */
+  formExtra?: {
+    label?: { name: string; opts?: { showAllPath?: boolean } };
+  };
 
   //拓展属性
   extra?: {

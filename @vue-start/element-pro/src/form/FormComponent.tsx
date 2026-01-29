@@ -1,16 +1,7 @@
-import {
-  ElInput,
-  ElInputNumber,
-  ElDatePicker,
-  ElTimePicker,
-  ElTreeSelect,
-  ElSwitch,
-  ElCascader,
-  ElColorPicker,
-} from "element-plus";
+import { ElInput, ElInputNumber, ElDatePicker, ElTimePicker, ElSwitch, ElColorPicker } from "element-plus";
 
 import { createFormItemComponent } from "./createFormItemComponent";
-import { InputNumberRange, ProCheckbox, ProRadio, ProSelect } from "../comp";
+import { InputNumberRange, ProCheckbox, ProRadio, ProSelect, ProCascader, ProTreeSelect } from "../comp";
 
 export const ProFormText = createFormItemComponent({
   InputComp: ElInput,
@@ -43,7 +34,7 @@ export const ProFormSelect = createFormItemComponent({
   name: "PFormSelect",
 });
 export const ProFormTreeSelect = createFormItemComponent({
-  InputComp: ElTreeSelect,
+  InputComp: ProTreeSelect,
   valueType: "treeSelect",
   name: "PFormTreeSelect",
 });
@@ -63,7 +54,7 @@ export const ProFormSwitch = createFormItemComponent({
   name: "PFromSwitch",
 });
 export const ProFormCascader = createFormItemComponent({
-  InputComp: ElCascader,
+  InputComp: ProCascader,
   valueType: "cascader",
   name: "PFormCascader",
 });

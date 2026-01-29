@@ -1,5 +1,9 @@
 # Change Log
 
+# 0.2.31
+
+- options 支持value格式自定义
+
 # 0.2.30
 
 - 新增集合过滤方法 filterCollection

@@ -1,5 +1,11 @@
 # Change Log
 
+# 0.2.39
+
+- feat: 添加样式文件；
+- feat: 新增 ProTreeSelect、ProCascader 组件；
+- perf：ProSelect、ProTreeSelect、ProCascader 等选择组件提供 value 自定义配置；
+
 # 0.2.38
 
 - fix: ProTableV2 虚拟表格

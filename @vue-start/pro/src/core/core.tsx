@@ -59,6 +59,14 @@ export const getColumnFormItemName = (column: TColumn): string | number | undefi
 };
 
 /**
+ * 获取Column的FormItem props
+ * @param column
+ */
+export const getColumnFormInputProps = (column: TColumn) => {
+  return column.inputProps || column.formFieldProps || {};
+};
+
+/**
  * 获取column 中对应的render方法
  * case1：render为方法的时候，直接返回render；
  * case2：render为字符串的时候，返回column中该字符串对应的属性；

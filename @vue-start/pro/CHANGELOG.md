@@ -6,6 +6,7 @@ See [Conventional Commits](https://conventionalcommits.org) for commit guideline
 # 0.5.68
 
 - fix: ProRouterView include 更新机制使用 nextTick 优化；
+- perf: column 支持 formExtra 配置； ProForm 支持提交选择组件 label 拓展；
 
 # 0.5.67
 

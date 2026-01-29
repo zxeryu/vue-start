@@ -11,3 +11,5 @@ export * from "./Uploader";
 export * from "./input";
 export * from "./Tree";
 export * from "./Dropdown";
+export * from "./TreeSelect";
+export * from "./Cascader";

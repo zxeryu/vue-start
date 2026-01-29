@@ -1,7 +1,6 @@
 import { defineComponent } from "vue";
 
 import Basic from "./demo/basic";
-import Slot from "./demo/slot";
 import Value from "./demo/value";
 import Compose from "./demo/compose";
 
@@ -10,7 +9,6 @@ export default defineComponent(() => {
     return (
       <>
         <Basic />
-        <Slot />
         <Value />
         <Compose />
       </>

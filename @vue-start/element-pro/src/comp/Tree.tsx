@@ -3,6 +3,27 @@ import { ElTree } from "element-plus";
 import { TreeComponentProps } from "element-plus/es/components/tree/src/tree.type";
 import { isBoolean, keys, omit } from "lodash";
 
+export const TreeMethods = [
+  "filter",
+  "updateKeyChildren",
+  "getCheckedNodes",
+  "setCheckedNodes",
+  "getCheckedKeys",
+  "setCheckedKeys",
+  "setChecked",
+  "getHalfCheckedNodes",
+  "getHalfCheckedKeys",
+  "getCurrentKey",
+  "getCurrentNode",
+  "setCurrentKey",
+  "setCurrentNode",
+  "getNode",
+  "remove",
+  "append",
+  "insertBefore",
+  "insertAfter",
+];
+
 type TFieldNames = {
   key?: string;
   children?: string;

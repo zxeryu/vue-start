@@ -34,6 +34,8 @@ export const menus = [
                 { title: "Modal", name: "ElModalIndex" },
                 { title: "Radio", name: "ElRadioIndex" },
                 { title: "Select", name: "ElSelectIndex" },
+                { title: "TreeSelect", name: "ElTreeSelectIndex" },
+                { title: "Cascader", name: "ElCascaderIndex" },
               ]
             : []),
         ],

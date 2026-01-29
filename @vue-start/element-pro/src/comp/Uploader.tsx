@@ -24,6 +24,7 @@ const uploadProps = () => ({
   onStart: Function as PropType<(file: any) => void>,
   //重写
   beforeUpload: { type: Function },
+  beforeUpload2: { type: Function },
   //上传过程中 全局loading
   globalLoading: { type: [Boolean, Object], default: undefined },
   //
@@ -118,8 +119,13 @@ export const ProUploader = defineComponent<ProUploadProps>({
     };
 
     const handleBeforeUpload = (file: UploadRawFile) => {
+      //全部拦截
       if (props.beforeUpload) {
         return props.beforeUpload(file);
+      }
+      //拦截2
+      if (props.beforeUpload2 && !props.beforeUpload2(file)) {
+        return false;
       }
       //类型校验
       if (props.accept) {

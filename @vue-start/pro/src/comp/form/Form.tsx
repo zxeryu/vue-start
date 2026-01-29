@@ -1,9 +1,10 @@
 import { Ref, UnwrapNestedRefs } from "@vue/reactivity";
 import { computed, defineComponent, ExtractPropTypes, inject, PropType, provide, reactive, ref } from "vue";
 import { BooleanObjType, BooleanRulesObjType, TColumn, TColumns, TElementMap } from "../../types";
-import { convertCollection, useRuleState } from "@vue-start/hooks";
-import { get, keys, map, omit, size, debounce, filter } from "lodash";
+import { convertCollection, findValueLabel, findValueRecord, TLabelOpts, useRuleState } from "@vue-start/hooks";
+import { get, keys, map, omit, size, debounce, filter, forEach, set } from "lodash";
 import {
+  getColumnFormInputProps,
   getColumnFormItemName,
   isValidNode,
   mergeState,
@@ -116,6 +117,13 @@ const proFormProps = () => ({
     type: Function as PropType<(...e: any[]) => boolean | undefined>,
     default: undefined,
   },
+  /**
+   * onFinish 中加入额外的值
+   */
+  onGetExtraValues: {
+    type: Function as PropType<(opts?: any) => Record<string, any> | undefined>,
+    default: undefined,
+  },
 });
 
 export type ProFormProps = Partial<ExtractPropTypes<ReturnType<typeof proFormProps>>> &
@@ -160,6 +168,36 @@ export const ProForm = defineComponent<ProFormProps>({
       return list;
     });
 
+    /*************** form extra **************/
+
+    const getExtraLabelOpts = () => {
+      const recordOpts = {};
+      const labelOpts = {};
+      const labelColumns = filter(columns.value, (item) => !!item.formExtra?.label?.name);
+      forEach(labelColumns, (item) => {
+        const name = getColumnFormItemName(item);
+        const value = get(formState, name!);
+        const fieldProps = getColumnFormInputProps(item);
+        const opts: TLabelOpts = {
+          options: fieldProps?.options || fieldProps?.data,
+          fieldNames: fieldProps?.fieldNames,
+          multiple: fieldProps?.multiple,
+          allPath: fieldProps?.emitPath,
+          separator: fieldProps?.separator$,
+          itemSeparator: fieldProps?.itemSeparator$,
+          ...item.formExtra.label.opts,
+        };
+        const records = findValueRecord(value, opts);
+        const labels = findValueLabel(records, opts);
+
+        const propName = item.formExtra.label.name;
+        set(recordOpts, propName, records);
+        set(labelOpts, propName, labels);
+      });
+
+      return { recordOpts, labelOpts };
+    };
+
     //
     const userOpe = ref(false);
     //
@@ -180,12 +218,14 @@ export const ProForm = defineComponent<ProFormProps>({
     const debounceFinish = useFormSubmit((...e: any[]) => emitFinish(...e), wait, (dOpts as any)?.options);
 
     const handleFinish = (values: Record<string, any>) => {
+      const { recordOpts, labelOpts } = getExtraLabelOpts();
+      const reValues = { ...values, ...labelOpts, ...props.onGetExtraValues?.({ recordOpts, labelOpts }) };
       //删除不显示的值再触发事件
-      const showValues = getValidValues(values, showState, props.showStateRules);
+      const showValues = getValidValues(reValues, showState, props.showStateRules);
       if (dOpts !== undefined) {
-        debounceFinish(showValues, values);
+        debounceFinish(showValues, reValues);
       } else {
-        emitFinish(showValues, values);
+        emitFinish(showValues, reValues);
       }
     };
 
