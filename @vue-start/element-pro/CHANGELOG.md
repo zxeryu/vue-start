@@ -4,7 +4,7 @@
 
 - feat: 添加样式文件；
 - feat: 新增 ProTreeSelect、ProCascader 组件；
-- perf：ProSelect、ProTreeSelect、ProCascader 等选择组件提供 value 自定义配置；
+- perf：ProSelect、ProTreeSelect、ProCascader、ProCheckbox 等选择组件提供 value 自定义配置；
 
 # 0.2.38
 

@@ -9,6 +9,7 @@ import Debounce from "./demo/debounce";
 import PreFinish from "./demo/pre-finish";
 import FormList from "./demo/form-list";
 import FormList2 from "./demo/form-list-2";
+import Value from "./demo/value";
 
 
 export default defineComponent(() => {
@@ -25,6 +26,7 @@ export default defineComponent(() => {
         <PreFinish />
         <FormList />
         <FormList2 />
+        <Value />
       </>
     );
   };

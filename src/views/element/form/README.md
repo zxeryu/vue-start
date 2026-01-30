@@ -53,21 +53,27 @@ useWatch(
 
 ### 属性
 
-| 名称                 | 说明                    | 类型       | 默认值 |
-| -------------------- | ----------------------- | ---------- | ------ |
-| `columns`            | 通用项配置              | `TColumns` | --     |
-| `columnState`        | 通用项拓展              | `object`   | --     |
-| `elementMap`         | 展示组件集              | `object`   | --     |
-| `formElementMap`     | 录入组件集              | `object`   | --     |
-| `readonly`           | 是否展示只读模式        | `boolean`  | --     |
-| `showState`          | item 项是否展示控制     | `object`   | --     |
-| `showStateRules`     | item 项是否展示规则配置 | `object`   | --     |
-| `readonlyState`      | item 项是否只读控制     | `object`   | --     |
-| `readonlyStateRules` | item 项是否只读规则配置 | `object`   | --     |
-| `disableState`       | item 项是否禁用控制     | `object`   | --     |
-| `disableStateRules`  | item 项是否禁用规则配置 | `object`   | --     |
-| `row`                | 启用 Grid 布局 row 配置 | `object`   | --     |
-| `col`                | col 配置                | `object`   | --     |
+| 名称                 | 说明                                  | 类型              | 默认值 |
+| -------------------- | ------------------------------------- | ----------------- | ------ |
+| `columns`            | 通用项配置                            | `TColumns`        | --     |
+| `columnState`        | 通用项拓展                            | `object`          | --     |
+| `elementMap`         | 展示组件集                            | `object`          | --     |
+| `formElementMap`     | 录入组件集                            | `object`          | --     |
+| `readonly`           | 是否展示只读模式                      | `boolean`         | --     |
+| `showState`          | item 项是否展示控制                   | `object`          | --     |
+| `showStateRules`     | item 项是否展示规则配置               | `object`          | --     |
+| `readonlyState`      | item 项是否只读控制                   | `object`          | --     |
+| `readonlyStateRules` | item 项是否只读规则配置               | `object`          | --     |
+| `disableState`       | item 项是否禁用控制                   | `object`          | --     |
+| `disableStateRules`  | item 项是否禁用规则配置               | `object`          | --     |
+| `row`                | 启用 Grid 布局 row 配置               | `object`          | --     |
+| `col`                | col 配置                              | `object`          | --     |
+| `operate`            | 操作按钮配置，见 ProOperate           | `TProFormOperate` | --     |
+| `opeItems`           | 预设 operate 中的 items               | `function`        | --     |
+| `submitLoading`      | operate 中提交按钮 loading            | `boolean`         | --     |
+| `debounceSubmit`     | 防抖                                  | `number`          | --     |
+| `onPreFinish`        | 提交前 hook，返回 true：不执行 finish | `function`        | --     |
+| `onGetExtraValues`   | finish 回调中加入参数                 | `function`        | --     |
 
 - readonly 为 true 时，会从 elementMap 查找对应的组件进行渲染
 - showState readonlyState disableState 及各自对应的 ${prefix}Rules 都是用来配置 column 项的状态；在使用 columns 渲染组件的情况下推荐使用。
