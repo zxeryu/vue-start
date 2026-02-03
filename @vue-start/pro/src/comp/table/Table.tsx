@@ -13,7 +13,18 @@ import {
 } from "vue";
 import { TColumn } from "../../types";
 import { filter, get, isBoolean, isFunction, keys, map, omit, pick, reduce, size, some } from "lodash";
-import { mergeState, proBaseProps, ProBaseProps, renderColumn, useProConfig, useProRouter } from "../../core";
+import {
+  getColumnsOpts,
+  mergeState,
+  proBaseProps,
+  ProBaseProps,
+  renderColumn,
+  useGetMetaStoreName,
+  useProConfig,
+  useProRouter,
+  useRegisterMetas,
+  useRegisterStores,
+} from "../../core";
 import { createExpose, filterSlotsByPrefix } from "../../util";
 import { IOpeItem, ProOperate, ProOperateProps } from "../Operate";
 import { ElementKeys } from "../comp";
@@ -269,9 +280,7 @@ export const ProTable = defineComponent<ProTableProps>({
     const convertColumns = (list: TTableColumns) => {
       return map(list, (item) => {
         //merge公共column
-        const mergeColumn = { ...props.column, ...item };
-        //convertColumn 转换（如果需要）
-        const nextItem: TTableColumn = props.convertColumn ? props.convertColumn(mergeColumn) : mergeColumn;
+        const nextItem = { ...props.column, ...item };
         //如果有子column，转换子节点 再返回
         if (item.children && size(item.children) > 0) {
           nextItem.children = convertColumns(item.children);
@@ -291,8 +300,20 @@ export const ProTable = defineComponent<ProTableProps>({
       });
     };
 
+    const getMetaStoreName = useGetMetaStoreName();
+
+    const { storeKeys, metaKeys } = getColumnsOpts(props.columns || []);
+    const stores = useRegisterStores(storeKeys || []);
+    const metas = useRegisterMetas(metaKeys || []);
+
     const columns = computed(() => {
-      const mergeColumns = mergeState(showColumns.value as any, props.columnState, props.columnState2);
+      const mergeColumns = mergeState(showColumns.value as any, props.columnState, props.columnState2, {
+        stores,
+        metas,
+        getMetaStoreName,
+        convertColumnPre: props.convertColumnPre,
+        convertColumn: props.convertColumn,
+      });
       //根据valueType选择对应的展示组件
       const columns = convertColumns(mergeColumns);
       //处理序号

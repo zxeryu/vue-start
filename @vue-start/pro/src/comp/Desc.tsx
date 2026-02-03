@@ -1,7 +1,17 @@
 import { computed, defineComponent, ExtractPropTypes, PropType } from "vue";
 import { ElementKeys, useGetCompByKey } from "./comp";
 import { get, keys, map, omit } from "lodash";
-import { mergeState, ProBaseProps, proBaseProps, renderColumn, useProConfig } from "../core";
+import {
+  getColumnsOpts,
+  mergeState,
+  ProBaseProps,
+  proBaseProps,
+  renderColumn,
+  useGetMetaStoreName,
+  useProConfig,
+  useRegisterMetas,
+  useRegisterStores,
+} from "../core";
 import { UnwrapNestedRefs } from "@vue/reactivity";
 
 const proDescProps = () => ({
@@ -28,8 +38,20 @@ export const ProDesc = defineComponent<ProDescProps>({
     const Descriptions = getComp(ElementKeys.DescriptionsKey);
     const DescriptionsItem = getComp(ElementKeys.DescriptionsItemKey);
 
+    const getMetaStoreName = useGetMetaStoreName();
+
+    const { storeKeys, metaKeys } = getColumnsOpts(props.columns || []);
+    const stores = useRegisterStores(storeKeys || []);
+    const metas = useRegisterMetas(metaKeys || []);
+
     const columns = computed(() => {
-      return mergeState(props.columns!, props.columnState, props.columnState2);
+      return mergeState(props.columns!, props.columnState, props.columnState2, {
+        stores,
+        metas,
+        getMetaStoreName,
+        convertColumnPre: props.convertColumnPre,
+        convertColumn: props.convertColumn,
+      });
     });
 
     const proBaseKeys = keys(proBaseProps);

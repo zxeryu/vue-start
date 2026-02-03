@@ -1,17 +1,21 @@
 import { Ref, UnwrapNestedRefs } from "@vue/reactivity";
 import { computed, defineComponent, ExtractPropTypes, inject, PropType, provide, reactive, ref } from "vue";
 import { BooleanObjType, BooleanRulesObjType, TColumn, TColumns, TElementMap } from "../../types";
-import { convertCollection, findValueLabel, findValueRecord, TLabelOpts, useRuleState } from "@vue-start/hooks";
+import { findValueLabel, findValueRecord, TLabelOpts, useRuleState } from "@vue-start/hooks";
 import { get, keys, map, omit, size, debounce, filter, forEach, set } from "lodash";
 import {
   getColumnFormInputProps,
   getColumnFormItemName,
+  getColumnsOpts,
   isValidNode,
   mergeState,
   proBaseProps,
   ProBaseProps,
   renderInputColumn,
+  useGetMetaStoreName,
   useProConfig,
+  useRegisterMetas,
+  useRegisterStores,
 } from "../../core";
 import { createExpose, getValidValues } from "../../util";
 import { ProGridProps, ProOperate, ProGrid, ProOperateProps, IOpeItem, ElementKeys } from "../index";
@@ -159,13 +163,21 @@ export const ProForm = defineComponent<ProFormProps>({
     //readonly
     const readonly = computed(() => props.readonly);
 
+    const getMetaStoreName = useGetMetaStoreName();
+
+    const { storeKeys, metaKeys } = getColumnsOpts(props.columns || []);
+    const stores = useRegisterStores(storeKeys || []);
+    const metas = useRegisterMetas(metaKeys || []);
+
     //columns合并
-    const columns = computed(() => {
-      const list = mergeState(props.columns!, props.columnState, props.columnState2);
-      if (props.convertColumn) {
-        return convertCollection(list, props.convertColumn);
-      }
-      return list;
+    const columns = computed<TColumns>(() => {
+      return mergeState(props.columns!, props.columnState, props.columnState2, {
+        stores,
+        metas,
+        getMetaStoreName,
+        convertColumnPre: props.convertColumnPre,
+        convertColumn: props.convertColumn,
+      });
     });
 
     /*************** form extra **************/
@@ -185,12 +197,12 @@ export const ProForm = defineComponent<ProFormProps>({
           allPath: fieldProps?.emitPath,
           separator: fieldProps?.separator$,
           itemSeparator: fieldProps?.itemSeparator$,
-          ...item.formExtra.label.opts,
+          ...item.formExtra?.label?.opts,
         };
         const records = findValueRecord(value, opts);
         const labels = findValueLabel(records, opts);
 
-        const propName = item.formExtra.label.name;
+        const propName = item.formExtra?.label?.name!;
         set(recordOpts, propName, records);
         set(labelOpts, propName, labels);
       });

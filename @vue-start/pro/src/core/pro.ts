@@ -1,4 +1,15 @@
-import { App, computed, ComputedRef, defineComponent, ExtractPropTypes, inject, PropType, provide } from "vue";
+import {
+  App,
+  computed,
+  ComputedRef,
+  defineComponent,
+  ExtractPropTypes,
+  inject,
+  PropType,
+  provide,
+  reactive,
+  UnwrapNestedRefs,
+} from "vue";
 import { TColumn, TColumns, TElementMap } from "../types";
 import { TRegisterStore, TRegisterStoreMap } from "./store";
 import { get, reduce } from "lodash";
@@ -6,8 +17,6 @@ import { IRequestActor, useRequestProvide } from "@vue-start/request";
 import { TMeta, useMetaRegister } from "./request";
 import { TRouter } from "./router";
 import { Router } from "vue-router";
-import { mergeStateToData, mergeStateToData2 } from "@vue-start/hooks";
-import { getColumnFormItemName } from "./core";
 import { AppConfig, TAppConfig } from "../theme/ctx";
 import { zhLocale } from "../locale/zh";
 import { enLocale } from "../locale/en";
@@ -26,7 +35,10 @@ const proBasePropsFn = () => ({
    * 基础项配置
    */
   columns: { type: Array as PropType<TColumns> },
-  convertColumn: { type: Function as PropType<(t: TColumn) => TColumn> }, //拓展使用
+  //转换column，发生在补充数据前
+  convertColumnPre: { type: Function as PropType<(t: TColumn) => TColumn> },
+  //转换column，发生在补充数据后
+  convertColumn: { type: Function as PropType<(t: TColumn) => TColumn> },
   /**
    * 对 column 进行补充
    * 通常对columns为静态值时候使用
@@ -41,21 +53,6 @@ const proBasePropsFn = () => ({
 export type ProBaseProps = Partial<ExtractPropTypes<ReturnType<typeof proBasePropsFn>>>;
 
 export const proBaseProps: ProBaseProps = proBasePropsFn() as any;
-
-export const mergeState = (
-  columns: TColumns,
-  columnState?: Record<string, any>,
-  columnState2?: Record<string, any>,
-) => {
-  let list = columns;
-  if (columnState) {
-    list = mergeStateToData(list, columnState, (item) => getColumnFormItemName(item) as string);
-  }
-  if (columnState2) {
-    list = mergeStateToData2(list, columnState2, (item) => getColumnFormItemName(item) as string);
-  }
-  return list;
-};
 
 export type ProDispatchRequestType = (
   actorName: string,
@@ -90,6 +87,7 @@ export interface IProConfigProvide {
    * 注册的全局Meta
    */
   registerMetaMap: Record<string, TMeta>;
+  metaState: UnwrapNestedRefs<{ [key: string]: boolean }>;
   /**
    * 发送请求
    * @param actorName
@@ -189,8 +187,11 @@ export const ProConfig = defineComponent<ProConfigProps>({
       return dispatchRequestOrigin(registerItem.actor, params, extra);
     };
 
+    // meta loading 状态
+    const metaState = reactive<{ [key: string]: boolean }>({});
+
     //meta订阅
-    useMetaRegister(registerMetaMap, registerActorMap);
+    useMetaRegister(registerMetaMap, registerActorMap, metaState);
 
     //Form
     const formExtraMap = computed(() => props.formExtraMap);
@@ -220,6 +221,7 @@ export const ProConfig = defineComponent<ProConfigProps>({
       registerActorMap,
       //
       registerMetaMap,
+      metaState,
       //
       dispatchRequest,
       //

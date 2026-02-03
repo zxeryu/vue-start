@@ -1,4 +1,5 @@
 export * from "./core";
+export * from "./column";
 export * from "./Module";
 export * from "./create-module";
 

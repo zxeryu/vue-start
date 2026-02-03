@@ -1,5 +1,6 @@
 import { computed, defineComponent, ExtractPropTypes, PropType, reactive, ref, VNode } from "vue";
 import {
+  getColumnsOpts,
   IProModuleProvide,
   IRequestOpts,
   mergeState,
@@ -8,12 +9,13 @@ import {
   ProModule,
   ProModuleProps,
   RequestAction,
+  useGetMetaStoreName,
   useModuleEvent,
   useProConfig,
   useProModule,
   useProRouter,
 } from "../core";
-import { filter, find, get, isString, keys, map, omit, pick, reduce, sortBy } from "lodash";
+import { filter, find, get, isString, keys, map, omit, pick, sortBy } from "lodash";
 import { TActionEvent, TColumns } from "../types";
 import { UnwrapNestedRefs } from "@vue/reactivity";
 import {
@@ -28,7 +30,7 @@ import {
 } from "./ctx";
 import { IOperateItem, useProLayout } from "../comp";
 import { IRequestActor } from "@vue-start/request";
-import { findTreeItem } from "@vue-start/hooks";
+import { convertCollection, findTreeItem } from "@vue-start/hooks";
 
 export interface IListData extends Record<string, any> {
   total: number;
@@ -112,7 +114,10 @@ const Curd = defineComponent<CurdProps>({
 
     const { route } = useProRouter();
 
-    const { elementMap, state, sendEvent, sendRequest } = useProModule() as Omit<IProModuleProvide, "state"> & {
+    const { elementMap, state, sendEvent, sendRequest, stores, metas } = useProModule() as Omit<
+      IProModuleProvide,
+      "state"
+    > & {
       state: ICurdState;
     };
 
@@ -127,11 +132,21 @@ const Curd = defineComponent<CurdProps>({
       return "";
     });
 
+    const getMetaStoreName = useGetMetaStoreName();
+
     /**
      * columns columnState 合并
      */
     const columns = computed(() => {
-      return mergeState(props.columns!, props.columnState, props.columnState2);
+      const list = mergeState(props.columns!, props.columnState, props.columnState2, {
+        stores,
+        metas,
+        getMetaStoreName,
+        convertColumnPre: props.convertColumnPre,
+        convertColumn: props.convertColumn,
+      });
+      // 去除setData，防止子组件重复补充
+      return convertCollection(list, (item) => omit(item, "setData"));
     });
 
     /**
@@ -346,6 +361,10 @@ export const ProCurd = defineComponent<ProCurdProps>({
 
     const moduleKeys = keys(omit(ProModule.props, "state", "requests"));
 
+    /****************************** setData *************************************/
+
+    const { storeKeys, metaKeys } = getColumnsOpts(props.columns || []);
+
     expose({
       sendCurdEvent: (event: TCurdActionEvent) => {
         curdRef.value?.sendCurdEvent(event);
@@ -366,6 +385,8 @@ export const ProCurd = defineComponent<ProCurdProps>({
         <ProModule
           ref={moduleRef}
           {...pick(props, moduleKeys)}
+          storeKeys={props.storeKeys || storeKeys}
+          metaKeys={props.metaKeys || metaKeys}
           elementMap={props.elementMap || elementMap}
           state={curdState}
           requests={requests.value as any}>

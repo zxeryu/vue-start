@@ -1,4 +1,4 @@
-import { defineComponent, ExtractPropTypes, inject, PropType, provide, reactive } from "vue";
+import { defineComponent, ExtractPropTypes, inject, PropType, provide, reactive, Ref, UnwrapRef } from "vue";
 import { TActionEvent, TActionState, TElementMap } from "../types";
 import { filter, forEach, get, isArray, isFunction, isObject, isString, keys, map, reduce, size, has } from "lodash";
 import { UnwrapNestedRefs } from "@vue/reactivity";
@@ -6,13 +6,13 @@ import { Subject } from "rxjs";
 import { map as rxMap, tap as rxTap } from "rxjs/operators";
 import { setReactiveValue, useEffect } from "@vue-start/hooks";
 import { IRequestActor, useRequestProvide } from "@vue-start/request";
-import { useComposeRequestActor } from "./request";
+import { TMetaKey, useComposeRequestActor, useRegisterMetas } from "./request";
 import { IElementConfig, renderElement, renderElements, TExecuteItem } from "./core";
 import { useProConfig } from "./pro";
 import { useProRouter } from "./router";
 import { executeEx, TExpression } from "./expression";
 import { shallowEqual, useStore } from "@vue-start/store";
-import { useDispatchStore } from "./store";
+import { useDispatchStore, useRegisterStores } from "./store";
 
 const ProModuleKey = Symbol("pro-module");
 
@@ -32,6 +32,9 @@ export interface IProModuleProvide {
   //
   executeExp: (param: TExpression, args: any) => any;
   execute: (executeList: TExecuteItem[], args: any[]) => void;
+  //
+  stores: Record<string, Ref<UnwrapRef<any>>>;
+  metas: Record<string, Ref<UnwrapRef<any>>>;
 }
 
 export const useProModule = (): IProModuleProvide => inject(ProModuleKey) as IProModuleProvide;
@@ -92,9 +95,9 @@ const proModuleProps = () => ({
    */
   storeKeys: { type: Array as PropType<string[]> },
   /**
-   * meta names
+   * meta names (actorName)
    */
-  metasKeys: { type: Array as PropType<string[]> },
+  metaKeys: { type: Array as PropType<TMetaKey[]> },
   /**
    * 组件集
    */
@@ -140,6 +143,16 @@ export const ProModule = defineComponent<ProModuleProps>({
     };
 
     /*********************************** state、store ***************************************/
+    /**
+     * 订阅的store ref对象
+     * {
+     *  storeName: Ref(storeValue)
+     * }
+     */
+    const stores = useRegisterStores(props.storeKeys || []);
+
+    const metas = useRegisterMetas(props.metaKeys || []);
+
     //初始化获取store中的值赋值到state中
     const storeKeys = filter(props.storeKeys, (item) => has(registerStoreMap, item));
     const createStoreValue = () => {
@@ -159,7 +172,8 @@ export const ProModule = defineComponent<ProModuleProps>({
     };
     const initStoreValue = createStoreValue();
 
-    const state = props.state || reactive({ ...initStoreValue, ...props.initState });
+    const state: UnwrapNestedRefs<Record<string, any>> =
+      props.state || reactive({ ...initStoreValue, ...props.initState });
 
     const data = {};
 
@@ -346,6 +360,9 @@ export const ProModule = defineComponent<ProModuleProps>({
       //
       executeExp,
       execute,
+      //
+      stores,
+      metas,
     });
 
     expose({ sendEvent, sendRequest });

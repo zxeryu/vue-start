@@ -10,7 +10,7 @@ import {
   useGetCompByKey,
 } from "../../comp";
 import { CurdAction, CurdSubAction, useProCurd } from "../ctx";
-import { filter, get, keys, map, omit, pick } from "lodash";
+import { filter, get, isNumber, keys, map, omit, pick } from "lodash";
 import { ICurdOperateOpts } from "../Curd";
 import { AddButton } from "./button";
 import { useSafeActivated } from "@vue-start/hooks";
@@ -99,7 +99,7 @@ export const ProCurdList = defineComponent<ProCurdListProps>({
 
     const hasPagination = computed<boolean>(() => {
       if (props.paginationProps === false) return false;
-      return !!curdState.listData?.total;
+      return isNumber(curdState.listData?.total);
     });
 
     const invalidKeys = keys(curdListProps());

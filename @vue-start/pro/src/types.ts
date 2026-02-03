@@ -39,6 +39,22 @@ export type TreeOptions = TreeOption[];
 
 export type TRender = (opts: { value: any; record: any; column?: TColumn }) => VNode | string | number;
 
+export type TSetData = {
+  type: string; //数据类型
+  path: string | string[]; //补充数据路径
+};
+
+export type TSetDataMeta = Omit<TSetData, "type"> & {
+  type: "meta";
+  actorName: string; //actor名称
+  params?: Record<string, any>; //请求参数
+};
+
+export type TSetDataStore = Omit<TSetData, "type"> & {
+  type: "store";
+  storeName: string; //store名称
+};
+
 export type TColumn = {
   title?: string | VNode;
   dataIndex?: string | number;
@@ -70,7 +86,10 @@ export type TColumn = {
   width?: number;
   minWidth?: number;
 
-  /************ column 补充 (columnState2)************ */
+  /************ column 数据补充 ************ */
+  setData?: (TSetDataMeta | TSetDataStore)[];
+
+  //column 补充 (columnState2)
   paths?: string | string[];
 
   /************ form extra 数据补充 ************ */
@@ -93,6 +112,8 @@ export type TColumn = {
      * [`${sign}Sort`]：     标记的columns排序
      */
   } & Record<string, any>;
+
+  children?: TColumns;
 };
 
 export type TColumns = TColumn[];

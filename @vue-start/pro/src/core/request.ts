@@ -1,10 +1,11 @@
 import { IRequestActor, isDoneRequestActor, isFailedRequestActor, useRequestProvide } from "@vue-start/request";
 import { useEffect } from "@vue-start/hooks";
 import { merge as rxMerge, filter as rxFilter, tap as rxTap } from "rxjs";
-import { forEach, get, isFunction, isString, map } from "lodash";
+import { forEach, get, isFunction, isString, map, reduce } from "lodash";
 import { IProConfigProvide, useProConfig } from "./pro";
 import { useDispatchStore, useObservableRef, useStoreConn } from "@vue-start/store";
 import { Ref } from "@vue/reactivity";
+import { computed, ComputedRef, UnwrapNestedRefs } from "vue";
 
 /******************************* subscribe *********************************/
 
@@ -116,7 +117,7 @@ export const convertResData = (
 export type TMeta = {
   actorName: string;
   //全局状态中的 key 缺省为 `${actorName}`
-  storeName?: string | ((params?: Record<string, any>) => string);
+  storeName: string | ((params?: Record<string, any>) => string);
   //默认参数
   initParams?: Record<string, any>;
   //转换path  IRequestActor["res"] 中找到convertPath对应的值
@@ -125,11 +126,34 @@ export type TMeta = {
   convertData?: (data: any, actor: IRequestActor) => any;
 };
 
-const getStoreName = (storeName: TMeta["storeName"], params?: Record<string, any>): string => {
+const getStoreName = (actorName: string, storeName: TMeta["storeName"], params?: Record<string, any>): string => {
   if (isFunction(storeName)) {
-    return "meta_" + storeName(params);
+    return actorName + "_" + storeName(params);
   }
-  return ("meta_" + storeName) as string;
+  return storeName || actorName;
+};
+
+export const useGetMetaStoreName = () => {
+  const { registerMetaMap } = useProConfig();
+
+  return (actorName: string, params?: Record<string, any>) => {
+    const registerMetaItem = get(registerMetaMap, actorName);
+    if (!registerMetaItem) return undefined;
+    return getStoreName(actorName, registerMetaItem.storeName, params);
+  };
+};
+
+/**
+ * 读取meta加载状态
+ */
+export const useMetaLoading = (actorName: string, params?: Record<string, any>): ComputedRef<boolean> => {
+  const { registerMetaMap, metaState } = useProConfig();
+  const registerMetaItem = get(registerMetaMap, actorName);
+  if (!registerMetaItem) return {} as any;
+
+  const storeNname = getStoreName(actorName, registerMetaItem.storeName, params || registerMetaItem.initParams);
+
+  return computed(() => metaState[storeNname]);
 };
 
 /**
@@ -138,27 +162,45 @@ const getStoreName = (storeName: TMeta["storeName"], params?: Record<string, any
  * @param params
  */
 export const useMeta = <T>(actorName: string, params?: Record<string, any>): Ref<T | undefined> => {
-  const { registerMetaMap, dispatchRequest } = useProConfig();
+  const { registerMetaMap, dispatchRequest, metaState } = useProConfig();
   const registerMetaItem = get(registerMetaMap, actorName);
   if (!registerMetaItem) return {} as any;
 
-  const name = getStoreName(registerMetaItem.storeName || actorName, params || registerMetaItem.initParams);
+  const name = getStoreName(actorName, registerMetaItem.storeName, params || registerMetaItem.initParams);
   const mapper = (state: Record<string, any>) => {
     return get(state, name);
   };
 
-  const valueRef = useObservableRef(useStoreConn(mapper));
-  if (!valueRef.value) {
+  const valueRef = useObservableRef<T>(useStoreConn(mapper));
+  if (!valueRef.value && !metaState[name]) {
     //发送meta请求
     dispatchRequest(actorName, params || registerMetaItem.initParams || {});
+    metaState[name] = true;
   }
   return valueRef;
+};
+
+export type TMetaKey = { actorName: string; params?: Record<string, any> };
+
+export const useRegisterMetas = (metaKeys: TMetaKey[]) => {
+  const getMetaStoreName = useGetMetaStoreName();
+
+  return reduce(
+    metaKeys,
+    (pair, item) => {
+      const storeName = getMetaStoreName(item.actorName, item.params);
+      if (!storeName) return pair;
+      return { ...pair, [storeName]: useMeta(item.actorName, item.params) };
+    },
+    {},
+  );
 };
 
 //订阅meta接口
 export const useMetaRegister = (
   registerMetaMap: IProConfigProvide["registerMetaMap"],
   registerActorMap: IProConfigProvide["registerActorMap"],
+  metaState: UnwrapNestedRefs<{ [key: string]: boolean }>,
 ) => {
   const { requestSubject$ } = useRequestProvide();
   const dispatchStore = useDispatchStore();
@@ -173,23 +215,34 @@ export const useMetaRegister = (
   };
 
   useEffect(() => {
-    const sub = requestSubject$
-      .pipe(
+    const sub = rxMerge(
+      requestSubject$.pipe(
         rxFilter(metaFilter),
         rxFilter(isDoneRequestActor),
         rxTap((actor) => {
           const registerMetaItem = get(registerMetaMap, actor.name);
-          if (!registerMetaItem) {
-            return;
-          }
-          const storeName = registerMetaItem.storeName || actor.name;
+          if (!registerMetaItem) return;
+
           const data = convertResData(actor, registerMetaItem.convertData, registerMetaItem.convertPath);
           //将请求回来的数据同步到store$中
-          const name = getStoreName(storeName, actor.req);
-          dispatchStore(name, data, false, undefined);
+          const storeName = getStoreName(actor.name, registerMetaItem.storeName, actor.req);
+          dispatchStore(storeName, data, false, undefined);
+          //
+          metaState[storeName] = false;
         }),
-      )
-      .subscribe();
+      ),
+      requestSubject$.pipe(
+        rxFilter(metaFilter),
+        rxFilter(isFailedRequestActor),
+        rxTap((actor) => {
+          const registerMetaItem = get(registerMetaMap, actor.name);
+          if (!registerMetaItem) return;
+
+          const storeName = getStoreName(actor.name, registerMetaItem.storeName, actor.req);
+          metaState[storeName] = false;
+        }),
+      ),
+    ).subscribe();
     return () => {
       sub.unsubscribe();
     };

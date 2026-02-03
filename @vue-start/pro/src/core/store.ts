@@ -1,6 +1,6 @@
 import { TUpdater, useDispatchStore as useDispatchStoreOrigin, useObservableRef, useStoreConn } from "@vue-start/store";
 import { useProConfig } from "./pro";
-import { get, isFunction } from "lodash";
+import { get, isFunction, reduce } from "lodash";
 
 export type TInitialState<T> = T | (() => T);
 
@@ -45,4 +45,13 @@ export const useReadStore = (key: string) => {
   };
 
   return useObservableRef(useStoreConn(mapper));
+};
+
+/**
+ * 批量读取全局状态
+ * @param storeKeys
+ * @returns
+ */
+export const useRegisterStores = (storeKeys: string[]) => {
+  return reduce(storeKeys, (pair, item) => ({ ...pair, [item]: useReadStore(item) }), {});
 };
