@@ -12,7 +12,7 @@ import {
 } from "vue";
 import { TColumn, TColumns, TElementMap } from "../types";
 import { TRegisterStore, TRegisterStoreMap } from "./store";
-import { get, reduce } from "lodash";
+import { forEach, get, reduce } from "lodash";
 import { IRequestActor, useRequestProvide } from "@vue-start/request";
 import { TMeta, useMetaRegister } from "./request";
 import { TRouter } from "./router";
@@ -20,6 +20,8 @@ import { Router } from "vue-router";
 import { AppConfig, TAppConfig } from "../theme/ctx";
 import { zhLocale } from "../locale/zh";
 import { enLocale } from "../locale/en";
+import { DEVICE_MODES, TDeviceMode, useResponsive } from "../comp/layout/mode";
+import { useEffect } from "@vue-start/hooks";
 
 const proBasePropsFn = () => ({
   /**
@@ -110,6 +112,8 @@ export interface IProConfigProvide {
   //
   localeConfig: ComputedRef<Record<string, string>>;
   t: ComputedRef<(k: string) => string>;
+  //
+  device: ComputedRef<TDeviceMode>;
 }
 
 const proConfigProps = () => ({
@@ -211,6 +215,16 @@ export const ProConfig = defineComponent<ProConfigProps>({
       };
     });
 
+    // device
+    const { device } = useResponsive();
+
+    useEffect(() => {
+      const h = document.querySelector("html");
+      if (!h) return;
+      forEach(DEVICE_MODES, (v) => h.classList.remove(v));
+      h.classList.add(device.value);
+    }, [device]);
+
     provide(ProConfigKey, {
       elementMap: props.elementMap,
       formElementMap: props.formElementMap,
@@ -236,6 +250,8 @@ export const ProConfig = defineComponent<ProConfigProps>({
       locale: locale,
       localeConfig: localeConfig,
       t,
+      //
+      device,
     });
 
     return () => {

@@ -14,7 +14,7 @@ export type TLayoutMenu = {
 
 export type TLayoutTabMenu = TLayoutMenu & { query?: Record<string, any> };
 
-export type TLayoutType = "vertical" | "horizontal" | "horizontal-v" | "compose";
+export type TLayoutType = "vertical" | "horizontal" | "horizontal-v" | "compose" | "simple";
 
 export interface IProLayoutProvide {
   //

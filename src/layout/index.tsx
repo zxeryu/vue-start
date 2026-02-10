@@ -1,6 +1,6 @@
-import { computed, defineComponent } from "vue";
+import { computed, defineComponent, ref } from "vue";
 import { useEffect } from "@vue-start/hooks";
-import { ProLayout, useAppConfig, useProRouter } from "@vue-start/pro";
+import { DEVICE_MODES, ProLayout, useAppConfig, useProConfig, useProRouter } from "@vue-start/pro";
 import { HeaderLeft, HeaderRight } from "@/layout/Header";
 import { css } from "@emotion/css";
 import { menus } from "@/common/menus";
@@ -9,6 +9,8 @@ import Sortable from "sortablejs";
 
 export const BasicLayout = defineComponent(() => {
   const { router } = useProRouter();
+
+  const { device } = useProConfig();
 
   const { appConfig, setAppConfig } = useAppConfig();
 
@@ -84,6 +86,19 @@ export const BasicLayout = defineComponent(() => {
     return undefined;
   });
 
+  const drawerMenuVisible = ref(false);
+
+  const isSimple = computed(() => {
+    return device.value === DEVICE_MODES.MOBILE || device.value === DEVICE_MODES.TABLET;
+  });
+
+  const layout = computed(() => {
+    if (isSimple.value) {
+      return "simple";
+    }
+    return appConfig.layout;
+  });
+
   return () => {
     return (
       <ProLayout
@@ -92,24 +107,34 @@ export const BasicLayout = defineComponent(() => {
             borderBottom: "unset",
           },
         })}
-        layout={appConfig.layout as any}
+        layout={layout.value as any}
         tabs={tabs.value}
         menus={menus as any}
         fieldNames={{ value: "name", label: "title", hide: "hide", children: "children" }}
         collapse={appConfig.isCollapse}
         watermark={watermark.value}
-        routeOpts={{
-          // tagsCache: false,
-        }}
+        routeOpts={
+          {
+            // tagsCache: false,
+          }
+        }
+        v-model:drawerMenuVisible={drawerMenuVisible.value}
+        drawerProps={{ direction: "ltr", size: "80vw" }}
         v-slots={{
           "header-start": () => <HeaderLeft />,
-          "header-end": () => <HeaderRight />,
+          "header-end": () => {
+            if (device.value === DEVICE_MODES.MOBILE) return null;
+            return <HeaderRight />;
+          },
           "menu-start": () => <div class={css({ lineHeight: "30px" })}>start</div>,
           "menu-end": () => (
             <div class={css({ lineHeight: "30px", textAlign: "center" })} onClick={handleCollapse}>
               {appConfig.isCollapse ? "展开" : "合并"}
             </div>
           ),
+          drawerMenuTrigger: () => {
+            return <div>菜单</div>;
+          },
         }}
       />
     );

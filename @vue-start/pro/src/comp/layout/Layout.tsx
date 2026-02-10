@@ -90,6 +90,10 @@ const layoutProps = () => ({
   routeOpts: { type: Object as PropType<ProRouterViewProps>, default: undefined },
   //Watermark
   watermark: { type: Object as PropType<ProWatermarkProps>, default: undefined },
+  //simple 模式下, Drawer visible状态
+  drawerMenuVisible: { type: Boolean },
+  drawerProps: { type: Object },
+  drawerMenuProps: { type: Object },
   /**************************** menu相关 *******************************/
   menus: { type: Array as PropType<TLayoutMenu[]> },
   fieldNames: {
@@ -114,9 +118,10 @@ export const ProLayout = defineComponent<ProLayoutProps>({
   props: {
     ...layoutProps(),
   } as any,
-  setup: (props, { slots, attrs }) => {
+  setup: (props, { slots, attrs, emit }) => {
     const getComp = useGetCompByKey();
     const Menus = getComp(ElementKeys.MenusKey);
+    const Drawer = getComp(ElementKeys.DrawerKey);
     const Scroll = getComp(ElementKeys.ScrollKey) || "div";
 
     const { router, route } = useProRouter();
@@ -242,6 +247,8 @@ export const ProLayout = defineComponent<ProLayoutProps>({
       } else {
         router.openMenu(menu);
       }
+
+      handleMenuVisibleChange(false)
     };
 
     //compose 模式 header中的menu item 事件
@@ -336,6 +343,12 @@ export const ProLayout = defineComponent<ProLayoutProps>({
 
     const showBreadcrumb = computed(() => !!props.breadcrumb);
 
+    /************************** simple *********************************/
+
+    const handleMenuVisibleChange = (v: boolean) => {
+      emit("update:drawerMenuVisible", v);
+    };
+
     /************************** 刷新当前路由 *********************************/
 
     const refreshRef = ref(false);
@@ -381,20 +394,28 @@ export const ProLayout = defineComponent<ProLayoutProps>({
       );
     };
 
-    return () => {
-      if (!Menus) return null;
-
+    //cls
+    const cls = computed(() => {
       const cls = [`${props.clsName} ${props.clsName}-${props.layout}`];
-
-      //
       if (showTabs.value) {
         cls.push("has-tabs");
       }
       if (showBreadcrumb.value) {
         cls.push("has-breadcrumb");
       }
+      if (props.layout === "horizontal" || props.layout === "horizontal-v") {
+        cls.push("has-left-menu");
+        if (props.collapse) cls.push("mini");
+      }
+      if (props.layout === "compose") {
+        if (hasLeftMenu.value) cls.push("has-left-menu");
+        if (props.collapse) cls.push("mini");
+      }
+      return cls;
+    });
 
-      const menuProps = {
+    const menuProps = computed(() => {
+      return {
         class: `${props.clsName}-menus`,
         options: showMenus.value,
         activeKey: activeKey.value,
@@ -402,11 +423,14 @@ export const ProLayout = defineComponent<ProLayoutProps>({
         onMenuItemClick,
         ...props.menuProps,
       };
+    });
 
-      const leftMenuProps = {
-        collapse: props.collapse,
-        ...menuProps,
-      };
+    const leftMenuProps = computed(() => {
+      return { ...menuProps.value, collapse: props.collapse };
+    });
+
+    return () => {
+      if (!Menus) return null;
 
       //内容区
       const section = (
@@ -425,14 +449,33 @@ export const ProLayout = defineComponent<ProLayoutProps>({
         </>
       );
 
-      if (props.layout === "vertical") {
+      if (props.layout === "simple") {
         return (
-          <main {...attrs} class={cls}>
+          <main {...attrs} class={cls.value}>
+            <Header class={`${props.clsName}-header`} v-slots={headerSlots} />
+            {section}
+            {slots.drawerMenuTrigger && (
+              <div class={`${props.clsName}-trigger`} onClick={() => handleMenuVisibleChange(true)}>
+                {slots.drawerMenuTrigger()}
+              </div>
+            )}
+            <Drawer
+              visible={props.drawerMenuVisible}
+              onUpdate:visible={(v: boolean) => handleMenuVisibleChange(v)}
+              footer={false}
+              {...props.drawerProps}>
+              {renderLeftMenu({ ...leftMenuProps.value, ...props.drawerMenuProps })}
+            </Drawer>
+          </main>
+        );
+      } else if (props.layout === "vertical") {
+        return (
+          <main {...attrs} class={cls.value}>
             <Header
               class={`${props.clsName}-header`}
               v-slots={{
                 menus: () => {
-                  return <Menus mode={"horizontal"} {...menuProps} v-slots={menuSlots} />;
+                  return <Menus mode={"horizontal"} {...menuProps.value} v-slots={menuSlots} />;
                 },
                 ...headerSlots,
               }}
@@ -441,11 +484,9 @@ export const ProLayout = defineComponent<ProLayoutProps>({
           </main>
         );
       } else if (props.layout === "horizontal") {
-        cls.push("has-left-menu");
-        if (props.collapse) cls.push("mini");
         return (
-          <main {...attrs} class={cls}>
-            {renderLeftMenu(leftMenuProps)}
+          <main {...attrs} class={cls.value}>
+            {renderLeftMenu(leftMenuProps.value)}
             <div class={`${props.clsName}-structure`}>
               <Header class={`${props.clsName}-header`} v-slots={headerSlots} />
               {section}
@@ -453,24 +494,19 @@ export const ProLayout = defineComponent<ProLayoutProps>({
           </main>
         );
       } else if (props.layout === "horizontal-v") {
-        cls.push("has-left-menu");
-        if (props.collapse) cls.push("mini");
         return (
-          <main {...attrs} class={cls}>
+          <main {...attrs} class={cls.value}>
             <Header class={`${props.clsName}-header`} v-slots={headerSlots} />
             <div class={`${props.clsName}-structure`}>
-              {renderLeftMenu(leftMenuProps)}
+              {renderLeftMenu(leftMenuProps.value)}
               <div class={`${props.clsName}-right`}>{section}</div>
             </div>
           </main>
         );
       }
 
-      if (hasLeftMenu.value) cls.push("has-left-menu");
-      if (props.collapse) cls.push("mini");
-
       return (
-        <main {...attrs} class={cls}>
+        <main {...attrs} class={cls.value}>
           <Header
             class={`${props.clsName}-header`}
             v-slots={{
@@ -493,7 +529,11 @@ export const ProLayout = defineComponent<ProLayoutProps>({
           />
           <div class={`${props.clsName}-structure`}>
             {hasLeftMenu.value &&
-              renderLeftMenu({ ...leftMenuProps, options: currentTop.value!.children, key: currentTop.value!.value })}
+              renderLeftMenu({
+                ...leftMenuProps.value,
+                options: currentTop.value!.children,
+                key: currentTop.value!.value,
+              })}
             <div class={`${props.clsName}-right`}>{section}</div>
           </div>
         </main>

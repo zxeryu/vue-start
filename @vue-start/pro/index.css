@@ -208,6 +208,15 @@
   width: calc(100vw - var(--pro-left-menu-wid));
 }
 
+/*simple*/
+
+.pro-layout-trigger {
+  position: fixed;
+  right: var(--pro-spacing-4);
+  top: calc(var(--pro-header-hei) / 2);
+  transform: translateY(-50%);
+}
+
 /*layout-tabs*/
 
 .pro-layout .pro-layout-tabs {
@@ -594,4 +603,19 @@
   display: flex;
   justify-content: center;
   padding: 16px 0;
+}
+
+/***************************** device 适配 ***********************************/
+html.tablet {
+}
+
+html.tablet .pro-modal {
+  width: 80vw !important;
+}
+
+html.mobile {
+}
+
+html.mobile .pro-modal {
+  width: 90vw !important;
 }
