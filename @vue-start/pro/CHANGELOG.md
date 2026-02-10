@@ -3,6 +3,10 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# 0.5.69
+
+- perf: ProLayout 支持 simple 模式；html 添加 device class 标记；ProConfigProvide 提供 device 变量；
+
 # 0.5.68
 
 - fix: ProRouterView include 更新机制使用 nextTick 优化；
