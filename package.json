@@ -24,7 +24,7 @@
     "axios": "^0.21.0",
     "docx-preview": "^0.1.15",
     "echarts": "^5.4.2",
-    "element-plus": "2.3.14",
+    "element-plus": "2.9.11",
     "highlight.js": "^11.7.0",
     "js-base64": "^3.7.4",
     "localforage": "^1.9.0",

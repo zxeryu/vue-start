@@ -1,12 +1,12 @@
 import { computed, defineComponent, ExtractPropTypes, PropType, ref } from "vue";
-import { ElSelect, ISelectProps, ElOption, IOptionProps } from "element-plus";
+import { ElSelect, ISelectProps, ElOption } from "element-plus";
 import { TOption } from "@vue-start/pro";
-import { get, isArray, isString, keys, map, omit } from "lodash";
+import { get, keys, map, omit } from "lodash";
 import { createExposeObj } from "@vue-start/pro";
 import { formatValue, parseValue } from "@vue-start/hooks";
 
 const proSelectProps = () => ({
-  options: Array as PropType<Array<TOption & IOptionProps>>,
+  options: Array as PropType<Array<TOption>>,
   fieldNames: { type: Object },
   // **************** expose 拓展 **********************
   expMethods: { type: Array as PropType<string[]>, default: () => ["focus", "blur", "selectedLabel"] },
@@ -71,7 +71,7 @@ export const ProSelect = defineComponent<ProSelectProps>({
           v-slots={omit(slots, "default")}>
           {slots.start?.()}
 
-          {map(reOptions.value, (item: TOption & IOptionProps) => {
+          {map(reOptions.value, (item: TOption) => {
             //插槽重写label
             const labelEl = slots.label?.(item);
 
