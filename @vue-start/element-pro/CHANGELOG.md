@@ -1,5 +1,9 @@
 # Change Log
 
+# 0.2.40
+
+- feat: 添加 ProSelectV2 虚拟组件；
+
 # 0.2.39
 
 - feat: 添加样式文件；
