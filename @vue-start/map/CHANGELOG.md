@@ -1,3 +1,7 @@
+# 0.0.9
+
+- feat: MapAutoComplete、MapLoc组件；
+
 # 0.0.7
 
 - perf: useMapApi 返回插件对象 targetRef;
