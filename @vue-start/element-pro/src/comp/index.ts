@@ -5,7 +5,7 @@ export * from "./Popover";
 export * from "./Checkbox";
 export * from "./Radio";
 export * from "./Select";
-export * from "./SelectV2.tsx";
+export * from "./SelectV2";
 export * from "./Tabs";
 export * from "./Menus";
 export * from "./Uploader";
