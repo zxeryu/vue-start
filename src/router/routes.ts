@@ -469,6 +469,17 @@ export const routes = [
         ],
       },
       {
+        name: "MapAutocomplete",
+        path: "autocomplete",
+        children: [
+          {
+            name: "MapAutocompleteIndex",
+            path: "index",
+            component: () => import("@/views/map/autocomplete/index"),
+          },
+        ],
+      },
+      {
         name: "MapInfoWindow",
         path: "info-window",
         children: [
@@ -509,6 +520,17 @@ export const routes = [
             name: "MapLayerLabelsIndex",
             path: "index",
             component: () => import("@/views/map/layer-labels/index"),
+          },
+        ],
+      },
+      {
+        name: "MapLoc",
+        path: "loc",
+        children: [
+          {
+            name: "MapLocIndex",
+            path: "index",
+            component: () => import("@/views/map/loc/index"),
           },
         ],
       },

@@ -9,3 +9,4 @@ export * from "./overlay";
 export * from "./layer";
 
 export * from "./api";
+export * from "./comp";

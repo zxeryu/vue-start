@@ -82,6 +82,8 @@ export const menus = [
       { title: "labels-layer", name: "MapLayerLabelsIndex" },
       { title: "layer-group", name: "MapLayerGroupIndex" },
       { title: "api", name: "MapApiIndex" },
+      { title: "autocomplete", name: "MapAutocompleteIndex" },
+      { title: "loc", name: "MapLocIndex" },
     ],
   },
   { title: "css", name: "CssIndex" },

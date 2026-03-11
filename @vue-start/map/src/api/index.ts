@@ -5,7 +5,7 @@ export const ApiNames = {
   Geocoder_getLocation: "AMap.Geocoder_getLocation",
   Geocoder_getAddress: "AMap.Geocoder_getAddress",
   // AutoComplete
-  Autocomplete_search: "AMap.Autocomplete_search",
+  AutoComplete_search: "AMap.AutoComplete_search",
   // PlaceSearch
   PlaceSearch_search: "AMap.PlaceSearch_search",
   PlaceSearch_searchNearBy: "AMap.PlaceSearch_searchNearBy",

@@ -1,5 +1,5 @@
 import { App } from "@vue/runtime-core";
-import { ElButton, ElInputNumber, ElMessageBox, ElIcon, ElScrollbar } from "element-plus";
+import { ElButton, ElInputNumber, ElMessageBox, ElIcon, ElScrollbar, ElAutocomplete } from "element-plus";
 import { ArrowLeftBold } from "@element-plus/icons-vue";
 import {
   ProLoading,
@@ -46,9 +46,9 @@ import {
 
 import { ProPreview } from "@vue-start/media";
 import { ProChart } from "@vue-start/chart";
-import { Map } from "@vue-start/map";
+import { Map, MapAutoComplete } from "@vue-start/map";
 import { css } from "@emotion/css";
-import { get, omit } from "lodash";
+import { get, map, omit } from "lodash";
 
 ProChart.props = {
   ...ProChart.props,
@@ -58,6 +58,25 @@ ProChart.props = {
 Map.props = {
   ...Map.props,
   loadOpts: { type: Object, default: { key: "e576dc4fdf66a1f0334d9ae4615a62ea" } },
+};
+
+MapAutoComplete.props = {
+  ...MapAutoComplete.props,
+  renderComp: {
+    type: Function,
+    default: ({ query, onSelect, valueRef }: any) => {
+      return (
+        <ElAutocomplete
+          class={"map-autocomplete"}
+          v-model={valueRef.value}
+          trigger-on-focus={false}
+          clearable
+          fetchSuggestions={query}
+          onSelect={onSelect}
+        />
+      );
+    },
+  },
 };
 
 ColumnSetting.props = {
