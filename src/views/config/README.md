@@ -27,6 +27,29 @@ const config = useConfig();
 const config2 = getConfig();
 ```
 
+## 全局配置初始化
+
+可以通过 `init` 方法预先设置全局配置，之后 `getConfig` 和 `createConfig` 会优先使用该配置。
+
+```ts
+import { init, createConfig, useConfig, getConfig } from "@vue-start/config";
+
+// 项目入口处初始化（传入解密后的配置）
+init({
+  API_KEY: "decrypted-api-key",
+  SECRET: "decrypted-secret",
+});
+
+// 之后的使用方式保持不变
+createApp().use(createConfig());
+const config = useConfig();
+const config2 = getConfig();
+```
+
+### API
+
+- `init(config)` - 初始化全局配置
+
 ## API
 
 ### vite 中使用

@@ -20,7 +20,8 @@ const isBase64 = (str: string) => {
     return false;
   }
 };
-const getDevKitValue = (key: string) => {
+
+export const getDevKitValue = (key: string) => {
   const str = globalThis.document?.querySelector(`meta[name="devkit:${key}"]`)?.getAttribute("content") || "";
   if (str && isBase64(str)) {
     return decode(str);
@@ -30,9 +31,24 @@ const getDevKitValue = (key: string) => {
 
 type TConfig = { [key: string]: string };
 
-export const getConfig = (): TConfig => {
-  const app = parse(getDevKitValue("app"));
+// 全局配置
+let globalConfig: TConfig | null = null;
 
+export const init = (config: TConfig) => {
+  globalConfig = config;
+};
+
+export const getGlobalConfig = (): TConfig | null => {
+  return globalConfig;
+};
+
+export const getConfig = (): TConfig => {
+  // 如果全局配置存在，优先使用
+  if (globalConfig) {
+    return globalConfig;
+  }
+
+  const app = parse(getDevKitValue("app"));
   const config = parse(getDevKitValue("config"));
 
   return { ...config, ...app } as TConfig;
