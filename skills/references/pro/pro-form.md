@@ -90,7 +90,12 @@ export default defineComponent(() => {
     { dataIndex: "image", title: "图片", valueType: "image" },
     { dataIndex: "file", title: "文件", valueType: "file" },
     { dataIndex: "switch", title: "开关", valueType: "switch" },
-    { dataIndex: "textarea", title: "多行文本", valueType: "textarea" },
+    { dataIndex: "textarea", title: "多行文本", valueType: "textarea",
+      extra: {
+        //当前组件在grid布局中占位1行
+        col: { span: 24 }
+      }
+     },
   ];
 
   const handleFinish = (values: Record<string, any>) => {
@@ -103,6 +108,7 @@ export default defineComponent(() => {
   return () => {
     return (
       <pro-form
+        model={formState}
         columns={columns}
         // 栅格布局：col={{ span: 8 }}
         row={{}}
@@ -210,6 +216,8 @@ interface TColumn {
     search?: object;
     form?: object;
     table?: object;
+    col?: object;
+    //...其他
   };
   // 表单专用
   formItemProps?: object;      // ProFormItem props
