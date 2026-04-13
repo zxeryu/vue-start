@@ -28,25 +28,33 @@ export default defineComponent(() => {
 | 属性 | 说明 | 类型 |
 |------|------|------|
 | `columns` | 列配置 | `TColumns` |
-| `model` | 表单数据（响应式对象） | `Record<string, any>` |
 | `columnState` | 列状态 | `Record<string, any>` |
 | `columnState2` | 列状态2 | `Record<string, any>` |
+| `convertColumnPre` | 列转换预处理 | `(column: TColumn) => TColumn` |
+| `convertColumn` | 列转换处理 | `(column: TColumn) => TColumn` |
+| `model` | 表单数据（响应式对象） | `Record<string, any>` |
+| `elementMap` | 展示组件集 | `TElementMap` |
+| `formElementMap` | 录入组件集 | `TElementMap` |
 | `readonly` | 只读模式 | `boolean` |
 | `showState` | 显示状态控制 | `Record<string, boolean>` |
+| `showStateRules` | 显示状态规则（根据表单值动态计算） | `Record<string, (values: Record<string, any>) => boolean>` |
 | `readonlyState` | 只读状态控制 | `Record<string, boolean>` |
+| `readonlyStateRules` | 只读状态规则（根据表单值动态计算） | `Record<string, (values: Record<string, any>) => boolean>` |
 | `disableState` | 禁用状态控制 | `Record<string, boolean>` |
+| `disableStateRules` | 禁用状态规则（根据表单值动态计算） | `Record<string, (values: Record<string, any>) => boolean>` |
 | `row` | Grid Row 配置 | `object` |
 | `col` | Grid Col 配置 | `object` |
 | `operate` | 操作按钮配置 | `object` |
 | `debounceSubmit` | 防抖提交延迟（ms） | `number` |
-| `elementMap` | 展示组件集 | `TElementMap` |
-| `formElementMap` | 录入组件集 | `TElementMap` |
+| `submitLoading` | 提交按钮loading状态 | `boolean` |
+| `formMethods` | ref 默认中转方法 | `string[]` |
 
 ## Events
 
 | 事件 | 说明 | 参数 |
 |------|------|------|
-| `onFinish` | 表单提交 | `(values: Record<string, any>) => void` |
+| `onFinish` | 表单提交成功 | `(showValues: Record<string, any>, values: Record<string, any>, opts: { userOpe: Ref, asyncNum: Ref }) => void` |
+| `onFinishFailed` | 表单提交失败 | `(errs: any) => void` |
 | `onReset` | 表单重置 | `() => void` |
 
 ---
@@ -102,7 +110,22 @@ export default defineComponent(() => {
     console.log("提交数据:", values);
   };
 
-  // 字段状态控制
+  // 字段状态控制 - 使用 Rules 动态控制
+  const showStateRules = {
+    // 当 gender 为 "female" 时显示 age 字段
+    age: (values: Record<string, any>) => values.gender === "female",
+  };
+
+  const readonlyStateRules = {
+    // 当 type 为 "view" 时，name 字段只读
+    name: (values: Record<string, any>) => formType.value === "view",
+  };
+
+  const disableStateRules = {
+    // 当 type 为 "add" 时，status 字段禁用
+    status: (values: Record<string, any>) => formType.value === "add",
+  };
+
   const formType = ref("add");
 
   return () => {
@@ -113,9 +136,10 @@ export default defineComponent(() => {
         // 栅格布局：col={{ span: 8 }}
         row={{}}
         col={{ span: 8 }}
-        // 只读/禁用状态控制
-        readonlyState={{ name: formType.value === "edit" }}
-        disableState={{ status: formType.value === "add" }}
+        // 状态规则控制（根据表单值动态计算）
+        showStateRules={showStateRules}
+        readonlyStateRules={readonlyStateRules}
+        disableStateRules={disableStateRules}
         // 防抖提交
         debounceSubmit={1000}
         operate={{}}
@@ -226,3 +250,4 @@ interface TColumn {
 ```
 
 ---
+
