@@ -37,51 +37,70 @@ export default defineComponent(() => {
 
 ## 综合示例
 
-展示搜索表单、表格、分页、搜索位置、插槽等核心功能。
+展示搜索表单、表格、分页、搜索位置、工具栏、插槽等完整功能。
 
 ```tsx
-import { defineComponent, ref } from "vue";
-import { take } from "lodash";
+import { defineComponent, reactive, ref } from "vue";
+import { ElButton, ElInput } from "element-plus";
 
 export default defineComponent(() => {
   const searchColumns = take(columns, 3);
-
-  // 搜索位置控制
+  const pageState = reactive({ page: 1, pageSize: 10 });
   const searchInTableRef = ref(false);
 
-  const handleChange = () => {
-    searchInTableRef.value = !searchInTableRef.value;
-  };
+  const dataSource = [
+    { id: 1, name: "张三", status: "1" },
+    { id: 2, name: "李四", status: "0" },
+  ];
 
-  const handleSearch = (values: Record<string, any>) => {
-    console.log("搜索:", values);
-  };
-
-  return () => {
-    return (
-      <>
-        <button onClick={handleChange}>search in table</button>
-        <pro-list
-          // 搜索位置：true 在表格内，false 在表格外
-          searchInTable={searchInTableRef.value}
-          searchProps={{ columns: searchColumns }}
-          tableProps={{
-            columns,
-            dataSource,
-            toolbar: { columnSetting: {} },
-          }}
-          paginationProps={{ total: 100 }}
-          onSearch={handleSearch}
-          v-slots={{
-            // 插槽
-            start: () => <div>列表顶部内容</div>,
-            divide: () => <div>搜索和表格之间的分隔内容</div>,
-            end: () => <div>列表底部内容</div>,
-          }}
-        />
-      </>
-    );
-  };
+  return () => (
+    <pro-list
+      // 搜索位置：true 在表格 toolbar 内
+      searchInTable={searchInTableRef.value}
+      searchProps={{
+        columns: searchColumns,
+        searchMode: "MANUAL",
+        debounceTime: 300,
+      }}
+      tableProps={{
+        columns,
+        dataSource,
+        bordered: true,
+        operate: {
+          items: [
+            { value: "edit", label: "编辑", show: true },
+            { value: "delete", label: "删除", show: true },
+          ],
+        },
+        toolbar: { columnSetting: {} },
+      }}
+      paginationProps={{ total: 100, showSizeChanger: true, showQuickJumper: true }}
+      pageState={pageState}
+      onSearch={(values) => console.log("搜索:", values)}
+      v-slots={{
+        start: () => <div>列表顶部内容</div>,
+        // 自定义搜索区域
+        search: ({ executeSearchWithResetPage }: any) => (
+          <div style={{ display: "flex", gap: "10px" }}>
+            <ElInput placeholder="请输入名称" style={{ width: "200px" }} />
+            <ElButton type="primary" onClick={() => executeSearchWithResetPage({})}>搜索</ElButton>
+          </div>
+        ),
+        // 自定义分页区域
+        pagination: ({ executePageChange }: any) => (
+          <div style={{ marginTop: "20px", textAlign: "right" }}>
+            <ElButton size="small" onClick={() => executePageChange(pageState.page - 1, pageState.pageSize)}>
+              上一页
+            </ElButton>
+            <span style={{ margin: "0 10px" }}>第 {pageState.page} / {Math.ceil(100 / pageState.pageSize)} 页</span>
+            <ElButton size="small" onClick={() => executePageChange(pageState.page + 1, pageState.pageSize)}>
+              下一页
+            </ElButton>
+          </div>
+        ),
+      }}
+    />
+  );
 });
 ```
 
