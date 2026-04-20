@@ -65,6 +65,7 @@ pro-form 通过 `valueType` 指定字段类型，实际组件由 `formElementMap
 |--------|------|
 | `selectv2` | 虚拟化下拉 |
 | `color` | 颜色选择 |
+| `table-select` | 表格选择 |
 
 ### 配置示例
 
