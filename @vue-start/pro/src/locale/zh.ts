@@ -6,6 +6,7 @@ export const zhLocale = {
   closeOthers: "关闭其他",
   closeAll: "全部关闭",
   pleaseEnter: "请输入",
+  pleaseSelect: "请选择",
   columnSettings: "列设置",
   columnDisplay: "列展示",
   serialNumber: "序号",
@@ -19,4 +20,5 @@ export const zhLocale = {
   confirm: "确认",
   back: "返回",
   uploadingWatting: "正在上传文件，请稍后...",
+  clear: "清空",
 };

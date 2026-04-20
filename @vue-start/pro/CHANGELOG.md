@@ -3,6 +3,11 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# 0.5.70
+
+- feat: ProCurd 内部生成 curdId 附加到 actor name 后，保证同页面多实例 actor 名称唯一性
+- feat: 国际化文案新增 pleaseSelect、clear
+
 # 0.5.69
 
 - perf: ProLayout 支持 simple 模式；html 添加 device class 标记；ProConfigProvide 提供 device 变量；

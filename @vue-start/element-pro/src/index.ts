@@ -50,6 +50,7 @@ import {
   ProFormSwitch,
   ProFormCascader,
   ProFormColor,
+  ProFormTableSelect,
 } from "./form";
 import { ProTable as Table, ProTableOperateItem, ProTableV2 as TableV2 } from "./table";
 import { ProUploader, ProLoading, ProMenus, ProModal, ProPagination, ProPopover, ProDropdown, ProDrawer } from "./comp";
@@ -172,4 +173,5 @@ export const formElementMap = {
   switch: ProFormSwitch,
   cascader: ProFormCascader,
   color: ProFormColor,
+  tableSelect: ProFormTableSelect,
 };

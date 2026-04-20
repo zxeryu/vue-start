@@ -1,6 +1,6 @@
 import { App } from "@vue/runtime-core";
 import { ElButton, ElInputNumber, ElMessageBox, ElIcon, ElScrollbar, ElAutocomplete } from "element-plus";
-import { ArrowLeftBold } from "@element-plus/icons-vue";
+import { ArrowDown, ArrowLeftBold, CircleClose } from "@element-plus/icons-vue";
 import {
   ProLoading,
   ProFormItem,
@@ -17,6 +17,8 @@ import {
   ProMenus,
   ProUploader,
   InputNumberRange,
+  TagsTrigger,
+  ProTableSelect,
   elementMap as elementMapOrigin,
   formElementMap as formElementMapOrigin,
 } from "@vue-start/element-pro";
@@ -145,6 +147,26 @@ ProModal.props = {
   scrollProps: { type: Object, default: { maxHeight: "70vh" } },
 };
 
+TagsTrigger.props = {
+  ...TagsTrigger.props,
+  renderClose: {
+    type: Function,
+    default: () => (
+      <ElIcon>
+        <CircleClose />
+      </ElIcon>
+    ),
+  },
+  renderArrow: {
+    type: Function,
+    default: () => (
+      <ElIcon>
+        <ArrowDown />
+      </ElIcon>
+    ),
+  },
+};
+
 export const elementMap = {
   ...elementMapOrigin,
   [ElementKeys.ScrollKey]: ElScrollbar,
@@ -191,6 +213,7 @@ export const initComp = (app: App) => {
   app.component("pro-uploader", ProUploader);
   app.component("pro-uploader-text", ProUploaderText);
   app.component("pro-digit-range", InputNumberRange);
+  app.component("pro-table-select", ProTableSelect);
   //兼容演示
   app.component("pro-input-number", ElInputNumber);
   app.component("pro-button", ElButton);

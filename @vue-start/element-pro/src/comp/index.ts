@@ -14,3 +14,5 @@ export * from "./Tree";
 export * from "./Dropdown";
 export * from "./TreeSelect";
 export * from "./Cascader";
+export * from "./TagsTrigger";
+export * from "./TableSelect";

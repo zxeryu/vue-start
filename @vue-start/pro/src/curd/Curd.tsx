@@ -30,7 +30,7 @@ import {
 } from "./ctx";
 import { IOperateItem, useProLayout } from "../comp";
 import { IRequestActor } from "@vue-start/request";
-import { convertCollection, findTreeItem } from "@vue-start/hooks";
+import { convertCollection, findTreeItem, generateId } from "@vue-start/hooks";
 
 export interface IListData extends Record<string, any> {
   total: number;
@@ -305,6 +305,8 @@ export const ProCurd = defineComponent<ProCurdProps>({
     curdState: { type: Object as PropType<ICurdState> },
   },
   setup: (props, { slots, expose }) => {
+    const curdId = generateId();
+
     const { elementMap, formElementMap, t } = useProConfig();
 
     const moduleRef = ref();
@@ -357,7 +359,14 @@ export const ProCurd = defineComponent<ProCurdProps>({
       });
     });
     //只取配置actor的项
-    const requests = computed(() => filter(operates.value, (item) => item.actor));
+    const requests = computed(() => {
+      return map(
+        filter(operates.value, (item) => item.actor),
+        (a: IRequestActor) => {
+          return { ...a, name: a.name + "_" + curdId };
+        },
+      );
+    });
 
     const moduleKeys = keys(omit(ProModule.props, "state", "requests"));
 

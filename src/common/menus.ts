@@ -36,6 +36,8 @@ export const menus = [
                 { title: "Select", name: "ElSelectIndex" },
                 { title: "TreeSelect", name: "ElTreeSelectIndex" },
                 { title: "Cascader", name: "ElCascaderIndex" },
+                { title: "TagsTrigger", name: "ElTagsTriggerIndex" },
+                { title: "TableSelect", name: "ElTableSelectIndex" },
               ]
             : []),
         ],

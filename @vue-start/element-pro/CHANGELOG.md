@@ -1,5 +1,14 @@
 # Change Log
 
+# 0.2.41
+
+- feat: 新增 ProTableSelect 表格选择组件，支持单选/多选、Modal/Popover 弹出模式
+- feat: 新增 TagsTrigger 标签触发器组件，支持折叠标签、Tooltip 提示
+- feat: 新增 ProFormTableSelect 表单组件（valueType: table-select）
+- feat: 新增 TagsTrigger/TagsList/TableSelect popup 相关样式
+- fix: ProPopover v-model update:modelValue 双向绑定修复
+- fix: ProTable rowSelection onChange 返回完整 rows 参数
+
 # 0.2.40
 
 - feat: 添加 ProSelectV2 虚拟组件；

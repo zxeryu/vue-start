@@ -113,7 +113,7 @@ const proTableProps = () => ({
        * 与当前页无关；可累计选择；
        * 缺点：
        *  1、如果初始化绑定的数据中存在数据源中不存在的数据，table中操作清空不了，需要外部处理（如："清空"按钮）；
-       *  2、onChange中没有rows
+       *  2、onChange中的rows不是完整的
        */
       pagination?: boolean;
     }>,
@@ -228,7 +228,7 @@ export const ProTable = defineComponent<ProTableProps>({
         });
         reIds.push(...ids);
 
-        props.rowSelection!.onChange?.(reIds, []);
+        props.rowSelection!.onChange?.(reIds, rows);
         emit("update:selectedRowKeys", reIds);
         return;
       }

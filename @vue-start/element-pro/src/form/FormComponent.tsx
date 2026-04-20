@@ -1,7 +1,16 @@
 import { ElInput, ElInputNumber, ElDatePicker, ElTimePicker, ElSwitch, ElColorPicker } from "element-plus";
 
 import { createFormItemComponent } from "./createFormItemComponent";
-import { InputNumberRange, ProCheckbox, ProRadio, ProSelect, ProCascader, ProTreeSelect, ProSelectV2 } from "../comp";
+import {
+  InputNumberRange,
+  ProCheckbox,
+  ProRadio,
+  ProSelect,
+  ProCascader,
+  ProTreeSelect,
+  ProSelectV2,
+  ProTableSelect,
+} from "../comp";
 
 export const ProFormText = createFormItemComponent({
   InputComp: ElInput,
@@ -67,4 +76,9 @@ export const ProFormColor = createFormItemComponent({
   InputComp: ElColorPicker,
   valueType: "color",
   name: "PFormColor",
+});
+export const ProFormTableSelect = createFormItemComponent({
+  InputComp: ProTableSelect,
+  valueType: "table-select",
+  name: "ProFormTableSelect",
 });

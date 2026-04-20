@@ -264,6 +264,17 @@ export const routes = [
         ],
       },
       {
+        name: "ElTableSelect",
+        path: "table-select",
+        children: [
+          {
+            name: "ElTableSelectIndex",
+            path: "index",
+            component: () => import("@/views/el/table-select/index"),
+          },
+        ],
+      },
+      {
         name: "ElTabs",
         path: "tabs",
         children: [
@@ -271,6 +282,17 @@ export const routes = [
             name: "ElTabsIndex",
             path: "index",
             component: () => import("@/views/el/tabs/index"),
+          },
+        ],
+      },
+      {
+        name: "ElTagsTrigger",
+        path: "tags-trigger",
+        children: [
+          {
+            name: "ElTagsTriggerIndex",
+            path: "index",
+            component: () => import("@/views/el/tags-trigger/index"),
           },
         ],
       },
