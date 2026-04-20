@@ -1,0 +1,16 @@
+{
+  "commands": {
+    "demo": {
+      "description": "根据 git 变更生成 demo 和 README",
+      "prompt": "读取 .claude/commands/demo.md 和 .claude/commands/mappings.md，按照其中定义的流程执行：\n1. 分析 git diff 获取变更文件\n2. 根据 mappings.md 映射找到对应视图目录\n3. 生成 demo/basic.tsx 和 README.md"
+    },
+    "docs": {
+      "description": "更新 skills 文档",
+      "prompt": "读取 .claude/commands/docs.md 和 .claude/commands/mappings.md，按照其中定义的流程执行：\n1. 分析 git diff 获取变更文件\n2. 在 src/views 目录查找对应 demo\n3. 更新 skills/references 目录下对应的文档"
+    },
+    "changelog": {
+      "description": "更新 CHANGELOG",
+      "prompt": "读取 .claude/commands/changelog.md，按照其中定义的流程执行：\n1. 分析 git diff 获取变更文件\n2. 识别变更涉及的包\n3. 在对应包的 CHANGELOG.md 顶部添加新版本记录\n4. 版本号在最新版本基础上 +0.01"
+    }
+  }
+}
