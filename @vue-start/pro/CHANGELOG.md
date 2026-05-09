@@ -3,6 +3,10 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# 0.5.71
+
+- feat: LayoutTabs 组件新增左右滚动按钮功能，支持 showScrollButton、scrollButtonWid、showScrollbar、scrollStep、scrollMouseStep 配置
+
 # 0.5.70
 
 - feat: ProCurd 内部生成 curdId 附加到 actor name 后，保证同页面多实例 actor 名称唯一性

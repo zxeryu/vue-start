@@ -1,7 +1,7 @@
-import { computed, defineComponent, ExtractPropTypes, PropType, reactive, Ref, ref, Teleport } from "vue";
+import { computed, defineComponent, ExtractPropTypes, nextTick, PropType, reactive, Ref, ref, Teleport } from "vue";
 import { useProConfig, useProRouter } from "../../core";
 import { TLayoutMenu, TLayoutTabMenu, useProLayout } from "./ctx";
-import { useEffect, useUpdateKey, jsonToStr } from "@vue-start/hooks";
+import { useEffect, useUpdateKey, jsonToStr, useResizeObserver, useWatch } from "@vue-start/hooks";
 import { ElementKeys, useGetCompByKey } from "../comp";
 import { filter, find, get, map, findIndex, reduce } from "lodash";
 
@@ -22,6 +22,18 @@ const tabsProps = () => ({
   findFirstMenu: { type: Function },
   //tab item 点击监听
   onItemClick: { type: Function },
+  //是否展示左右滚动按钮
+  showScrollButton: { type: Boolean, default: false },
+  scrollButtonWid: { type: Number, default: 30 },
+  //是否展示滚动条
+  showScrollbar: { type: Boolean, default: true },
+  //按钮每次滚动像素
+  scrollStep: { type: Number, default: 200 },
+  //鼠标滚轮每次滚动像素
+  scrollMouseStep: { type: Number, default: 50 },
+  //
+  renderLeftBtn: { type: Function },
+  renderRightBtn: { type: Function },
 });
 
 export type ProLayoutTabsProps = Partial<ExtractPropTypes<ReturnType<typeof tabsProps>>>;
@@ -207,11 +219,14 @@ export const LayoutTabs = defineComponent<ProLayoutTabsProps>({
     //右键菜单
     const handleCtxMenu = (e: any, item: TLayoutTabMenu) => {
       e.preventDefault();
-      const target = e.target;
-      if (!target) return;
-      const rect = target.getBoundingClientRect();
-      state.ctxMenuPos = { x: rect.x + rect.width / 2, y: rect.y + rect.height };
-      state.ctxMenuItem = item;
+      const itemEl = e.currentTarget as HTMLElement;
+      if (!itemEl) return;
+      scrollItemIntoView(itemEl);
+      requestAnimationFrame(() => {
+        const rect = itemEl.getBoundingClientRect();
+        state.ctxMenuPos = { x: rect.x + rect.width / 2, y: rect.y + rect.height };
+        state.ctxMenuItem = item;
+      });
     };
 
     //
@@ -293,6 +308,89 @@ export const LayoutTabs = defineComponent<ProLayoutTabsProps>({
       });
     });
 
+    /**************************** 滚动 ******************************/
+
+    const showScrollBtn = computed(() => props.showScrollButton ?? false);
+    const showScrollbarVal = computed(() => props.showScrollbar ?? true);
+    const scrollStepVal = computed(() => props.scrollStep ?? 200);
+    const scrollMouseStepVal = computed(() => props.scrollMouseStep ?? 50);
+
+    const scrollRef = ref<{ wrapRef: HTMLElement; setScrollLeft: (v: number) => void }>();
+    const isScrollable = ref(false);
+    const canScrollLeft = ref(false);
+    const canScrollRight = ref(false);
+
+    const scrollWrapEl = computed(() => scrollRef.value?.wrapRef);
+
+    const checkScrollState = () => {
+      const el = scrollWrapEl.value;
+      if (!el) return;
+      const { scrollLeft, scrollWidth, clientWidth } = el;
+      isScrollable.value = scrollWidth > clientWidth + 1;
+      canScrollLeft.value = scrollLeft > 0;
+      canScrollRight.value = scrollLeft + clientWidth < scrollWidth - 1;
+    };
+
+    useResizeObserver(scrollWrapEl, checkScrollState);
+
+    // 监听 scroll 事件
+    useEffect(() => {
+      const el = scrollWrapEl.value;
+      if (!el) return;
+      el.addEventListener("scroll", checkScrollState);
+      return () => el.removeEventListener("scroll", checkScrollState);
+    }, scrollWrapEl);
+
+    // 鼠标滚轮左右滚动
+    useEffect(() => {
+      const el = scrollWrapEl.value;
+      if (!el) return;
+      const handleWheel = (e: WheelEvent) => {
+        e.preventDefault();
+        const dir = e.deltaY > 0 ? 1 : -1;
+        scrollRef.value?.setScrollLeft((scrollWrapEl.value?.scrollLeft || 0) + dir * scrollMouseStepVal.value);
+      };
+      el.addEventListener("wheel", handleWheel, { passive: false });
+      return () => el.removeEventListener("wheel", handleWheel);
+    }, scrollWrapEl);
+
+    const handleLeft = () => {
+      const wrap = scrollWrapEl.value;
+      if (!wrap || !scrollRef.value) return;
+      scrollRef.value.setScrollLeft(wrap.scrollLeft - scrollStepVal.value);
+    };
+    const handleRight = () => {
+      const wrap = scrollWrapEl.value;
+      if (!wrap || !scrollRef.value) return;
+      scrollRef.value.setScrollLeft(wrap.scrollLeft + scrollStepVal.value);
+    };
+
+    const scrollItemIntoView = (itemEl: HTMLElement) => {
+      const wrap = scrollWrapEl.value;
+      if (!wrap || !scrollRef.value) return;
+      const wrapRect = wrap.getBoundingClientRect();
+      const itemRect = itemEl.getBoundingClientRect();
+      // sticky按钮宽度，与 index.css .pro-layout-tabs-btn width 保持一致
+      const btnW = showScrollBtn.value ? props.scrollButtonWid! : 0;
+      const visibleLeft = wrapRect.left + btnW;
+      const visibleRight = wrapRect.right - btnW;
+      if (itemRect.left >= visibleLeft && itemRect.right <= visibleRight) return;
+      const delta = itemRect.left < visibleLeft ? itemRect.left - visibleLeft : itemRect.right - visibleRight;
+      scrollRef.value.setScrollLeft(wrap.scrollLeft + delta);
+    };
+
+    // 选中tab变化时自动滚动到可见区域
+    useEffect(() => {
+      //确保tab已渲染
+      nextTick(() => {
+        const menuValue = menu.value?.value;
+        if (!menuValue) return;
+        const itemEl = document.querySelector(`[data-url="${menuValue}"]`) as HTMLElement;
+        if (!itemEl) return;
+        scrollItemIntoView(itemEl);
+      });
+    }, [menu, isScrollable]);
+
     /***************************************************************/
 
     const getComp = useGetCompByKey();
@@ -302,8 +400,17 @@ export const LayoutTabs = defineComponent<ProLayoutTabsProps>({
     return () => {
       return (
         <>
-          <RComp class={"pro-layout-tabs"}>
-            <div class={"pro-layout-tabs-root"} ref={domRef} key={domKey.value}>
+          <RComp ref={scrollRef} class={["pro-layout-tabs", !showScrollbarVal.value && "hide-scrollbar"]}>
+            <div
+              class={"pro-layout-tabs-root"}
+              ref={domRef}
+              key={domKey.value}
+              style={{ "--pro-layout-tabs-btn-wid": props.scrollButtonWid + "px" }}>
+              {showScrollBtn.value && isScrollable.value && (
+                <div class={["pro-layout-tabs-btn", "left", !canScrollLeft.value && "disabled"]} onClick={handleLeft}>
+                  {props.renderLeftBtn?.() || "〈"}
+                </div>
+              )}
               {map(tabs.value, (item) => {
                 const isHide = isHideClose(item);
                 const isActive = item.value === menu.value?.value;
@@ -312,9 +419,13 @@ export const LayoutTabs = defineComponent<ProLayoutTabsProps>({
                   <div
                     class={["pro-layout-tabs-item", isActive ? "active" : ""]}
                     data-url={item.value}
-                    onClick={() => handleItemClick(item)}
+                    onClick={() => {
+                      handleItemClick(item);
+                    }}
                     // @ts-ignore
-                    oncontextmenu={(e) => handleCtxMenu(e, item)}>
+                    oncontextmenu={(e) => {
+                      handleCtxMenu(e, item);
+                    }}>
                     {item.itemLabel?.(item) || item.label}
                     {!isHide && (
                       <div
@@ -332,6 +443,13 @@ export const LayoutTabs = defineComponent<ProLayoutTabsProps>({
                   </div>
                 );
               })}
+              {showScrollBtn.value && isScrollable.value && (
+                <div
+                  class={["pro-layout-tabs-btn", "right", !canScrollRight.value && "disabled"]}
+                  onClick={handleRight}>
+                  {props.renderRightBtn?.() || "〉"}
+                </div>
+              )}
             </div>
           </RComp>
           {state.ctxMenuItem && state.ctxMenuPos && (
