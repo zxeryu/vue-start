@@ -3,6 +3,11 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# 0.5.72
+
+- feat: FormItem 新增 combinePlaceholderMessage 方法，支持 placeholderPrefixMap 配置，为不同值类型动态生成占位文案
+- feat: TFormExtraMap 新增 placeholderPrefixMap 类型定义
+
 # 0.5.71
 
 - feat: LayoutTabs 组件新增左右滚动按钮功能，支持 showScrollButton、scrollButtonWid、showScrollbar、scrollStep、scrollMouseStep 配置

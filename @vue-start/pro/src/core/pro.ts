@@ -64,6 +64,7 @@ export type ProDispatchRequestType = (
 
 export type TFormExtraMap = {
   rulePrefixMap?: Record<string, string>;
+  placeholderPrefixMap?: Record<string, string>;
 };
 
 export interface IProConfigProvide {

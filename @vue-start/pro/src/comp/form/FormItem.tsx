@@ -49,6 +49,14 @@ export const createFormItemCompFn = <T extends FormItemProps>(
           return formReadonly.value;
         });
 
+        const combinePlaceholderMessage = () => {
+          const prefix = get(formExtraMap!.value?.placeholderPrefixMap, valueType);
+          if (!prefix) {
+            return undefined;
+          }
+          return `${prefix || t.value("pleaseEnter")}${props.label || ""}`;
+        };
+
         const combineRuleMessage = () => {
           const prefix = get(formExtraMap!.value?.rulePrefixMap, valueType);
           return `${prefix || t.value("pleaseEnter")}${props.label || ""}`;
@@ -107,8 +115,18 @@ export const createFormItemCompFn = <T extends FormItemProps>(
           if (slots.renderInput) {
             return slots.renderInput({ value, setValue, disabled, record: formState, path });
           }
+          const extraProps: Record<string, any> = {};
+          const placeholder = combinePlaceholderMessage();
+          if (placeholder) {
+            extraProps.placeholder = placeholder;
+          }
           return (
-            <InputComp {...convertInputCompProps(value, setValue, disabled)} {...props.fieldProps} v-slots={slots} />
+            <InputComp
+              {...convertInputCompProps(value, setValue, disabled)}
+              {...extraProps}
+              {...props.fieldProps}
+              v-slots={slots}
+            />
           );
         };
 

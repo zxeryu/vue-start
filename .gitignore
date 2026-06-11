@@ -18,3 +18,7 @@ package-lock.json
 test/
 
 settings.local.json
+
+.codegraph/
+.reasonix/
+reasonix.toml
