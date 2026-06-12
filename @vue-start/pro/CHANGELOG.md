@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# 0.5.73
+
+- feat: PageHeader 新增 slots 属性，支持模板插槽传递 title
+- feat: LayoutBreadcrumb 新增 lastLabel 属性，支持覆盖末级面包屑文案
+- feat: 新增 resolveSlot 工具方法，统一管理插槽渲染优先级：模板插槽 > props 插槽 > fallback
+
 # 0.5.72
 
 - feat: FormItem 新增 combinePlaceholderMessage 方法，支持 placeholderPrefixMap 配置，为不同值类型动态生成占位文案

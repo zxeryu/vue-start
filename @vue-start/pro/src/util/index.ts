@@ -1,4 +1,4 @@
-import { Ref } from "vue";
+import { Ref, Slot } from "vue";
 import { filter, forEach, keys, pick, reduce, size, startsWith, mapKeys, get } from "lodash";
 import { TColumn } from "../types";
 
@@ -63,3 +63,26 @@ export const filterSlotsByPrefix = (slots: Record<string, any>, prefix: string) 
     return key.replace(prefixStr, "");
   });
 };
+
+/**
+ * 优先使用模板插槽，否则使用 props 传入的函数插槽，否则使用 fallback
+ * @param templateSlot 模板插槽（如 slots.icon）
+ * @param propSlot     props 传入的插槽函数（如 props.slots?.icon）
+ * @param fallback     默认内容（可以是 VNode、字符串或返回 VNode 的函数）
+ * @param args         传递给插槽函数的参数
+ * @returns            插槽函数调用的结果，或 fallback 的结果/值
+ */
+export const resolveSlot = (
+  templateSlot: Slot | undefined,
+  propSlot: ((...args: any[]) => any) | undefined,
+  fallback: any = null,
+  ...args: unknown[]
+): any => {
+  if (typeof templateSlot === 'function') {
+    return templateSlot(...args)
+  }
+  if (typeof propSlot === 'function') {
+    return propSlot(...args)
+  }
+  return typeof fallback === 'function' ? fallback(...args) : fallback
+}

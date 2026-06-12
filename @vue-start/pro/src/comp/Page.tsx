@@ -3,6 +3,7 @@ import { keys, omit, pick } from "lodash";
 import { ElementKeys, useGetCompByKey } from "./comp";
 import { isValidNode, useProConfig, useProRouter } from "../core";
 import { useProLayout } from "./layout";
+import { resolveSlot } from "../util";
 
 const proPageHeaderProps = () => ({
   title: { type: String },
@@ -13,6 +14,8 @@ const proPageHeaderProps = () => ({
   onBackClick: { type: Function },
   //render dom
   renderBackIcon: { type: Function as PropType<() => VNode> },
+  //slots 拓展
+  slots: { type: Object as PropType<Record<string, () => VNode>> },
 });
 
 export type PageHeaderProps = Partial<ExtractPropTypes<ReturnType<typeof proPageHeaderProps>>>;
@@ -45,7 +48,9 @@ export const PageHeader = defineComponent({
               {slots.backIcon ? slots.backIcon() : props.renderBackIcon?.() || renderBackIcon()}
             </div>
           )}
-          <div class={"pro-page-header-title"}>{slots.title ? slots.title() : props.title}</div>
+          <div class={"pro-page-header-title"}>
+            {resolveSlot(slots.title, props.slots?.title, props.title, props.title)}
+          </div>
           <div class={"pro-page-header-sub-title"}>{slots.subTitle ? slots.subTitle() : props.subTitle}</div>
           <div class={"pro-page-header-space"}>{slots.space?.()}</div>
           <div class={"pro-page-header-extra"}>{slots.extra?.()}</div>

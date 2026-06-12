@@ -10,6 +10,7 @@ const breadcrumbProps = () => ({
   renderSeparator: { type: Function },
   renderStart: { type: Function },
   renderEnd: { type: Function },
+  lastLabel: { type: String },
 });
 
 export type LayoutBreadcrumbProps = Partial<ExtractPropTypes<ReturnType<typeof breadcrumbProps>>>;
@@ -51,7 +52,7 @@ export const LayoutBreadcrumb = defineComponent<LayoutBreadcrumbProps>({
             return (
               <>
                 <span class={cls} onClick={() => handleItemClick(item, isLast)}>
-                  {item.label}
+                  {isLast ? props.lastLabel || item.label : item.label}
                 </span>
                 {!isLast && (
                   <span class={"breadcrumb-separator"}>{props.renderSeparator?.(item) || props.separator || "/"}</span>
