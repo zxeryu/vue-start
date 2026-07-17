@@ -220,6 +220,93 @@ export default defineComponent(() => {
 
 ---
 
+## formFieldProps.slots — 表单组件插槽传递
+
+`formFieldProps.slots` 允许向表单字段组件内部传递插槽，用于自定义组件渲染。
+
+```tsx
+const columns = [
+  {
+    dataIndex: "status",
+    title: "状态",
+    valueType: "select",
+    formFieldProps: {
+      options: [
+        { value: 1, label: "启用" },
+        { value: 0, label: "禁用" },
+      ],
+      // 向 select 组件内部传递插槽
+      slots: {
+        prefix: () => <el-icon><InfoFilled /></el-icon>,
+        empty: () => <div>暂无数据</div>,
+        default: ({ item }) => (
+          <div style="display:flex;align-items:center">
+            <span style="margin-right:4px">{item.label}</span>
+            <el-tag size="small">{item.value}</el-tag>
+          </div>
+        ),
+      },
+    },
+  },
+  {
+    dataIndex: "name",
+    title: "姓名",
+    valueType: "text",
+    formFieldProps: {
+      // 向 input 组件传递插槽
+      slots: {
+        prefix: () => <el-icon><User /></el-icon>,
+        suffix: () => <span>.com</span>,
+      },
+    },
+  },
+];
+```
+
+### 插槽传递机制
+
+插槽内容会透传到 `formElementMap` 中对应组件（如 `pro-form-select`、`pro-form-text`）的内部。插槽名称由目标组件定义：
+
+| 目标组件 | 可用插槽 |
+|---------|---------|
+| pro-form-select / pro-select | `default`（自定义选项渲染）、`empty`、`prefix` |
+| pro-form-text / el-input | `prefix`、`suffix`、`prepend`、`append` |
+| pro-form-checkbox | `default`（自定义选项渲染） |
+| pro-form-radio | `default`（自定义选项渲染） |
+
+---
+
+## TColumn.extra 详解
+
+`extra` 控制 column 在不同场景下的行为，每个场景配置会覆盖当前 column 的默认值：
+
+| 属性 | 使用场景 | 说明 |
+|------|---------|------|
+| `extra.desc` | `pro-desc` 详情展示 | 覆盖详情场景的 column 配置 |
+| `extra.search` | `pro-form` / `pro-search-form` 搜索 | 覆盖搜索表单的 column 配置 |
+| `extra.form` | `pro-form` 表单 | 覆盖表单场景的 column 配置 |
+| `extra.table` | `pro-table` 表格 | 覆盖表格场景的 column 配置 |
+| `extra.col` | 布局 | 覆盖栅格列配置（如 `{ span: 12 }`） |
+
+```tsx
+const columns = [
+  {
+    dataIndex: "name",
+    title: "姓名",
+    valueType: "text",
+    // 在不同场景中分别配置
+    extra: {
+      search: { hidden: false },  // 搜索中显示
+      form: { required: true },   // 表单中必填
+      table: { width: 200 },      // 表格中宽度
+      col: { span: 12 },          // 栅格占12列
+    },
+  },
+];
+```
+
+---
+
 ## 核心类型
 
 ### TColumn
@@ -231,17 +318,46 @@ interface TColumn {
   valueType?: string;
   width?: number | string;
   extra?: {
-    desc?: object;
-    search?: object;
-    form?: object;
-    table?: object;
-    col?: object;
+    desc?: object;     // 覆盖 Desc 场景的 column 配置
+    search?: object;   // 覆盖搜索表单场景的 column 配置
+    form?: object;     // 覆盖表单场景的 column 配置
+    table?: object;    // 覆盖表格场景的 column 配置
+    col?: object;      // 覆盖栅格列配置
   };
-  formItemProps?: object;
-  formFieldProps?: object;
+  formItemProps?: {
+    [key: string]: any;
+    slots?: Record<string, (props: any) => VNode>; // FormItem 插槽
+  };
+  formFieldProps?: {
+    options?: TOption[];
+    slots?: Record<string, (props: any) => VNode>; // 字段组件插槽
+    [key: string]: any;
+  };
   formExtra?: {
     label?: { name?: string; opts?: TLabelOpts };
   };
 }
+```
+
+### showStateRules / readonlyStateRules / disableStateRules 函数签名
+
+```ts
+// 参数：当前表单的 values 对象
+// 返回：boolean（true 表示应用规则）
+
+type TRuleFn = (values: Record<string, any>) => boolean;
+
+// 示例
+const showStateRules: Record<string, TRuleFn> = {
+  age: (values) => values.gender === "female",  // 性别为女时显示年龄字段
+};
+
+const readonlyStateRules: Record<string, TRuleFn> = {
+  name: (values) => !values.isNewUser,          // 非新用户时姓名只读
+};
+
+const disableStateRules: Record<string, TRuleFn> = {
+  status: (values) => values.type === "fixed",  // 固定类型时禁用状态
+};
 ```
 

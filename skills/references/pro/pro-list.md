@@ -2,6 +2,8 @@
 
 组合搜索表单、表格、分页的列表容器组件。
 
+> 实际开发中，通常不直接使用 `pro-list`，而是通过 [pro-curd](./pro-curd.md) 的 `listProps` 属性配置。`pro-curd` 内部将 `listProps` 透传给 `pro-list`，本页文档即为 `listProps` 的完整配置参考。
+
 ## 快速开始
 
 ```tsx
@@ -31,7 +33,22 @@ export default defineComponent(() => {
 | `searchProps` | 搜索表单配置 | `object` |
 | `tableProps` | 表格配置 | `object` |
 | `paginationProps` | 分页配置 | `object` |
-| `searchInTable` | 搜索是否在表格内 | `boolean` |
+| `searchInTable` | 搜索是否在表格 toolbar 内 | `boolean` |
+| `pageState` | 分页状态（v-model） | `{ page: number; pageSize: number }` |
+
+### 事件
+
+| 事件 | 说明 | 参数 |
+|------|------|------|
+| `onSearch` | 搜索触发 | `(values: Record<string, any>) => void` |
+
+### 插槽
+
+| 插槽 | 说明 | 参数 |
+|------|------|------|
+| `start` | 列表顶部内容 | - |
+| `search` | 自定义搜索区域 | `{ executeSearchWithResetPage: (values) => void }` |
+| `pagination` | 自定义分页区域 | `{ executePageChange: (page, pageSize) => void }` |
 
 ---
 

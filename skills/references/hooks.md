@@ -8,6 +8,18 @@
 pnpm add @vue-start/hooks
 ```
 
+## 文档组织
+
+Hooks 和工具函数按功能域分为以下几类：
+
+| 类别 | 说明 |
+|------|------|
+| 状态管理类 | useState、useToggle、useBoolean、useMemo 等 |
+| 副作用类 | useEffect、useWatch 等 |
+| DOM 操作类 | useClickAway、useEventListener、useHover 等 |
+| 工具类 | useUpdateKey、useRuleState 等 |
+| 工具函数 | base、collection、options、number、menu、vue3、timer、file、path、pattern |
+
 ## 核心 Hooks
 
 ### 状态管理类
@@ -17,9 +29,19 @@ pnpm add @vue-start/hooks
 状态切换 Hook，支持双向切换。
 
 ```ts
-const [state, { toggle, setLeft, setRight }] = useToggle();
-const [state, actions] = useToggle(true);
-const [state, actions] = useToggle('open', 'close');
+import { useToggle } from "@vue-start/hooks";
+
+// 默认 boolean 切换
+const [state, { toggle, setLeft, setRight }] = useToggle(): [
+  Ref<boolean>,
+  { toggle: () => void; setLeft: () => void; setRight: () => void }
+];
+
+// 指定初始值
+const [state, actions] = useToggle(true): [Ref<boolean>, ToggleActions];
+
+// 指定两个值切换
+const [state, actions] = useToggle<T1, T2>(left: T1, right: T2): [Ref<T1 | T2>, ToggleActions<T1, T2>];
 ```
 
 #### useBoolean
@@ -27,7 +49,12 @@ const [state, actions] = useToggle('open', 'close');
 布尔值状态管理，基于 useToggle 封装。
 
 ```ts
-const [isVisible, { toggle, setTrue, setFalse }] = useBoolean(false);
+import { useBoolean } from "@vue-start/hooks";
+
+const [isVisible, { toggle, setTrue, setFalse }] = useBoolean(false): [
+  Ref<boolean>,
+  { toggle: () => void; setTrue: () => void; setFalse: () => void }
+];
 ```
 
 #### useState
@@ -35,8 +62,12 @@ const [isVisible, { toggle, setTrue, setFalse }] = useBoolean(false);
 响应式状态管理，解决 ref 的 .value 访问问题。
 
 ```ts
-const [state, setState] = useState({ name: '' });
-const setReactiveValue = (r, obj) => void; // 快速为reactive对象赋值
+import { useState } from "@vue-start/hooks";
+
+const [state, setState] = useState<T>(initialValue: T): [Ref<T>, (value: T) => void];
+
+// 快速为 reactive 对象赋值
+const setReactiveValue = (r: Record<string, any>, obj: Record<string, any>) => void;
 ```
 
 #### useSet
@@ -44,7 +75,17 @@ const setReactiveValue = (r, obj) => void; // 快速为reactive对象赋值
 Set 数据结构的状态管理。
 
 ```ts
-const [set, { add, remove, reset, has }] = useSet(['a', 'b']);
+import { useSet } from "@vue-start/hooks";
+
+const [set, { add, remove, reset, has }] = useSet<T>(initial?: T[]): [
+  Ref<Set<T>>,
+  {
+    add: (item: T) => void;
+    remove: (item: T) => void;
+    reset: (items?: T[]) => void;
+    has: (item: T) => boolean;
+  }
+];
 ```
 
 #### useStorageState
@@ -52,7 +93,9 @@ const [set, { add, remove, reset, has }] = useSet(['a', 'b']);
 localStorage 状态持久化。
 
 ```ts
-const [state, setState] = useStorageState('key', 'defaultValue');
+import { useStorageState } from "@vue-start/hooks";
+
+const [state, setState] = useStorageState<T>(key: string, defaultValue: T): [Ref<T>, (v: T) => void];
 ```
 
 #### useMemo
@@ -60,7 +103,9 @@ const [state, setState] = useStorageState('key', 'defaultValue');
 计算缓存，依赖变化时重新计算。
 
 ```ts
-const result = useMemo(() => expensiveComputation(a, b), [a, b]);
+import { useMemo } from "@vue-start/hooks";
+
+const result = useMemo<T>(factory: () => T, deps: WatchSource[]): Ref<T>;
 ```
 
 ### 副作用类
@@ -70,6 +115,8 @@ const result = useMemo(() => expensiveComputation(a, b), [a, b]);
 结合 watch、onMounted、onBeforeUnmount 的生命周期 Hook。
 
 ```ts
+import { useEffect } from "@vue-start/hooks";
+
 // 组件挂载和卸载时执行
 useEffect(() => {
   console.log('mounted');
@@ -85,190 +132,209 @@ useEffect(() => { /* ... */ }, () => [dep1, dep2]);
 监听响应式数据变化，自动在组件卸载时停止监听。
 
 ```ts
-useWatch((newVal, oldVal) => { /* ... */ }, () => state.count);
+import { useWatch } from "@vue-start/hooks";
+
+useWatch(
+  (newVal, oldVal) => { /* ... */ },
+  () => state.count
+);
 ```
 
 ### DOM 操作类
 
 #### useClickAway
 
-检测点击目标外部。
-
 ```ts
-useClickAway(() => { /* ... */ }, ref.value, 'click');
+import { useClickAway } from "@vue-start/hooks";
+
+useClickAway(callback: () => void, target: Ref<HTMLElement>, eventName?: string): void;
 ```
 
 #### useEventListener
 
-事件监听封装。
-
 ```ts
-useEventListener('resize', handleResize, { target: window, passive: true });
+import { useEventListener } from "@vue-start/hooks";
+
+useEventListener(
+  event: string,
+  handler: (e: Event) => void,
+  options?: { target?: EventTarget; passive?: boolean }
+): void;
 ```
 
 #### useHover
 
-检测元素 hover 状态。
-
 ```ts
-const [isHover, startHover, endHover] = useHover(elementRef);
+import { useHover } from "@vue-start/hooks";
+
+const [isHover, startHover, endHover] = useHover(elementRef: Ref<HTMLElement>): [
+  Ref<boolean>,
+  () => void,
+  () => void
+];
 ```
 
 #### useResizeObserver
 
-监听元素尺寸变化。
-
 ```ts
-useResizeObserver(containerRef, (entries) => {
-  const { width, height } = entries[0].contentRect;
-});
+import { useResizeObserver } from "@vue-start/hooks";
+
+useResizeObserver(
+  target: Ref<HTMLElement>,
+  callback: (entries: ResizeObserverEntry[]) => void
+): void;
 ```
 
 #### useDocumentVisibility
 
-监听页面可见性。
-
 ```ts
-const visibility = useDocumentVisibility(); // 'visible' | 'hidden'
+import { useDocumentVisibility } from "@vue-start/hooks";
+
+const visibility = useDocumentVisibility(): Ref<"visible" | "hidden">;
 ```
 
 ### 工具类
 
 #### useUpdateKey
 
-生成唯一 key，用于刷新图表、组件。
-
 ```ts
-const [key, updateKey] = useUpdateKey();
+import { useUpdateKey } from "@vue-start/hooks";
+
+const [key, updateKey] = useUpdateKey(): [Ref<string>, () => void];
 ```
 
 #### useRuleState
 
-根据规则自动计算状态。
-
 ```ts
-const state = useRuleState(formData, {
-  valid: (record) => record.name && record.age,
-  canSubmit: (record) => record.name && record.age > 18,
-});
+import { useRuleState } from "@vue-start/hooks";
+
+const state = useRuleState<T, R extends Record<string, (record: T) => any>>(
+  data: T,
+  rules: R
+): { [K in keyof R]: ReturnType<R[K]> };
 ```
 
+---
+
 ## 工具函数 (util)
+
+工具函数按功能域组织，从 `@vue-start/hooks` 导入。
 
 ### 基础工具 (base)
 
 ```ts
-const generateId = () => string;                    // 生成唯一id
-const strToJson = (v: string) => any;                // JSON字符串转对象
-const jsonToStr = (obj: Object) => string;           // 对象转JSON字符串
-const isValidInRules = (target, rules) => boolean;   // 判断是否满足规则
-const isSame = (a, b, opts?) => boolean;            // 判断两个值是否相等
-const isSameNum = (num1, num2) => boolean;           // 数值比较
+import { generateId, strToJson, jsonToStr, isValidInRules, isSame, isSameNum } from "@vue-start/hooks";
+
+const generateId = (): string;
+const strToJson = (v: string): any;
+const jsonToStr = (obj: Object): string;
+const isValidInRules = (target: any, rules: Record<string, any>): boolean;
+const isSame = (a: any, b: any, opts?: object): boolean;
+const isSameNum = (num1: number, num2: number): boolean;
 ```
 
 ### 数据转换 (collection)
 
 ```ts
-// list 数据转 Map
-const listToMap = (data, convert, fieldNames?) => Record<string, any>;
+import { listToMap, findTreeItem, treeToMap, convertCollection, filterCollection, mergeStateToData, signTableMerge } from "@vue-start/hooks";
 
-// tree 数据查找
-const findTreeItem = (data, rules, fieldNames?, parent?) => TFindTarget;
-const findTreeItem2 = (data, value[], fieldNames?) => TFindTarget;
-
-// tree 数据转 Map
-const treeToMap = (data, convert, fieldNames?, onlyLeaf?) => Record<string, any>;
-
-// 综合转换（替代 listToOptions 和 treeToOptions）
-const convertCollection = (data, convert, fieldNames?) => any[];
-// fieldNames: { children: "children", childrenName: "children" }
-
-// 数据过滤
-const filterCollection = (data, verify, fieldNames?) => any[];
-
-// 数据合并
-const mergeStateToData = (data, state, value, fieldNames?) => any[];
-const assignStateToData = (data, state, value, fieldNames?) => any[];
-
-// 表格合并标记
-const signTableMerge = (data, opts) => void;
-const getNameMapByMergeOpts = (opts) => Record<string, any>;
+const listToMap = (data: any[], convert: (item: any) => any, fieldNames?: { key?: string }): Record<string, any>;
+const findTreeItem = (data: any[], rules: Record<string, any>, fieldNames?: object, parent?: any): TFindTarget;
+const treeToMap = (data: any[], convert: (item: any) => any, fieldNames?: object, onlyLeaf?: boolean): Record<string, any>;
+const convertCollection = (data: any[], convert: (item: any) => any, fieldNames?: object): any[];
+const filterCollection = (data: any[], verify: (item: any) => boolean, fieldNames?: object): any[];
+const mergeStateToData = (data: any[], state: any, value: any, fieldNames?: object): any[];
+const assignStateToData = (data: any[], state: any, value: any, fieldNames?: object): any[];
+const signTableMerge = (data: any[], opts: object): void;
 ```
 
 ### Options 工具 (options)
 
 ```ts
-const getFieldNames = (fieldNames?) => { labelName, valueName, childrenName };
+import { enumToOptions, listToOptions, parseValue, formatValue, findValueRecord, findValueLabel } from "@vue-start/hooks";
 
-// 枚举转 options
-const enumToOptions = (enumObj, displayEnumObj) => TOptions;
-
-// list 相关
-const listToOptions = (list, fieldNames?, rewriteProps?) => TOptions;
-const listToOptionsMap = (list, fieldNames?, isItemObj?) => Record<string, any>;
-
-// value 解析与格式化
-const parseValue = (v, opts: TValueOpts) => any;
-const formatValue = (v, opts: TValueOpts) => any;
-const findValueRecord = (v, opts: TLabelOpts) => any;
-const findValueLabel = (r, opts: TLabelOpts) => string;
+const enumToOptions = (enumObj: Record<string, any>, displayEnumObj?: Record<string, any>): TOptions;
+const listToOptions = (list: any[], fieldNames?: TFieldNames, rewriteProps?: Record<string, any>): TOptions;
+const parseValue = (v: any, opts: TValueOpts): any;
+const formatValue = (v: any, opts: TValueOpts): any;
+const findValueRecord = (v: any, opts: TLabelOpts): any;
+const findValueLabel = (r: any, opts: TLabelOpts): string;
 ```
 
 ### 数值处理 (number)
 
 ```ts
-const decimalLen = (value) => number;              // 获取小数位数
-const decimalFixed = (value, length?) => string;   // 保留小数位，默认2位
-const thousandDivision = (value) => string;        // 千分位处理
-const toNum = (num, def?) => number | null;        // 转换为number
-const showNum = (num, def?) => number | string;    // 展示数字
+import { decimalLen, decimalFixed, thousandDivision, toNum, showNum } from "@vue-start/hooks";
+
+const decimalLen = (value: number): number;
+const decimalFixed = (value: number, length?: number): string;
+const thousandDivision = (value: number): string;
+const toNum = (num: any, def?: number): number | null;
+const showNum = (num: any, def?: number | string): number | string;
 ```
 
 ### 菜单工具 (menu)
 
 ```ts
-const findFirstValidMenu = (menus, rules, fieldNames?) => TMenu;
-const getMenuTopNameMap = (menus, fieldNames?) => Record<string, any>;
+import { findFirstValidMenu, getMenuTopNameMap } from "@vue-start/hooks";
+
+const findFirstValidMenu = (menus: TMenu[], rules: Record<string, any>, fieldNames?: object): TMenu;
+const getMenuTopNameMap = (menus: TMenu[], fieldNames?: object): Record<string, any>;
 ```
 
 ### Vue3 工具 (vue3)
 
 ```ts
-const createExposeObj = (targetRef, methods?, opts?) => Record<string, any>;
-const toValue = <T>(r: T | Ref<T> | (() => T)) => T;
-const unrefElement = <T>(elRef) => HTMLElement | SVGElement | undefined;
-const useSafeActivated = (cb: () => void) => void; // 安全执行 onActivated
+import { createExposeObj, toValue, unrefElement, useSafeActivated } from "@vue-start/hooks";
+
+const createExposeObj = (targetRef: Ref, methods?: string[], opts?: object): Record<string, any>;
+const toValue = <T>(r: T | Ref<T> | (() => T)): T;
+const unrefElement = <T>(elRef: any): HTMLElement | SVGElement | undefined;
+const useSafeActivated = (cb: () => void): void;
 ```
 
 ### 定时器工具 (timer)
 
 ```ts
-const formatCountStr = (time: number, format?) => string;  // 秒转字符串
-const useCountDown = (time?, format?) => { count, str, stop, start };
+import { formatCountStr, useCountDown } from "@vue-start/hooks";
+
+const formatCountStr = (time: number, format?: string): string;
+const useCountDown = (time?: number, format?: string): {
+  count: Ref<number>;
+  str: Ref<string>;
+  stop: () => void;
+  start: () => void;
+};
 ```
 
 ### 文件工具 (file)
 
 ```ts
-const isValidFileType = (accept, fileName) => boolean;  // 验证文件类型
-const convertFileSize = (sizeInBytes) => string;        // 文件大小转换
+import { isValidFileType, convertFileSize } from "@vue-start/hooks";
+
+const isValidFileType = (accept: string, fileName: string): boolean;
+const convertFileSize = (sizeInBytes: number): string;
 ```
 
 ### Path 工具 (path)
 
 ```ts
-const restorePath = (path: string, obj) => string;   // 还原path中的描述性下标
-const isValidPath = (path: string) => boolean;        // 是否是合法path
-const isPathHasParent = (path: string, obj) => boolean; // 父级对象是否存在
+import { restorePath, isValidPath, isPathHasParent } from "@vue-start/hooks";
+
+const restorePath = (path: string, obj: object): string;
+const isValidPath = (path: string): boolean;
+const isPathHasParent = (path: string, obj: object): boolean;
 ```
 
 ### 正则常量 (pattern)
 
 ```ts
-const mobilePhoneReg = RegExp;     // 手机号
-const telephoneReg = RegExp;       // 电话
-const idCardReg = RegExp;          // 身份证
-const creditCodeReg = RegExp;      // 统一社会信用码
-const floatNumberReg = RegExp;     // 小数点后两位数字
-const emailPhoneReg = RegExp;      // 邮箱
+import { mobilePhoneReg, telephoneReg, idCardReg, creditCodeReg, floatNumberReg, emailPhoneReg } from "@vue-start/hooks";
+
+const mobilePhoneReg: RegExp;
+const telephoneReg: RegExp;
+const idCardReg: RegExp;
+const creditCodeReg: RegExp;
+const floatNumberReg: RegExp;
+const emailPhoneReg: RegExp;
 ```

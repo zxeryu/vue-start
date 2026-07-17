@@ -69,13 +69,20 @@ init(config: TConfig): void
 
 ## 配置来源
 
-配置从 HTML 的 meta 标签中读取：
+配置从 HTML 的 meta 标签中读取，支持 Base64 编码：
 
 ```html
+<!-- index.html -->
 <head>
-  <meta name="devkit:app" content="base64编码的配置数据" />
-  <meta name="devkit:config" content="base64编码的配置数据" />
+  <meta name="devkit:app" content="eyJhcGlVcmwiOiJodHRwczovL2FwaS5leGFtcGxlLmNvbSJ9" />
+  <meta name="devkit:config" content="eyJlbnYiOiJwcm9kdWN0aW9uIn0=" />
 </head>
+```
+
+以上内容解码后为：
+```json
+// devkit:app → { "apiUrl": "https://api.example.com" }
+// devkit:config → { "env": "production" }
 ```
 
 ## 配置格式
@@ -86,9 +93,41 @@ type TConfig = {
 };
 
 // 实际使用
-{
-  "apiUrl": "https://api.example.com",
-  "env": "production",
-  // ...
-}
+const config = getConfig();
+// { apiUrl: "https://api.example.com", env: "production", ... }
+```
+
+## API 关系说明
+
+### `init()` vs `createConfig()`
+
+| 方法 | 用途 | 调用时机 |
+|------|------|---------|
+| `init(config)` | 预先设置全局配置（如解密后的配置），优先级最高 | 项目入口，`createApp` 之前 |
+| `createConfig()` | 创建 Vue 插件，从 meta 标签或 `init` 中读取配置 | `app.use()` 时 |
+| `getConfig()` | 直接获取配置对象 | 任意时机 |
+| `useConfig()` | 在组件中注入配置 | 组件 setup 内 |
+
+**优先级**: `init()` 设置的配置 > meta 标签中的配置
+
+### 典型使用流程
+
+```ts
+// 1. 入口文件：解密并初始化配置
+import { init } from "@vue-start/config";
+import { Base64 } from "js-base64";
+
+const metaConfig = document.querySelector('meta[name="devkit:config"]')?.getAttribute("content");
+const decrypted = metaConfig ? JSON.parse(Base64.decode(metaConfig)) : {};
+init(decrypted);
+
+// 2. 创建应用并使用配置插件
+const app = createApp(App);
+app.use(createConfig());
+app.mount("#app");
+
+// 3. 组件中使用
+import { useConfig } from "@vue-start/config";
+const config = useConfig();
+console.log(config.apiUrl); // "https://api.example.com"
 ```

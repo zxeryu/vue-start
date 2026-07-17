@@ -266,7 +266,7 @@ export default defineComponent(() => {
 
 ### pro-table
 
-Ant Design Vue 增强表格。
+> 完整文档见 [Pro Table 表格组件](../pro/pro-table.md)。antd-pro 的表格继承原生 ATable 属性。
 
 **Props**
 
@@ -290,7 +290,7 @@ Ant Design Vue 增强表格。
 **示例**
 
 ```tsx
-import { defineComponent, ref } from "vue";
+import { defineComponent } from "vue";
 
 export default defineComponent(() => {
   const columns = [
@@ -303,15 +303,7 @@ export default defineComponent(() => {
     { id: 2, name: "李四", status: "禁用" },
   ];
 
-  return () => {
-    return (
-      <pro-table
-        columns={columns}
-        dataSource={dataSource}
-        rowKey="id"
-      />
-    );
-  };
+  return () => <pro-table columns={columns} dataSource={dataSource} rowKey="id" />;
 });
 ```
 
@@ -319,7 +311,7 @@ export default defineComponent(() => {
 
 ### pro-desc
 
-Ant Design Vue 详情组件。
+> 完整文档见 [Pro Desc 详情组件](../pro/pro-desc.md)。
 
 **Props**
 
@@ -343,11 +335,7 @@ export default defineComponent(() => {
     { label: "状态", value: "启用" },
   ];
 
-  const data = { name: "张三", age: 25, status: "启用" };
-
-  return () => {
-    return <pro-desc items={items} dataSource={data} />;
-  };
+  return () => <pro-desc items={items} dataSource={{ name: "张三", age: 25, status: "启用" }} />;
 });
 ```
 

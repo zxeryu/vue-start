@@ -2,11 +2,126 @@
 
 `@vue-start/map` 是基于高德地图 JS API 的 Vue3 组件封装，提供地图容器、覆盖物、图层、控件等组件化支持。
 
+## 坐标系说明
+
+高德地图使用 **GCJ-02** 坐标系（火星坐标系），与 GPS 使用的 WGS-84 坐标系有偏移。
+
+| 坐标格式 | 示例 | 说明 |
+|---------|------|------|
+| 经纬度数组 | `[116.39, 39.9]` | `[lng, lat]`，经度在前，纬度在后 |
+| 经纬度对象 | `{ lng: 116.39, lat: 39.9 }` | 对象格式 |
+
 ## 安装
 
 ```bash
 pnpm add @vue-start/map @amap/amap-jsapi-loader @amap/amap-jsapi-types
 ```
+
+## 初始化流程
+
+```tsx
+// 1. 在高德开放平台获取 Key 和安全密钥
+// 2. 配置地图组件
+<Map
+  securityJsCode="your-security-code"
+  loadOpts={{
+    key: "your-web-key",
+    version: "2.0",
+    plugins: [
+      "AMap.ToolBar",
+      "AMap.Scale",
+      "AMap.Geolocation",
+      "AMap.Geocoder",
+    ],
+  }}
+  opts={{ zoom: 13, center: [116.39, 39.9] }}
+  events={[
+    { type: "click", handler: (e) => console.log("点击位置:", e.lnglat) },
+    { type: "complete", handler: () => console.log("地图加载完成") },
+  ]}
+/>
+```
+
+### 常用模式：位置选择器
+
+```tsx
+import { defineComponent, ref } from "vue";
+import { Map, MapLoc } from "@vue-start/map";
+
+export default defineComponent({
+  setup() {
+    const position = ref<[number, number]>([116.39, 39.9]);
+
+    return () => (
+      <Map
+        securityJsCode="xxx"
+        loadOpts={{ key: "xxx", version: "2.0" }}
+        opts={{ zoom: 15, center: position.value }}
+      >
+        <MapLoc
+          v-model={position.value}
+          enableAuto={true}
+          autoProps={{ city: "北京" }}
+          onAddress={(result) => console.log("地址:", result)}
+        />
+      </Map>
+    );
+  },
+});
+```
+
+### 常用模式：覆盖物信息窗
+
+```tsx
+import { defineComponent, reactive } from "vue";
+import { Map, Marker, InfoWindow } from "@vue-start/map";
+
+export default defineComponent({
+  setup() {
+    const state = reactive({
+      markers: [
+        { id: 1, position: [116.39, 39.9], title: "天安门" },
+        { id: 2, position: [116.40, 39.92], title: "故宫" },
+      ] as any[],
+      activeInfo: { visible: false, position: [0, 0] as [number, number], content: "" },
+    });
+
+    const showInfo = (marker: any) => {
+      state.activeInfo = {
+        visible: true,
+        position: marker.position,
+        content: `<div><h3>${marker.title}</h3><p>详情信息</p></div>`,
+      };
+    };
+
+    return () => (
+      <Map
+        securityJsCode="xxx"
+        loadOpts={{ key: "xxx", version: "2.0" }}
+        opts={{ zoom: 13, center: [116.39, 39.9] }}
+      >
+        {state.markers.map((m) => (
+          <Marker
+            opts={{ position: m.position, title: m.title }}
+            events={[{ type: "click", handler: () => showInfo(m) }]}
+          />
+        ))}
+        <InfoWindow
+          opts={{
+            position: state.activeInfo.position,
+            content: state.activeInfo.content,
+            isCustom: false,
+          }}
+          visible={state.activeInfo.visible}
+          onClose={() => (state.activeInfo.visible = false)}
+        />
+      </Map>
+    );
+  },
+});
+```
+
+---
 
 ## 核心组件
 

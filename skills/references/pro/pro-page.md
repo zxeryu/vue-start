@@ -26,8 +26,21 @@ export default defineComponent(() => {
 | `subTitle` | 副标题 | `string` |
 | `showBack` | 是否显示返回按钮 | `boolean` |
 | `loading` | 加载状态 | `boolean` |
-| `loadingOpts` | loading 配置 | `object` |
+| `loadingOpts` | loading 配置（如 `{ background: "#eee" }`） | `object` |
 | `fillMode` | 是否充满容器 | `boolean` |
+
+### 事件
+
+| 事件 | 说明 | 参数 |
+|------|------|------|
+| `onBack` | 点击返回按钮 | `() => void` |
+
+### 插槽
+
+| 插槽 | 说明 |
+|------|------|
+| `default` | 页面主体内容 |
+| `extra` | 标题栏右侧操作区 |
 
 ---
 

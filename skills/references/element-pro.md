@@ -683,7 +683,7 @@ export default defineComponent(() => {
 
 ## 表格组件
 
-element-pro 的 `pro-table` 继承原生 ElTable 所有属性。
+> `pro-table` 的完整文档见 [Pro Table 表格组件](../pro/pro-table.md)。element-pro 的表格继承原生 ElTable 所有属性，以下是快速参考。
 
 ### Props
 
@@ -693,14 +693,7 @@ element-pro 的 `pro-table` 继承原生 ElTable 所有属性。
 | `dataSource` | 数据源 | `array` |
 | `loading` | 加载状态 | `boolean` |
 | `selectedRowKeys` (v-model) | 选中行 keys | `string[] \| string` |
-| `rowSelection` | 行选择配置 | `object` |
-
-### rowSelection 配置
-
-| 属性 | 说明 | 类型 | 默认值 |
-|------|------|------|--------|
-| `type` | 选择类型 | `single` \| `multi` | multi |
-| `onChange` | 选中变化回调 | `(keys, rows) => void` | - |
+| `rowSelection` | 行选择配置 | `{ type?: 'single' \| 'multi', onChange?: (keys, rows) => void }` |
 
 ### 方法（通过 expose）
 
@@ -710,7 +703,7 @@ element-pro 的 `pro-table` 继承原生 ElTable 所有属性。
 | `getSelectionRows` | 获取选中行 |
 | `clearSort` | 清空排序 |
 
-**示例**
+### 示例
 
 ```tsx
 import { defineComponent, reactive, ref } from "vue";
@@ -726,22 +719,14 @@ export default defineComponent(() => {
   ];
 
   return () => (
-    <>
-      <pro-table
-        ref={tableRef}
-        columns={columns}
-        dataSource={[]}
-        loading={state.loading}
-        v-model:selectedRowKeys={state.selectedRowKeys}
-        rowSelection={{ onChange: (keys) => (state.selectedRowKeys = keys) }}
-      />
-      {state.selectedRowKeys.length > 0 && (
-        <div style={{ marginTop: 16 }}>
-          <span>已选择 {state.selectedRowKeys.length} 项</span>
-          <el-button onClick={() => tableRef.value?.clearSelection()}>清空</el-button>
-        </div>
-      )}
-    </>
+    <pro-table
+      ref={tableRef}
+      columns={columns}
+      dataSource={[]}
+      loading={state.loading}
+      v-model:selectedRowKeys={state.selectedRowKeys}
+      rowSelection={{ onChange: (keys) => (state.selectedRowKeys = keys) }}
+    />
   );
 });
 ```
@@ -750,7 +735,7 @@ export default defineComponent(() => {
 
 ## 表单组件
 
-element-pro 的 `pro-form` 继承原生 ElForm 所有属性。
+> `pro-form` 的完整文档见 [Pro Form 表单组件](../pro/pro-form.md)。element-pro 的 form 继承原生 ElForm 所有属性，以下是快速参考。
 
 ### Props
 
@@ -776,7 +761,7 @@ element-pro 的 `pro-form` 继承原生 ElForm 所有属性。
 | `finish` | 表单提交成功 | `(values) => void` |
 | `finishFailed` | 表单提交失败 | `(invalidFields) => void` |
 
-**示例**
+### 示例
 
 ```tsx
 import { defineComponent, reactive, ref } from "vue";
@@ -799,10 +784,9 @@ export default defineComponent(() => {
       labelWidth={80}
       onFinish={(values) => console.log("提交成功:", values)}
     >
-      <el-button type="primary" html-type="submit">
-        提交
-      </el-button>
+      <el-button type="primary" html-type="submit">提交</el-button>
       <el-button onClick={() => formRef.value?.resetFields()}>重置</el-button>
     </pro-form>
   );
 });
+```

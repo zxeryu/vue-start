@@ -36,9 +36,36 @@ export default defineComponent(() => {
 |------|------|------|
 | `columns` | 列配置 | `TDescColumns` |
 | `data` | 数据源 | `Record<string, any>` |
-| `column` | 公共列配置 | `object` |
+| `column` | 公共列配置（默认列数） | `number` |
 | `border` | 是否显示边框 | `boolean` |
 | `size` | 尺寸 | `'small' \| 'default' \| 'large'` |
+
+### 分组机制
+
+`columns` 支持分组展示：当一个 column 没有 `dataIndex` 时，该行作为分组标题。
+
+```tsx
+const descColumns = [
+  { title: "基本信息" },                    // 分组标题行
+  { title: "姓名", dataIndex: "name" },     // 数据行
+  { title: "年龄", dataIndex: "age" },
+  { title: "联系方式" },                    // 分组标题行
+  { title: "邮箱", dataIndex: "email" },
+  { title: "电话", dataIndex: "phone" },
+];
+```
+
+### span 属性
+
+每个 column 可通过 `span` 控制占据的列数（共 `column` 列）：
+
+```tsx
+const descColumns = [
+  { title: "姓名", dataIndex: "name", span: 2 },  // 占2列
+  { title: "年龄", dataIndex: "age" },              // 默认1列
+  { title: "邮箱", dataIndex: "email", span: 3 },  // 占3列
+];
+```
 
 ---
 

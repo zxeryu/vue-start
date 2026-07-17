@@ -28,13 +28,13 @@ export default defineComponent(() => {
 |------|------|------|
 | `value` | 唯一标识 | `string \| number` |
 | `label` | 显示文本 | `string` |
-| `show` | 显示条件 | `boolean \| (record) => boolean` |
-| `disabled` | 禁用条件 | `boolean \| (record) => boolean` |
-| `loading` | 加载状态 | `boolean \| (record) => boolean` |
-| `onClick` | 点击事件 | `(record) => void` |
-| `per` | 权限标识 | `string` |
-| `tip` | 提示文本 | `string` |
-| `routeOpts` | 路由跳转 | `{ name: string; query: string[] }` |
+| `show` | 显示条件 | `boolean \| (record: any) => boolean` |
+| `disabled` | 禁用条件 | `boolean \| (record: any) => boolean` |
+| `loading` | 加载状态 | `boolean \| (record: any) => boolean` |
+| `onClick` | 点击事件 | `(record: any) => void` |
+| `per` | 权限标识（配合 `useHasPer` 使用，无权限时自动隐藏） | `string` |
+| `tip` | 提示文本（操作成功后显示） | `string` |
+| `routeOpts` | 路由跳转 | `{ name: string; query: string[] } \| ((record: any) => Record<string, any>)` |
 
 ---
 

@@ -28,20 +28,57 @@ export default defineComponent(() => {
 
 ## Props
 
-| 属性 | 说明 | 类型 |
-|------|------|------|
-| `layout` | 布局模式 | `'compose'` \| `'vertical'` \| `'horizontal'` \| `'horizontal-v'` \| `'simple'` |
-| `menus` | 菜单数据 | `TLayoutMenu[]` |
-| `fieldNames` | 菜单字段映射 | `object` |
-| `collapse` | 菜单收起状态 | `boolean` |
-| `tabs` | Tabs 配置 | `object` |
-| `breadcrumb` | 面包屑配置 | `object` |
-| `watermark` | 水印配置 | `object` |
-| `drawerMenuVisible` | Drawer 显示状态（simple 模式） | `boolean` |
-| `drawerProps` | Drawer 配置 | `object` |
-| `menuProps` | 菜单配置 | `object` |
-| `topMenuProps` | 顶部菜单配置（compose 模式） | `object` |
-| `routeOpts` | 路由配置 | `object` |
+### 布局模式
+
+| 模式 | 说明 |
+|------|------|
+| `compose` | 综合布局：顶部菜单 + 侧边菜单（默认） |
+| `vertical` | 左侧垂直菜单布局 |
+| `horizontal` | 顶部水平菜单布局 |
+| `horizontal-v` | 顶部菜单 + 左侧二级菜单 |
+| `simple` | 简洁模式：通过 Drawer 展示菜单 |
+
+### 属性
+
+| 属性 | 说明 | 类型 | 默认值 |
+|------|------|------|--------|
+| `layout` | 布局模式 | `'compose'` \| `'vertical'` \| `'horizontal'` \| `'horizontal-v'` \| `'simple'` | `compose` |
+| `menus` | 菜单数据 | `TLayoutMenu[]` | - |
+| `fieldNames` | 菜单字段映射 | `{ label?: string; value?: string; path?: string; children?: string }` | `{ label: 'label', value: 'value' }` |
+| `collapse` | 菜单收起状态 | `boolean` | `false` |
+| `tabs` | Tabs 配置 | `{ sessionKey?: string; clearWhileUnmount?: boolean }` | - |
+| `breadcrumb` | 面包屑配置 | `object` | - |
+| `watermark` | 水印配置 | `{ content?: string; fontColor?: string }` | - |
+| `drawerMenuVisible` | Drawer 显示状态（simple 模式） | `boolean` | - |
+| `drawerProps` | Drawer 配置 | `object` | - |
+| `menuProps` | 侧边菜单配置 | `object` | - |
+| `topMenuProps` | 顶部菜单配置（compose 模式） | `object` | - |
+| `routeOpts` | 路由配置 | `object` | - |
+
+### 插槽
+
+| 插槽 | 说明 |
+|------|------|
+| `header.start` | 头部左侧区域 |
+| `header.end` | 头部右侧区域 |
+| `menu.start` | 菜单上方 |
+| `menu.end` | 菜单下方 |
+| `default` | 主内容区域 |
+| `drawerMenuTrigger` | 简洁模式菜单触发按钮 |
+
+### TLayoutMenu
+
+```ts
+interface TLayoutMenu {
+  value: string;            // 菜单唯一标识
+  label: string;            // 菜单显示文本
+  path?: string;            // 路由路径
+  icon?: string;            // 图标
+  children?: TLayoutMenu[]; // 子菜单
+  hidden?: boolean;         // 是否隐藏
+  [key: string]: any;
+}
+```
 
 ---
 

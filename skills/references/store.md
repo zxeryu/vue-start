@@ -36,16 +36,18 @@ app.use(store$);
 import { createStateUse } from "@vue-start/store";
 
 // 声明全局状态
-export const useLocalConfig = createStateUse(
-  "local-config",     // 存储 key
-  { light: true },    // 初始值
-  true,               // 是否持久化
-);
+const useLocalConfig = createStateUse<T>(
+  key: string,        // 存储 key
+  initialValue: T,    // 初始值
+  persist?: boolean,  // 是否持久化
+): () => [Ref<T>, (value: T) => void];
 
 // 组件中使用
+export const useLocalConfig = createStateUse("local-config", { light: true }, true);
 const [config, setConfig] = useLocalConfig();
-setConfig({ light: false });
 ```
+
+**返回值**: `createStateUse` 返回一个 hook 函数，调用该 hook 返回 `[state, setState]` 元组。
 
 ### useStoreState$
 
@@ -54,7 +56,11 @@ setConfig({ light: false });
 ```ts
 import { useStoreState$ } from "@vue-start/store";
 
-const [state, update] = useStoreState$("key", initialValue, persist);
+const [state, update] = useStoreState$<T>(
+  key: string,
+  initialValue: T,
+  persist?: boolean
+): [Ref<T>, (value: T) => void];
 ```
 
 ### useDispatchStore
@@ -64,11 +70,8 @@ const [state, update] = useStoreState$("key", initialValue, persist);
 ```ts
 import { useDispatchStore } from "@vue-start/store";
 
-const dispatch = useDispatchStore();
-dispatch("key", newValue, persist);
+const dispatch = useDispatchStore(): (key: string, value: any, persist?: boolean) => void;
 ```
-
-## Observable Hooks
 
 ### useObservable
 
@@ -77,7 +80,7 @@ dispatch("key", newValue, persist);
 ```ts
 import { useObservable } from "@vue-start/store";
 
-const state = useObservable(ob$, defaultValue);
+const state = useObservable<T>(ob$: Observable<T>, defaultValue?: T): Ref<T>;
 ```
 
 ### useSelector
@@ -87,7 +90,7 @@ const state = useObservable(ob$, defaultValue);
 ```ts
 import { useSelector } from "@vue-start/store";
 
-const count = useSelector(store$, (state) => state.count);
+const count = useSelector<T, R>(store$: Observable<T>, selector: (state: T) => R): Ref<R>;
 ```
 
 ### useStoreSelector
@@ -97,7 +100,7 @@ const count = useSelector(store$, (state) => state.count);
 ```ts
 import { useStoreSelector } from "@vue-start/store";
 
-const count = useStoreSelector((state) => state.count);
+const count = useStoreSelector<T>((state: T) => state.count): Ref<T[keyof T]>;
 ```
 
 ## 与 @vue-start/pro 集成

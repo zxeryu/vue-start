@@ -33,7 +33,7 @@ app.use(request);
 
 ## useFetch
 
-数据获取 Hook，推荐使用。
+数据获取 Hook，推荐使用。内部通过 `IRequestActor` 管理请求生命周期。
 
 ```ts
 import { useFetch } from "@vue-start/request";
@@ -41,6 +41,11 @@ import { getData } from "@/clients";
 
 const { data, request, requesting } = useFetch(getData, options);
 ```
+
+### 参数
+
+- `actor`: `IRequestActor` — 请求对象（定义了请求的 URL、方法、参数转换等）
+- `options`: `UseFetchOptions` — 行为配置
 
 ### Options
 
@@ -50,8 +55,8 @@ const { data, request, requesting } = useFetch(getData, options);
 | `params` | 请求参数 | `object \| () => object` |
 | `deps` | 监听对象，变化时重新请求 | `WatchSource[]` |
 | `convertData` | 转换响应数据 | `(response) => any` |
-| `onSuccess` | 请求成功回调 | `(actor, data) => void` |
-| `onFail` | 请求失败回调 | `(actor) => void` |
+| `onSuccess` | 请求成功回调 | `(actor: IRequestActor, data) => void` |
+| `onFail` | 请求失败回调 | `(actor: IRequestActor) => void` |
 | `onFinish` | 请求完成回调 | `() => void` |
 | `cancelWhileUnmount` | 组件卸载时取消请求 | `boolean` |
 | `activeEmit` | keep-alive 下 onActivated 时重新请求 | `boolean` |
@@ -149,20 +154,54 @@ requestSubject$.pipe(
 
 ## 请求 Actor
 
+`useFetch` 的第一个参数 `actor` 是 `IRequestActor` 类型，它定义了请求的 URL、方法、参数转换等核心信息。
+
+### 创建 Actor
+
+```ts
+import { IRequestActor } from "@vue-start/request";
+
+// 方式1：使用 requestConfig 定义静态请求
+const getUser: IRequestActor = {
+  name: "getUser",
+  requestConfig: {
+    url: "/api/user",
+    method: "GET",
+  },
+};
+
+// 方式2：使用 requestFromReq 动态生成请求配置
+const updateUser: IRequestActor = {
+  name: "updateUser",
+  requestFromReq: (req) => ({
+    url: `/api/user/${req.id}`,
+    method: "PUT",
+    data: req.body,
+  }),
+};
+```
+
 ### IRequestActor
 
 ```ts
-interface IRequestActor<TReq, TRes, TErr> {
-  name: string;
-  requestFromReq?: (req: TReq) => AxiosRequestConfig;
-  requestConfig?: AxiosRequestConfig;
-  req?: TReq;
-  res?: AxiosResponse<TRes>;
-  err?: TErr;
-  stage?: "DONE" | "FAILED" | "CANCEL";
-  id?: string;
+interface IRequestActor<TReq = any, TRes = any, TErr = any> {
+  name: string;                                        // 请求名称（唯一标识）
+  requestFromReq?: (req: TReq) => AxiosRequestConfig;  // 动态请求配置
+  requestConfig?: AxiosRequestConfig;                   // 静态请求配置
+  req?: TReq;                                          // 请求参数（运行时填充）
+  res?: AxiosResponse<TRes>;                           // 请求响应（运行时填充）
+  err?: TErr;                                          // 请求错误（运行时填充）
+  stage?: "DONE" | "FAILED" | "CANCEL";               // 请求阶段（运行时填充）
+  id?: string;                                         // 请求 ID（运行时填充）
 }
 ```
+
+### 与 useFetch 的关系
+
+`useFetch` 内部将 `IRequestActor` 作为请求单元，管理其生命周期：
+- 调用 `request()` 时，根据 `actor.requestFromReq` 或 `actor.requestConfig` 生成 Axios 配置
+- 请求成功/失败后更新 `actor.res` / `actor.err` 和 `actor.stage`
+- `onSuccess` / `onFail` 回调接收完整的 `actor` 对象
 
 ### 状态判断
 
