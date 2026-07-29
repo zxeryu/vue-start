@@ -192,3 +192,10 @@
   cursor: pointer;
   flex-shrink: 0;
 }
+
+/********************************** 横向菜单超出内容-弹出组件防止超出页面 ***********************************/
+.el-menu--horizontal .el-menu.el-menu--popup {
+  overflow: hidden;
+  overflow-y: auto;
+  max-height: 46vh;
+}
