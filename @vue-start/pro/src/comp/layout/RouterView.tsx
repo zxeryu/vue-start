@@ -5,11 +5,17 @@ import { filter, map, pickBy, identity, size, every, keys } from "lodash";
 import { useProRouter } from "../../core";
 import { findTreeItem, treeToMap, useEffect } from "@vue-start/hooks";
 
+export type KeepAliveOpts = {
+  max?: number;
+  exclude?: string | RegExp | (string | RegExp)[];
+};
+
 const routerViewProps = () => ({
   //includes 额外拓展
   includes: { type: Array as PropType<string[]>, default: [] },
   //开启 tags 模式全部缓存策略
   tagsCache: { type: Boolean, default: true },
+  keepAliveOpts: { type: Object as PropType<KeepAliveOpts>, default: undefined },
 });
 
 export type ProRouterViewProps = Partial<ExtractPropTypes<ReturnType<typeof routerViewProps>>>;
@@ -108,7 +114,7 @@ export const ProRouterView = defineComponent<ProRouterViewProps>({
                 }
               }
               return (
-                <KeepAlive include={includeRef.value}>
+                <KeepAlive {...props.keepAliveOpts} include={includeRef.value}>
                   {/*  <></> 会引起强制刷新，导致keep-live失效！！！ */}
                   {refreshRef.value ? null : ReComponent ? <ReComponent /> : <Component />}
                 </KeepAlive>
