@@ -3,6 +3,10 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# 0.5.74
+
+- feat: keepAlive 增加 keepAliveOpts 属性透传
+
 # 0.5.73
 
 - feat: PageHeader 新增 slots 属性，支持模板插槽传递 title

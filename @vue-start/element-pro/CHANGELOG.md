@@ -1,5 +1,9 @@
 # Change Log
 
+# 0.2.42
+
+- style: 横向菜单弹出组件防止超出页面
+
 # 0.2.41
 
 - feat: 新增 ProTableSelect 表格选择组件，支持单选/多选、Modal/Popover 弹出模式
