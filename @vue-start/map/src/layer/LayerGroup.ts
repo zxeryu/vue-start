@@ -1,4 +1,4 @@
-import { provideMap, useMap } from "../Map";
+import { provideGroup, useGroup, useMap } from "../Map";
 import { debounce, isArray, isNumber } from "lodash";
 import { useEffect, useWatch } from "@vue-start/hooks";
 import { defineComponent, PropType, toRef } from "vue";
@@ -6,7 +6,8 @@ import { TEvents } from "../event";
 import { useFeatureOptMethods, useShowConnect } from "../Feature";
 
 const useMapLayerOpe = () => {
-  const { mapRef, layerGroup } = useMap();
+  const { mapRef } = useMap();
+  const { layerGroup } = useGroup();
 
   const addToMap = (layer: any) => {
     if (layerGroup) {
@@ -127,7 +128,7 @@ export const LayerGroup = defineComponent({
 
     expose({ getFeature, addToMap, removeFormMap });
 
-    provideMap({ mapRef, layerGroup });
+    provideGroup({ layerGroup });
 
     return () => {
       return slots.default?.();

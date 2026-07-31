@@ -4,9 +4,32 @@ import { useEffect } from "@vue-start/hooks";
 import { TEvents, useEvents } from "./event";
 
 const MapProvideKey = Symbol("amap-key");
+const GroupProvideKey = Symbol("amap-group-key");
+
+export type GeoJsonFeature = {
+  type: "Feature";
+  properties: Record<string, any>;
+  geometry: { type: string; coordinates: any };
+};
+
+export type GeoJsonFeatureCollection = {
+  type: "FeatureCollection";
+  features: GeoJsonFeature[];
+};
+
+export type GeoJsonQuery = {
+  adcode: string;
+  type: "boundary" | "children";
+};
+
+export type GetGeoJson = (opts: GeoJsonQuery) => Promise<GeoJsonFeatureCollection>;
 
 export interface IMapProvide {
   mapRef: ShallowRef<AMap.Map>;
+  getGeoJson: GetGeoJson;
+}
+
+export interface IGroupProvide {
   overlayGroup?: AMap.OverlayGroup;
   layerGroup?: AMap.LayerGroup;
 }
@@ -14,6 +37,10 @@ export interface IMapProvide {
 export const provideMap = (opts: IMapProvide) => provide(MapProvideKey, opts);
 
 export const useMap = <T extends IMapProvide>() => inject(MapProvideKey) as T;
+
+export const provideGroup = (opts: IGroupProvide) => provide(GroupProvideKey, opts);
+
+export const useGroup = () => inject(GroupProvideKey, {} as IGroupProvide);
 
 export type TLoadOpts = {
   key: string; // 申请好的Web端开发者Key，首次调用 load 时必填
@@ -39,6 +66,8 @@ const mapProps = () => ({
   opts: { type: Object as PropType<AMap.MapOptions> },
   //事件
   events: { type: Array as PropType<TEvents> },
+  getGeoJson: { type: Function as PropType<GetGeoJson> },
+  geoJsonPath: { type: String },
 });
 
 export type MapProps = Partial<ExtractPropTypes<ReturnType<typeof mapProps>>>;
@@ -109,7 +138,83 @@ export const Map = defineComponent<MapProps>({
       };
     }, []);
 
-    provideMap({ mapRef } as any);
+    const emptyFC = (): GeoJsonFeatureCollection => ({ type: "FeatureCollection", features: [] });
+
+    const normalizeAdcode = (fc: GeoJsonFeatureCollection): GeoJsonFeatureCollection => ({
+      ...fc,
+      features: fc.features.map((f) => ({
+        ...f,
+        properties: {
+          ...f.properties,
+          adcode: f.properties?.adcode != null ? String(f.properties.adcode) : f.properties?.adcode,
+          parent: f.properties?.parent
+            ? { ...f.properties.parent, adcode: String(f.properties.parent.adcode) }
+            : f.properties?.parent,
+        },
+      })),
+    });
+
+    const cache: Record<string, Promise<GeoJsonFeatureCollection>> = {};
+    const load = (url: string): Promise<GeoJsonFeatureCollection> => {
+      if (!cache[url]) {
+        cache[url] = fetch(url)
+          .then((r) => (r.ok ? r.json() : emptyFC()))
+          .then(normalizeAdcode)
+          .catch(() => emptyFC());
+      }
+      return cache[url];
+    };
+
+    const MUNICIPALITIES = ["110000", "120000", "310000", "500000", "810000", "820000"];
+
+    const defaultGetGeoJson: GetGeoJson | undefined = props.geoJsonPath
+      ? (opts) => {
+          const base = props.geoJsonPath!.replace(/\/$/, "");
+          const code = opts.adcode;
+          const isCountry = opts.adcode === "100000";
+          const isProvince = !isCountry && opts.adcode.endsWith("0000");
+          const isCity = !isProvince && opts.adcode.endsWith("00");
+          const provinceCode = opts.adcode.slice(0, 2) + "0000";
+
+          if (opts.type === "boundary") {
+            if (isCountry) return load(`${base}/100000.json`);
+            const url = isProvince
+              ? `${base}/100000_full.json`
+              : isCity
+              ? `${base}/${provinceCode}_full.json`
+              : MUNICIPALITIES.includes(provinceCode)
+              ? `${base}/${provinceCode}_full.json`
+              : `${base}/${provinceCode}_full_district.json`;
+            return load(url).then((fc) => ({
+              type: "FeatureCollection",
+              features: fc.features.filter((f) => f.properties?.adcode === code),
+            }));
+          }
+
+          if (isCountry) return load(`${base}/100000_full.json`);
+          if (isProvince) {
+            return load(`${base}/${provinceCode}_full.json`).then((fc) => ({
+              type: "FeatureCollection",
+              features: fc.features.filter((f) => f.properties?.parent?.adcode === code),
+            }));
+          }
+          if (isCity) {
+            return load(`${base}/${provinceCode}_full_district.json`).then((fc) => ({
+              type: "FeatureCollection",
+              features: fc.features.filter((f) => f.properties?.parent?.adcode === code),
+            }));
+          }
+          return Promise.resolve(emptyFC());
+        }
+      : undefined;
+
+    const getGeoJson: GetGeoJson = (opts) => {
+      if (props.getGeoJson) return props.getGeoJson(opts);
+      if (defaultGetGeoJson) return defaultGetGeoJson(opts);
+      return Promise.resolve(emptyFC());
+    };
+
+    provideMap({ mapRef, getGeoJson } as any);
 
     return () => {
       return (

@@ -13,6 +13,7 @@ const locProps = {
   autoProps: { type: Object, default: () => ({}) },
   // 逆地理编码配置
   geoOpts: { type: Object, default: () => ({}) },
+  enableGeo: { type: Boolean, default: false },
   // 模型值，可以是位置坐标 [lng, lat] 或位置字符串
   modelValue: {
     type: [Array, String, Object] as PropType<[number, number] | null | undefined>,
@@ -71,6 +72,7 @@ export const MapLoc = defineComponent({
       const { lng, lat } = item.location;
       emit("update:modelValue", [lng, lat]);
       emit("select", item);
+      if (props.enableGeo) geoReqCurrent();
     };
 
     const events = [
@@ -83,6 +85,7 @@ export const MapLoc = defineComponent({
           const { lng, lat } = e.lnglat;
           emit("update:modelValue", [lng, lat]);
           emit("click", e);
+          if (props.enableGeo) geoReqCurrent();
         },
       },
     ];

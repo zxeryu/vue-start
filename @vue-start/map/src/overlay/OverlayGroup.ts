@@ -1,5 +1,5 @@
 import { defineComponent, PropType, toRef } from "vue";
-import { provideMap, useMap } from "../Map";
+import { provideGroup, useGroup, useMap } from "../Map";
 import { useEffect, useWatch } from "@vue-start/hooks";
 import { debounce, isArray, isNumber } from "lodash";
 import { useFeatureOptMethods, useShowConnect } from "../Feature";
@@ -9,7 +9,8 @@ import { TEvents } from "../event";
  * overlay 类型 组件 map 添加/删除 操作方法
  */
 const useMapOverlayOpe = () => {
-  const { mapRef, overlayGroup } = useMap();
+  const { mapRef } = useMap();
+  const { overlayGroup } = useGroup();
 
   const addToMap = (overlay: any) => {
     if (overlayGroup) {
@@ -141,7 +142,7 @@ export const OverlayGroup = defineComponent({
 
     expose({ getFeature, addToMap, removeFormMap });
 
-    provideMap({ mapRef, overlayGroup });
+    provideGroup({ overlayGroup });
 
     return () => {
       return slots.default?.();
