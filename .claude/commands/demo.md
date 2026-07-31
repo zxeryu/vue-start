@@ -16,14 +16,38 @@ description: "分析git工作区代码变更，在 src/views 目录下生成对�
 
 ### Demo 文件格式
 
+所有 demo 文件放在 `demo/` 目录下，每个文件以 `/*--- title: ... desc: ... ---*/` 开头。
+
 ```tsx
 /*---
 title: 基础使用
+desc: 可选，补充说明
 ---*/
 import { defineComponent } from "vue";
 
 export default defineComponent(() => {
   return () => <div>demo content</div>;
+});
+```
+
+**解析机制**：`plugin/tsxWithCode.ts` 使用 `gray-matter` 解析 `/*--- ... ---*/` 中的 `title` 和 `desc`，组件会被 `<demo-box>` 包裹渲染 title/desc 标题区域。
+
+### Demo 索引文件
+
+`index.tsx` 为纯引入模式，不做描述、不加 CSS：
+
+```tsx
+import { defineComponent } from "vue";
+import Basic from "./demo/basic";
+import Compose from "./demo/compose";
+
+export default defineComponent(() => {
+  return () => (
+    <>
+      <Basic />
+      <Compose />
+    </>
+  );
 });
 ```
 
@@ -66,6 +90,50 @@ export default defineComponent(() => {
 - **动态切换**：通过开关、表单等控件实时切换属性状态
 - **配置联动**：不同属性之间的相互影响（如 disabled 时样式变化）
 - **状态反馈**：属性变化后的 UI 实时反馈
+
+### 样式规范
+
+使用 `@emotion/css` 的 `css` 方法，通过 `class={css({})}` 应用样式，避免 `style={}` 内联写法：
+
+```tsx
+import { css } from "@emotion/css";
+
+const wrapCls = css({
+  position: "absolute", top: 12, left: 12,
+  padding: "8px 14px", background: "#fff",
+  borderRadius: 8, fontSize: 13,
+});
+
+// 使用
+<div class={wrapCls}>content</div>
+```
+
+### 控制面板组件
+
+demo 中的控制面板（属性切换、状态展示）优先使用 `pro-*` 组件，减少自定义 DOM 和 CSS：
+
+| 组件 | 用途 | 示例 |
+|------|------|------|
+| `pro-select` | 下拉选择 | `<pro-select v-model={value} options={[...]} />` |
+| `pro-radio` | 单选切换 | `<pro-radio v-model={value} options={[...]} optionType="button" />` |
+| `pro-search-form` | 搜索/设置表单 | `<pro-search-form model={state} columns={columns} />` |
+| `pro-form` | 表单 | `<pro-form model={state} columns={columns} />` |
+
+使用 `options` 数组配置选项：
+
+```tsx
+const options = [
+  { value: "a", label: "选项A" },
+  { value: "b", label: "选项B" },
+];
+```
+
+### Demo 精简原则
+
+- demo 文件聚焦组件用法，去掉不必要的 CSS 类名和 DOM 层级
+- 控制面板用 `pro-*` 组件实现，而非自定义 `<select>` / `<div>` 组合
+- 面包屑、标签等用简单 `<span>` + 少量 `css` 类实现，不堆砌样式
+- 不需要在 `index.tsx` 中写描述文字和 CSS（由 `/*--- title: desc ---*/` 和 `DemoBox` 处理）
 
 ### README 文档格式
 
