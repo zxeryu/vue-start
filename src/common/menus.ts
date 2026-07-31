@@ -86,6 +86,7 @@ export const menus = [
       { title: "api", name: "MapApiIndex" },
       { title: "autocomplete", name: "MapAutocompleteIndex" },
       { title: "loc", name: "MapLocIndex" },
+      { title: "district-layer", name: "MapDistrictLayerIndex" },
     ],
   },
   { title: "css", name: "CssIndex" },
