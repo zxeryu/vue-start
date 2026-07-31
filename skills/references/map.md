@@ -187,6 +187,41 @@ mapRef.value.getAllOverlays();        // 获取所有覆盖物
 // ... 其他 AMap.Map 方法
 ```
 
+**数据源配置（用于 DistrictLayer）**
+
+通过 `geoJsonPath` 或 `getGeoJson` 配置地理数据源：
+
+```tsx
+// 方式一：geoJsonPath（默认实现）
+<Map geoJsonPath="/amap_areas-v3">
+  <DistrictLayer />
+</Map>
+
+// 方式二：getGeoJson（自定义数据源）
+<Map getGeoJson={(opts) => fetch(`/api/geo/${opts.adcode}?type=${opts.type}`).then(r => r.json())}>
+  <DistrictLayer />
+</Map>
+```
+
+`GeoJsonQuery` 参数：
+
+| 字段 | 类型 | 说明 |
+|------|------|------|
+| `adcode` | `string` | 区域编码 |
+| `type` | `"boundary" \| "children"` | `boundary`=边界，`children`=子级 |
+
+**默认 `geoJsonPath` 的 URL 映射规则：**
+
+| 请求类型 | adcode | URL |
+|---------|--------|-----|
+| country 边界 | `100000` | `{base}/100000.json` |
+| 省边界 | `140000` | `{base}/100000_full.json` → 过滤该省 |
+| 市边界 | `140100` | `{base}/140000_full.json` → 过滤该市 |
+| 区边界 | `140105` | `{base}/140000_full_district.json` → 过滤该区 |
+| 直辖市/港澳区边界 | `110101` | `{base}/110000_full.json` → 过滤该区 |
+| 省子级（市列表） | `140000` | `{base}/140000_full.json` → 过滤 parent |
+| 市子级（区列表） | `140100` | `{base}/140000_full_district.json` → 过滤 parent |
+
 ### useMap
 
 获取地图实例。
@@ -222,6 +257,35 @@ useMapPlugin(['AMap.Geolocation'], () => {
 ```
 
 ## 覆盖物组件 (overlay)
+
+### opts$ 动态更新机制
+
+所有覆盖物组件（Marker、Polygon、Polyline 等）支持 `opts$` 属性实现动态更新。
+
+**原理：** `opts$` 的每个 key 会映射为 `set${Key}` 方法调用。例如 `opts$={{ position: [116.5, 40] }}` 会调用 `feature.setPosition([116.5, 40])`。
+
+```tsx
+// opts（静态）：传给构造函数，只初始化一次
+opts={{ position: [116.39, 39.9], title: "标注" }}
+
+// opts$（动态）：遍历 key 调用 set${Key} 方法
+opts$={{ position: [116.5, 40] }}
+// → marker.setPosition([116.5, 40])   ✅
+```
+
+**关于 `options` 包裹：** 大部分属性有对应的 `set${Key}` 方法，直接写即可。如果某个属性更新不生效，说明该属性没有对应的 `set${Key}` 方法，改用 `options` 包裹，会调用 `setOptions` 更新：
+
+```tsx
+// 直接写（调用 set${Key}）
+opts$={{ fillColor: "#ff7a45" }}
+// → feature.setFillColor("#ff7a45")   ⚠️ 如果不存在则静默失败
+
+// options 包裹（调用 setOptions）
+opts$={{ options: { fillColor: "#ff7a45" } }}
+// → feature.setOptions({ fillColor: "#ff7a45" })   ✅
+```
+
+> 如果遇到 `opts$` 更新不生效，优先尝试 `options` 包裹。可查阅高德官方 API 文档确认该属性是否有独立 setter 方法。
 
 ### Marker
 
@@ -371,6 +435,67 @@ useMapPlugin(['AMap.Geolocation'], () => {
 
 ## 功能组件 (comp)
 
+### DistrictLayer
+
+行政区下钻组件，支持省-市-区逐级点击下钻、悬停高亮、自动定位。
+
+```tsx
+<DistrictLayer
+  provinceCode={provinceCode}
+  cityCode={cityCode}
+  maxLevel="district"
+  fill={(feature, state) => "#ff7a45"}
+  styles={{ strokeColor: "#fff", strokeWeight: 1 }}
+  onArea={(v) => console.log(v)}
+/>
+```
+
+**属性**
+
+| 名称 | 说明 | 类型 | 默认值 |
+|------|------|------|--------|
+| `provinceCode` | 省 code | `string\|number` | - |
+| `cityCode` | 市 code | `string\|number` | - |
+| `maxLevel` | 最大层级（到达后不可下钻） | `"province"\|"city"\|"district"` | `"district"` |
+| `fill` | 自定义填充颜色 | `(feature, state) => string` | - |
+| `hoverColor` | 悬停高亮颜色 | `string` | `"#ff7a45"` |
+| `defaultColor` | 默认填充颜色 | `string` | `"#e6e6e6"` |
+| `styles` | 全局 Polygon 样式 | `object` | - |
+| `disabled` | 禁用点击空白回退 | `boolean` | `false` |
+| `fitView` | 自动定位到当前区域 | `boolean` | `true` |
+| `fitViewOpts` | 定位参数 | `{immediately?, avoid?, maxZoom?}` | - |
+
+**事件**
+
+| 名称 | 说明 | 类型 |
+|------|------|------|
+| `area` | 当前区域变化 | `(v: {province?, city?}) => void` |
+| `click` | 点击区域下钻 | `(v: {adcode, level, name}) => void` |
+| `hover` | 悬停区域变化 | `(v: {adcode, level, name} \| undefined) => void` |
+
+**方法（expose）**
+
+```ts
+getState(): { province?: TArea; city?: TArea; hover?: TArea }
+```
+
+### MapFitView
+
+区域定位组件，根据 adcode 自动计算边界并定位地图视野。
+
+```tsx
+<MapFitView adcode="140000" :immediately="false" :avoid="[60, 60, 60, 60]" />
+```
+
+**属性**
+
+| 名称 | 说明 | 类型 | 默认值 |
+|------|------|------|--------|
+| `adcode` | 区域编码 | `string` | - |
+| `immediately` | 是否无动画定位 | `boolean` | `false` |
+| `avoid` | 边距 `[top,right,bottom,left]` | `number[]` | - |
+| `maxZoom` | 最大缩放级别 | `number` | - |
+
 ### MapLoc
 
 位置选择组件，集成搜索和逆地理编码。
@@ -493,6 +618,32 @@ ApiNames = {
   // ...更多
 }
 ```
+
+## 常见问题
+
+### `opts$` 更新不生效？
+
+**原因：** 该属性没有对应的 `set${Key}` 方法。`opts$` 的工作原理是遍历 key，对每个 key 调用 `feature.set${Key}(value)`，如果该方法不存在则静默失败。
+
+**解决：** 用 `options` 包裹，会调用 `setOptions` 更新：
+
+```tsx
+// ❌ 不生效（如果不存在 setFillColor）
+opts$={{ fillColor: "#ff7a45" }}
+
+// ✅ 改用 options 包裹
+opts$={{ options: { fillColor: "#ff7a45" } }}
+```
+
+可查阅高德官方 API 文档确认该属性是否有独立 setter 方法。
+
+### `getGeoJson` 返回空数据？
+
+检查 `geoJsonPath` 的 URL 映射规则是否正确，参考上文「数据源配置」章节的映射表。
+
+### DistrictLayer 不显示？
+
+检查 `Map` 是否正确配置了 `geoJsonPath` 或 `getGeoJson` 数据源。
 
 ## 地图插件常量 (Plugin)
 
